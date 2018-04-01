@@ -1,19 +1,11 @@
 name: KitPreview
 main: com.songoda.kitpreview.KitPreview
-version: 5.4
+version: 5.5
 depend: [Arconix]
 softdepend: [PlaceholderAPI, Vault, UltimateCore, Essentials, MiniKitPvP]
 description: View a kit before you purchase it!
 author: songoda
 commands:
-  kits:
-    description: Display kits.
-    default: false
-    usage: /<command> [reload]
-  kit:
-    description: Display kits.
-    default: false
-    usage: /<command> [reload]
   kitpreview:
     description: View information on this plugin.
     default: true

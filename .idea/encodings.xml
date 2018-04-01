@@ -2,34 +2,35 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/SettingDefinitions.yml" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/API/Update.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Events/BlockListeners.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Events/ChatListeners.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Events/InteractListeners.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Events/InventoryListeners.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Events/QuitListeners.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Events/SignListeners.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Handlers/CommandHandler.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Handlers/DailyHandler.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Handlers/DisplayItemHandler.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Handlers/HologramHandler.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Handlers/ParticleHandler.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Hooks/EssentialsHook.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Hooks/Hooks.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Hooks/UltimateCoreHook.java" charset="UTF-16" />
     <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/KitPreview.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Kits/BlockEditor.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Kits/Buy.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Kits/Editor.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Kits/Keys.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Kits/Kit.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Kits/KitsGUI.java" charset="UTF-16" />
     <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Lang.java" charset="UTF-16" />
     <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/References.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Utils/ConfigWrapper.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Utils/Debugger.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Utils/Methods.java" charset="UTF-16" />
-    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/Utils/SettingsManager.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/api/Update.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/events/BlockListeners.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/events/ChatListeners.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/events/EntityListeners.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/events/InteractListeners.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/events/InventoryListeners.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/events/QuitListeners.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/events/SignListeners.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/handlers/CommandHandler.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/handlers/DailyHandler.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/handlers/DisplayItemHandler.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/handlers/HologramHandler.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/handlers/ParticleHandler.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/hooks/EssentialsHook.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/hooks/Hooks.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/hooks/UltimateCoreHook.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/kits/BlockEditor.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/kits/Buy.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/kits/Editor.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/kits/Keys.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/kits/Kit.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/kits/KitsGUI.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/utils/ConfigWrapper.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/utils/Debugger.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/utils/Methods.java" charset="UTF-16" />
+    <file url="file://$PROJECT_DIR$/src/com/songoda/kitpreview/utils/SettingsManager.java" charset="UTF-16" />
     <file url="PROJECT" charset="windows-1252" />
   </component>
 </project>

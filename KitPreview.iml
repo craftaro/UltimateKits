@@ -67,5 +67,8 @@
         <jarDirectory url="file://$MODULE_DIR$/../Lib" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Lib" level="project" />
+    <orderEntry type="library" name="spigot-1.12.2" level="project" />
+    <orderEntry type="library" name="spigot-1.7.10" level="project" />
   </component>
 </module>

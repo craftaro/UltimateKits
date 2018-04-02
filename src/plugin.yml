@@ -15,4 +15,10 @@ commands:
     description: Preview a kit
     default: true
     aliases: [pk, preview]
-    usage: /<command> [kit]0
+    usage: /<command> [kit]
+permissions:
+  kitpreview.use:
+    description: allows the user to preview kits
+    default: true
+  kitpreview.admin:
+    description: Gives access to admin commands.

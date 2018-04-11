@@ -1,4 +1,4 @@
-# KitPreview  
+# UltimateKits  
 
-KitPreview introduces a powerful, yet intuitive system to your server that allows players and administrators to preview and purchase your delicately crafted in-game kits. Kits can be easily assigned to any block and configured to sell for either kit keys or economy balance. That, along with it's unique, one-of-a kind kit editor makes it a must have for server owners looking to add something to their server in order to boost profit and keep players motivated! Have questions? Check out our support page [here](http://songoda.com/support.php?a=product&id=KitPreview.2 "http://songoda.com/support.php?a=product&id=KitPreview.2").  
+UltimateKits introduces a powerful, yet intuitive system to your server that allows players and administrators to preview and purchase your delicately crafted in-game kits. Kits can be easily assigned to any block and configured to sell for either kit keys or economy balance. That, along with it's unique, one-of-a kind kit editor makes it a must have for server owners looking to add something to their server in order to boost profit and keep players motivated! Have questions? Check out our support page [here](http://songoda.com/support.php?a=product&id=UltimateKits.2 "http://songoda.com/support.php?a=product&id=UltimateKits.2").  
 ![N|Solid](https://i.imgur.com/jKtE7ZM.png)

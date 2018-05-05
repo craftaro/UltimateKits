@@ -1,0 +1,24 @@
+name: UltimateKits
+main: com.songoda.ultimatekits.UltimateKits
+version: 1.0.1
+depend: [Arconix]
+softdepend: [PlaceholderAPI, Vault, UltimateCore, Essentials, MiniKitPvP]
+description: View a kit before you purchase it!
+author: Songoda
+commands:
+  ultimatekits:
+    description: View information on this plugin.
+    default: true
+    aliases: [kp, uk]
+    usage: /<command> [reload]
+  previewkit:
+    description: Preview a kit
+    default: true
+    aliases: [pk, preview]
+    usage: /<command> [kit]
+permissions:
+  ultimatekits.use:
+    description: allows the user to preview kit
+    default: true
+  ultimatekits.admin:
+    description: Gives access to admin commands.

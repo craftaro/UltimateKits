@@ -6,3 +6,4 @@ out/
 UltimateKits\.iml
 
 target/
+/src/main/java/META-INF/MANIFEST.MF

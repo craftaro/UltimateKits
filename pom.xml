@@ -20,10 +20,6 @@
         </plugins>
     </build>
     <repositories>
-        <repository>
-            <id>jcenter</id>
-            <url>http://jcenter.bintray.com</url>
-        </repository>
         <!--Bukkit Repo-->
         <repository>
             <id>bukkit-repo</id>

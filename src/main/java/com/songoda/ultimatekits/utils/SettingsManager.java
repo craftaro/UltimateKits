@@ -229,7 +229,7 @@ public class SettingsManager implements Listener {
         o5("Dont-Preview-Commands", "Main.Dont Preview Commands In Kits", false),
         o6("Hologram-Layout", "Main.Hologram Layout", Arrays.asList("{TITLE}", "{LEFT-CLICK}", "{RIGHT-CLICK}")),
         o7("EnableSound", "Main.Sounds Enabled", true),
-        o8("Sound", "Main.Sound Played While Clicking In Inventories", "ENTITY_ENDERMAN_TELEPORT"),
+        o8("Sound", "Main.Sound Played While Clicking In Inventories", "ENTITY_ENDERMEN_TELEPORT"),
         o85("Sound", "Main.Prevent The Redeeming of a Kit When Inventory Is Full", true),
 
         o9("Exit-Icon", "Interfaces.Exit Icon", "WOOD_DOOR"),

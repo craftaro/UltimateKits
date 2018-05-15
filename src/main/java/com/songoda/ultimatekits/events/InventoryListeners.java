@@ -184,11 +184,10 @@ public class InventoryListeners implements Listener {
                         if (event.getInventory() != null && event.getInventory().getType() == InventoryType.CHEST) {
                             event.setCancelled(true);
                         }
-                    }
-                    if (event.getInventory() == player.getInventory()
-                            &&(!playerData.isInInventory())) {
-                        event.setCancelled(true);
-                        if (event.getInventory() == player.getInventory()) {
+                        if (event.getRawSlot() > event.getView().getTopInventory().getSize()
+                                && playerData.isInInventory()) {
+                            event.setCancelled(false);
+                        } else {
                             switch (event.getSlot()) {
                                 case 9:
                                     edit.general(player);
@@ -237,15 +236,15 @@ public class InventoryListeners implements Listener {
                     switch (event.getSlot()) {
                         case 11:
                             if (event.getClick() == ClickType.RIGHT)
-                                edit.setTitle(player,false);
+                                edit.setTitle(player, false);
                             else if (event.getClick() == ClickType.LEFT)
-                                edit.setTitle(player,true);
+                                edit.setTitle(player, true);
                             break;
                         case 13:
                             if (event.getClick() == ClickType.LEFT)
                                 edit.setKitsDisplayItem(player, true);
                             else if (event.getClick() == ClickType.RIGHT)
-                                edit.setKitsDisplayItem(player,false);
+                                edit.setKitsDisplayItem(player, false);
                             break;
                         case 15:
                             edit.hide(player);

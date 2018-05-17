@@ -185,8 +185,8 @@ public class InventoryListeners implements Listener {
                             event.setCancelled(true);
                         }
                     }
-                        if (event.getRawSlot() > event.getView().getTopInventory().getSize()
-                                && playerData.isInInventory()) {
+                    if (event.getRawSlot() > event.getView().getTopInventory().getSize()) {
+                        if (playerData.isInInventory()) {
                             event.setCancelled(false);
                         } else {
                             switch (event.getSlot()) {
@@ -210,6 +210,7 @@ public class InventoryListeners implements Listener {
                                     break;
                             }
                         }
+                    }
 
                     if (event.getSlot() == 49) {
                         if (!playerData.isInInventory()) {

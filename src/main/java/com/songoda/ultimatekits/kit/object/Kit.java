@@ -96,7 +96,7 @@ public class Kit {
         return items;
     }
 
-    private boolean hasRoom(Player p) {
+    private boolean hasRoom(Player p, boolean useKey) {
         int space = 0;
 
         for (ItemStack content : p.getInventory().getContents()) {
@@ -105,12 +105,21 @@ public class Kit {
             }
         }
 
-        return space >= getItemContents().size();
+        int spaceNeeded = getItemContents().size();
+
+
+        if (useKey) {
+            Key key = UltimateKits.getInstance().getKeyManager().getKey(ChatColor.stripColor(p.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
+            if (key.getAmt() != -1)
+                spaceNeeded = key.getAmt();
+        }
+
+        return space >= spaceNeeded;
     }
 
     public void give(Player p, boolean useKey, boolean economy, boolean console) {
         try {
-            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(p)) {
+            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(p, useKey)) {
                 p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.INVENTORY_FULL.getConfigValue()));
                 return;
             }

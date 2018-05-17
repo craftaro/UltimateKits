@@ -45,7 +45,6 @@ public class InteractListeners implements Listener {
             if (kitBlockData == null) return;
             Kit kit = kitBlockData.getKit();
 
-            String loc = Arconix.pl().getApi().serialize().serializeLocation(b);
             Player p = e.getPlayer();
             if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
 

@@ -184,6 +184,10 @@ public class InventoryListeners implements Listener {
                         if (event.getInventory() != null && event.getInventory().getType() == InventoryType.CHEST) {
                             event.setCancelled(true);
                         }
+                    }
+                        Bukkit.broadcastMessage(event.getRawSlot() + ":" + event.getView().getTopInventory().getSize());
+                        Bukkit.broadcastMessage((event.getRawSlot() > event.getView().getTopInventory().getSize()) + "");
+                        Bukkit.broadcastMessage(playerData.isInInventory() + "");
                         if (event.getRawSlot() > event.getView().getTopInventory().getSize()
                                 && playerData.isInInventory()) {
                             event.setCancelled(false);
@@ -209,7 +213,7 @@ public class InventoryListeners implements Listener {
                                     break;
                             }
                         }
-                    }
+
                     if (event.getSlot() == 49) {
                         if (!playerData.isInInventory()) {
                             player.getInventory().setContents(playerData.getInventory());

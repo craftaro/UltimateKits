@@ -185,9 +185,6 @@ public class InventoryListeners implements Listener {
                             event.setCancelled(true);
                         }
                     }
-                        Bukkit.broadcastMessage(event.getRawSlot() + ":" + event.getView().getTopInventory().getSize());
-                        Bukkit.broadcastMessage((event.getRawSlot() > event.getView().getTopInventory().getSize()) + "");
-                        Bukkit.broadcastMessage(playerData.isInInventory() + "");
                         if (event.getRawSlot() > event.getView().getTopInventory().getSize()
                                 && playerData.isInInventory()) {
                             event.setCancelled(false);

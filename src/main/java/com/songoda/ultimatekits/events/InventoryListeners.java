@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.events;
 
+import com.massivecraft.factions.P;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
@@ -19,7 +20,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 
-@SuppressWarnings("Duplicates")
 public class InventoryListeners implements Listener {
 
     private final UltimateKits instance;
@@ -28,7 +28,7 @@ public class InventoryListeners implements Listener {
         this.instance = instance;
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onClick(InventoryClickEvent event) {
         try {
             Player player = (Player) event.getWhoClicked();

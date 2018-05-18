@@ -336,7 +336,4 @@ public class BlockEditor {
         return blockPlayerData.computeIfAbsent(player.getUniqueId(), uuid -> new BlockEditorPlayerData());
     }
 
-    public void removeFromInstance(Player player) {
-        blockPlayerData.remove(player);
-    }
 }

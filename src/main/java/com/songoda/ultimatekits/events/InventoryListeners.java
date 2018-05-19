@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.events;
 
-import com.massivecraft.factions.P;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;

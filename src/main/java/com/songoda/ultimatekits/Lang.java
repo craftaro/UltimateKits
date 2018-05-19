@@ -106,7 +106,7 @@ public enum Lang {
 
     KEY_SUCCESS("key-success", "&9You have successfully redeemed a key for the kit &7{KIT}&9."),
 
-    KEY_DESC1("key-desc1", "&rRight-Click on a &c&l{KIT}&r kit"),
+    KEY_DESC1("key-desc1", "&rRight-Click on [a ]&c&l{KIT}&r kit"),
 
     KEY_DESC2("key-desc2", "&rand receive its contents!"),
 

@@ -29,6 +29,7 @@ public class Key {
         this.kitAmount = kitAmount;
     }
 
+
     public ItemStack getKeyItem(Kit kit, int amt) {
         ItemStack is = null;
         try {
@@ -38,15 +39,23 @@ public class Key {
             if (kit != null)
                 kitName = Arconix.pl().getApi().format().formatText(kit.getShowableName(), true);
             else
-                kitName = "All";
+                kitName = "Any";
 
             ItemMeta meta = is.getItemMeta();
             meta.setDisplayName(Arconix.pl().getApi().format().formatText(Lang.KEY_TITLE.getConfigValue(kitName)));
 
             meta.addEnchant(Enchantment.DURABILITY, 1, true);
             List<String> lore = new ArrayList<>();
-            lore.add(Arconix.pl().getApi().format().formatText(name + " &fKey"));
-            lore.add(Arconix.pl().getApi().format().formatText(Lang.KEY_DESC1.getConfigValue(kitName)));
+            lore.add(Arconix.pl().getApi().format().formatText("&e" + name + " &fKey"));
+
+            String desc1 = Lang.KEY_DESC1.getConfigValue(kitName);
+
+            if (kitName.equals("Any"))
+                desc1 = desc1.replaceAll("\\[.*?\\]","");
+            else
+                desc1 = desc1.replace("[", "").replace("]", "");
+
+            lore.add(Arconix.pl().getApi().format().formatText(desc1));
             if (this.amt == -1)
                 lore.add(Arconix.pl().getApi().format().formatText(Lang.KEY_DESC2.getConfigValue()));
             else

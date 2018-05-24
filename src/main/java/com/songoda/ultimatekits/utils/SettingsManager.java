@@ -223,7 +223,6 @@ public class SettingsManager implements Listener {
     public enum settings {
 
         o1("Lock-KP-Commands", "Main.Block Help Page For Non Admins", false),
-        o2("Enabled-Kits", "Main.Enabled Custom Kits And Kit Commands", true),
         o3("Only-Show-Kits-With-Perms", "Main.Only Show Players Kits They Have Permission To Use", false),
         o4("Kits-Free-With-Perms", "Main.Allow Players To Receive Kits For Free If They Have Permission", true),
         o5("Dont-Preview-Commands", "Main.Dont Preview Commands In Kits", false),

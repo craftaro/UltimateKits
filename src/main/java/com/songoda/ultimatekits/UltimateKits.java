@@ -104,17 +104,11 @@ public class UltimateKits extends JavaPlugin {
 
         new com.massivestats.MassiveStats(this, 900);
 
-        if (!getConfig().getBoolean("Main.Enabled Custom Kits And Kit Commands")) {
-            console.sendMessage(Arconix.pl().getApi().format().formatText("&7The &a/kit&7 and &a/kit &7features have been &cdisabled&7."));
-        } else {
-            registerCommandDynamically("kits", new CommandHandler(this));
-            registerCommandDynamically("kit", new CommandHandler(this));
-        }
-
         console.sendMessage(Arconix.pl().getApi().format().formatText("&a============================="));
 
         this.getCommand("UltimateKits").setExecutor(new CommandHandler(this));
         this.getCommand("PreviewKit").setExecutor(new CommandHandler(this));
+        this.getCommand("Kits").setExecutor(new CommandHandler(this));
 
         getServer().getPluginManager().registerEvents(new BlockListeners(this), this);
         getServer().getPluginManager().registerEvents(new ChatListeners(this), this);
@@ -138,30 +132,6 @@ public class UltimateKits extends JavaPlugin {
         console.sendMessage(Arconix.pl().getApi().format().formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
         console.sendMessage(Arconix.pl().getApi().format().formatText("&7Action: &cDisabling&7..."));
         console.sendMessage(Arconix.pl().getApi().format().formatText("&a============================="));
-    }
-
-    private void registerCommandDynamically(String command, CommandExecutor executor) {
-        try {
-            // Retrieve the SimpleCommandMap from the server
-            Class<?> classCraftServer = Bukkit.getServer().getClass();
-            Field fieldCommandMap = classCraftServer.getDeclaredField("commandMap");
-            fieldCommandMap.setAccessible(true);
-            SimpleCommandMap commandMap = (SimpleCommandMap) fieldCommandMap.get(Bukkit.getServer());
-
-            // Construct a new Command object
-            Constructor<PluginCommand> constructorPluginCommand = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
-            constructorPluginCommand.setAccessible(true);
-            PluginCommand commandObject = constructorPluginCommand.newInstance(command, this);
-            commandObject.setExecutor(executor);
-
-            // Register the command
-            Field fieldKnownCommands = commandMap.getClass().getDeclaredField("knownCommands");
-            fieldKnownCommands.setAccessible(true);
-            Map<String, Command> knownCommands = (Map<String, Command>) fieldKnownCommands.get(commandMap);
-            knownCommands.put(command, commandObject);
-        } catch (ReflectiveOperationException e) {
-            Debugger.runReport(e);
-        }
     }
 
     /*

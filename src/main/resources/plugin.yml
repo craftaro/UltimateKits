@@ -16,6 +16,11 @@ commands:
     default: true
     aliases: [pk, preview]
     usage: /<command> [kit]
+  kits:
+    description: Preview a kit
+    default: true
+    aliases: [kits]
+    usage: /<command>
 permissions:
   ultimatekits.use:
     description: allows the user to preview kit

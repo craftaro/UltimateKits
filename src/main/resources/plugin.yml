@@ -16,7 +16,7 @@ commands:
     default: true
     aliases: [pk, preview]
     usage: /<command> [kit]
-  kits:
+  kit:
     description: Preview a kit
     default: true
     aliases: [kits]

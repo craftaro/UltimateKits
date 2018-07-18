@@ -34,7 +34,6 @@ public class HologramHandler {
 
     public void updateHolograms() {
         try {
-            if (instance.v1_7) return;
 
             Map<Location, KitBlockData> kitBlocks = instance.getKitManager().getKitLocations();
             for (KitBlockData kitBlockData : kitBlocks.values()) {
@@ -126,7 +125,7 @@ public class HologramHandler {
     public void remove(Location location) {
 
 
-        for (Entity e : Methods.getNearbyEntities(location, 1, 50, 1)) {
+        for (Entity e : location.getWorld().getNearbyEntities(location, 1, 50, 1)) {
             if (e.getType().equals(EntityType.ARMOR_STAND))
                 Arconix.pl().getApi().packetLibrary.getHologramManager().despawnHologram(e.getLocation());
         }

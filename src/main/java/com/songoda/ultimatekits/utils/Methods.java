@@ -62,24 +62,6 @@ public class Methods {
         return UltimateKits.getInstance().getKitFile().getConfig().contains("Kits." + kit);
     }
 
-    public static Collection<Entity> getNearbyEntities(Location location, double x, double y, double z) {
-        if (!UltimateKits.getInstance().v1_7) return location.getWorld().getNearbyEntities(location, x, y, z);
-
-        if (location == null) return Collections.emptyList();
-
-        World world = location.getWorld();
-        net.minecraft.server.v1_7_R4.AxisAlignedBB aabb = net.minecraft.server.v1_7_R4.AxisAlignedBB
-                .a(location.getX() - x, location.getY() - y, location.getZ() - z, location.getX() + x, location.getY() + y, location.getZ() + z);
-        List<net.minecraft.server.v1_7_R4.Entity> entityList = ((org.bukkit.craftbukkit.v1_7_R4.CraftWorld) world).getHandle().getEntities(null, aabb, null);
-        List<Entity> bukkitEntityList = new ArrayList<>();
-
-        for (Object entity : entityList) {
-            bukkitEntityList.add(((net.minecraft.server.v1_7_R4.Entity) entity).getBukkitEntity());
-        }
-
-        return bukkitEntityList;
-    }
-
     public static boolean pay(Player p, double amount) {
         if (UltimateKits.getInstance().getServer().getPluginManager().getPlugin("Vault") == null) return false;
         RegisteredServiceProvider<Economy> rsp = UltimateKits.getInstance().getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
@@ -162,7 +144,7 @@ public class Methods {
                     str.append(e.getName().toLowerCase()).append(":").append(enchantmentStorageMeta.getStoredEnchantLevel(e)).append(" ");
                 }
                 break;
-            case FIREWORK:
+            case FIREWORK_ROCKET:
                 FireworkMeta fireworkMeta = (FireworkMeta) item.getItemMeta();
                 if (fireworkMeta.hasEffects()) {
                     for (FireworkEffect effect : fireworkMeta.getEffects()) {
@@ -198,7 +180,6 @@ public class Methods {
                 break;
             case POTION:
                 PotionMeta potion = ((PotionMeta) item.getItemMeta());
-                if (!UltimateKits.getInstance().v1_8 && !UltimateKits.getInstance().v1_7) {
                     if (potion.hasColor()) {
                         str.append("color:").append(potion.getColor().asRGB()).append(" ");
                     }
@@ -208,9 +189,8 @@ public class Methods {
                         PotionEffectType e = potion.getBasePotionData().getType().getEffectType();
                         str.append("effect:").append(e.getName().toLowerCase()).append(" ").append("duration:").append(e.getDurationModifier()).append(" ");
                     }
-                }
                 break;
-            case SKULL_ITEM:
+            case PLAYER_HEAD:
                 SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
                 if (skullMeta != null && skullMeta.hasOwner()) {
                     str.append("player:").append(skullMeta.getOwner()).append(" ");
@@ -224,7 +204,7 @@ public class Methods {
                 int rgb = leatherArmorMeta.getColor().asRGB();
                 str.append("color:").append(rgb).append(" ");
                 break;
-            case BANNER:
+            case LEGACY_BANNER: //ToDO: shouldnt be done like this, but i dont have time to do this corecctly.
                 BannerMeta bannerMeta = (BannerMeta) item.getItemMeta();
                 if (bannerMeta != null) {
                     int basecolor = bannerMeta.getBaseColor().getColor().asRGB();
@@ -256,15 +236,10 @@ public class Methods {
         String[] splited = string.split("\\s+");
 
         String[] val = splited[0].split(":");
-        ItemStack item;
-        if (Arconix.pl().getApi().doMath().isNumeric(val[0])) {
-            item = new ItemStack(Integer.parseInt(val[0]));
-        } else {
-            item = new ItemStack(Material.valueOf(val[0]));
-        }
+        ItemStack item = new ItemStack(Material.valueOf(val[0]));
 
-        if (item.getType() == Material.SKULL_ITEM) {
-            item = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+        if (item.getType() == Material.PLAYER_HEAD) {
+            item = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
         }
 
         ItemMeta meta = item.getItemMeta();
@@ -313,7 +288,7 @@ public class Methods {
                         meta.setLore(lore);
                         break;
                     case "player":
-                        if (item.getType() == Material.SKULL_ITEM) {
+                        if (item.getType() == Material.PLAYER_HEAD) {
                             ((SkullMeta) meta).setOwner(value);
                         }
                         break;
@@ -350,9 +325,7 @@ public class Methods {
                     case "color":
                         switch (item.getType()) {
                             case POTION:
-                                if (!UltimateKits.getInstance().v1_8 && !UltimateKits.getInstance().v1_7) {
-                                    ((PotionMeta) meta).setColor(Color.fromRGB(Integer.parseInt(value)));
-                                }
+                                //ToDO: this
                                 break;
                             case LEATHER_HELMET:
                             case LEATHER_CHESTPLATE:

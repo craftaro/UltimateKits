@@ -53,7 +53,7 @@ public class SettingsManager implements Listener {
         }
         if (e.getInventory().getTitle().equals(pluginName + " Settings Manager")) {
 
-            if (e.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE)) {
+            if (e.getCurrentItem().getType().name().contains("STAINED_GLASS")) {
                 e.setCancelled(true);
                 return;
             }
@@ -64,7 +64,7 @@ public class SettingsManager implements Listener {
             e.setCancelled(true);
         } else if (e.getInventory().getTitle().equals(pluginName + " Settings KitEditor")) {
 
-            if (e.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE)) {
+            if (e.getCurrentItem().getType().name().contains("STAINED_GLASS")) {
                 e.setCancelled(true);
                 return;
             }
@@ -137,7 +137,7 @@ public class SettingsManager implements Listener {
 
         int spot = 10;
         for (String key : instance.getConfig().getConfigurationSection("").getKeys(false)) {
-            ItemStack item = new ItemStack(Material.WOOL, 1, (byte) (spot - 9));
+            ItemStack item = new ItemStack(Material.WHITE_WOOL, 1, (byte) (spot - 9)); //ToDo: Make this function as it was meant to.
             ItemMeta meta = item.getItemMeta();
             meta.setLore(Collections.singletonList(Arconix.pl().getApi().format().formatText("&6Click To Edit This Category.")));
             meta.setDisplayName(Arconix.pl().getApi().format().formatText("&f&l" + key));
@@ -176,7 +176,7 @@ public class SettingsManager implements Listener {
                     lore.add(Arconix.pl().getApi().format().formatText("&9" + str));
                     break;
                 case "java.lang.Integer":
-                    item.setType(Material.WATCH);
+                    item.setType(Material.CLOCK);
 
                     int in = (Integer) instance.getConfig().get(fKey);
                     lore.add(Arconix.pl().getApi().format().formatText("&5" + in));
@@ -211,9 +211,6 @@ public class SettingsManager implements Listener {
                 config.set(s.setting, config.get(s.oldSetting));
                 config.set(s.oldSetting, null);
             } else if (s.setting.equals("Main.Upgrade Particle Type")) {
-                if (instance.v1_7 || instance.v1_8)
-                    config.addDefault(s.setting, "WITCH_MAGIC");
-                else
                     config.addDefault(s.setting, s.option);
             } else
                 config.addDefault(s.setting, s.option);
@@ -221,7 +218,7 @@ public class SettingsManager implements Listener {
     }
 
     public enum settings {
-        
+
         o1("Lock-KP-Commands", "Main.Block Help Page For Non Admins", false),
         o3("Only-Show-Kits-With-Perms", "Main.Only Show Players Kits They Have Permission To Use", false),
         o4("Kits-Free-With-Perms", "Main.Allow Players To Receive Kits For Free If They Have Permission", true),
@@ -231,7 +228,7 @@ public class SettingsManager implements Listener {
         o8("Sound", "Main.Sound Played While Clicking In Inventories", "ENTITY_ENDERMEN_TELEPORT"),
         o85("Sound", "Main.Prevent The Redeeming of a Kit When Inventory Is Full", true),
 
-        o9("Exit-Icon", "Interfaces.Exit Icon", "WOOD_DOOR"),
+        o9("Exit-Icon", "Interfaces.Exit Icon", "OAK_DOOR"),
         o10("Buy-Icon", "Interfaces.Buy Icon", "EMERALD"),
         o11("Glass-Type-1", "Interfaces.Glass Type 1", 7),
         o12("Glass-Type-2", "Interfaces.Glass Type 2", 11),

@@ -29,11 +29,9 @@ public class InteractListeners implements Listener {
     public void onBlockInteract(PlayerInteractEvent e) {
         try {
             boolean chand = true; // This needs to be out of my code.
-            if (!UltimateKits.getInstance().v1_7 && !UltimateKits.getInstance().v1_8) {
                 if (e.getHand() != EquipmentSlot.HAND) {
                     chand = false;
                 }
-            }
 
             Block b = e.getClickedBlock();
 

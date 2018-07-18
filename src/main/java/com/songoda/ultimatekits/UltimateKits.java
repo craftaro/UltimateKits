@@ -42,9 +42,6 @@ public class UltimateKits extends JavaPlugin {
     public HologramHandler holo;
     private SettingsManager settingsManager;
 
-    public boolean v1_7 = Bukkit.getServer().getClass().getPackage().getName().contains("1_7");
-    public boolean v1_8 = Bukkit.getServer().getClass().getPackage().getName().contains("1_8");
-
     private static UltimateKits INSTANCE;
 
     public DisplayItemHandler displayitem;
@@ -112,7 +109,7 @@ public class UltimateKits extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new BlockListeners(this), this);
         getServer().getPluginManager().registerEvents(new ChatListeners(this), this);
-        if (!v1_7) getServer().getPluginManager().registerEvents(new EntityListeners(this), this);
+        getServer().getPluginManager().registerEvents(new EntityListeners(this), this);
         getServer().getPluginManager().registerEvents(new InteractListeners(this), this);
         getServer().getPluginManager().registerEvents(new InventoryListeners(this), this);
         getServer().getPluginManager().registerEvents(new QuitListeners(this), this);

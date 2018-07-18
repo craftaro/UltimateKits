@@ -201,24 +201,16 @@ public class KitsGUI {
             infometa.setLore(lore);
             info.setItemMeta(infometa);
 
-            ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
-            ItemStack skull = head;
-            if (!UltimateKits.getInstance().v1_7)
-                skull = Arconix.pl().getApi().getGUI().addTexture(head, "http://textures.minecraft.net/texture/1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b");
+            ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
+            ItemStack skull = Arconix.pl().getApi().getGUI().addTexture(head, "http://textures.minecraft.net/texture/1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b");
             SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-            if (UltimateKits.getInstance().v1_7)
-                skullMeta.setOwner("MHF_ArrowRight");
             skull.setDurability((short) 3);
             skullMeta.setDisplayName(Lang.NEXT.getConfigValue());
             skull.setItemMeta(skullMeta);
 
-            ItemStack head2 = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
-            ItemStack skull2 = head2;
-            if (!UltimateKits.getInstance().v1_7)
-                skull2 = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+            ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
+            ItemStack skull2 = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
-            if (UltimateKits.getInstance().v1_7)
-                skull2Meta.setOwner("MHF_ArrowLeft");
             skull2.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.LAST.getConfigValue());
             skull2.setItemMeta(skull2Meta);

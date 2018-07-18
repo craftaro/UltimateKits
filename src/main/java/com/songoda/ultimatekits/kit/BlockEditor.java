@@ -70,7 +70,7 @@ public class BlockEditor {
             exit.setItemMeta(exitmeta);
             i.setItem(8, exit);
 
-            ItemStack alli = new ItemStack(Material.REDSTONE_COMPARATOR);
+            ItemStack alli = new ItemStack(Material.COMPARATOR);
             ItemMeta allmeta = alli.getItemMeta();
             allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&5&lSwitch kit type"));
             ArrayList<String> lore = new ArrayList<>();
@@ -95,7 +95,7 @@ public class BlockEditor {
 
             i.setItem(11, alli);
 
-            alli = new ItemStack(Material.RED_ROSE);
+            alli = new ItemStack(Material.POPPY);
             allmeta = alli.getItemMeta();
             allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&9&lDecor Options"));
             lore = new ArrayList<>();
@@ -158,7 +158,7 @@ public class BlockEditor {
             exit.setItemMeta(exitmeta);
 
 
-            ItemStack head2 = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+            ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
             ItemStack back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
             back.setDurability((short) 3);

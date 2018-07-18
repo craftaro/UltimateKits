@@ -124,11 +124,7 @@ public class Kit {
                 return;
             }
             if (UltimateKits.getInstance().getConfig().getBoolean("Main.Sounds Enabled")) {
-                if (!UltimateKits.getInstance().v1_8 && !UltimateKits.getInstance().v1_7) {
-                    p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
-                } else {
-                    p.playSound(p.getLocation(), Sound.valueOf("LEVEL_UP"), 2F, 15.0F);
-                }
+                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
             }
             if (useKey) {
                 if (p.getItemInHand().getType() != Material.TRIPWIRE_HOOK || !p.getItemInHand().hasItemMeta()) {
@@ -350,13 +346,10 @@ public class Kit {
 
             if (back && !UltimateKits.getInstance().getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
 
-                ItemStack head2 = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
-                ItemStack skull2 = head2;
-                if (!UltimateKits.getInstance().v1_7)
-                    skull2 = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+                ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
+                ItemStack skull2 = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
                 SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
-                if (UltimateKits.getInstance().v1_7)
-                    skull2Meta.setOwner("MHF_ArrowLeft");
+                skull2Meta.setOwner("MHF_ArrowLeft");
                 skull2.setDurability((short) 3);
                 skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
                 skull2.setItemMeta(skull2Meta);

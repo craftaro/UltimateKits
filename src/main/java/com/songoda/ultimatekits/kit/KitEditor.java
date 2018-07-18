@@ -46,13 +46,10 @@ public class KitEditor {
             exitmeta.setDisplayName(Lang.EXIT.getConfigValue());
             exit.setItemMeta(exitmeta);
 
-            ItemStack head2 = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+            ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
             ItemStack back = head2;
-            if (!instance.v1_7)
                 back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
-            if (instance.v1_7)
-                skull2Meta.setOwner("MHF_ArrowLeft");
             back.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
             back.setItemMeta(skull2Meta);
@@ -67,7 +64,7 @@ public class KitEditor {
             itmeta.setLore(lore);
             it.setItemMeta(itmeta);
 
-            ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7);
+            ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1);
             ItemMeta glassmeta = glass.getItemMeta();
             glassmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&" + playerData.getKit().getName().replaceAll(".(?!$)", "$0&")));
             glass.setItemMeta(glassmeta);
@@ -190,7 +187,7 @@ public class KitEditor {
         playerData.setInInventory(false);
         player.getInventory().clear();
 
-        ItemStack alli = new ItemStack(Material.REDSTONE_TORCH_ON, 1);
+        ItemStack alli = new ItemStack(Material.REDSTONE_TORCH, 1);
         ItemMeta allmeta = alli.getItemMeta();
         allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&6General Options"));
         List<String> lore = new ArrayList<>();
@@ -234,7 +231,7 @@ public class KitEditor {
 
         player.getInventory().setItem(13, alli);
 
-        alli = new ItemStack(Material.DOUBLE_PLANT, 1);
+        alli = new ItemStack(Material.SUNFLOWER, 1);
         allmeta = alli.getItemMeta();
         allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&6Add Economy"));
         lore = new ArrayList<>();
@@ -287,13 +284,10 @@ public class KitEditor {
             exitmeta.setDisplayName(Lang.EXIT.getConfigValue());
             exit.setItemMeta(exitmeta);
 
-            ItemStack head2 = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+            ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
             ItemStack back = head2;
-            if (!instance.v1_7)
                 back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
-            if (instance.v1_7)
-                skull2Meta.setOwner("MHF_ArrowLeft");
             back.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
             back.setItemMeta(skull2Meta);
@@ -395,13 +389,10 @@ public class KitEditor {
             exitmeta.setDisplayName(Lang.EXIT.getConfigValue());
             exit.setItemMeta(exitmeta);
 
-            ItemStack head2 = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+            ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
             ItemStack back = head2;
-            if (!instance.v1_7)
                 back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
-            if (instance.v1_7)
-                skull2Meta.setOwner("MHF_ArrowLeft");
             back.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
             back.setItemMeta(skull2Meta);
@@ -511,13 +502,10 @@ public class KitEditor {
             exitmeta.setDisplayName(Lang.EXIT.getConfigValue());
             exit.setItemMeta(exitmeta);
 
-            ItemStack head2 = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+            ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
             ItemStack back = head2;
-            if (!instance.v1_7)
                 back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
-            if (instance.v1_7)
-                skull2Meta.setOwner("MHF_ArrowLeft");
             back.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
             back.setItemMeta(skull2Meta);
@@ -546,7 +534,7 @@ public class KitEditor {
 
             /*i.setItem(11, alli);*/
 
-            alli = new ItemStack(Material.WATCH);
+            alli = new ItemStack(Material.CLOCK);
             allmeta = alli.getItemMeta();
             allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&9&lChange Delay"));
             lore = new ArrayList<>();

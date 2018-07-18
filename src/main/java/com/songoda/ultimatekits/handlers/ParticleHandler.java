@@ -34,13 +34,7 @@ public class ParticleHandler {
                 Location location = kitBlockData.getLocation();
                 location.add(.5, 0, .5);
 
-                if (instance.v1_8 || instance.v1_7) {
-                    //Could not manage to get the original message to resolve, so I am doing this. --Nova
-                    location.getWorld().playEffect(location, Effect.valueOf(type), 1, 0);
-                    //location.getWorld().spigot.playEffect(location, org.bukkit.Effect.valueOf(type), 1, 0, (float) 0.25, (float) 0.25, (float) 0.25, 1, amt, 100);
-                } else {
                     location.getWorld().spawnParticle(org.bukkit.Particle.valueOf(type), location, amt, 0.25, 0.25, 0.25);
-                }
             }
 
         } catch (Exception ex) {
@@ -55,11 +49,7 @@ public class ParticleHandler {
                 instance.saveConfig();
             }
             if (instance.getConfig().getString("data.particlesettings.type") != null) return;
-            if (instance.v1_7 || instance.v1_8) {
-                instance.getConfig().set("data.particlesettings.type", "WITCH_MAGIC");
-            } else {
                 instance.getConfig().set("data.particlesettings.type", "SPELL_WITCH");
-            }
             instance.saveConfig();
         } catch (Exception ex) {
             Debugger.runReport(ex);

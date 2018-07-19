@@ -75,6 +75,7 @@
             <artifactId>craftbukkit</artifactId>
             <version>1.13</version>
             <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <!--Vault API-->
         <dependency>

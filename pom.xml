@@ -48,6 +48,7 @@
             <id>songoda-public</id>
             <url>http://repo.songoda.com/repository/songoda-public/</url>
         </repository>
+        <!--Private Repo for CB-->
         <repository>
             <id>songoda-private</id>
             <url>http://repo.songoda.com/repository/songoda-private/</url>
@@ -69,13 +70,11 @@
     </repositories>
 
     <dependencies>
-        <!--Bukkit API-->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
             <version>1.13</version>
             <type>jar</type>
-            <scope>provided</scope>
         </dependency>
         <!--Vault API-->
         <dependency>

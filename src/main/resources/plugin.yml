@@ -5,6 +5,7 @@ depend: [Arconix]
 softdepend: [PlaceholderAPI, Vault, UltimateCore, Essentials, MiniKitPvP]
 description: View a kit before you purchase it!
 author: Songoda
+api-version: 1.13
 commands:
   ultimatekits:
     description: View information on this plugin.

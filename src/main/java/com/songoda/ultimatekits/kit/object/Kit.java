@@ -349,7 +349,6 @@ public class Kit {
                 ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
                 ItemStack skull2 = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
                 SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
-                skull2Meta.setOwner("MHF_ArrowLeft");
                 skull2.setDurability((short) 3);
                 skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
                 skull2.setItemMeta(skull2Meta);

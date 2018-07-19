@@ -110,13 +110,6 @@
             <version>2.0.0</version>
             <scope>provided</scope>
         </dependency>
-        <!--CB 1.7 R4-->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.7.10</version>
-            <scope>provided</scope>
-        </dependency>
         <!--PlaceHolderAPI-->
         <dependency>
             <groupId>me.clip</groupId>

@@ -19,6 +19,7 @@ import com.songoda.ultimatekits.kit.object.KitType;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.SettingsManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.*;
@@ -65,10 +66,31 @@ public class UltimateKits extends JavaPlugin {
 
     public List<UUID> kitsMode = new ArrayList<>();
 
+    private boolean checkVersion() {
+        int workingVersion = 13;
+        int currentVersion = Integer.parseInt(Bukkit.getServer().getClass()
+                .getPackage().getName().split("\\.")[3].split("_")[1]);
+
+        if (currentVersion < workingVersion) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
+                Bukkit.getConsoleSender().sendMessage("");
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "You installed the 1." + workingVersion + "+ only version of " + this.getDescription().getName() + " on a 1." + currentVersion + " server. Since you are on the wrong version we disabled the plugin for you. Please install correct version to continue using " + this.getDescription().getName() + ".");
+                Bukkit.getConsoleSender().sendMessage("");
+            }, 20L);
+            return false;
+        }
+        return true;
+    }
+
     /*
      * On plugin enable.
      */
+
+    @Override
     public void onEnable() {
+        // Check to make sure the Bukkit version is compatible.
+        if (!checkVersion()) return;
+
         INSTANCE = this;
         Arconix.pl().hook(this);
 

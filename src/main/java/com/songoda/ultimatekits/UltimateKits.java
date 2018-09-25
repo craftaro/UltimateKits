@@ -5,7 +5,6 @@ import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.events.*;
-import com.songoda.ultimatekits.handlers.CommandHandler;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.HologramHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
@@ -24,11 +23,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.*;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.*;
 
 public class UltimateKits extends JavaPlugin {

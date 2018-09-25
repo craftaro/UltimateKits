@@ -109,14 +109,14 @@ public class SettingsManager implements Listener {
 
     }
 
-    public void finishEditing(Player p) {
+    private void finishEditing(Player p) {
         current.remove(p);
         instance.saveConfig();
         openEditor(p);
     }
 
 
-    public void editObject(Player p, String current) {
+    private void editObject(Player p, String current) {
         this.current.put(p, ChatColor.stripColor(current));
         p.closeInventory();
         p.sendMessage("");
@@ -148,7 +148,7 @@ public class SettingsManager implements Listener {
         p.openInventory(i);
     }
 
-    public void openEditor(Player p) {
+    private void openEditor(Player p) {
         Inventory i = Bukkit.createInventory(null, 54, pluginName + " Settings KitEditor");
 
         int num = 0;
@@ -218,8 +218,6 @@ public class SettingsManager implements Listener {
     }
 
     public enum settings {
-
-        o1("Lock-KP-Commands", "Main.Block Help Page For Non Admins", false),
         o3("Only-Show-Kits-With-Perms", "Main.Only Show Players Kits They Have Permission To Use", false),
         o4("Kits-Free-With-Perms", "Main.Allow Players To Receive Kits For Free If They Have Permission", true),
         o5("Dont-Preview-Commands", "Main.Dont Preview Commands In Kits", false),

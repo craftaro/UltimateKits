@@ -2,6 +2,7 @@ package com.songoda.ultimatekits;
 
 import com.songoda.arconix.api.utils.ConfigWrapper;
 import com.songoda.arconix.plugin.Arconix;
+import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.events.*;
 import com.songoda.ultimatekits.handlers.CommandHandler;
@@ -31,9 +32,9 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 public class UltimateKits extends JavaPlugin {
-    public static CommandSender console = Bukkit.getConsoleSender();
+    private static CommandSender console = Bukkit.getConsoleSender();
 
-    public ConfigWrapper langFile = new ConfigWrapper(this, "", "lang.yml");
+    private ConfigWrapper langFile = new ConfigWrapper(this, "", "lang.yml");
     private ConfigWrapper kitFile = new ConfigWrapper(this, "", "kit.yml");
     private ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
     private ConfigWrapper keyFile = new ConfigWrapper(this, "", "keys.yml");
@@ -49,6 +50,7 @@ public class UltimateKits extends JavaPlugin {
 
     private KitManager kitManager;
 
+    private CommandManager commandManager;
     private KeyManager keyManager;
 
     private KitEditor kitEditor;
@@ -111,10 +113,11 @@ public class UltimateKits extends JavaPlugin {
         settingsManager.updateSettings();
         setupConfig();
 
-        kitManager = new KitManager();
-        keyManager = new KeyManager();
-        kitEditor = new KitEditor(this);
-        blockEditor = new BlockEditor(this);
+        this.kitManager = new KitManager();
+        this.keyManager = new KeyManager();
+        this.kitEditor = new KitEditor(this);
+        this.blockEditor = new BlockEditor(this);
+        this.commandManager = new CommandManager(this);
 
         loadFromFile();
 
@@ -124,10 +127,6 @@ public class UltimateKits extends JavaPlugin {
         new com.massivestats.MassiveStats(this, 900);
 
         console.sendMessage(Arconix.pl().getApi().format().formatText("&a============================="));
-
-        this.getCommand("UltimateKits").setExecutor(new CommandHandler(this));
-        this.getCommand("PreviewKit").setExecutor(new CommandHandler(this));
-        this.getCommand("Kits").setExecutor(new CommandHandler(this));
 
         getServer().getPluginManager().registerEvents(new BlockListeners(this), this);
         getServer().getPluginManager().registerEvents(new ChatListeners(this), this);
@@ -379,6 +378,10 @@ public class UltimateKits extends JavaPlugin {
      */
     public static UltimateKits getInstance() {
         return INSTANCE;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 
 }

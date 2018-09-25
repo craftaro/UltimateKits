@@ -17,10 +17,10 @@ commands:
     default: true
     aliases: [pk, preview]
     usage: /<command> [kit]
-  kit:
+  kits:
     description: Preview a kit
     default: true
-    aliases: [kits]
+    aliases: [kit]
     usage: /<command>
 permissions:
   ultimatekits.use:

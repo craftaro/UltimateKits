@@ -322,7 +322,7 @@ public class InventoryListeners implements Listener {
 
             KitEditorPlayerData kitPlayerData = instance.getKitEditor().getDataFor(player);
 
-            if (instance.getBlockEditor().getDataFor(player).getEditorType() != BlockEditorPlayerData.EditorType.NOTIN) {
+            if (kitPlayerData.getEditorType() == KitEditorPlayerData.EditorType.OVERVIEW) {
                 KitEditor edit = instance.getKitEditor();
                 edit.saveKit(player, player.getOpenInventory().getTopInventory());
             }

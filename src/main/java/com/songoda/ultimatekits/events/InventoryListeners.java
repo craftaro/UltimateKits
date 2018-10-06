@@ -318,32 +318,37 @@ public class InventoryListeners implements Listener {
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
         try {
-            final Player p = (Player) event.getPlayer();
+            final Player player = (Player) event.getPlayer();
 
-            KitEditorPlayerData kitPlayerData = instance.getKitEditor().getDataFor(p);
+            KitEditorPlayerData kitPlayerData = instance.getKitEditor().getDataFor(player);
+
+            if (instance.getBlockEditor().getDataFor(player).getEditorType() != BlockEditorPlayerData.EditorType.NOTIN) {
+                KitEditor edit = instance.getKitEditor();
+                edit.saveKit(player, player.getOpenInventory().getTopInventory());
+            }
 
             if (!kitPlayerData.isInInventory() && kitPlayerData.getInventory().length != 0) {
-                p.getInventory().setContents(kitPlayerData.getInventory());
+                player.getInventory().setContents(kitPlayerData.getInventory());
                 kitPlayerData.setInInventory(true);
-                p.updateInventory();
+                player.updateInventory();
             }
 
             kitPlayerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
 
-            BlockEditorPlayerData blockPlayerData = instance.getBlockEditor().getDataFor(p);
+            BlockEditorPlayerData blockPlayerData = instance.getBlockEditor().getDataFor(player);
             blockPlayerData.setEditorType(BlockEditorPlayerData.EditorType.NOTIN);
 
-            instance.buy.remove(p.getUniqueId());
+            instance.buy.remove(player.getUniqueId());
 
-            if (!instance.whereAt.containsKey(p.getUniqueId())) {
+            if (!instance.whereAt.containsKey(player.getUniqueId())) {
                 return;
             }
 
-            instance.whereAt.remove(p.getUniqueId());
+            instance.whereAt.remove(player.getUniqueId());
 
             Bukkit.getScheduler().runTaskLater(instance, () -> {
-                if (!p.getOpenInventory().getTopInventory().getType().equals(InventoryType.CHEST))
-                    p.closeInventory();
+                if (!player.getOpenInventory().getTopInventory().getType().equals(InventoryType.CHEST))
+                    player.closeInventory();
             }, 1L);
         } catch (Exception ex) {
             Debugger.runReport(ex);

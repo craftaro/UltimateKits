@@ -219,7 +219,10 @@ public class Methods {
             case SHIELD:
                 BlockStateMeta shieldMeta = (BlockStateMeta) item.getItemMeta();
                 Banner shieldBannerMeta = (Banner) shieldMeta.getBlockState();
-                int basecolor = shieldBannerMeta.getBaseColor().getColor().asRGB();
+                int basecolor = 0;
+                if (shieldBannerMeta.getBaseColor() != null) {
+                    basecolor = shieldBannerMeta.getBaseColor().getColor().asRGB();
+                }
                 str.append("basecolor:").append(basecolor).append(" ");
                 for (org.bukkit.block.banner.Pattern p : shieldBannerMeta.getPatterns()) {
                     String type = p.getPattern().getIdentifier();

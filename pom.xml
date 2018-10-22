@@ -2,29 +2,10 @@
     <groupId>com.songoda</groupId>
     <artifactId>UltimateKits</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>5.4</version>
+    <version>1.1.0</version>
     <build>
         <defaultGoal>clean package</defaultGoal>
         <plugins>
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>build-helper-maven-plugin</artifactId>-->
-                <!--<version>1.7</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>add-source</id>-->
-                        <!--<phase>generate-sources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>add-source</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<sources>-->
-                                <!--<source>EpicSpawners-API/src/main/java</source>-->
-                            <!--</sources>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
             <plugin>
                 <version>3.6.1</version>
                 <groupId>org.apache.maven.plugins</groupId>

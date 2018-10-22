@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
@@ -27,7 +26,7 @@ public class CommandKits extends AbstractCommand {
         if (args.length == 1) {
             Player p = (Player) sender;
             String kitName = args[0].toLowerCase();
-            if (!Methods.doesKitExist(kitName)) {
+            if (instance.getKitManager().getKit(kitName) == null) {
                 p.sendMessage(instance.references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitName));
                 return ReturnType.FAILURE;
             }
@@ -41,7 +40,7 @@ public class CommandKits extends AbstractCommand {
         }
         if (args.length == 2) {
             String kitName = args[0].toLowerCase();
-            if (!Methods.doesKitExist(kitName)) {
+            if (instance.getKitManager().getKit(kitName) == null) {
                 sender.sendMessage(instance.references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitName));
                 return ReturnType.FAILURE;
             }

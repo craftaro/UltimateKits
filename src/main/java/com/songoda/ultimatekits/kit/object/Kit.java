@@ -4,6 +4,7 @@ import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.key.Key;
+import com.songoda.ultimatekits.player.PlayerData;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
 import net.milkbowl.vault.economy.Economy;
@@ -67,7 +68,7 @@ public class Kit {
                 return;
             }
 
-            if (!p.hasPermission("ultimatekits.buy."+name)) {
+            if (!p.hasPermission("ultimatekits.buy." + name)) {
                 p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Lang.NO_PERM.getConfigValue());
                 return;
             }
@@ -184,7 +185,8 @@ public class Kit {
                 p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(showableName));
                 return;
             }
-            UltimateKits.getInstance().inKit.put(p.getUniqueId(), this);
+            PlayerData playerData = UltimateKits.getInstance().getPlayerDataManager().getPlayerAction(p);
+            playerData.setInKit(this);
             p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Lang.PREVIEWING_KIT.getConfigValue(showableName));
             String guititle = Arconix.pl().getApi().format().formatTitle(Lang.PREVIEW_TITLE.getConfigValue(showableName));
             if (title != null) {
@@ -356,8 +358,8 @@ public class Kit {
             }
 
             p.openInventory(i);
-            UltimateKits.getInstance().whereAt.remove(p.getUniqueId());
-            UltimateKits.getInstance().whereAt.put(p.getUniqueId(), "display");
+
+            playerData.setGuiLocation(PlayerData.GUILocation.DISPLAY);
         } catch (Exception ex) {
             Debugger.runReport(ex);
         }
@@ -517,7 +519,7 @@ public class Kit {
         return (last + delay) >= System.currentTimeMillis() ? (last + delay) - System.currentTimeMillis() : 0L;
     }
 
-    public void confirmBuy(String kitName, Player p) {
+    private void confirmBuy(String kitName, Player p) {
         try {
 
             double cost = price;
@@ -572,8 +574,9 @@ public class Kit {
             i.setItem(15, item3);
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(UltimateKits.getInstance(), () -> {
-                p.openInventory(i);
-                UltimateKits.getInstance().buy.put(p.getUniqueId(), kitName);
+                PlayerData playerData = UltimateKits.getInstance().getPlayerDataManager().getPlayerAction(p);
+                playerData.setInKit(this);
+                playerData.setGuiLocation(PlayerData.GUILocation.BUY_FINAL);
             }, 1);
         } catch (Exception ex) {
             Debugger.runReport(ex);
@@ -661,6 +664,10 @@ public class Kit {
         return this.contents;
     }
 
+    public void setContents(List<String> contents) {
+        this.contents = contents;
+    }
+
     public String getName() {
         return name;
     }
@@ -683,10 +690,6 @@ public class Kit {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
-    }
-
-    public void setContents(List<String> contents) {
-        this.contents = contents;
     }
 
     @Override

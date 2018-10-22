@@ -26,13 +26,13 @@ public class BlockListeners implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         try {
-            Block b = event.getBlock();
-            KitBlockData kitBlockData = instance.getKitManager().getKit(b.getLocation());
+            Block block = event.getBlock();
+            KitBlockData kitBlockData = instance.getKitManager().getKit(block.getLocation());
             if (kitBlockData == null) return;
             Kit kit = kitBlockData.getKit();
-            instance.getKitManager().removeKitFromLocation(b.getLocation());
-            instance.holo.updateHolograms();
-            event.getPlayer().sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().references.getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + b.getType() + "&8."));
+            instance.getKitManager().removeKitFromLocation(block.getLocation());
+            instance.getHologramHandler().updateHolograms();
+            event.getPlayer().sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().references.getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType() + "&8."));
 
         } catch (Exception e) {
             Debugger.runReport(e);

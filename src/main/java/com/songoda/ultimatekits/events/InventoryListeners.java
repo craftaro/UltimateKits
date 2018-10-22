@@ -9,8 +9,8 @@ import com.songoda.ultimatekits.kit.KitsGUI;
 import com.songoda.ultimatekits.kit.object.BlockEditorPlayerData;
 import com.songoda.ultimatekits.kit.object.Kit;
 import com.songoda.ultimatekits.kit.object.KitEditorPlayerData;
+import com.songoda.ultimatekits.player.PlayerData;
 import com.songoda.ultimatekits.utils.Debugger;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,19 +31,19 @@ public class InventoryListeners implements Listener {
     public void onClick(InventoryClickEvent event) {
         try {
             Player player = (Player) event.getWhoClicked();
-            if (instance.buy.containsKey(player.getUniqueId())) {
+            PlayerData playerData = instance.getPlayerDataManager().getPlayerAction(player);
+            
+            if (playerData.getGuiLocation() == PlayerData.GUILocation.BUY_FINAL) {
                 if (event.getSlot() == 11) {
-                    Kit kit = instance.getKitManager().getKit(instance.buy.get(player.getUniqueId()));
+                    Kit kit = playerData.getInKit();
                     kit.buyWithEconomy(player);
                     player.closeInventory();
-                    instance.buy.remove(player.getUniqueId());
                 } else if (event.getSlot() == 15) {
                     player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + Lang.BUYCANCELLED.getConfigValue()));
                     player.closeInventory();
-                    instance.buy.remove(player.getUniqueId());
                 }
                 event.setCancelled(true);
-            } else if (instance.whereAt.containsKey(event.getWhoClicked().getUniqueId()) && instance.whereAt.get(event.getWhoClicked().getUniqueId()).equals("kits")) {
+            } else if (playerData.getGuiLocation() == PlayerData.GUILocation.KITS) {
                 event.setCancelled(true);
                 if (instance.references.isPlaySound())
                     player.playSound(event.getWhoClicked().getLocation(), instance.references.getSound(), 10.0F, 1.0F);
@@ -54,23 +54,22 @@ public class InventoryListeners implements Listener {
                 }
 
                 ItemStack clicked = event.getCurrentItem();
-                int page = instance.page.get(player.getUniqueId());
+                int page = playerData.getKitsPage();
 
                 if (event.getClick() == ClickType.MIDDLE && player.hasPermission("ultimatekits.admin")) {
-                    if (instance.kitsMode.contains(player.getUniqueId())) {
-                        instance.kitsMode.remove(player.getUniqueId());
-                    } else {
-                        instance.kitsMode.add(player.getUniqueId());
-                    }
+                    
+                    playerData.setKitMode(!playerData.isKitsMode());
+                    
                     KitsGUI.show(player, page);
                     return;
                 }
 
-                String kitName = instance.kits.get(clicked.getItemMeta().getDisplayName());
+                System.out.println(clicked.getItemMeta().getDisplayName());
+                String kitName = clicked.getItemMeta().getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "").split(":")[0];
 
                 Kit kit = instance.getKitManager().getKit(kitName);
 
-                if (instance.kitsMode.contains(player.getUniqueId())) {
+                if (playerData.isKitsMode()) {
                     if (event.getClick() == ClickType.RIGHT) {
                         instance.getKitManager().moveKit(kit, true);
                     } else if (event.getClick() == ClickType.LEFT) {
@@ -102,7 +101,7 @@ public class InventoryListeners implements Listener {
                         KitsGUI.show(player, page);
                     }
                 }
-            } else if (instance.whereAt.containsKey(event.getWhoClicked().getUniqueId()) && instance.whereAt.get(event.getWhoClicked().getUniqueId()).equals("display")) {
+            } else if (playerData.getGuiLocation() == PlayerData.GUILocation.DISPLAY) {
                 event.setCancelled(true);
                 if (instance.references.isPlaySound()) {
                     ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), instance.references.getSound(), 10.0F, 1.0F);
@@ -121,7 +120,7 @@ public class InventoryListeners implements Listener {
                 }
                 if (ChatColor.stripColor(clicked.getItemMeta().getDisplayName()).equalsIgnoreCase(ChatColor.stripColor(Lang.BUYNOW.getConfigValue()))) {
                     player.closeInventory();
-                    String kitName = instance.inKit.get(player.getUniqueId()).getName();
+                    String kitName = instance.getPlayerDataManager().getPlayerAction(player).getInKit().getName();
                     Kit kit = instance.getKitManager().getKit(kitName);
                     kit.buy(player);
                 }
@@ -178,14 +177,14 @@ public class InventoryListeners implements Listener {
             } else if (instance.getKitEditor().getDataFor(player).getEditorType() != KitEditorPlayerData.EditorType.NOTIN) {
                 KitEditor edit = instance.getKitEditor();
                 if (instance.getKitEditor().getDataFor(player).getEditorType() == KitEditorPlayerData.EditorType.OVERVIEW) {
-                    KitEditorPlayerData playerData = edit.getDataFor(player);
+                    KitEditorPlayerData editorData = edit.getDataFor(player);
                     if ((event.getSlot() < 10 || event.getSlot() > 43) || event.getSlot() == 17 || event.getSlot() == 36) {
                         if (event.getInventory() != null && event.getInventory().getType() == InventoryType.CHEST) {
                             event.setCancelled(true);
                         }
                     }
                     if (event.getRawSlot() > event.getView().getTopInventory().getSize() - 1) {
-                        if (playerData.isInInventory()) {
+                        if (editorData.isInInventory()) {
                             event.setCancelled(false);
                         } else {
                             switch (event.getSlot()) {
@@ -204,20 +203,17 @@ public class InventoryListeners implements Listener {
                                 case 14:
                                     edit.createMoney(player);
                                     break;
-                                case 17:
-                                    edit.saveKit(player, player.getOpenInventory().getTopInventory());
-                                    break;
                             }
                         }
                     }
 
                     if (event.getSlot() == 49) {
-                        if (!playerData.isInInventory()) {
-                            player.getInventory().setContents(playerData.getInventory());
-                            playerData.setInInventory(true);
+                        if (!editorData.isInInventory()) {
+                            player.getInventory().setContents(editorData.getInventory());
+                            editorData.setInInventory(true);
                             player.updateInventory();
-                        } else edit.getInvItems(player, playerData);
-                        edit.updateInvButton(event.getInventory(), playerData);
+                        } else edit.getInvItems(player, editorData);
+                        edit.updateInvButton(event.getInventory(), editorData);
                     }
                 } else if (instance.getKitEditor().getDataFor(player).getEditorType() == KitEditorPlayerData.EditorType.SELLING) {
                     event.setCancelled(true);
@@ -288,8 +284,7 @@ public class InventoryListeners implements Listener {
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
         try {
-            if (!event.getInventory().getTitle().startsWith("Previewing")
-                    || !(instance.whereAt.containsKey(event.getWhoClicked().getUniqueId()) && instance.whereAt.get(event.getWhoClicked().getUniqueId()).equals("display")))
+            if (instance.getPlayerDataManager().getPlayerAction((Player)event.getWhoClicked()).getGuiLocation() != PlayerData.GUILocation.DISPLAY)
                 return;
             event.setCancelled(true);
             if (instance.references.isPlaySound())
@@ -303,8 +298,7 @@ public class InventoryListeners implements Listener {
     @EventHandler
     public void onInteract(InventoryInteractEvent event) {
         try {
-            if (!event.getInventory().getTitle().startsWith("Previewing")
-                    || !(instance.whereAt.containsKey(event.getWhoClicked().getUniqueId()) && instance.whereAt.get(event.getWhoClicked().getUniqueId()).equals("display")))
+            if (instance.getPlayerDataManager().getPlayerAction((Player)event.getWhoClicked()).getGuiLocation() != PlayerData.GUILocation.DISPLAY)
                 return;
             event.setCancelled(true);
             if (instance.references.isPlaySound())
@@ -320,7 +314,11 @@ public class InventoryListeners implements Listener {
         try {
             final Player player = (Player) event.getPlayer();
 
+            PlayerData playerData = instance.getPlayerDataManager().getPlayerAction(player);
+
             KitEditorPlayerData kitPlayerData = instance.getKitEditor().getDataFor(player);
+
+            playerData.setGuiLocation(PlayerData.GUILocation.NOT_IN);
 
             if (kitPlayerData.getEditorType() == KitEditorPlayerData.EditorType.OVERVIEW) {
                 KitEditor edit = instance.getKitEditor();
@@ -338,18 +336,6 @@ public class InventoryListeners implements Listener {
             BlockEditorPlayerData blockPlayerData = instance.getBlockEditor().getDataFor(player);
             blockPlayerData.setEditorType(BlockEditorPlayerData.EditorType.NOTIN);
 
-            instance.buy.remove(player.getUniqueId());
-
-            if (!instance.whereAt.containsKey(player.getUniqueId())) {
-                return;
-            }
-
-            instance.whereAt.remove(player.getUniqueId());
-
-            Bukkit.getScheduler().runTaskLater(instance, () -> {
-                if (!player.getOpenInventory().getTopInventory().getType().equals(InventoryType.CHEST))
-                    player.closeInventory();
-            }, 1L);
         } catch (Exception ex) {
             Debugger.runReport(ex);
         }

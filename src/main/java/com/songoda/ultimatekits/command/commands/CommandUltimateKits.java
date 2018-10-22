@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 public class CommandUltimateKits extends AbstractCommand {
 
     public CommandUltimateKits() {
-        super("UltimateKits", null, false,  true);
+        super("UltimateKits", null, false, true);
     }
 
     @Override

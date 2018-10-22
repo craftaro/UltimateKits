@@ -51,7 +51,7 @@ public class Key {
             String desc1 = Lang.KEY_DESC1.getConfigValue(kitName);
 
             if (kitName.equals("Any"))
-                desc1 = desc1.replaceAll("\\[.*?\\]","");
+                desc1 = desc1.replaceAll("\\[.*?\\]", "");
             else
                 desc1 = desc1.replace("[", "").replace("]", "");
 

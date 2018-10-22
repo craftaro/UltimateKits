@@ -4,7 +4,6 @@ import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.object.KitBlockData;
 import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 
 import java.util.Map;
@@ -34,7 +33,7 @@ public class ParticleHandler {
                 Location location = kitBlockData.getLocation();
                 location.add(.5, 0, .5);
 
-                    location.getWorld().spawnParticle(org.bukkit.Particle.valueOf(type), location, amt, 0.25, 0.25, 0.25);
+                location.getWorld().spawnParticle(org.bukkit.Particle.valueOf(type), location, amt, 0.25, 0.25, 0.25);
             }
 
         } catch (Exception ex) {
@@ -49,7 +48,7 @@ public class ParticleHandler {
                 instance.saveConfig();
             }
             if (instance.getConfig().getString("data.particlesettings.type") != null) return;
-                instance.getConfig().set("data.particlesettings.type", "SPELL_WITCH");
+            instance.getConfig().set("data.particlesettings.type", "SPELL_WITCH");
             instance.saveConfig();
         } catch (Exception ex) {
             Debugger.runReport(ex);

@@ -38,6 +38,7 @@ public class DisplayItemHandler {
             Debugger.runReport(ex);
         }
     }
+
     public void displayItem(KitBlockData kitBlockData) {
         Location location = kitBlockData.getLocation();
         location.add(0.5, 0, 0.5);
@@ -79,11 +80,11 @@ public class DisplayItemHandler {
         ItemMeta meta = is.getItemMeta();
         meta.setDisplayName("0");
         is.setItemMeta(meta);
-        Item i = location.getWorld().dropItem(location.add(0, 1, 0), list.get(0));
+        Item item = location.getWorld().dropItem(location.add(0, 1, 0), list.get(0));
         Vector vec = new Vector(0, 0, 0);
-        i.setVelocity(vec);
-        i.setPickupDelay(9999);
-        i.setMetadata("displayItem", new FixedMetadataValue(UltimateKits.getInstance(), true));
-        i.setMetadata("betterdrops_ignore", new FixedMetadataValue(UltimateKits.getInstance(), true));
+        item.setVelocity(vec);
+        item.setPickupDelay(9999);
+        item.setMetadata("displayItem", new FixedMetadataValue(UltimateKits.getInstance(), true));
+        item.setMetadata("betterdrops_ignore", new FixedMetadataValue(UltimateKits.getInstance(), true));
     }
 }

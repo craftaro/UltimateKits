@@ -23,16 +23,16 @@ public class EntityListeners implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerEntityInteract(EntityDamageEvent e) {
         try {
-            if (e.getEntity().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.holo") == null) {
+            if (e.getEntity().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.hologramHandler") == null) {
                 return;
             }
-            ConfigurationSection section = instance.getConfig().getConfigurationSection("data.holo");
+            ConfigurationSection section = instance.getConfig().getConfigurationSection("data.hologramHandler");
             for (String loc : section.getKeys(false)) {
                 String str[] = loc.split(":");
-                World w = Bukkit.getServer().getWorld(str[1].substring(0, str[1].length() - 1));
+                World world = Bukkit.getServer().getWorld(str[1].substring(0, str[1].length() - 1));
                 double x = Double.parseDouble(str[2].substring(0, str[2].length() - 1)) + .5;
                 double z = Double.parseDouble(str[4]) + .5;
-                if (w == e.getEntity().getLocation().getWorld() && x == e.getEntity().getLocation().getX() && z == e.getEntity().getLocation().getZ()) {
+                if (world == e.getEntity().getLocation().getWorld() && x == e.getEntity().getLocation().getX() && z == e.getEntity().getLocation().getZ()) {
                     e.setCancelled(true);
                 }
             }
@@ -44,10 +44,10 @@ public class EntityListeners implements Listener {
     @EventHandler
     public void onPlayerEntityInteract(PlayerInteractAtEntityEvent e) {
         try {
-            if (e.getRightClicked().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.holo") == null) {
+            if (e.getRightClicked().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.hologramHandler") == null) {
                 return;
             }
-            ConfigurationSection section = instance.getConfig().getConfigurationSection("data.holo");
+            ConfigurationSection section = instance.getConfig().getConfigurationSection("data.hologramHandler");
             for (String loc : section.getKeys(false)) {
                 String str[] = loc.split(":");
                 World w = Bukkit.getServer().getWorld(str[1].substring(0, str[1].length() - 1));

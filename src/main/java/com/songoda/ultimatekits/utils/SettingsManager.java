@@ -25,11 +25,10 @@ import java.util.regex.Pattern;
  */
 public class SettingsManager implements Listener {
 
-    String pluginName = "UltimateKits";
-    private final UltimateKits instance;
-
     private static ConfigWrapper defs;
-
+    private final UltimateKits instance;
+    private Map<Player, String> current = new HashMap<>();
+    private String pluginName = "UltimateKits";
     private Map<Player, String> cat = new HashMap<>();
 
     public SettingsManager(UltimateKits instance) {
@@ -39,8 +38,6 @@ public class SettingsManager implements Listener {
         defs.createNewFile("Loading data file", "UltimateKits SettingDefinitions file");
         instance.getServer().getPluginManager().registerEvents(this, instance);
     }
-
-    public Map<Player, String> current = new HashMap<>();
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
@@ -211,7 +208,7 @@ public class SettingsManager implements Listener {
                 config.set(s.setting, config.get(s.oldSetting));
                 config.set(s.oldSetting, null);
             } else if (s.setting.equals("Main.Upgrade Particle Type")) {
-                    config.addDefault(s.setting, s.option);
+                config.addDefault(s.setting, s.option);
             } else
                 config.addDefault(s.setting, s.option);
         }

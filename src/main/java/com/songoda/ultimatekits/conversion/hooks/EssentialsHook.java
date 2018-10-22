@@ -57,6 +57,6 @@ public class EssentialsHook implements Hook {
     }
 
     public long getDelay(String kitName) {
-        return Integer.toUnsignedLong((int)essentials.getSettings().getKit(kitName).getOrDefault("delay", 0));
+        return Integer.toUnsignedLong((int) essentials.getSettings().getKit(kitName).getOrDefault("delay", 0));
     }
 }

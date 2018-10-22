@@ -196,7 +196,7 @@ public class BlockEditor {
 
             i.setItem(12, alli);
 
-            alli = new ItemStack(Material.GRASS);
+            alli = new ItemStack(Material.DIAMOND);
             allmeta = alli.getItemMeta();
             allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&9&lToggle DisplayItems"));
             lore = new ArrayList<>();
@@ -249,7 +249,7 @@ public class BlockEditor {
             } else {
                 kitBlockData.setShowHologram(true);
             }
-            UltimateKits.getInstance().holo.updateHolograms();
+            UltimateKits.getInstance().getHologramHandler().updateHolograms();
             decor(player);
         } catch (Exception ex) {
             Debugger.runReport(ex);
@@ -278,7 +278,7 @@ public class BlockEditor {
 
             if (isHolo) {
                 kitBlockData.setShowHologram(false);
-                instance.holo.updateHolograms();
+                instance.getHologramHandler().updateHolograms();
             }
 
             if (kitBlockData.isDisplayingItems()) {
@@ -289,7 +289,7 @@ public class BlockEditor {
             decor(player);
             if (isHolo) {
                 kitBlockData.setShowHologram(true);
-                UltimateKits.getInstance().holo.updateHolograms();
+                UltimateKits.getInstance().getHologramHandler().updateHolograms();
             }
         } catch (Exception ex) {
             Debugger.runReport(ex);
@@ -321,10 +321,10 @@ public class BlockEditor {
 
             if (kitBlockData.getType() == KitType.PREVIEW) kitBlockData.setType(KitType.CRATE);
             else if (kitBlockData.getType() == KitType.CRATE) kitBlockData.setType(KitType.CLAIM);
-            else if (kitBlockData.getType() == KitType.CLAIM)  kitBlockData.setType(KitType.PREVIEW);
+            else if (kitBlockData.getType() == KitType.CLAIM) kitBlockData.setType(KitType.PREVIEW);
 
             instance.saveConfig();
-            instance.holo.updateHolograms();
+            instance.getHologramHandler().updateHolograms();
             openOverview(player, playerData.getLocation());
         } catch (Exception ex) {
             Debugger.runReport(ex);

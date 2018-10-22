@@ -6,8 +6,6 @@ import java.util.Arrays;
 
 public class KitEditorPlayerData {
 
-    public enum EditorType { OVERVIEW, GENERAL, SELLING, GUI, COMMAND, MONEY, DELAY, TITLE, PRICE, LINK, NOTIN }
-
     private Kit kit;
     private EditorType editorType = EditorType.NOTIN;
     private ItemStack[] inventory = new ItemStack[0];
@@ -44,4 +42,6 @@ public class KitEditorPlayerData {
     public void setInventory(ItemStack[] inventory) {
         this.inventory = inventory;
     }
+
+    public enum EditorType {OVERVIEW, GENERAL, SELLING, GUI, COMMAND, MONEY, DELAY, TITLE, PRICE, LINK, NOTIN}
 }

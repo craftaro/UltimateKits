@@ -7,7 +7,6 @@ import com.songoda.ultimatekits.kit.object.Kit;
 import com.songoda.ultimatekits.kit.object.KitBlockData;
 import com.songoda.ultimatekits.kit.object.KitType;
 import com.songoda.ultimatekits.utils.Debugger;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

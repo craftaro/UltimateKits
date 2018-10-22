@@ -1,9 +1,11 @@
 package com.songoda.ultimatekits.kit;
 
+import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.object.Kit;
+import com.songoda.ultimatekits.player.PlayerData;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
@@ -26,12 +28,13 @@ public class KitsGUI {
         try {
             UltimateKits instance = UltimateKits.getInstance();
 
-            UltimateKits.getInstance().page.put(player.getUniqueId(), page);
-            UltimateKits.getInstance().kits.clear();
+            PlayerData playerData = instance.getPlayerDataManager().getPlayerAction(player);
+
+            playerData.setKitsPage(page);
 
             String guititle = Lang.KITS_TITLE.getConfigValue();
 
-            ItemStack exit = new ItemStack(Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")), 1);
+            ItemStack exit = new ItemStack(Material.valueOf(instance.getConfig().getString("Interfaces.Exit Icon")), 1);
             ItemMeta exitmeta = exit.getItemMeta();
             exitmeta.setDisplayName(Lang.EXIT.getConfigValue());
             exit.setItemMeta(exitmeta);
@@ -39,13 +42,13 @@ public class KitsGUI {
             List<String> kitList = new ArrayList<>();
 
             int ino = 14;
-            if (UltimateKits.getInstance().getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) ino = 54;
+            if (instance.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) ino = 54;
             int num = 0;
             int start = (page - 1) * ino;
             int show = 1;
-            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits()) {
+            for (Kit kit : instance.getKitManager().getKits()) {
                 if (!kit.isHidden()
-                        && (!UltimateKits.getInstance().getConfig().getBoolean("Main.Only Show Players Kits They Have Permission To Use") || kit.hasPermission(player))
+                        && (!instance.getConfig().getBoolean("Main.Only Show Players Kits They Have Permission To Use") || kit.hasPermission(player))
                         && num >= start
                         && show <= ino) {
                     kitList.add(kit.getName());
@@ -54,7 +57,7 @@ public class KitsGUI {
                 num++;
             }
 
-            boolean glassless = UltimateKits.getInstance().getConfig().getBoolean("Interfaces.Do Not Use Glass Borders");
+            boolean glassless = instance.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders");
 
             int n = 7;
             if (glassless)
@@ -120,18 +123,17 @@ public class KitsGUI {
                 }
                 String kitItem = kitList.get(id);
 
-                Kit kit = UltimateKits.getInstance().getKitManager().getKit(kitItem);
+                Kit kit = instance.getKitManager().getKit(kitItem);
 
                 String title = Lang.GUI_KIT_NAME.getConfigValue(Arconix.pl().getApi().format().formatText(kitItem, true));
                 if (kit.getTitle() != null)
                     title = Arconix.pl().getApi().format().formatText(kit.getTitle());
-                UltimateKits.getInstance().kits.put(title, kitItem);
 
                 ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
                 if (kit.getDisplayItem() != null)
                     item.setType(kit.getDisplayItem());
                 ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName(Arconix.pl().getApi().format().formatText(title));
+                meta.setDisplayName(TextComponent.convertToInvisibleString(kitItem + ":") + Arconix.pl().getApi().format().formatText(title));
                 ArrayList<String> lore = new ArrayList<>();
                 if (kit.getPrice() != 0)
                     lore.add(Arconix.pl().getApi().format().formatText("&7This kit costs &a$" + kit.getPrice() + "&7."));
@@ -139,7 +141,7 @@ public class KitsGUI {
                     lore.add(Lang.LINK.getConfigValue());
 
 
-                if (!instance.kitsMode.contains(player.getUniqueId())) {
+                if (!instance.getPlayerDataManager().getPlayerAction(player).isKitsMode()) {
                     if (!Lang.ABOUT_KIT.getConfigValue().trim().equals("")) {
                         String[] parts = Lang.ABOUT_KIT.getConfigValue().split("\\|");
                         lore.add("");
@@ -215,18 +217,18 @@ public class KitsGUI {
             skull2Meta.setDisplayName(Lang.LAST.getConfigValue());
             skull2.setItemMeta(skull2Meta);
 
-            if (!UltimateKits.getInstance().getConfig().getBoolean("Interfaces.Do Not Use Glass Borders"))
+            if (!instance.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders"))
                 i.setItem(max - 5, exit);
             if (kitList.size() == 14)
                 i.setItem(max - 4, skull);
             if (page != 1)
                 i.setItem(max - 6, skull2);
-            if (!UltimateKits.getInstance().getConfig().getBoolean("Interfaces.Do Not Use Glass Borders"))
+            if (!instance.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders"))
                 i.setItem(4, info);
             player.openInventory(i);
 
-            UltimateKits.getInstance().whereAt.remove(player.getUniqueId());
-            UltimateKits.getInstance().whereAt.put(player.getUniqueId(), "kits");
+
+            playerData.setGuiLocation(PlayerData.GUILocation.KITS);
         } catch (Exception ex) {
             Debugger.runReport(ex);
         }

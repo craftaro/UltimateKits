@@ -16,53 +16,51 @@ import com.songoda.ultimatekits.kit.object.Kit;
 import com.songoda.ultimatekits.kit.object.KitBlockData;
 import com.songoda.ultimatekits.kit.object.KitManager;
 import com.songoda.ultimatekits.kit.object.KitType;
+import com.songoda.ultimatekits.player.PlayerData;
+import com.songoda.ultimatekits.player.PlayerDataManager;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.SettingsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
 public class UltimateKits extends JavaPlugin {
     private static CommandSender console = Bukkit.getConsoleSender();
+    private static UltimateKits INSTANCE;
+    public References references;
+    public DisplayItemHandler displayitem;
 
     private ConfigWrapper langFile = new ConfigWrapper(this, "", "lang.yml");
     private ConfigWrapper kitFile = new ConfigWrapper(this, "", "kit.yml");
     private ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
     private ConfigWrapper keyFile = new ConfigWrapper(this, "", "keys.yml");
 
-    public References references;
-
-    public HologramHandler holo;
     private SettingsManager settingsManager;
-
-    private static UltimateKits INSTANCE;
-
-    public DisplayItemHandler displayitem;
-
     private KitManager kitManager;
-
     private CommandManager commandManager;
     private KeyManager keyManager;
-
     private KitEditor kitEditor;
-
     private BlockEditor blockEditor;
+    private HologramHandler hologramHandler;
+    private PlayerDataManager playerDataManager;
 
-    public Map<UUID, Integer> page = new HashMap<>();
+    /**
+     * Grab instance of UltimateKits
+     *
+     * @return instance of UltimateKits
+     */
+    public static UltimateKits getInstance() {
+        return INSTANCE;
+    }
 
-    public Map<UUID, String> buy = new HashMap<>();
-    public Map<String, String> kits = new HashMap<>();
-
-    public Map<UUID, Kit> inKit = new HashMap<>();
-
-    public Map<UUID, String> whereAt = new HashMap<>();
-
-    public List<UUID> kitsMode = new ArrayList<>();
+    /*
+     * On plugin enable.
+     */
 
     private boolean checkVersion() {
         int workingVersion = 13;
@@ -79,10 +77,6 @@ public class UltimateKits extends JavaPlugin {
         }
         return true;
     }
-
-    /*
-     * On plugin enable.
-     */
 
     @Override
     public void onEnable() {
@@ -102,9 +96,10 @@ public class UltimateKits extends JavaPlugin {
 
         references = new References();
 
-        holo = new HologramHandler(this);
+        hologramHandler = new HologramHandler(this);
         new ParticleHandler(this);
         displayitem = new DisplayItemHandler(this);
+
         settingsManager = new SettingsManager(this);
         settingsManager.updateSettings();
         setupConfig();
@@ -114,13 +109,11 @@ public class UltimateKits extends JavaPlugin {
         this.kitEditor = new KitEditor(this);
         this.blockEditor = new BlockEditor(this);
         this.commandManager = new CommandManager(this);
+        this.playerDataManager = new PlayerDataManager();
 
         loadFromFile();
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
-
-
-        new com.massivestats.MassiveStats(this, 900);
 
         console.sendMessage(Arconix.pl().getApi().format().formatText("&a============================="));
 
@@ -136,11 +129,11 @@ public class UltimateKits extends JavaPlugin {
      * On plugin disable.
      */
     public void onDisable() {
-        for (UUID uuid : whereAt.keySet()) {
-            Bukkit.getPlayer(uuid).closeInventory();
+        for (PlayerData playerData : playerDataManager.getRegisteredPlayers()) {
+            if (playerData.getGuiLocation() == PlayerData.GUILocation.NOT_IN) continue;
+            playerData.getPlayer().closeInventory();
         }
         saveToFile();
-        whereAt.clear();
         kitManager.clearKits();
         console.sendMessage(Arconix.pl().getApi().format().formatText("&a============================="));
         console.sendMessage(Arconix.pl().getApi().format().formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
@@ -261,7 +254,7 @@ public class UltimateKits extends JavaPlugin {
     /*
      * Insert default key list into config.
      */
-    public void checkKeyDefaults() {
+    private void checkKeyDefaults() {
         if (keyFile.getConfig().contains("Keys")) return;
         keyFile.getConfig().set("Keys.Regular.Item Amount", 3);
         keyFile.getConfig().set("Keys.Regular.Amount overrides", Collections.singletonList("Tools:2"));
@@ -302,7 +295,7 @@ public class UltimateKits extends JavaPlugin {
             references = new References();
             reloadConfig();
             loadFromFile();
-            holo.updateHolograms();
+            hologramHandler.updateHolograms();
         } catch (Exception ex) {
             Debugger.runReport(ex);
         }
@@ -367,17 +360,15 @@ public class UltimateKits extends JavaPlugin {
         return settingsManager;
     }
 
-    /**
-     * Grab instance of UltimateKits
-     *
-     * @return instance of UltimateKits
-     */
-    public static UltimateKits getInstance() {
-        return INSTANCE;
-    }
-
     public CommandManager getCommandManager() {
         return commandManager;
     }
 
+    public HologramHandler getHologramHandler() {
+        return hologramHandler;
+    }
+
+    public PlayerDataManager getPlayerDataManager() {
+        return playerDataManager;
+    }
 }

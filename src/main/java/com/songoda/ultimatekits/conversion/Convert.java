@@ -38,7 +38,7 @@ public class Convert {
     }
 
 
-    public void convertKits() {
+    private void convertKits() {
         Set<String> kits = hook.getKits();
 
         if (instance.getKitFile().getConfig().contains("Kits")) return;

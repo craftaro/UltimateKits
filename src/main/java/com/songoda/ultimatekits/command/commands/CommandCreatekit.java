@@ -6,7 +6,6 @@ import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.kit.object.Kit;
 import com.songoda.ultimatekits.utils.Methods;
-import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -21,7 +20,7 @@ public class CommandCreatekit extends AbstractCommand {
         Player p = (Player) sender;
         if (args.length != 2) return ReturnType.SYNTAX_ERROR;
         String kitStr = args[1].toLowerCase();
-        if (Methods.doesKitExist(kitStr)) {
+        if (instance.getKitManager().getKit(kitStr) != null) {
             p.sendMessage(instance.references.getPrefix() + Lang.KIT_ALREADY_EXISTS.getConfigValue(kitStr));
             return ReturnType.FAILURE;
         }

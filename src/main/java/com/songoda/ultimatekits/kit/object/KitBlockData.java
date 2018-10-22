@@ -5,17 +5,13 @@ import org.bukkit.Location;
 
 public class KitBlockData {
 
+    private final Kit kit;
+    private final Location location;
     private boolean hologram, particles, items;
-
     private boolean itemOverride;
-
     private KitType type;
 
-    private final Kit kit;
-
-    private final Location location;
-
-    public KitBlockData(Kit kit, Location location, KitType type, boolean hologram, boolean particles,  boolean items, boolean itemOverride) {
+    public KitBlockData(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
         this.kit = kit;
         this.location = location;
         this.hologram = hologram;
@@ -25,16 +21,16 @@ public class KitBlockData {
         this.type = type;
     }
 
+    public KitBlockData(Kit kit, Location location) {
+        this(kit, location, KitType.PREVIEW, false, false, false, false);
+    }
+
     public void reset() {
         setShowHologram(false);
         setDisplayingItems(false);
         setHasParticles(false);
         UltimateKits.getInstance().displayitem.displayItem(this);
-        UltimateKits.getInstance().holo.updateHolograms();
-    }
-
-    public KitBlockData(Kit kit, Location location) {
-        this(kit, location, KitType.PREVIEW, false, false, false, false);
+        UltimateKits.getInstance().getHologramHandler().updateHolograms();
     }
 
     public Kit getKit() {

@@ -27,16 +27,16 @@ public enum Lang {
 
     PREVIEW_SIGN_CREATED("sign-created", "&aPreview sign created for kit &7{KIT}&9."),
 
-    PREVIEW_ONLY_HOLOGRAM("Preview-only-holo", "Click to Preview!"),
+    PREVIEW_ONLY_HOLOGRAM("Preview-only-hologramHandler", "Click to Preview!"),
 
-    PREVIEW_HOLOGRAM("Preview-holo", "Right-Click to Preview!"),
+    PREVIEW_HOLOGRAM("Preview-hologramHandler", "Right-Click to Preview!"),
 
-    BUY_LINK_HOLOGRAM("Buy-link-holo", "Left-Click for Buy Link!"),
+    BUY_LINK_HOLOGRAM("Buy-link-hologramHandler", "Left-Click for Buy Link!"),
 
-    BUY_ECO_HOLOGRAM("Buy-eco-holo", "Left-Click to buy for &a${PRICE}&f!"),
+    BUY_ECO_HOLOGRAM("Buy-eco-hologramHandler", "Left-Click to buy for &a${PRICE}&f!"),
 
-    OPEN_CRATE_HOLOGRAM("open-crate-holo", "Left-Click with a key to open!"),
-    DAILY_HOLOGRAM("daily-holo", "Left-Click to claim!"),
+    OPEN_CRATE_HOLOGRAM("open-crate-hologramHandler", "Left-Click with a key to open!"),
+    DAILY_HOLOGRAM("daily-hologramHandler", "Left-Click to claim!"),
 
     WRONG_KEY("wrong-key", "&cThis key does not go to this kit."),
     NOT_KEY("not-key", "&cYou are not holding a key."),
@@ -136,9 +136,9 @@ public enum Lang {
     INVENTORY_FULL("Inventory-full", "&cYour inventory is too full to claim this kit!");
 
 
+    private static FileConfiguration LANG;
     private String path;
     private String def;
-    private static FileConfiguration LANG;
 
     Lang(String path, String start) {
         this.path = path;

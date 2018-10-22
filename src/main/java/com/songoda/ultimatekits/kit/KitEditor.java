@@ -48,7 +48,7 @@ public class KitEditor {
 
             ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
             ItemStack back = head2;
-                back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+            back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
             back.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
@@ -241,16 +241,6 @@ public class KitEditor {
         alli.setItemMeta(allmeta);
 
         player.getInventory().setItem(14, alli);
-
-        alli = new ItemStack(Material.REDSTONE, 1);
-        allmeta = alli.getItemMeta();
-        allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&aSave Changes"));
-        lore = new ArrayList<>();
-        lore.add(Arconix.pl().getApi().format().formatText("&7Click to save all changes."));
-        allmeta.setLore(lore);
-        alli.setItemMeta(allmeta);
-
-        player.getInventory().setItem(17, alli);
     }
 
     public void selling(Player player) {
@@ -286,7 +276,7 @@ public class KitEditor {
 
             ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
             ItemStack back = head2;
-                back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+            back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
             back.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
@@ -391,7 +381,7 @@ public class KitEditor {
 
             ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
             ItemStack back = head2;
-                back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+            back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
             back.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
@@ -504,7 +494,7 @@ public class KitEditor {
 
             ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
             ItemStack back = head2;
-                back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+            back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
             back.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
@@ -594,10 +584,10 @@ public class KitEditor {
             KitEditorPlayerData playerData = getDataFor(player);
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
-                    if (playerData.getEditorType() == KitEditorPlayerData.EditorType.COMMAND) {
-                        player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "Editing Timed out."));
-                        playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
-                    }
+                if (playerData.getEditorType() == KitEditorPlayerData.EditorType.COMMAND) {
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "Editing Timed out."));
+                    playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
+                }
             }, 500L);
             player.closeInventory();
 
@@ -678,7 +668,7 @@ public class KitEditor {
             Kit kit = getDataFor(player).getKit();
             kit.setPrice(0);
             kit.setLink(null);
-            instance.holo.updateHolograms();
+            instance.getHologramHandler().updateHolograms();
             selling(player);
         } catch (Exception ex) {
             Debugger.runReport(ex);
@@ -729,7 +719,7 @@ public class KitEditor {
             } else {
                 instance.getConfig().set("data.kit." + kit.getName() + ".title", null);
                 instance.saveConfig();
-                instance.holo.updateHolograms();
+                instance.getHologramHandler().updateHolograms();
                 gui(player);
             }
         } catch (Exception ex) {

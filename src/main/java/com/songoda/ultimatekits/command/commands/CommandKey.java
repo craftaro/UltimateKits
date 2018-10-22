@@ -6,7 +6,6 @@ import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.kit.object.Kit;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

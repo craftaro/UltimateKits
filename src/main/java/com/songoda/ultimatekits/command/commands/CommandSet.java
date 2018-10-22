@@ -23,7 +23,7 @@ public class CommandSet extends AbstractCommand {
         }
         Player player = (Player) sender;
         String kit = args[1].toLowerCase();
-        if (!Methods.doesKitExist(kit)) {
+        if (instance.getKitManager().getKit(kit) == null) {
             player.sendMessage(instance.references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kit));
             return ReturnType.FAILURE;
         }

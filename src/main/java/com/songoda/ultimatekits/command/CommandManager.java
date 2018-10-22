@@ -30,7 +30,7 @@ public class CommandManager implements CommandExecutor {
 
         addCommand(new CommandPreviewKit());
         addCommand(new CommandKits());
-        
+
         addCommand(new CommandReload(commandUltimateKits));
         addCommand(new CommandSettings(commandUltimateKits));
         addCommand(new CommandCreatekit(commandUltimateKits));
@@ -71,14 +71,15 @@ public class CommandManager implements CommandExecutor {
             return;
         }
         if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
-             AbstractCommand.ReturnType returnType = command.runCommand(instance, sender, strings);
-             if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
-                 sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&cInvalid Syntax!"));
-                 sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
-             }
+            AbstractCommand.ReturnType returnType = command.runCommand(instance, sender, strings);
+            if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
+                sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&cInvalid Syntax!"));
+                sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
+            }
             return;
         }
-        sender.sendMessage(instance.references.getPrefix() + Lang.NO_PERM.getConfigValue());    }
+        sender.sendMessage(instance.references.getPrefix() + Lang.NO_PERM.getConfigValue());
+    }
 
     public List<AbstractCommand> getCommands() {
         return Collections.unmodifiableList(commands);

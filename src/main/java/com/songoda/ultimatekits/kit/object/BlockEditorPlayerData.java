@@ -5,8 +5,6 @@ import org.bukkit.entity.Player;
 
 public class BlockEditorPlayerData {
 
-    public enum EditorType { OVERVIEW, DECOR, NOTIN }
-
     private Location location;
     private Player player;
     private KitBlockData kitBlockData;
@@ -55,4 +53,6 @@ public class BlockEditorPlayerData {
         location.setZ(location.getBlockZ());
         return location;
     }
+
+    public enum EditorType {OVERVIEW, DECOR, NOTIN}
 }

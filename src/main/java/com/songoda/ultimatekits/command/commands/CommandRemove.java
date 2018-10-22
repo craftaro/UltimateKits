@@ -5,7 +5,6 @@ import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.kit.object.Kit;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +24,7 @@ public class CommandRemove extends AbstractCommand {
         Player player = (Player) sender;
         Block b = player.getTargetBlock(null, 200);
         Kit kit = instance.getKitManager().removeKitFromLocation(b.getLocation());
-        UltimateKits.getInstance().holo.updateHolograms();
+        UltimateKits.getInstance().getHologramHandler().updateHolograms();
         player.sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().references.getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + b.getType().toString() + "&8."));
         return ReturnType.SUCCESS;
     }

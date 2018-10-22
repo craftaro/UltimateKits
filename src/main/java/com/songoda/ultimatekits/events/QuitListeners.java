@@ -34,7 +34,8 @@ public class QuitListeners implements Listener {
             BlockEditorPlayerData blockPlayerData = instance.getBlockEditor().getDataFor(p);
             blockPlayerData.setEditorType(BlockEditorPlayerData.EditorType.NOTIN);
 
-            instance.whereAt.remove(p.getUniqueId());
+
+            playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
         } catch (Exception ex) {
             Debugger.runReport(ex);
         }

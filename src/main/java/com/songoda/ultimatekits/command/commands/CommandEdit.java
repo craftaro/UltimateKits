@@ -1,11 +1,11 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.utils.Methods;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,12 +26,12 @@ public class CommandEdit extends AbstractCommand {
         if (args.length == 1) {
             if (instance.getConfig().getString("data.block." + loc) == null) {
                 player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8This block does not contain a kit."));
-                return  ReturnType.FAILURE;
+                return ReturnType.FAILURE;
             }
             instance.getBlockEditor().openOverview(player, block.getLocation());
         } else {
             String kitStr = args[1].toLowerCase().trim();
-            if (!Methods.doesKitExist(kitStr)) {
+            if (instance.getKitManager().getKit(kitStr) == null) {
                 player.sendMessage(instance.references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitStr));
                 return ReturnType.FAILURE;
             }

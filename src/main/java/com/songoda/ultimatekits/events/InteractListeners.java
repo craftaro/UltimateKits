@@ -26,70 +26,70 @@ public class InteractListeners implements Listener {
     }
 
     @EventHandler
-    public void onBlockInteract(PlayerInteractEvent e) {
+    public void onBlockInteract(PlayerInteractEvent event) {
         try {
             boolean chand = true; // This needs to be out of my code.
-                if (e.getHand() != EquipmentSlot.HAND) {
-                    chand = false;
-                }
+            if (event.getHand() != EquipmentSlot.HAND) {
+                chand = false;
+            }
 
-            Block b = e.getClickedBlock();
+            Block block = event.getClickedBlock();
 
             if (!chand) return;
 
-            if (e.getClickedBlock() == null) return;
+            if (event.getClickedBlock() == null) return;
 
-            KitBlockData kitBlockData = instance.getKitManager().getKit(b.getLocation());
+            KitBlockData kitBlockData = instance.getKitManager().getKit(block.getLocation());
             if (kitBlockData == null) return;
             Kit kit = kitBlockData.getKit();
 
-            Player p = e.getPlayer();
-            if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
+            Player player = event.getPlayer();
+            if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 
-                if (p.isSneaking()) return;
-                e.setCancelled(true);
+                if (player.isSneaking()) return;
+                event.setCancelled(true);
 
-                if (p.getItemInHand() != null && p.getItemInHand().getType() != null && p.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
-                    e.setCancelled(true);
-                    kit.give(p, true, false, false);
+                if (player.getItemInHand() != null && player.getItemInHand().getType() != null && player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
+                    event.setCancelled(true);
+                    kit.give(player, true, false, false);
                     return;
                 }
 
                 if (kitBlockData.getType() != KitType.PREVIEW) {
                     if (kitBlockData.getType() == KitType.CRATE) {
-                        p.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + Lang.NOT_KEY.getConfigValue()));
+                        player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + Lang.NOT_KEY.getConfigValue()));
                     } else if (kitBlockData.getType() == KitType.CLAIM) {
-                        if (!p.hasPermission("essentials.kit." + kit.getName().toLowerCase()) || !p.hasPermission("ultimatekits.kit." + kit.getName().toLowerCase())) {
-                            p.sendMessage(instance.references.getPrefix() + Lang.NO_PERM.getConfigValue());
+                        if (!player.hasPermission("essentials.kit." + kit.getName().toLowerCase()) || !player.hasPermission("ultimatekits.kit." + kit.getName().toLowerCase())) {
+                            player.sendMessage(instance.references.getPrefix() + Lang.NO_PERM.getConfigValue());
                             return;
                         }
-                        if (kit.getNextUse(p) <= 0) {
-                            kit.give(p, false, false, false);
-                            kit.updateDelay(p);
+                        if (kit.getNextUse(player) <= 0) {
+                            kit.give(player, false, false, false);
+                            kit.updateDelay(player);
                         } else {
-                            long time = kit.getNextUse(p);
-                            p.sendMessage(instance.references.getPrefix() + Lang.NOT_YET.getConfigValue(Arconix.pl().getApi().format().readableTime(time)));
+                            long time = kit.getNextUse(player);
+                            player.sendMessage(instance.references.getPrefix() + Lang.NOT_YET.getConfigValue(Arconix.pl().getApi().format().readableTime(time)));
                         }
                     }
                 } else if (kit.getLink() != null || kit.getPrice() != 0) {
-                    kit.buy(p);
+                    kit.buy(player);
                 } else {
-                    kit.display(p, false);
+                    kit.display(player, false);
                 }
-            } else if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                if (b.getState() instanceof InventoryHolder || b.getType() == Material.ENDER_CHEST) {
-                    e.setCancelled(true);
+            } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                if (block.getState() instanceof InventoryHolder || block.getType() == Material.ENDER_CHEST) {
+                    event.setCancelled(true);
                 }
-                if (p.isSneaking() && p.hasPermission("ultimatekits.admin")) {
-                    instance.getBlockEditor().openOverview(p, b.getLocation());
+                if (player.isSneaking() && player.hasPermission("ultimatekits.admin")) {
+                    instance.getBlockEditor().openOverview(player, block.getLocation());
                     return;
                 }
-                if (p.getItemInHand() != null && p.getItemInHand().getType() != null && p.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
-                    e.setCancelled(true);
-                    kit.give(p, true, false, false);
+                if (player.getItemInHand() != null && player.getItemInHand().getType() != null && player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
+                    event.setCancelled(true);
+                    kit.give(player, true, false, false);
                     return;
                 }
-                kit.display(p, false);
+                kit.display(player, false);
 
             }
         } catch (Exception x) {

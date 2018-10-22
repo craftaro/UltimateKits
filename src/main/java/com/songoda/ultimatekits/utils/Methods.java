@@ -3,11 +3,13 @@ package com.songoda.ultimatekits.utils;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.UltimateKits;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Banner;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -17,7 +19,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -56,10 +59,6 @@ public class Methods {
             Debugger.runReport(e);
         }
         return false;
-    }
-
-    public static boolean doesKitExist(String kit) {
-        return UltimateKits.getInstance().getKitFile().getConfig().contains("Kits." + kit);
     }
 
     public static boolean pay(Player p, double amount) {
@@ -115,71 +114,72 @@ public class Methods {
             }
         }
 
-        switch (item.getType()) {
-            case WRITTEN_BOOK:
-                BookMeta bookMeta = (BookMeta) item.getItemMeta();
-                if (bookMeta.hasTitle()) {
-                    str.append("title:").append(bookMeta.getTitle().replace(" ", "_")).append(" ");
-                }
-                if (bookMeta.hasAuthor()) {
-                    str.append("author:").append(bookMeta.getAuthor()).append(" ");
-                }
-                if (bookMeta.hasPages()) {
-                    StringBuilder title = new StringBuilder(bookMeta.getAuthor());
-                    int num = 0;
-                    while (UltimateKits.getInstance().getDataFile().getConfig().contains("Books.pages." + title)) {
-                        title.append(num);
+        try {
+            switch (item.getType()) {
+                case WRITTEN_BOOK:
+                    BookMeta bookMeta = (BookMeta) item.getItemMeta();
+                    if (bookMeta.hasTitle()) {
+                        str.append("title:").append(bookMeta.getTitle().replace(" ", "_")).append(" ");
                     }
-                    str.append("id:").append(bookMeta.getAuthor()).append(" ");
-                    int pNum = 0;
-                    for (String page : bookMeta.getPages()) {
-                        pNum++;
-                        UltimateKits.getInstance().getDataFile().getConfig().set("Books.pages." + title + "." + pNum, page);
+                    if (bookMeta.hasAuthor()) {
+                        str.append("author:").append(bookMeta.getAuthor()).append(" ");
                     }
-                }
-                break;
-            case ENCHANTED_BOOK:
-                EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) item.getItemMeta();
-                for (Enchantment e : enchantmentStorageMeta.getStoredEnchants().keySet()) {
-                    str.append(e.getName().toLowerCase()).append(":").append(enchantmentStorageMeta.getStoredEnchantLevel(e)).append(" ");
-                }
-                break;
-            case FIREWORK_ROCKET:
-                FireworkMeta fireworkMeta = (FireworkMeta) item.getItemMeta();
-                if (fireworkMeta.hasEffects()) {
-                    for (FireworkEffect effect : fireworkMeta.getEffects()) {
-                        if (effect.getColors() != null && !effect.getColors().isEmpty()) {
-                            str.append("color:");
-                            boolean first = true;
-                            for (Color c : effect.getColors()) {
-                                if (!first) {
-                                    str.append(",");
-                                }
-                                str.append(c.asRGB());
-                                first = false;
-                            }
-                            str.append(" ");
+                    if (bookMeta.hasPages()) {
+                        StringBuilder title = new StringBuilder(bookMeta.getAuthor());
+                        int num = 0;
+                        while (UltimateKits.getInstance().getDataFile().getConfig().contains("Books.pages." + title)) {
+                            title.append(num);
                         }
+                        str.append("id:").append(bookMeta.getAuthor()).append(" ");
+                        int pNum = 0;
+                        for (String page : bookMeta.getPages()) {
+                            pNum++;
+                            UltimateKits.getInstance().getDataFile().getConfig().set("Books.pages." + title + "." + pNum, page);
+                        }
+                    }
+                    break;
+                case ENCHANTED_BOOK:
+                    EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) item.getItemMeta();
+                    for (Enchantment e : enchantmentStorageMeta.getStoredEnchants().keySet()) {
+                        str.append(e.getName().toLowerCase()).append(":").append(enchantmentStorageMeta.getStoredEnchantLevel(e)).append(" ");
+                    }
+                    break;
+                case FIREWORK_ROCKET:
+                    FireworkMeta fireworkMeta = (FireworkMeta) item.getItemMeta();
+                    if (fireworkMeta.hasEffects()) {
+                        for (FireworkEffect effect : fireworkMeta.getEffects()) {
+                            if (effect.getColors() != null && !effect.getColors().isEmpty()) {
+                                str.append("color:");
+                                boolean first = true;
+                                for (Color c : effect.getColors()) {
+                                    if (!first) {
+                                        str.append(",");
+                                    }
+                                    str.append(c.asRGB());
+                                    first = false;
+                                }
+                                str.append(" ");
+                            }
 
-                        str.append("shape: ").append(effect.getType().name()).append(" ");
-                        if (effect.getFadeColors() != null && !effect.getFadeColors().isEmpty()) {
-                            str.append("fade:");
-                            boolean first = true;
-                            for (Color c : effect.getFadeColors()) {
-                                if (!first) {
-                                    str.append(",");
+                            str.append("shape: ").append(effect.getType().name()).append(" ");
+                            if (effect.getFadeColors() != null && !effect.getFadeColors().isEmpty()) {
+                                str.append("fade:");
+                                boolean first = true;
+                                for (Color c : effect.getFadeColors()) {
+                                    if (!first) {
+                                        str.append(",");
+                                    }
+                                    str.append(c.asRGB());
+                                    first = false;
                                 }
-                                str.append(c.asRGB());
-                                first = false;
+                                str.append(" ");
                             }
-                            str.append(" ");
                         }
+                        str.append("power: ").append(fireworkMeta.getPower()).append(" ");
                     }
-                    str.append("power: ").append(fireworkMeta.getPower()).append(" ");
-                }
-                break;
-            case POTION:
-                PotionMeta potion = ((PotionMeta) item.getItemMeta());
+                    break;
+                case POTION:
+                    PotionMeta potion = ((PotionMeta) item.getItemMeta());
                     if (potion.hasColor()) {
                         str.append("color:").append(potion.getColor().asRGB()).append(" ");
                     }
@@ -189,47 +189,52 @@ public class Methods {
                         PotionEffectType e = potion.getBasePotionData().getType().getEffectType();
                         str.append("effect:").append(e.getName().toLowerCase()).append(" ").append("duration:").append(e.getDurationModifier()).append(" ");
                     }
-                break;
-            case PLAYER_HEAD:
-                SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
-                if (skullMeta != null && skullMeta.hasOwner()) {
-                    str.append("player:").append(skullMeta.getOwner()).append(" ");
-                }
-                break;
-            case LEATHER_HELMET:
-            case LEATHER_CHESTPLATE:
-            case LEATHER_LEGGINGS:
-            case LEATHER_BOOTS:
-                LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) item.getItemMeta();
-                int rgb = leatherArmorMeta.getColor().asRGB();
-                str.append("color:").append(rgb).append(" ");
-                break;
-            case LEGACY_BANNER: //ToDO: shouldnt be done like this, but i dont have time to do this corecctly.
-                BannerMeta bannerMeta = (BannerMeta) item.getItemMeta();
-                if (bannerMeta != null) {
-                    int basecolor = bannerMeta.getBaseColor().getColor().asRGB();
+                    break;
+                case PLAYER_HEAD:
+                    SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
+                    if (skullMeta != null && skullMeta.hasOwner()) {
+                        str.append("player:").append(skullMeta.getOwner()).append(" ");
+                    }
+                    break;
+                case LEATHER_HELMET:
+                case LEATHER_CHESTPLATE:
+                case LEATHER_LEGGINGS:
+                case LEATHER_BOOTS:
+                    LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) item.getItemMeta();
+                    int rgb = leatherArmorMeta.getColor().asRGB();
+                    str.append("color:").append(rgb).append(" ");
+                    break;
+                case LEGACY_BANNER: //ToDO: shouldnt be done like this, but i dont have time to do this corecctly.
+                    BannerMeta bannerMeta = (BannerMeta) item.getItemMeta();
+                    if (bannerMeta != null) {
+                        int basecolor = bannerMeta.getBaseColor().getColor().asRGB();
+                        str.append("basecolor:").append(basecolor).append(" ");
+                        for (org.bukkit.block.banner.Pattern p : bannerMeta.getPatterns()) {
+                            String type = p.getPattern().getIdentifier();
+                            int color = p.getColor().getColor().asRGB();
+                            str.append(type).append(",").append(color).append(" ");
+                        }
+                    }
+                    break;
+                case SHIELD:
+                    BlockStateMeta shieldMeta = (BlockStateMeta) item.getItemMeta();
+                    Banner shieldBannerMeta = (Banner) shieldMeta.getBlockState();
+                    int basecolor = 0;
+                    if (shieldBannerMeta.getBaseColor() != null) {
+                        basecolor = shieldBannerMeta.getBaseColor().getColor().asRGB();
+                    }
                     str.append("basecolor:").append(basecolor).append(" ");
-                    for (org.bukkit.block.banner.Pattern p : bannerMeta.getPatterns()) {
+                    for (org.bukkit.block.banner.Pattern p : shieldBannerMeta.getPatterns()) {
                         String type = p.getPattern().getIdentifier();
                         int color = p.getColor().getColor().asRGB();
                         str.append(type).append(",").append(color).append(" ");
                     }
-                }
-                break;
-            case SHIELD:
-                BlockStateMeta shieldMeta = (BlockStateMeta) item.getItemMeta();
-                Banner shieldBannerMeta = (Banner) shieldMeta.getBlockState();
-                int basecolor = 0;
-                if (shieldBannerMeta.getBaseColor() != null) {
-                    basecolor = shieldBannerMeta.getBaseColor().getColor().asRGB();
-                }
-                str.append("basecolor:").append(basecolor).append(" ");
-                for (org.bukkit.block.banner.Pattern p : shieldBannerMeta.getPatterns()) {
-                    String type = p.getPattern().getIdentifier();
-                    int color = p.getColor().getColor().asRGB();
-                    str.append(type).append(",").append(color).append(" ");
-                }
-                break;
+                    break;
+            }
+        } catch (NoSuchFieldError e) {
+            System.out.println("No such field.");
+        } catch (Exception e) {
+            Debugger.runReport(e);
         }
         return str.toString().replace("§", "&").trim();
     }

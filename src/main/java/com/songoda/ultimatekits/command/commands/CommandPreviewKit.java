@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;

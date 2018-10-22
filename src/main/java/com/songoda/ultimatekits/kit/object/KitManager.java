@@ -6,8 +6,8 @@ import java.util.*;
 
 public final class KitManager {
 
-    private List<Kit> registeredKits = new LinkedList<>();
     private final Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
+    private List<Kit> registeredKits = new LinkedList<>();
 
     public boolean addKit(Kit kit) {
         if (kit == null) return false;
@@ -84,11 +84,11 @@ public final class KitManager {
             i++;
         }
 
-        int action = i-1;
-        if (up) action = i+1;
+        int action = i - 1;
+        if (up) action = i + 1;
 
         if (action >= 0 && action < registeredKits.size())
-        Collections.swap(registeredKits, i, action);
+            Collections.swap(registeredKits, i, action);
 
     }
 }

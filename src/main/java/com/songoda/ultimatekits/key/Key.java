@@ -2,7 +2,7 @@ package com.songoda.ultimatekits.key;
 
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
-import com.songoda.ultimatekits.kit.object.Kit;
+import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

@@ -1,5 +1,7 @@
-package com.songoda.ultimatekits.kit.object;
+package com.songoda.ultimatekits.editor;
 
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitBlockData;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

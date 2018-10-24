@@ -10,12 +10,9 @@ import com.songoda.ultimatekits.handlers.HologramHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
-import com.songoda.ultimatekits.kit.BlockEditor;
-import com.songoda.ultimatekits.kit.KitEditor;
-import com.songoda.ultimatekits.kit.object.Kit;
-import com.songoda.ultimatekits.kit.object.KitBlockData;
-import com.songoda.ultimatekits.kit.object.KitManager;
-import com.songoda.ultimatekits.kit.object.KitType;
+import com.songoda.ultimatekits.editor.BlockEditor;
+import com.songoda.ultimatekits.editor.KitEditor;
+import com.songoda.ultimatekits.kit.*;
 import com.songoda.ultimatekits.player.PlayerData;
 import com.songoda.ultimatekits.player.PlayerDataManager;
 import com.songoda.ultimatekits.utils.Debugger;
@@ -160,9 +157,16 @@ public class UltimateKits extends JavaPlugin {
                 Material material = kitFile.getConfig().contains("Kits." + kitName + ".displayItem") ? Material.valueOf(kitFile.getConfig().getString("Kits." + kitName + ".displayItem")) : null;
                 boolean hidden = kitFile.getConfig().getBoolean("Kits." + kitName + ".hidden");
                 double price = kitFile.getConfig().getDouble("Kits." + kitName + ".price");
-                List<String> contents = kitFile.getConfig().getStringList("Kits." + kitName + ".items");
+                List<String> strContents = kitFile.getConfig().getStringList("Kits." + kitName + ".items");
+                String kitAnimation = kitFile.getConfig().getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
 
-                Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents);
+                List<KitItem> contents = new ArrayList<>();
+
+                for (String string : strContents) {
+                    contents.add(new KitItem(string));
+                }
+
+                Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents, KitAnimation.valueOf(kitAnimation));
                 kitManager.addKit(kit);
             } catch (Exception ex) {
                 console.sendMessage(Arconix.pl().getApi().format().formatText("&cYour kit &4" + kitName + " &cis setup incorrectly."));
@@ -225,9 +229,16 @@ public class UltimateKits extends JavaPlugin {
             kitFile.getConfig().set("Kits." + kit.getName() + ".link", kit.getLink());
             kitFile.getConfig().set("Kits." + kit.getName() + ".price", kit.getPrice());
             kitFile.getConfig().set("Kits." + kit.getName() + ".hidden", kit.isHidden());
+            kitFile.getConfig().set("Kits." + kit.getName() + ".animation", kit.getKitAnimation().name());
             if (kit.getDisplayItem() != null)
                 kitFile.getConfig().set("Kits." + kit.getName() + ".displayItem", kit.getDisplayItem().toString());
-            kitFile.getConfig().set("Kits." + kit.getName() + ".items", kit.getContents());
+
+            List<KitItem> contents = kit.getContents();
+            List<String> strContents = new ArrayList<>();
+
+            for (KitItem item : contents) strContents.add(item.getSerialized());
+
+            kitFile.getConfig().set("Kits." + kit.getName() + ".items", strContents);
         }
 
         // Wipe old block information.

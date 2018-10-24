@@ -3,9 +3,9 @@ package com.songoda.ultimatekits.events;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.kit.KitEditor;
-import com.songoda.ultimatekits.kit.object.Kit;
-import com.songoda.ultimatekits.kit.object.KitEditorPlayerData;
+import com.songoda.ultimatekits.editor.KitEditor;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.editor.KitEditorPlayerData;
 import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -106,7 +106,7 @@ public class ChatListeners implements Listener {
 
                     player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Command &5" + msg + "&8 has been added to your kit."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
-                    edit.openOverview(kit, player, false, parseStack);
+                    edit.openOverview(kit, player, false, parseStack, 0);
                     break;
                 case MONEY:
                     ItemStack parseStack2 = new ItemStack(Material.PAPER, 1);
@@ -125,7 +125,7 @@ public class ChatListeners implements Listener {
 
                     player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Money &5$" + msg + "&8 has been added to your kit."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
-                    edit.openOverview(kit, player, false, parseStack2);
+                    edit.openOverview(kit, player, false, parseStack2, 0);
                     break;
                 default:
                     e.setCancelled(false);

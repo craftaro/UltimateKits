@@ -1,8 +1,8 @@
 package com.songoda.ultimatekits.handlers;
 
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.kit.object.Kit;
-import com.songoda.ultimatekits.kit.object.KitBlockData;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,7 +45,7 @@ public class DisplayItemHandler {
 
         Kit kit = kitBlockData.getKit();
 
-        List<ItemStack> list = kit.getReadableContents(null, false);
+        List<ItemStack> list = kit.getReadableContents(null, false, false);
         for (Entity e : location.getChunk().getEntities()) {
             if (e.getType() != EntityType.DROPPED_ITEM
                     || e.getLocation().getX() != location.getX()

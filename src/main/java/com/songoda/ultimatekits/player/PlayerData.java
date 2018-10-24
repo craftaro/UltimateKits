@@ -1,6 +1,6 @@
 package com.songoda.ultimatekits.player;
 
-import com.songoda.ultimatekits.kit.object.Kit;
+import com.songoda.ultimatekits.kit.Kit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -9,6 +9,8 @@ import java.util.UUID;
 public class PlayerData {
 
     public enum GUILocation { NOT_IN, BUY_FINAL, KITS, DISPLAY }
+
+    private boolean isInCrate = false;
 
     private final UUID playerUUID;
     private boolean kitMode;
@@ -54,5 +56,13 @@ public class PlayerData {
 
     public void setGuiLocation(GUILocation guiLocation) {
         this.guiLocation = guiLocation;
+    }
+
+    public boolean isInCrate() {
+        return isInCrate;
+    }
+
+    public void setInCrate(boolean inCrate) {
+        isInCrate = inCrate;
     }
 }

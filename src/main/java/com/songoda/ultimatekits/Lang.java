@@ -133,7 +133,9 @@ public enum Lang {
     LAST("Last", "&7Last Page"),
     ECO_SENT("Eco_Sent", "&7You received &a{AMT}&7."),
 
-    INVENTORY_FULL("Inventory-full", "&cYour inventory is too full to claim this kit!");
+    INVENTORY_FULL("Inventory-full", "&cYour inventory is too full to claim this kit!"),
+
+    CRATE_WON("Crate-won", "&7You got a &6{ITEM}&7.");
 
 
     private static FileConfiguration LANG;
@@ -166,6 +168,7 @@ public enum Lang {
             value = value.replace("{AMT}", ob.toString());
             value = value.replace("{COST}", ob.toString());
             value = value.replace("{PRICE}", ob.toString());
+            value = value.replace("{ITEM}", ob.toString());
             value = value.replace("{TIME}", ob.toString());
         }
         return value;

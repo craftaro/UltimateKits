@@ -1,12 +1,18 @@
-package com.songoda.ultimatekits.kit.object;
+package com.songoda.ultimatekits.kit;
 
+import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.key.Key;
+import com.songoda.ultimatekits.kit.type.KitContentCommand;
+import com.songoda.ultimatekits.kit.type.KitContentEconomy;
+import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.player.PlayerData;
+import com.songoda.ultimatekits.tasks.CrateAnimateTask;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -21,11 +27,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -43,13 +45,16 @@ public class Kit {
 
     private Material displayItem;
 
-    private List<String> contents;
+    private List<KitItem> contents;
 
-    public Kit(String name, String title, String link, double price, Material displayItem, int delay, boolean hidden, List<String> contents) {
+    private KitAnimation kitAnimation;
+
+    public Kit(String name, String title, String link, double price, Material displayItem, int delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
         this.name = name;
         this.showableName = Arconix.pl().getApi().format().formatText(name, true);
         this.price = price;
         this.link = link;
+        this.kitAnimation = kitAnimation;
         this.title = title;
         this.delay = delay;
         this.hidden = hidden;
@@ -58,7 +63,7 @@ public class Kit {
     }
 
     public Kit(String name) {
-        this(name, null, null, 0, null, 0, false, new ArrayList<>());
+        this(name, null, null, 0, null, 0, false, new ArrayList<>(), KitAnimation.NONE);
     }
 
     public void buy(Player p) {
@@ -90,9 +95,9 @@ public class Kit {
 
     private List<ItemStack> getItemContents() {
         List<ItemStack> items = new ArrayList<>();
-        for (String str : this.getContents()) {
-            if ((!str.startsWith("/") && !str.startsWith("$")))
-                items.add(Methods.deserializeItemStack(str));
+        for (KitItem item : this.getContents()) {
+            if (item.getContent() instanceof KitContentItem)
+                items.add(((KitContentItem) item.getContent()).getItemStack());
         }
         return items;
     }
@@ -118,51 +123,53 @@ public class Kit {
         return space >= spaceNeeded;
     }
 
-    public void give(Player p, boolean useKey, boolean economy, boolean console) {
+    public void give(Player player, boolean useKey, boolean economy, boolean console) {
         try {
-            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(p, useKey)) {
-                p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.INVENTORY_FULL.getConfigValue()));
+            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player, useKey)) {
+                player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.INVENTORY_FULL.getConfigValue()));
                 return;
             }
-            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Sounds Enabled")) {
-                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
+            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE) {
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
             }
             if (useKey) {
-                if (p.getItemInHand().getType() != Material.TRIPWIRE_HOOK || !p.getItemInHand().hasItemMeta()) {
+                if (player.getItemInHand().getType() != Material.TRIPWIRE_HOOK || !player.getItemInHand().hasItemMeta()) {
                     return;
                 }
 
-                Key key = UltimateKits.getInstance().getKeyManager().getKey(ChatColor.stripColor(p.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
+                Key key = UltimateKits.getInstance().getKeyManager().getKey(ChatColor.stripColor(player.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
 
-                if (!p.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue(showableName)) && !p.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue("All"))) {
-                    p.sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().references.getPrefix() + Lang.WRONG_KEY.getConfigValue()));
+                if (!player.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue(showableName)) && !player.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue("Any"))) {
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().references.getPrefix() + Lang.WRONG_KEY.getConfigValue()));
                     return;
                 }
                 for (int i = 0; i < key.getKitAmount(); i++)
-                    givePartKit(p, key);
-                p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.KEY_SUCCESS.getConfigValue(showableName)));
-                if (p.getInventory().getItemInHand().getAmount() != 1) {
-                    ItemStack is = p.getItemInHand();
+                    givePartKit(player, key);
+                player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.KEY_SUCCESS.getConfigValue(showableName)));
+                if (player.getInventory().getItemInHand().getAmount() != 1) {
+                    ItemStack is = player.getItemInHand();
                     is.setAmount(is.getAmount() - 1);
-                    p.setItemInHand(is);
+                    player.setItemInHand(is);
                 } else {
-                    p.setItemInHand(null);
+                    player.setItemInHand(null);
                 }
                 return;
             }
 
-            if (getNextUse(p) == -1 && !economy && !console) {
-                p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
-            } else if (getNextUse(p) <= 0 || economy || console) {
-                giveKit(p);
+            if (getNextUse(player) == -1 && !economy && !console) {
+                player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
+            } else if (getNextUse(player) <= 0 || economy || console) {
+                giveKit(player);
                 if (economy) {
-                    p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.PURCHASE_SUCCESS.getConfigValue(showableName)));
+                    player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.PURCHASE_SUCCESS.getConfigValue(showableName)));
                 } else {
-                    updateDelay(p);
-                    p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.GIVE_SUCCESS.getConfigValue(showableName)));
+                    updateDelay(player);
+                    if (kitAnimation == KitAnimation.NONE) {
+                        player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.GIVE_SUCCESS.getConfigValue(showableName)));
+                    }
                 }
             } else {
-                p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(p)))));
+                player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(player)))));
             }
 
         } catch (Exception ex) {
@@ -195,7 +202,7 @@ public class Kit {
 
             guititle = Arconix.pl().getApi().format().formatText(guititle);
 
-            List<ItemStack> list = getReadableContents(p, true);
+            List<ItemStack> list = getReadableContents(p, true, false);
 
             int amt = 0;
             for (ItemStack is : list) {
@@ -368,21 +375,32 @@ public class Kit {
 
     public void saveKit(List<ItemStack> items) {
         try {
-            List<String> list = new ArrayList<>();
+            List<KitItem> list = new ArrayList<>();
             for (ItemStack is : items) {
                 if (is != null && is.getType() != null && is.getType() != Material.AIR) {
-                    if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).equals("Command")) {
+
+                    if (is.getItemMeta().hasLore()) {
+                        ItemMeta meta = is.getItemMeta();
+                        List<String> newLore = new ArrayList<>();
+                        for (String line : meta.getLore()) {
+                            if (line.equals(TextComponent.convertToInvisibleString("----"))) break;
+                            newLore.add(line);
+                        }
+                        meta.setLore(newLore);
+                        is.setItemMeta(meta);
+                    }
+
+                    if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).endsWith("Command")) {
                         StringBuilder command = new StringBuilder();
                         for (String line : is.getItemMeta().getLore()) {
                             command.append(line);
                         }
-                        list.add(ChatColor.stripColor(command.toString()));
-                    } else if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).equals("Money")) {
+                        list.add(new KitItem(ChatColor.stripColor(command.toString())));
+                    } else if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).endsWith("Money")) {
                         String money = is.getItemMeta().getLore().get(0);
-                        list.add(ChatColor.stripColor(money));
+                        list.add(new KitItem(ChatColor.stripColor(money)));
                     } else {
-                        String serialized = Methods.serializeItemStack(is);
-                        list.add(serialized);
+                        list.add(new KitItem(is));
                     }
                 }
             }
@@ -393,43 +411,19 @@ public class Kit {
     }
 
 
-    public List<ItemStack> getReadableContents(Player player, boolean commands) {
+    public List<ItemStack> getReadableContents(Player player, boolean commands, boolean moveable) {
         List<ItemStack> stacks = new ArrayList<>();
         try {
-            for (String str : getContents()) {
-                if ((!str.startsWith("/") && !str.startsWith("$")) || commands) {
-                    ItemStack parseStack;
-                    if (str.startsWith("$")) {
-                        parseStack = new ItemStack(Material.PAPER, 1);
-                        ItemMeta meta = parseStack.getItemMeta();
-                        ArrayList<String> lore = new ArrayList<>();
-                        lore.add("§a" + str.trim());
-                        meta.setLore(lore);
-                        meta.setDisplayName(Lang.MONEY.getConfigValue());
-                        parseStack.setItemMeta(meta);
-                    } else if (str.startsWith("/")) {
-                        parseStack = new ItemStack(Material.PAPER, 1);
-                        ItemMeta meta = parseStack.getItemMeta();
+            for (KitItem item : getContents()) {
+                if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol"))) || commands) { //ToDO: I doubt this is correct.
+                    ItemStack stack = moveable ? item.getMoveableItem() : item.getItem();
 
-                        ArrayList<String> lore = new ArrayList<>();
-
-                        int index = 0;
-                        while (index < str.length()) {
-                            lore.add(Arconix.pl().getApi().format().formatText("&a" + str.substring(index, Math.min(index + 30, str.length()))));
-                            index += 30;
-                        }
-                        meta.setLore(lore);
-                        meta.setDisplayName(Lang.COMMAND.getConfigValue());
-                        parseStack.setItemMeta(meta);
-                    } else {
-                        parseStack = Methods.deserializeItemStack(str);
-                    }
-                    ItemStack fin = parseStack;
-                    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && parseStack.getItemMeta().getLore() != null) {
+                    ItemStack fin = stack;
+                    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && stack.getItemMeta().getLore() != null) {
                         ArrayList<String> lore2 = new ArrayList<>();
-                        ItemMeta meta2 = parseStack.getItemMeta();
-                        for (String lor : parseStack.getItemMeta().getLore()) {
-                            lor = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, lor.replace(" ", "_")).replace("_", " ");
+                        ItemMeta meta2 = stack.getItemMeta();
+                        for (String lor : stack.getItemMeta().getLore()) {
+                            lor = PlaceholderAPI.setPlaceholders(player, lor.replace(" ", "_")).replace("_", " ");
                             lore2.add(lor);
                         }
                         meta2.setLore(lore2);
@@ -454,44 +448,58 @@ public class Kit {
 
     public void givePartKit(Player player, Key key) {
         try {
-
-            List<String> innerContents = new ArrayList<>(getContents());
+            List<KitItem> innerContents = new ArrayList<>(getContents());
+            Collections.shuffle(innerContents);
             int amt = innerContents.size();
+            int amtToGive = key == null ? amt : key.getAmt();
 
-            if (key != null && key.getAmt() != -1 && key.getAmt() < innerContents.size()) {
-                amt = innerContents.size() - key.getAmt();
-            }
-
-            while (key != null && amt != 0 && key.getAmt() != -1) {
-                int num = ThreadLocalRandom.current().nextInt(0, innerContents.size());
-                innerContents.remove(num);
-                amt--;
-            }
-            for (String line : innerContents) {
-                if (line.startsWith("$")) {
-                    try {
-                        Methods.pay(player, Double.parseDouble(line.substring("$".length()).trim()));
-                        player.sendMessage(Lang.ECO_SENT.getConfigValue(Arconix.pl().getApi().format().formatEconomy(Double.parseDouble(line.substring("$".length()).trim()))));
-                    } catch (NumberFormatException ex) {
-                        Debugger.runReport(ex);
+            int num = 0;
+            for (KitItem item : innerContents) {
+                if (amtToGive == 0) continue;
+                int ch = item.getChance() == 0 ? 100 : item.getChance();
+                double rand = Math.random() * 100;
+                if (rand - ch < 0 || ch == 100) {
+                    if (item.getContent() instanceof KitContentEconomy) {
+                        try {
+                            Methods.pay(player, ((KitContentEconomy) item.getContent()).getAmount());
+                            player.sendMessage(Lang.ECO_SENT.getConfigValue(Arconix.pl().getApi().format().formatEconomy(((KitContentEconomy) item.getContent()).getAmount())));
+                        } catch (NumberFormatException ex) {
+                            Debugger.runReport(ex);
+                        }
+                        amtToGive --;
+                        continue;
+                    } else if (item.getContent() instanceof KitContentCommand) {
+                        String parsed = ((KitContentCommand) item.getContent()).getCommand();
+                        parsed = parsed.replace("{player}", player.getName());
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
+                        amtToGive --;
+                        continue;
                     }
-                    continue;
-                } else if (line.startsWith("/")) {
-                    String parsed = line.substring(1);
-                    parsed = parsed.replace("{player}", player.getName());
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed); // Not proud of this.
-                    continue;
+
+                    ItemStack parseStack = ((KitContentItem)item.getContent()).getItemStack();
+                    if (parseStack.getType() == Material.AIR) continue;
+
+
+                    amtToGive --;
+
+                    if (kitAnimation != KitAnimation.NONE) {
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(UltimateKits.getInstance(),
+                                () -> new CrateAnimateTask(UltimateKits.getInstance(), player, this, item.getItem()), 210 * num);
+                    } else {
+                        Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
+                        for (ItemStack item2 : overfilled.values()) {
+                            player.getWorld().dropItemNaturally(player.getLocation(), item2);
+                        }
+                    }
+                    num ++;
                 }
-
-                ItemStack parseStack = Methods.deserializeItemStack(line);
-                if (parseStack.getType() == Material.AIR) continue;
-
-                Map<Integer, ItemStack> overfilled = player.getInventory().addItem(parseStack);
-
-
-                for (ItemStack item : overfilled.values()) {
-                    player.getWorld().dropItemNaturally(player.getLocation(), item);
-                }
+            }
+            if (kitAnimation != KitAnimation.NONE) {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(UltimateKits.getInstance(),
+                        () -> {
+                            UltimateKits.getInstance().getPlayerDataManager().getPlayerAction(player).setInCrate(false);
+                            player.closeInventory();
+                        }, (210 * num) + 20);
             }
 
             player.updateInventory();
@@ -660,11 +668,11 @@ public class Kit {
         this.delay = delay;
     }
 
-    public List<String> getContents() {
+    public List<KitItem> getContents() {
         return this.contents;
     }
 
-    public void setContents(List<String> contents) {
+    public void setContents(List<KitItem> contents) {
         this.contents = contents;
     }
 
@@ -690,6 +698,14 @@ public class Kit {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public KitAnimation getKitAnimation() {
+        return kitAnimation;
+    }
+
+    public void setKitAnimation(KitAnimation kitAnimation) {
+        this.kitAnimation = kitAnimation;
     }
 
     @Override

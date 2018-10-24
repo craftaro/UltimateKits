@@ -1,8 +1,8 @@
 package com.songoda.ultimatekits.events;
 
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.kit.object.BlockEditorPlayerData;
-import com.songoda.ultimatekits.kit.object.KitEditorPlayerData;
+import com.songoda.ultimatekits.editor.BlockEditorPlayerData;
+import com.songoda.ultimatekits.editor.KitEditorPlayerData;
 import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

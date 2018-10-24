@@ -36,7 +36,7 @@ public class CommandEdit extends AbstractCommand {
                 return ReturnType.FAILURE;
             }
 
-            instance.getKitEditor().openOverview(instance.getKitManager().getKit(kitStr), player, false, null);
+            instance.getKitEditor().openOverview(instance.getKitManager().getKit(kitStr), player, false, null, 0);
         }
         return ReturnType.SUCCESS;
     }

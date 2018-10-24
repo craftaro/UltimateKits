@@ -3,12 +3,12 @@ package com.songoda.ultimatekits.events;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.kit.BlockEditor;
-import com.songoda.ultimatekits.kit.KitEditor;
+import com.songoda.ultimatekits.editor.BlockEditor;
+import com.songoda.ultimatekits.editor.KitEditor;
 import com.songoda.ultimatekits.kit.KitsGUI;
-import com.songoda.ultimatekits.kit.object.BlockEditorPlayerData;
-import com.songoda.ultimatekits.kit.object.Kit;
-import com.songoda.ultimatekits.kit.object.KitEditorPlayerData;
+import com.songoda.ultimatekits.editor.BlockEditorPlayerData;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.editor.KitEditorPlayerData;
 import com.songoda.ultimatekits.player.PlayerData;
 import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.ChatColor;
@@ -32,8 +32,10 @@ public class InventoryListeners implements Listener {
         try {
             Player player = (Player) event.getWhoClicked();
             PlayerData playerData = instance.getPlayerDataManager().getPlayerAction(player);
-            
-            if (playerData.getGuiLocation() == PlayerData.GUILocation.BUY_FINAL) {
+
+            if (playerData.isInCrate()) {
+                event.setCancelled(true);
+            } else if (playerData.getGuiLocation() == PlayerData.GUILocation.BUY_FINAL) {
                 if (event.getSlot() == 11) {
                     Kit kit = playerData.getInKit();
                     kit.buyWithEconomy(player);
@@ -64,7 +66,6 @@ public class InventoryListeners implements Listener {
                     return;
                 }
 
-                System.out.println(clicked.getItemMeta().getDisplayName());
                 String kitName = clicked.getItemMeta().getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "").split(":")[0];
 
                 Kit kit = instance.getKitManager().getKit(kitName);
@@ -144,7 +145,7 @@ public class InventoryListeners implements Listener {
                             edit.decor(player);
                             break;
                         case 15:
-                            instance.getKitEditor().openOverview(instance.getBlockEditor().getDataFor(player).getKit(), player, true, null);
+                            instance.getKitEditor().openOverview(instance.getBlockEditor().getDataFor(player).getKit(), player, true, null, 0);
                             break;
                     }
                 } else if (instance.getBlockEditor().getDataFor(player).getEditorType() == BlockEditorPlayerData.EditorType.DECOR) {
@@ -178,6 +179,19 @@ public class InventoryListeners implements Listener {
                 KitEditor edit = instance.getKitEditor();
                 if (instance.getKitEditor().getDataFor(player).getEditorType() == KitEditorPlayerData.EditorType.OVERVIEW) {
                     KitEditorPlayerData editorData = edit.getDataFor(player);
+                    if ((event.getSlot() > 9 && event.getSlot() < 44) && event.getSlot() != 17 && event.getSlot() != 36) {
+                        if (event.getCurrentItem().getType() != Material.AIR) {
+                            if (editorData.isInFuction()) {
+                                if (event.isShiftClick()) {
+                                    editorData.setMuteSave(true);
+                                    edit.openOverview(edit.getDataFor(player).getKit(), player, false, null, event.getSlot());
+                                    editorData.setMuteSave(true);
+                                    edit.openOverview(edit.getDataFor(player).getKit(), player, false, null, event.getSlot());
+                                }
+                                event.setCancelled(true);
+                            }
+                        }
+                    }
                     if ((event.getSlot() < 10 || event.getSlot() > 43) || event.getSlot() == 17 || event.getSlot() == 36) {
                         if (event.getInventory() != null && event.getInventory().getType() == InventoryType.CHEST) {
                             event.setCancelled(true);
@@ -203,17 +217,25 @@ public class InventoryListeners implements Listener {
                                 case 14:
                                     edit.createMoney(player);
                                     break;
+                                case 17:
+                                    edit.changeAnimation(player);
+                                    break;
                             }
                         }
                     }
 
-                    if (event.getSlot() == 49) {
+                    if (event.getSlot() == 50) {
                         if (!editorData.isInInventory()) {
                             player.getInventory().setContents(editorData.getInventory());
                             editorData.setInInventory(true);
                             player.updateInventory();
                         } else edit.getInvItems(player, editorData);
                         edit.updateInvButton(event.getInventory(), editorData);
+                    }
+                    if (event.getSlot() == 48) {
+                        editorData.setInFunction(!editorData.isInFuction());
+                        editorData.setMuteSave(true);
+                        edit.openOverview(edit.getDataFor(player).getKit(), player, false, null, 0);
                     }
                 } else if (instance.getKitEditor().getDataFor(player).getEditorType() == KitEditorPlayerData.EditorType.SELLING) {
                     event.setCancelled(true);
@@ -270,7 +292,7 @@ public class InventoryListeners implements Listener {
                     if (event.getInventory().getTitle().contains("You are editing kit")) {
                         instance.getBlockEditor().openOverview(player, instance.getBlockEditor().getDataFor(player).getLocation());
                     } else {
-                        edit.openOverview(edit.getDataFor(player).getKit(), player, false, null);
+                        edit.openOverview(edit.getDataFor(player).getKit(), player, false, null, 0);
                     }
                 }
             }

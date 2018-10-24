@@ -5,7 +5,7 @@ import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.key.Key;
-import com.songoda.ultimatekits.kit.object.Kit;
+import com.songoda.ultimatekits.kit.Kit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -53,12 +53,12 @@ public class CommandKey extends AbstractCommand {
         if (!args[3].trim().equals("all")) {
             Player p = Bukkit.getPlayer(args[3]);
             p.getInventory().addItem(key.getKeyItem(kit, amt));
-            p.sendMessage(instance.references.getPrefix() + Lang.KEY_GIVEN.getConfigValue(kit.getShowableName()));
+            p.sendMessage(instance.references.getPrefix() + Lang.KEY_GIVEN.getConfigValue((kit == null ? "Any" : kit.getShowableName())));
             return ReturnType.SUCCESS;
         }
         for (Player pl : instance.getServer().getOnlinePlayers()) {
             pl.getInventory().addItem(key.getKeyItem(kit, amt));
-            pl.sendMessage(instance.references.getPrefix() + Lang.KEY_GIVEN.getConfigValue(kit.getShowableName()));
+            pl.sendMessage(instance.references.getPrefix() + Lang.KEY_GIVEN.getConfigValue((kit == null ? "Any" : kit.getShowableName())));
         }
         return ReturnType.SUCCESS;
     }

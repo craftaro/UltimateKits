@@ -1,12 +1,11 @@
-package com.songoda.ultimatekits.kit;
+package com.songoda.ultimatekits.editor;
 
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.kit.object.BlockEditorPlayerData;
-import com.songoda.ultimatekits.kit.object.Kit;
-import com.songoda.ultimatekits.kit.object.KitBlockData;
-import com.songoda.ultimatekits.kit.object.KitType;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitBlockData;
+import com.songoda.ultimatekits.kit.KitType;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;

@@ -5,7 +5,7 @@ import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.kit.KitsGUI;
-import com.songoda.ultimatekits.kit.object.Kit;
+import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class CommandKits extends AbstractCommand {
 
     public CommandKits() {
-        super("Kits", null, false, false);
+        super("Kits", null, true, false);
     }
 
     @Override

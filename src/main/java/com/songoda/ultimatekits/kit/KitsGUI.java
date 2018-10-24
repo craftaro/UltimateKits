@@ -4,7 +4,6 @@ import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.kit.object.Kit;
 import com.songoda.ultimatekits.player.PlayerData;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;

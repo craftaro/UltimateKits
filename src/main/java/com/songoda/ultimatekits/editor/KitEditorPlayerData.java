@@ -1,5 +1,6 @@
-package com.songoda.ultimatekits.kit.object;
+package com.songoda.ultimatekits.editor;
 
+import com.songoda.ultimatekits.kit.Kit;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -10,6 +11,8 @@ public class KitEditorPlayerData {
     private EditorType editorType = EditorType.NOTIN;
     private ItemStack[] inventory = new ItemStack[0];
     private boolean showInventory = false;
+    private boolean showFuctions = false;
+    private boolean muteSave = false;
 
     public Kit getKit() {
         return kit;
@@ -27,8 +30,23 @@ public class KitEditorPlayerData {
         this.editorType = editorType;
     }
 
+    public boolean isMuteSave() {
+        return muteSave;
+    }
+
+    public void setMuteSave(boolean muteSave) {
+        this.muteSave = muteSave;
+    }
+
     public boolean isInInventory() {
         return showInventory;
+    }
+    public boolean isInFuction() {
+        return showFuctions;
+    }
+
+    public void setInFunction(boolean showFuctions) {
+        this.showFuctions = showFuctions;
     }
 
     public void setInInventory(boolean showInventory) {

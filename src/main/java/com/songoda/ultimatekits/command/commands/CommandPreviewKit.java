@@ -3,7 +3,7 @@ package com.songoda.ultimatekits.command.commands;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
-import com.songoda.ultimatekits.kit.object.Kit;
+import com.songoda.ultimatekits.kit.Kit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

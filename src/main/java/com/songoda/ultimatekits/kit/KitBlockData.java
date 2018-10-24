@@ -1,4 +1,4 @@
-package com.songoda.ultimatekits.kit.object;
+package com.songoda.ultimatekits.kit;
 
 import com.songoda.ultimatekits.UltimateKits;
 import org.bukkit.Location;

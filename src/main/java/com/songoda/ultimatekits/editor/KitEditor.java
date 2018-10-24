@@ -1,10 +1,12 @@
-package com.songoda.ultimatekits.kit;
+package com.songoda.ultimatekits.editor;
 
+import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.kit.object.Kit;
-import com.songoda.ultimatekits.kit.object.KitEditorPlayerData;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitAnimation;
+import com.songoda.ultimatekits.kit.KitItem;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
@@ -30,7 +32,7 @@ public class KitEditor {
         this.instance = instance;
     }
 
-    public void openOverview(Kit kit, Player player, boolean backb, ItemStack command) {
+    public void openOverview(Kit kit, Player player, boolean backb, ItemStack command, int slot) {
         try {
             KitEditorPlayerData playerData = getDataFor(player);
 
@@ -47,7 +49,7 @@ public class KitEditor {
             exit.setItemMeta(exitmeta);
 
             ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
-            ItemStack back = head2;
+            ItemStack back;
             back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
             back.setDurability((short) 3);
@@ -60,7 +62,7 @@ public class KitEditor {
             itmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&5&l" + playerData.getKit().getName()));
             ArrayList<String> lore = new ArrayList<>();
             lore.add(Arconix.pl().getApi().format().formatText("&fPermissions:"));
-            lore.add(Arconix.pl().getApi().format().formatText("&7essentials.kit." + playerData.getKit().getName().toLowerCase()));
+            lore.add(Arconix.pl().getApi().format().formatText("&7ultimatekits.kit." + playerData.getKit().getName().toLowerCase()));
             itmeta.setLore(lore);
             it.setItemMeta(itmeta);
 
@@ -75,9 +77,16 @@ public class KitEditor {
             i.setItem(8, exit);
 
             int num = 10;
-            List<ItemStack> list = kit.getReadableContents(player, true);
-            for (ItemStack is : list) {
-                /*
+            List<ItemStack> list = kit.getReadableContents(player, true, true);
+            for (ItemStack iss : list) {
+                if (num == 17 || num == 36)
+                    num++;
+
+                KitItem item = new KitItem(iss);
+
+                if (slot != 0 && slot == num) item.setChance(item.getChance() == 100 ? 5 : (item.getChance() + 5));
+                ItemStack is = item.getMoveableItem();
+
                 ItemMeta meta;
 
                 if (is.hasItemMeta()) meta = is.getItemMeta();
@@ -87,19 +96,20 @@ public class KitEditor {
 
                 if (meta.hasLore()) itemLore = meta.getLore();
                 else itemLore = new ArrayList<>();
-
+                itemLore.add(TextComponent.convertToInvisibleString("----"));
+                itemLore.add(TextComponent.formatText("&7Chance: &6" + item.getChance() + "%"));
                 itemLore.add("");
-                itemLore.add(TextComponent.formatText("&7Left-Click: &6To set a display item."));
-                itemLore.add(TextComponent.formatText("&7Middle-Click: &6To set a display name."));
-                itemLore.add(TextComponent.formatText("&7Right-Click: &6To set display lore."));
-                itemLore.add(TextComponent.formatText("&7Shift-Click: &6To set crate percentage."));
-                itemLore.add("");
-                itemLore.add(TextComponent.formatText("&6Leave function mode to move items."));
+                if (playerData.isInFuction()) {
+                    itemLore.add(TextComponent.formatText("&7Left-Click: &6To set a display item."));
+                    itemLore.add(TextComponent.formatText("&7Middle-Click: &6To set a display name."));
+                    itemLore.add(TextComponent.formatText("&7Right-Click: &6To set display lore."));
+                    itemLore.add(TextComponent.formatText("&7Shift-Click: &6To set chance."));
+                    itemLore.add("");
+                    itemLore.add(TextComponent.formatText("&6Leave function mode to move items."));
+                }
                 meta.setLore(itemLore);
                 is.setItemMeta(meta);
-*/
-                if (num == 17 || num == 36)
-                    num++;
+
                 if (is.getAmount() > 64) {
                     int overflow = is.getAmount() % 64;
                     int stackamt = (int) ((long) (is.getAmount() / 64));
@@ -162,23 +172,41 @@ public class KitEditor {
     }
 
     public void updateInvButton(Inventory i, KitEditorPlayerData playerData) {
-        ItemStack alli = new ItemStack(Material.ITEM_FRAME, 1);
+        ItemStack alli = new ItemStack(Material.PAPER, 1);
         ItemMeta allmeta = alli.getItemMeta();
+        if (!playerData.isInFuction()) {
+            allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&6Switch To Item Editing"));
+            List<String> lore = new ArrayList<>();
+            lore.add(Arconix.pl().getApi().format().formatText("&7Click to enable"));
+            lore.add(Arconix.pl().getApi().format().formatText("&7item editing."));
+            allmeta.setLore(lore);
+        } else {
+            allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&6Switch To Item Moving"));
+            List<String> lore = new ArrayList<>();
+            lore.add(Arconix.pl().getApi().format().formatText("&7Click to switch back"));
+            lore.add(Arconix.pl().getApi().format().formatText("&7to item moving."));
+            allmeta.setLore(lore);
+        }
+        alli.setItemMeta(allmeta);
+        i.setItem(48, alli);
+
+        alli = new ItemStack(Material.ITEM_FRAME, 1);
+        allmeta = alli.getItemMeta();
         if (!playerData.isInInventory()) {
             allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&6Switch To Your Inventory"));
             List<String> lore = new ArrayList<>();
-            lore.add(Arconix.pl().getApi().format().formatText("&7Clicking to switch to"));
+            lore.add(Arconix.pl().getApi().format().formatText("&7Click to switch to"));
             lore.add(Arconix.pl().getApi().format().formatText("&7your inventory."));
             allmeta.setLore(lore);
         } else {
             allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&6Switch To Kit Functions"));
             List<String> lore = new ArrayList<>();
-            lore.add(Arconix.pl().getApi().format().formatText("&7Clicking to switch back"));
+            lore.add(Arconix.pl().getApi().format().formatText("&7Click to switch back"));
             lore.add(Arconix.pl().getApi().format().formatText("&7to the kit functions."));
             allmeta.setLore(lore);
         }
         alli.setItemMeta(allmeta);
-        i.setItem(49, alli);
+        i.setItem(50, alli);
     }
 
     public void getInvItems(Player player, KitEditorPlayerData playerData) {
@@ -241,6 +269,16 @@ public class KitEditor {
         alli.setItemMeta(allmeta);
 
         player.getInventory().setItem(14, alli);
+
+        alli = new ItemStack(Material.CHEST, 1);
+        allmeta = alli.getItemMeta();
+        allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&6Kit Animation"));
+        lore = new ArrayList<>();
+        lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &6" + playerData.getKit().getKitAnimation().name()));
+        allmeta.setLore(lore);
+        alli.setItemMeta(allmeta);
+
+        player.getInventory().setItem(17, alli);
     }
 
     public void selling(Player player) {
@@ -302,6 +340,25 @@ public class KitEditor {
             alli.setItemMeta(allmeta);
 
             i.setItem(11, alli);
+
+            alli = new ItemStack(Material.DIAMOND_HELMET);
+            allmeta = alli.getItemMeta();
+            allmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&a&lSet kit link"));
+            lore = new ArrayList<>();
+            if (kit.getLink() != null)
+                lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &a" + kit.getLink() + "&7."));
+            else
+                lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &cNot set&7."));
+            lore.add(Arconix.pl().getApi().format().formatText(""));
+            lore.add(Arconix.pl().getApi().format().formatText("&7Clicking this option will"));
+            lore.add(Arconix.pl().getApi().format().formatText("&7allow you to set a link"));
+            lore.add(Arconix.pl().getApi().format().formatText("&7that players will receive"));
+            lore.add(Arconix.pl().getApi().format().formatText("&7when attempting to purchase"));
+            lore.add(Arconix.pl().getApi().format().formatText("&7this kit."));
+            allmeta.setLore(lore);
+            alli.setItemMeta(allmeta);
+
+            i.setItem(13, alli);
 
             alli = new ItemStack(Material.DIAMOND_HELMET);
             allmeta = alli.getItemMeta();
@@ -602,6 +659,20 @@ public class KitEditor {
         }
     }
 
+    public void changeAnimation(Player player) {
+        KitEditorPlayerData playerData = getDataFor(player);
+
+        Kit kit = playerData.getKit();
+        if (kit.getKitAnimation() == KitAnimation.NONE) {
+            kit.setKitAnimation(KitAnimation.CSGO);
+        } else {
+            kit.setKitAnimation(KitAnimation.NONE);
+        }
+
+        getInvItems(player, playerData);
+
+    }
+
 
     public void createMoney(Player player) {
         try {
@@ -643,7 +714,10 @@ public class KitEditor {
             items = Arrays.copyOf(items, items.length - 10);
 
             kit.saveKit(Arrays.asList(items));
-            player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Changes to &a" + kit.getShowableName() + " &8saved successfully."));
+            if (!playerData.isMuteSave())
+                player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Changes to &a" + kit.getShowableName() + " &8saved successfully."));
+
+            playerData.setMuteSave(false);
         } catch (Exception ex) {
             Debugger.runReport(ex);
         }

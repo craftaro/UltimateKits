@@ -1,7 +1,7 @@
 package com.songoda.ultimatekits.handlers;
 
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.kit.object.KitBlockData;
+import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

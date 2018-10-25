@@ -621,14 +621,14 @@ public class KitEditor {
             if (type) {
                 ItemStack is = player.getItemInHand();
                 if (is == null || is.getType() == Material.AIR) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8You must be holding an item to use this function."));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "&8You must be holding an item to use this function."));
                     return;
                 }
                 kit.setDisplayItem(is.getType());
-                player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Custom Item Display set for kit &a" + kit.getShowableName() + "&8."));
+                player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "&8Custom Item Display set for kit &a" + kit.getShowableName() + "&8."));
             } else {
                 kit.setDisplayItem(null);
-                player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Custom Item Display removed from kit &a" + kit.getShowableName() + "&8."));
+                player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "&8Custom Item Display removed from kit &a" + kit.getShowableName() + "&8."));
             }
             gui(player);
         } catch (Exception ex) {
@@ -642,7 +642,7 @@ public class KitEditor {
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
                 if (playerData.getEditorType() == KitEditorPlayerData.EditorType.COMMAND) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "Editing Timed out."));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "Editing Timed out."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                 }
             }, 500L);
@@ -680,7 +680,7 @@ public class KitEditor {
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
                 if (playerData.getEditorType() == KitEditorPlayerData.EditorType.MONEY) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "Editing Timed out."));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "Editing Timed out."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                 }
             }, 500L);
@@ -715,7 +715,7 @@ public class KitEditor {
 
             kit.saveKit(Arrays.asList(items));
             if (!playerData.isMuteSave())
-                player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Changes to &a" + kit.getShowableName() + " &8saved successfully."));
+                player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "&8Changes to &a" + kit.getShowableName() + " &8saved successfully."));
 
             playerData.setMuteSave(false);
         } catch (Exception ex) {
@@ -756,7 +756,7 @@ public class KitEditor {
             player.closeInventory();
             Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
                 if (playerData.getEditorType() == KitEditorPlayerData.EditorType.DELAY) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "Editing Timed out."));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "Editing Timed out."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                 }
             }, 200L);
@@ -780,7 +780,7 @@ public class KitEditor {
                 player.closeInventory();
                 Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
                     if (playerData.getEditorType() == KitEditorPlayerData.EditorType.TITLE) {
-                        player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "Editing Timed out."));
+                        player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "Editing Timed out."));
                         playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                     }
                 }, 200L);
@@ -807,7 +807,7 @@ public class KitEditor {
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
                 if (playerData.getEditorType() == KitEditorPlayerData.EditorType.PRICE) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "Editing Timed out."));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "Editing Timed out."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                 }
             }, 200L);
@@ -830,7 +830,7 @@ public class KitEditor {
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
                 if (playerData.getEditorType() == KitEditorPlayerData.EditorType.LINK) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "Editing Timed out."));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "Editing Timed out."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                 }
             }, 200L);

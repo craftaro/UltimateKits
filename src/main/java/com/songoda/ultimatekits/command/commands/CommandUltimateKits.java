@@ -14,7 +14,7 @@ public class CommandUltimateKits extends AbstractCommand {
     @Override
     protected AbstractCommand.ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
         sender.sendMessage("");
-        sender.sendMessage(TextComponent.formatText(instance.references.getPrefix() + "&7Version " + instance.getDescription().getVersion() + " Created with <3 by &5&l&oBrianna"));
+        sender.sendMessage(TextComponent.formatText(instance.getReferences().getPrefix() + "&7Version " + instance.getDescription().getVersion() + " Created with <3 by &5&l&oBrianna"));
 
         for (AbstractCommand command : instance.getCommandManager().getCommands()) {
             if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {

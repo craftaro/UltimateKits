@@ -18,18 +18,18 @@ public class CommandSet extends AbstractCommand {
     @Override
     protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
         if (args.length != 2) {
-            sender.sendMessage(instance.references.getPrefix() + Lang.PREVIEW_NO_KIT_SUPPLIED.getConfigValue());
+            sender.sendMessage(instance.getReferences().getPrefix() + Lang.PREVIEW_NO_KIT_SUPPLIED.getConfigValue());
             return ReturnType.FAILURE;
         }
         Player player = (Player) sender;
         String kit = args[1].toLowerCase();
         if (instance.getKitManager().getKit(kit) == null) {
-            player.sendMessage(instance.references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kit));
+            player.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kit));
             return ReturnType.FAILURE;
         }
         Block b = player.getTargetBlock(null, 200);
         instance.getKitManager().addKitToLocation(instance.getKitManager().getKit(kit), b.getLocation());
-        sender.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Kit &a" + kit + " &8set to: &a" + b.getType().toString() + "&8."));
+        sender.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "&8Kit &a" + kit + " &8set to: &a" + b.getType().toString() + "&8."));
         return ReturnType.SUCCESS;
     }
 

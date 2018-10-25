@@ -27,10 +27,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
 
 public class UltimateKits extends JavaPlugin {
-    private static CommandSender console = Bukkit.getConsoleSender();
     private static UltimateKits INSTANCE;
-    public References references;
-    public DisplayItemHandler displayitem;
+
+    private static CommandSender console = Bukkit.getConsoleSender();
+    private References references;
+    private DisplayItemHandler displayItemHandler;
 
     private ConfigWrapper langFile = new ConfigWrapper(this, "", "lang.yml");
     private ConfigWrapper kitFile = new ConfigWrapper(this, "", "kit.yml");
@@ -91,11 +92,10 @@ public class UltimateKits extends JavaPlugin {
 
         new Convert(this);
 
-        references = new References();
+        this.references = new References();
 
-        hologramHandler = new HologramHandler(this);
         new ParticleHandler(this);
-        displayitem = new DisplayItemHandler(this);
+        this.displayItemHandler = new DisplayItemHandler(this);
 
         settingsManager = new SettingsManager(this);
         settingsManager.updateSettings();
@@ -107,6 +107,7 @@ public class UltimateKits extends JavaPlugin {
         this.blockEditor = new BlockEditor(this);
         this.commandManager = new CommandManager(this);
         this.playerDataManager = new PlayerDataManager();
+        this.hologramHandler = new HologramHandler(this);
 
         loadFromFile();
 
@@ -303,7 +304,7 @@ public class UltimateKits extends JavaPlugin {
             kitFile.reloadConfig();
             langFile.reloadConfig();
             loadLanguageFile();
-            references = new References();
+            this.references = new References();
             reloadConfig();
             loadFromFile();
             hologramHandler.updateHolograms();
@@ -381,5 +382,13 @@ public class UltimateKits extends JavaPlugin {
 
     public PlayerDataManager getPlayerDataManager() {
         return playerDataManager;
+    }
+
+    public References getReferences() {
+        return references;
+    }
+
+    public DisplayItemHandler getDisplayItemHandler() {
+        return displayItemHandler;
     }
 }

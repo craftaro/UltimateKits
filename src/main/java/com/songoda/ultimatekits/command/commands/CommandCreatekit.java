@@ -20,11 +20,11 @@ public class CommandCreatekit extends AbstractCommand {
         if (args.length != 2) return ReturnType.SYNTAX_ERROR;
         String kitStr = args[1].toLowerCase();
         if (instance.getKitManager().getKit(kitStr) != null) {
-            p.sendMessage(instance.references.getPrefix() + Lang.KIT_ALREADY_EXISTS.getConfigValue(kitStr));
+            p.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_ALREADY_EXISTS.getConfigValue(kitStr));
             return ReturnType.FAILURE;
         }
 
-        p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText("&aThat kit doesn't exist. Creating it now."));
+        p.sendMessage(UltimateKits.getInstance().getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&aThat kit doesn't exist. Creating it now."));
         Kit kit = new Kit(kitStr.trim());
         UltimateKits.getInstance().getKitManager().addKit(kit);
         instance.getKitEditor().openOverview(kit, p, false, null, 0);

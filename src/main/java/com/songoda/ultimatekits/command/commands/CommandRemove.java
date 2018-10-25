@@ -18,14 +18,14 @@ public class CommandRemove extends AbstractCommand {
     @Override
     protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
         if (args.length != 1) {
-            sender.sendMessage(instance.references.getPrefix() + Lang.PREVIEW_NO_KIT_SUPPLIED.getConfigValue());
+            sender.sendMessage(instance.getReferences().getPrefix() + Lang.PREVIEW_NO_KIT_SUPPLIED.getConfigValue());
             return ReturnType.FAILURE;
         }
         Player player = (Player) sender;
-        Block b = player.getTargetBlock(null, 200);
-        Kit kit = instance.getKitManager().removeKitFromLocation(b.getLocation());
+        Block block = player.getTargetBlock(null, 200);
+        Kit kit = instance.getKitManager().removeKitFromLocation(block.getLocation());
         UltimateKits.getInstance().getHologramHandler().updateHolograms();
-        player.sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().references.getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + b.getType().toString() + "&8."));
+        player.sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().getReferences().getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType().toString() + "&8."));
         return ReturnType.SUCCESS;
     }
 

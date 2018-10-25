@@ -27,7 +27,7 @@ public class CommandKits extends AbstractCommand {
             Player p = (Player) sender;
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
-                p.sendMessage(instance.references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitName));
+                p.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitName));
                 return ReturnType.FAILURE;
             }
             Kit kit = instance.getKitManager().getKit(kitName);
@@ -41,28 +41,28 @@ public class CommandKits extends AbstractCommand {
         if (args.length == 2) {
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
-                sender.sendMessage(instance.references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitName));
+                sender.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitName));
                 return ReturnType.FAILURE;
             }
 
             if (Bukkit.getPlayerExact(args[1]) == null) {
-                sender.sendMessage(instance.references.getPrefix() + Lang.PLAYER_NOT_FOUND.getConfigValue(kitName));
+                sender.sendMessage(instance.getReferences().getPrefix() + Lang.PLAYER_NOT_FOUND.getConfigValue(kitName));
                 return ReturnType.FAILURE;
             }
             Player p2 = Bukkit.getPlayer(args[1]);
             if (sender instanceof Player) {
                 Player p = (Player) sender;
                 if (!Methods.canGiveKit(p)) {
-                    p.sendMessage(instance.references.getPrefix() + Lang.NO_PERM.getConfigValue());
+                    p.sendMessage(instance.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
                     return ReturnType.FAILURE;
                 }
             }
             Kit kit = instance.getKitManager().getKit(kitName);
             kit.give(p2, false, false, true);
-            sender.sendMessage(instance.references.getPrefix() + Arconix.pl().getApi().format().formatText("&7You gave &9" + p2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7."));
+            sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&7You gave &9" + p2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7."));
             return ReturnType.SUCCESS;
         }
-        sender.sendMessage(instance.references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.SYNTAX.getConfigValue()));
+        sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.SYNTAX.getConfigValue()));
         return ReturnType.SUCCESS;
     }
 

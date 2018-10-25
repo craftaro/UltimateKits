@@ -15,16 +15,16 @@ import java.util.List;
 
 public class CommandManager implements CommandExecutor {
 
-    private UltimateKits instance;
+    private UltimateKits plugin;
 
     private List<AbstractCommand> commands = new ArrayList<>();
 
-    public CommandManager(UltimateKits instance) {
-        this.instance = instance;
+    public CommandManager(UltimateKits plugin) {
+        this.plugin = plugin;
 
-        instance.getCommand("UltimateKits").setExecutor(this);
-        instance.getCommand("PreviewKit").setExecutor(this);
-        instance.getCommand("Kits").setExecutor(this);
+        plugin.getCommand("UltimateKits").setExecutor(this);
+        plugin.getCommand("PreviewKit").setExecutor(this);
+        plugin.getCommand("Kits").setExecutor(this);
 
         AbstractCommand commandUltimateKits = addCommand(new CommandUltimateKits());
 
@@ -61,7 +61,7 @@ public class CommandManager implements CommandExecutor {
                 }
             }
         }
-        commandSender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&7The command you entered does not exist or is spelt incorrectly."));
+        commandSender.sendMessage(plugin.getReferences().getPrefix() + TextComponent.formatText("&7The command you entered does not exist or is spelt incorrectly."));
         return true;
     }
 
@@ -71,14 +71,14 @@ public class CommandManager implements CommandExecutor {
             return;
         }
         if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
-            AbstractCommand.ReturnType returnType = command.runCommand(instance, sender, strings);
+            AbstractCommand.ReturnType returnType = command.runCommand(plugin, sender, strings);
             if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
-                sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&cInvalid Syntax!"));
-                sender.sendMessage(instance.references.getPrefix() + TextComponent.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
+                sender.sendMessage(plugin.getReferences().getPrefix() + TextComponent.formatText("&cInvalid Syntax!"));
+                sender.sendMessage(plugin.getReferences().getPrefix() + TextComponent.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
             }
             return;
         }
-        sender.sendMessage(instance.references.getPrefix() + Lang.NO_PERM.getConfigValue());
+        sender.sendMessage(plugin.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
     }
 
     public List<AbstractCommand> getCommands() {

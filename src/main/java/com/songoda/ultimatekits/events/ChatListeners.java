@@ -23,41 +23,41 @@ import java.util.ArrayList;
  */
 public class ChatListeners implements Listener {
 
-    private final UltimateKits instance;
+    private final UltimateKits plugin;
 
-    public ChatListeners(UltimateKits instance) {
-        this.instance = instance;
+    public ChatListeners(UltimateKits plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onChat(AsyncPlayerChatEvent e) {
+    public void onChat(AsyncPlayerChatEvent event) {
         try {
-            final Player player = e.getPlayer();
+            final Player player = event.getPlayer();
 
-            KitEditorPlayerData playerData = instance.getKitEditor().getDataFor(player);
+            KitEditorPlayerData playerData = plugin.getKitEditor().getDataFor(player);
 
             if (playerData.getEditorType() == KitEditorPlayerData.EditorType.NOTIN) return;
 
-            KitEditor edit = instance.getKitEditor();
-            String msg = e.getMessage().trim();
+            KitEditor edit = plugin.getKitEditor();
+            String msg = event.getMessage().trim();
             Kit kit = playerData.getKit();
-            e.setCancelled(true);
+            event.setCancelled(true);
 
             switch (playerData.getEditorType()) {
                 case PRICE:
-                    if (instance.getServer().getPluginManager().getPlugin("Vault") == null) {
-                        player.sendMessage(instance.references.getPrefix() + Arconix.pl().getApi().format().formatText("&8You must have &aVault &8installed to utilize economy.."));
+                    if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
+                        player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&8You must have &aVault &8installed to utilize economy.."));
                     } else if (!Arconix.pl().getApi().doMath().isNumeric(msg)) {
                         player.sendMessage(Arconix.pl().getApi().format().formatText("&a" + msg + " &8is not a number. Please do not include a &a$&8."));
                     } else {
 
                         if (kit.getLink() != null) {
                             kit.setLink(null);
-                            player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8LINK has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
+                            player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8LINK has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
                         }
                         Double eco = Double.parseDouble(msg);
                         kit.setPrice(eco);
-                        instance.getHologramHandler().updateHolograms();
+                        plugin.getHologramHandler().updateHolograms();
                     }
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                     edit.selling(player);
@@ -74,18 +74,18 @@ public class ChatListeners implements Listener {
                 case LINK:
                     if (kit.getPrice() != 0) {
                         kit.setPrice(0);
-                        player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8ECO has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
+                        player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8ECO has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
                     }
                     kit.setLink(msg);
-                    instance.getHologramHandler().updateHolograms();
+                    plugin.getHologramHandler().updateHolograms();
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                     edit.selling(player);
                     break;
                 case TITLE:
                     kit.setTitle(msg);
-                    instance.saveConfig();
-                    instance.getHologramHandler().updateHolograms();
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Title &5" + msg + "&8 added to Kit &a" + kit.getShowableName() + "&8."));
+                    plugin.saveConfig();
+                    plugin.getHologramHandler().updateHolograms();
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8Title &5" + msg + "&8 added to Kit &a" + kit.getShowableName() + "&8."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                     edit.gui(player);
                     break;
@@ -104,7 +104,7 @@ public class ChatListeners implements Listener {
                     meta.setDisplayName(Lang.COMMAND.getConfigValue());
                     parseStack.setItemMeta(meta);
 
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Command &5" + msg + "&8 has been added to your kit."));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8Command &5" + msg + "&8 has been added to your kit."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                     edit.openOverview(kit, player, false, parseStack, 0);
                     break;
@@ -123,12 +123,12 @@ public class ChatListeners implements Listener {
                     meta2.setDisplayName(Lang.MONEY.getConfigValue());
                     parseStack2.setItemMeta(meta2);
 
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8Money &5$" + msg + "&8 has been added to your kit."));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8Money &5$" + msg + "&8 has been added to your kit."));
                     playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
                     edit.openOverview(kit, player, false, parseStack2, 0);
                     break;
                 default:
-                    e.setCancelled(false);
+                    event.setCancelled(false);
                     break;
             }
         } catch (Exception ex) {

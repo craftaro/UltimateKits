@@ -32,7 +32,7 @@ public class BlockListeners implements Listener {
             Kit kit = kitBlockData.getKit();
             instance.getKitManager().removeKitFromLocation(block.getLocation());
             instance.getHologramHandler().updateHolograms();
-            event.getPlayer().sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().references.getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType() + "&8."));
+            event.getPlayer().sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType() + "&8."));
 
         } catch (Exception e) {
             Debugger.runReport(e);

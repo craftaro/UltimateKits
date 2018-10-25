@@ -49,6 +49,8 @@ public class Kit {
 
     private KitAnimation kitAnimation;
 
+    private final UltimateKits plugin;
+
     public Kit(String name, String title, String link, double price, Material displayItem, int delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
         this.name = name;
         this.showableName = Arconix.pl().getApi().format().formatText(name, true);
@@ -60,33 +62,34 @@ public class Kit {
         this.hidden = hidden;
         this.displayItem = displayItem;
         this.contents = contents;
+        this.plugin = UltimateKits.getInstance();
     }
 
     public Kit(String name) {
         this(name, null, null, 0, null, 0, false, new ArrayList<>(), KitAnimation.NONE);
     }
 
-    public void buy(Player p) {
+    public void buy(Player player) {
         try {
-            if (hasPermission(p) && UltimateKits.getInstance().getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
-                give(p, false, false, false);
+            if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+                give(player, false, false, false);
                 return;
             }
 
-            if (!p.hasPermission("ultimatekits.buy." + name)) {
-                p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Lang.NO_PERM.getConfigValue());
+            if (!player.hasPermission("ultimatekits.buy." + name)) {
+                player.sendMessage(plugin.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
                 return;
             }
 
             if (link != null) {
-                p.sendMessage("");
-                p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText("&a" + link));
-                p.sendMessage("");
-                p.closeInventory();
+                player.sendMessage("");
+                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&a" + link));
+                player.sendMessage("");
+                player.closeInventory();
             } else if (price != 0) {
-                confirmBuy(name, p);
+                confirmBuy(name, player);
             } else {
-                p.sendMessage(Lang.NO_PERM.getConfigValue());
+                player.sendMessage(Lang.NO_PERM.getConfigValue());
             }
         } catch (Exception ex) {
             Debugger.runReport(ex);
@@ -115,7 +118,7 @@ public class Kit {
 
 
         if (useKey) {
-            Key key = UltimateKits.getInstance().getKeyManager().getKey(ChatColor.stripColor(p.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
+            Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(p.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
             if (key.getAmt() != -1)
                 spaceNeeded = key.getAmt();
         }
@@ -125,11 +128,11 @@ public class Kit {
 
     public void give(Player player, boolean useKey, boolean economy, boolean console) {
         try {
-            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player, useKey)) {
-                player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.INVENTORY_FULL.getConfigValue()));
+            if (plugin.getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player, useKey)) {
+                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.INVENTORY_FULL.getConfigValue()));
                 return;
             }
-            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE) {
+            if (plugin.getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE) {
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
             }
             if (useKey) {
@@ -137,15 +140,15 @@ public class Kit {
                     return;
                 }
 
-                Key key = UltimateKits.getInstance().getKeyManager().getKey(ChatColor.stripColor(player.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
+                Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(player.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
 
                 if (!player.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue(showableName)) && !player.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue("Any"))) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().references.getPrefix() + Lang.WRONG_KEY.getConfigValue()));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + Lang.WRONG_KEY.getConfigValue()));
                     return;
                 }
                 for (int i = 0; i < key.getKitAmount(); i++)
                     givePartKit(player, key);
-                player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.KEY_SUCCESS.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.KEY_SUCCESS.getConfigValue(showableName)));
                 if (player.getInventory().getItemInHand().getAmount() != 1) {
                     ItemStack is = player.getItemInHand();
                     is.setAmount(is.getAmount() - 1);
@@ -157,19 +160,19 @@ public class Kit {
             }
 
             if (getNextUse(player) == -1 && !economy && !console) {
-                player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
             } else if (getNextUse(player) <= 0 || economy || console) {
                 giveKit(player);
                 if (economy) {
-                    player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.PURCHASE_SUCCESS.getConfigValue(showableName)));
+                    player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.PURCHASE_SUCCESS.getConfigValue(showableName)));
                 } else {
                     updateDelay(player);
                     if (kitAnimation == KitAnimation.NONE) {
-                        player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.GIVE_SUCCESS.getConfigValue(showableName)));
+                        player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.GIVE_SUCCESS.getConfigValue(showableName)));
                     }
                 }
             } else {
-                player.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(player)))));
+                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(player)))));
             }
 
         } catch (Exception ex) {
@@ -185,16 +188,16 @@ public class Kit {
                     && !p.hasPermission("previewkit." + name)
                     && !p.hasPermission("ultimatekits.use")
                     && !p.hasPermission("ultimatekits." + name)) {
-                p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Lang.NO_PERM.getConfigValue());
+                p.sendMessage(plugin.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
                 return;
             }
             if (name == null) {
-                p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(showableName));
+                p.sendMessage(plugin.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(showableName));
                 return;
             }
-            PlayerData playerData = UltimateKits.getInstance().getPlayerDataManager().getPlayerAction(p);
+            PlayerData playerData = plugin.getPlayerDataManager().getPlayerAction(p);
             playerData.setInKit(this);
-            p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Lang.PREVIEWING_KIT.getConfigValue(showableName));
+            p.sendMessage(plugin.getReferences().getPrefix() + Lang.PREVIEWING_KIT.getConfigValue(showableName));
             String guititle = Arconix.pl().getApi().format().formatTitle(Lang.PREVIEW_TITLE.getConfigValue(showableName));
             if (title != null) {
                 guititle = Lang.PREVIEW_TITLE.getConfigValue(Arconix.pl().getApi().format().formatText(title, true));
@@ -226,7 +229,7 @@ public class Kit {
                 buyable = true;
             }
             int min = 0;
-            if (UltimateKits.getInstance().getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
+            if (plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
                 min = 9;
                 if (!buyable) {
                     min = min + 9;
@@ -247,8 +250,8 @@ public class Kit {
 
 
             int num = 0;
-            if (!UltimateKits.getInstance().getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-                ItemStack exit = new ItemStack(Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")), 1);
+            if (!plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
+                ItemStack exit = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
                 ItemMeta exitmeta = exit.getItemMeta();
                 exitmeta.setDisplayName(Lang.EXIT.getConfigValue());
                 exit.setItemMeta(exitmeta);
@@ -286,11 +289,11 @@ public class Kit {
             }
 
             if (buyable) {
-                ItemStack link = new ItemStack(Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Buy Icon")), 1);
+                ItemStack link = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Buy Icon")), 1);
                 ItemMeta linkmeta = link.getItemMeta();
                 linkmeta.setDisplayName(Lang.BUYNOW.getConfigValue());
                 ArrayList<String> lore = new ArrayList<>();
-                if (hasPermission(p) && UltimateKits.getInstance().getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+                if (hasPermission(p) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
                     lore.add(Lang.CLICKECO.getConfigValue("0"));
                     if (p.isOp()) {
                         lore.add("");
@@ -314,7 +317,7 @@ public class Kit {
             }
 
             for (ItemStack is : list) {
-                if (!UltimateKits.getInstance().getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
+                if (!plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
                     if (num == 17)
                         num++;
                     if (num == (max - 18))
@@ -347,13 +350,13 @@ public class Kit {
                     }
                     continue;
                 }
-                if (!UltimateKits.getInstance().getConfig().getBoolean("Main.Dont Preview Commands In Kits") || is.getType() != Material.PAPER || !is.getItemMeta().hasDisplayName() || !is.getItemMeta().getDisplayName().equals(Lang.COMMAND.getConfigValue())) {
+                if (!plugin.getConfig().getBoolean("Main.Dont Preview Commands In Kits") || is.getType() != Material.PAPER || !is.getItemMeta().hasDisplayName() || !is.getItemMeta().getDisplayName().equals(Lang.COMMAND.getConfigValue())) {
                     i.setItem(num, is);
                     num++;
                 }
             }
 
-            if (back && !UltimateKits.getInstance().getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
+            if (back && !plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
 
                 ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
                 ItemStack skull2 = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
@@ -415,7 +418,7 @@ public class Kit {
         List<ItemStack> stacks = new ArrayList<>();
         try {
             for (KitItem item : getContents()) {
-                if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol"))) || commands) { //ToDO: I doubt this is correct.
+                if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(plugin.getConfig().getString("Main.Currency Symbol"))) || commands) { //ToDO: I doubt this is correct.
                     ItemStack stack = moveable ? item.getMoveableItem() : item.getItem();
 
                     ItemStack fin = stack;
@@ -483,8 +486,8 @@ public class Kit {
                     amtToGive --;
 
                     if (kitAnimation != KitAnimation.NONE) {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(UltimateKits.getInstance(),
-                                () -> new CrateAnimateTask(UltimateKits.getInstance(), player, this, item.getItem()), 210 * num);
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
+                                () -> new CrateAnimateTask(plugin, player, this, item.getItem()), 210 * num);
                     } else {
                         Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
                         for (ItemStack item2 : overfilled.values()) {
@@ -495,9 +498,9 @@ public class Kit {
                 }
             }
             if (kitAnimation != KitAnimation.NONE) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(UltimateKits.getInstance(),
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
                         () -> {
-                            UltimateKits.getInstance().getPlayerDataManager().getPlayerAction(player).setInCrate(false);
+                            plugin.getPlayerDataManager().getPlayerAction(player).setInCrate(false);
                             player.closeInventory();
                         }, (210 * num) + 20);
             }
@@ -509,12 +512,12 @@ public class Kit {
     }
 
     public void updateDelay(Player player) {
-        UltimateKits.getInstance().getDataFile().getConfig().set("Kits." + name + ".delays." + player.getUniqueId().toString(), System.currentTimeMillis());
+        plugin.getDataFile().getConfig().set("Kits." + name + ".delays." + player.getUniqueId().toString(), System.currentTimeMillis());
     }
 
     public Long getNextUse(Player player) {
         String configSectionPlayer = "Kits." + name + ".delays." + player.getUniqueId().toString();
-        FileConfiguration config = UltimateKits.getInstance().getDataFile().getConfig();
+        FileConfiguration config = plugin.getDataFile().getConfig();
 
         if (!config.contains(configSectionPlayer)) {
             return 0L;
@@ -531,7 +534,7 @@ public class Kit {
         try {
 
             double cost = price;
-            if (hasPermission(p) && UltimateKits.getInstance().getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+            if (hasPermission(p) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
                 cost = 0;
             }
             Inventory i = Bukkit.createInventory(null, 27, Arconix.pl().getApi().format().formatTitle(Lang.GUI_TITLE_YESNO.getConfigValue(cost)));
@@ -567,12 +570,12 @@ public class Kit {
             i.setItem(25, Methods.getBackgroundGlass(true));
             i.setItem(26, Methods.getBackgroundGlass(true));
 
-            ItemStack item2 = new ItemStack(Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Buy Icon")), 1);
+            ItemStack item2 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Buy Icon")), 1);
             ItemMeta itemmeta2 = item2.getItemMeta();
             itemmeta2.setDisplayName(Lang.YES_GUI.getConfigValue());
             item2.setItemMeta(itemmeta2);
 
-            ItemStack item3 = new ItemStack(Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")), 1);
+            ItemStack item3 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
             ItemMeta itemmeta3 = item3.getItemMeta();
             itemmeta3.setDisplayName(Lang.NO_GUI.getConfigValue());
             item3.setItemMeta(itemmeta3);
@@ -581,8 +584,8 @@ public class Kit {
             i.setItem(11, item2);
             i.setItem(15, item3);
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(UltimateKits.getInstance(), () -> {
-                PlayerData playerData = UltimateKits.getInstance().getPlayerDataManager().getPlayerAction(p);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                PlayerData playerData = plugin.getPlayerDataManager().getPlayerAction(p);
                 playerData.setInKit(this);
                 playerData.setGuiLocation(PlayerData.GUILocation.BUY_FINAL);
             }, 1);
@@ -593,23 +596,23 @@ public class Kit {
 
     public void buyWithEconomy(Player p) {
         try {
-            if (UltimateKits.getInstance().getServer().getPluginManager().getPlugin("Vault") == null) return;
-            RegisteredServiceProvider<Economy> rsp = UltimateKits.getInstance().getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+            if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) return;
+            RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 
             net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
             if (!econ.has(p, price) && !hasPermission(p)) {
                 if (!hasPermission(p))
-                    p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NO_PERM.getConfigValue(showableName)));
+                    p.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NO_PERM.getConfigValue(showableName)));
                 else
-                    p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.CANNOT_AFFORD.getConfigValue(showableName)));
+                    p.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.CANNOT_AFFORD.getConfigValue(showableName)));
                 return;
             }
             if (this.delay > 0) {
 
                 if (getNextUse(p) == -1) {
-                    p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
+                    p.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
                 } else if (getNextUse(p) != 0) {
-                    p.sendMessage(UltimateKits.getInstance().references.getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(p)))));
+                    p.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(p)))));
                     return;
                 }
             }

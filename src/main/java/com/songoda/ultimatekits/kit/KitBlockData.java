@@ -29,7 +29,7 @@ public class KitBlockData {
         setShowHologram(false);
         setDisplayingItems(false);
         setHasParticles(false);
-        UltimateKits.getInstance().displayitem.displayItem(this);
+        UltimateKits.getInstance().getDisplayItemHandler().displayItem(this);
         UltimateKits.getInstance().getHologramHandler().updateHolograms();
     }
 

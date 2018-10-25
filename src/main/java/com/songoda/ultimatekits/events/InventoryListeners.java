@@ -23,8 +23,8 @@ public class InventoryListeners implements Listener {
 
     private final UltimateKits instance;
 
-    public InventoryListeners(UltimateKits instance) {
-        this.instance = instance;
+    public InventoryListeners(UltimateKits plugin) {
+        this.instance = plugin;
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -41,14 +41,14 @@ public class InventoryListeners implements Listener {
                     kit.buyWithEconomy(player);
                     player.closeInventory();
                 } else if (event.getSlot() == 15) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + Lang.BUYCANCELLED.getConfigValue()));
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + Lang.BUYCANCELLED.getConfigValue()));
                     player.closeInventory();
                 }
                 event.setCancelled(true);
             } else if (playerData.getGuiLocation() == PlayerData.GUILocation.KITS) {
                 event.setCancelled(true);
-                if (instance.references.isPlaySound())
-                    player.playSound(event.getWhoClicked().getLocation(), instance.references.getSound(), 10.0F, 1.0F);
+                if (instance.getReferences().isPlaySound())
+                    player.playSound(event.getWhoClicked().getLocation(), instance.getReferences().getSound(), 10.0F, 1.0F);
                 if (event.getAction() == InventoryAction.NOTHING
                         || event.getCurrentItem().getType() == Material.AIR
                         || event.getCurrentItem().getItemMeta().getDisplayName() == null) {
@@ -104,8 +104,8 @@ public class InventoryListeners implements Listener {
                 }
             } else if (playerData.getGuiLocation() == PlayerData.GUILocation.DISPLAY) {
                 event.setCancelled(true);
-                if (instance.references.isPlaySound()) {
-                    ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), instance.references.getSound(), 10.0F, 1.0F);
+                if (instance.getReferences().isPlaySound()) {
+                    ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), instance.getReferences().getSound(), 10.0F, 1.0F);
                 }
                 if (event.getAction() == InventoryAction.NOTHING
                         || event.getCurrentItem().getType() == Material.AIR
@@ -277,7 +277,7 @@ public class InventoryListeners implements Listener {
                             break;
                         case 15:
                             instance.getKitManager().removeKit(edit.getDataFor(player).getKit());
-                            player.sendMessage(instance.references.getPrefix() + Arconix.pl().getApi().format().formatText("&cKit destroyed successfully."));
+                            player.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&cKit destroyed successfully."));
                             player.closeInventory();
                             break;
                     }
@@ -309,8 +309,8 @@ public class InventoryListeners implements Listener {
             if (instance.getPlayerDataManager().getPlayerAction((Player)event.getWhoClicked()).getGuiLocation() != PlayerData.GUILocation.DISPLAY)
                 return;
             event.setCancelled(true);
-            if (instance.references.isPlaySound())
-                ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), instance.references.getSound(), 10.0F, 1.0F);
+            if (instance.getReferences().isPlaySound())
+                ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), instance.getReferences().getSound(), 10.0F, 1.0F);
 
         } catch (Exception ex) {
             Debugger.runReport(ex);
@@ -323,8 +323,8 @@ public class InventoryListeners implements Listener {
             if (instance.getPlayerDataManager().getPlayerAction((Player)event.getWhoClicked()).getGuiLocation() != PlayerData.GUILocation.DISPLAY)
                 return;
             event.setCancelled(true);
-            if (instance.references.isPlaySound())
-                ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), instance.references.getSound(), 10.0F, 1.0F);
+            if (instance.getReferences().isPlaySound())
+                ((Player) event.getWhoClicked()).playSound(event.getWhoClicked().getLocation(), instance.getReferences().getSound(), 10.0F, 1.0F);
 
         } catch (Exception ex) {
             Debugger.runReport(ex);

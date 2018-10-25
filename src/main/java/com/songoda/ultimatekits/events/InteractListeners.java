@@ -57,10 +57,10 @@ public class InteractListeners implements Listener {
 
                 if (kitBlockData.getType() != KitType.PREVIEW) {
                     if (kitBlockData.getType() == KitType.CRATE) {
-                        player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + Lang.NOT_KEY.getConfigValue()));
+                        player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + Lang.NOT_KEY.getConfigValue()));
                     } else if (kitBlockData.getType() == KitType.CLAIM) {
                         if (!player.hasPermission("essentials.kit." + kit.getName().toLowerCase()) || !player.hasPermission("ultimatekits.kit." + kit.getName().toLowerCase())) {
-                            player.sendMessage(instance.references.getPrefix() + Lang.NO_PERM.getConfigValue());
+                            player.sendMessage(instance.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
                             return;
                         }
                         if (kit.getNextUse(player) <= 0) {
@@ -68,7 +68,7 @@ public class InteractListeners implements Listener {
                             kit.updateDelay(player);
                         } else {
                             long time = kit.getNextUse(player);
-                            player.sendMessage(instance.references.getPrefix() + Lang.NOT_YET.getConfigValue(Arconix.pl().getApi().format().readableTime(time)));
+                            player.sendMessage(instance.getReferences().getPrefix() + Lang.NOT_YET.getConfigValue(Arconix.pl().getApi().format().readableTime(time)));
                         }
                     }
                 } else if (kit.getLink() != null || kit.getPrice() != 0) {

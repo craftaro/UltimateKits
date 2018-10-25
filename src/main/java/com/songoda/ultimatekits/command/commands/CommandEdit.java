@@ -25,14 +25,14 @@ public class CommandEdit extends AbstractCommand {
 
         if (args.length == 1) {
             if (instance.getConfig().getString("data.block." + loc) == null) {
-                player.sendMessage(Arconix.pl().getApi().format().formatText(instance.references.getPrefix() + "&8This block does not contain a kit."));
+                player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "&8This block does not contain a kit."));
                 return ReturnType.FAILURE;
             }
             instance.getBlockEditor().openOverview(player, block.getLocation());
         } else {
             String kitStr = args[1].toLowerCase().trim();
             if (instance.getKitManager().getKit(kitStr) == null) {
-                player.sendMessage(instance.references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitStr));
+                player.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitStr));
                 return ReturnType.FAILURE;
             }
 

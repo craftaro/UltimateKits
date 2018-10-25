@@ -14,15 +14,15 @@ public class CommandPreviewKit extends AbstractCommand {
     }
 
     @Override
-    protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(UltimateKits plugin, CommandSender sender, String... args) {
         Player player = (Player) sender;
         if (args.length != 1) {
-            player.sendMessage(instance.references.getPrefix() + Lang.PREVIEW_NO_KIT_SUPPLIED.getConfigValue());
+            player.sendMessage(plugin.getReferences().getPrefix() + Lang.PREVIEW_NO_KIT_SUPPLIED.getConfigValue());
             return ReturnType.FAILURE;
         }
-        Kit kit = instance.getKitManager().getKit(args[0].toLowerCase().trim());
+        Kit kit = plugin.getKitManager().getKit(args[0].toLowerCase().trim());
         if (kit == null) {
-            player.sendMessage(instance.references.getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue());
+            player.sendMessage(plugin.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue());
             return ReturnType.FAILURE;
         }
         kit.display(player, false);

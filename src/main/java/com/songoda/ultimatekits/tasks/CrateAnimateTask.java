@@ -102,7 +102,7 @@ public class CrateAnimateTask extends BukkitRunnable {
                         player.getWorld().dropItemNaturally(player.getLocation(), item2);
                     }
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10f, 10f);
-                    player.sendMessage(plugin.references.getPrefix() + TextComponent.formatText(Lang.CRATE_WON.getConfigValue(WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))));
+                    player.sendMessage(plugin.getReferences().getPrefix() + TextComponent.formatText(Lang.CRATE_WON.getConfigValue(WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))));
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> finish(), 50);
                 }
                 done = true;

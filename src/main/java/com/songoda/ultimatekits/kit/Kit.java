@@ -28,6 +28,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -456,6 +457,8 @@ public class Kit {
             int amt = innerContents.size();
             int amtToGive = key == null ? amt : key.getAmt();
 
+            AtomicReference<CrateAnimateTask> task = null;
+
             int num = 0;
             for (KitItem item : innerContents) {
                 if (amtToGive == 0) continue;
@@ -487,7 +490,7 @@ public class Kit {
 
                     if (kitAnimation != KitAnimation.NONE) {
                         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
-                                () -> new CrateAnimateTask(plugin, player, this, item.getItem()), 210 * num);
+                                () -> task.set(new CrateAnimateTask(plugin, player, this, item.getItem())), 210 * num);
                     } else {
                         Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
                         for (ItemStack item2 : overfilled.values()) {
@@ -497,12 +500,8 @@ public class Kit {
                     num ++;
                 }
             }
-            if (kitAnimation != KitAnimation.NONE) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
-                        () -> {
-                            plugin.getPlayerDataManager().getPlayerAction(player).setInCrate(false);
-                            player.closeInventory();
-                        }, (210 * num) + 20);
+            if (task.get() != null) {
+                task.get().setLast(true);
             }
 
             player.updateInventory();

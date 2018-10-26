@@ -39,13 +39,13 @@ public class KitItem {
     public KitItem(ItemStack item) {
         ItemStack itemStack = item.clone();
         ItemMeta meta = itemStack.getItemMeta();
-        if (meta != null || meta.getDisplayName().contains(";")) {
+        if (itemStack.hasItemMeta() && meta.getDisplayName().contains(";")) {
             translateLine(meta.getDisplayName());
             String[] split = meta.getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "").split(";", 2);
             meta.setDisplayName(split[1].contains("faqe") ? null : meta.getDisplayName().split(";", 2)[1]);
             itemStack.setItemMeta(meta);
         }
-        String name = meta.hasDisplayName() ? meta.getDisplayName() : "";
+        String name = itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() ? meta.getDisplayName() : "";
 
         if (name.startsWith(UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol"))) {
             this.content = new KitContentEconomy(Double.parseDouble(name.substring(1).trim()));

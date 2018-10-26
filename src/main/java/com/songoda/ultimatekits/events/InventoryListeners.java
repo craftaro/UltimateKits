@@ -179,16 +179,21 @@ public class InventoryListeners implements Listener {
                 KitEditor edit = instance.getKitEditor();
                 if (instance.getKitEditor().getDataFor(player).getEditorType() == KitEditorPlayerData.EditorType.OVERVIEW) {
                     KitEditorPlayerData editorData = edit.getDataFor(player);
-                    if ((event.getSlot() > 9 && event.getSlot() < 44) && event.getSlot() != 17 && event.getSlot() != 36) {
-                        if (event.getCurrentItem().getType() != Material.AIR) {
-                            if (editorData.isInFuction()) {
-                                if (event.isShiftClick()) {
-                                    editorData.setMuteSave(true);
-                                    edit.openOverview(edit.getDataFor(player).getKit(), player, false, null, event.getSlot());
-                                    editorData.setMuteSave(true);
-                                    edit.openOverview(edit.getDataFor(player).getKit(), player, false, null, event.getSlot());
+                    if (!(event.getRawSlot() > event.getView().getTopInventory().getSize() - 1)) {
+                        if ((event.getSlot() > 9 && event.getSlot() < 44) && event.getSlot() != 17 && event.getSlot() != 36) {
+                            if (event.getCurrentItem().getType() != Material.AIR) {
+                                if (editorData.isInFuction()) {
+                                    if (event.isShiftClick()) {
+                                        edit.replaceItem(KitEditor.Action.CHANCE, player, event.getCurrentItem(), event.getSlot());
+                                    } else if (event.isLeftClick()) {
+                                        edit.replaceItem(KitEditor.Action.DISPLAY_ITEM, player, event.getCurrentItem(), event.getSlot());
+                                    } else if (event.getClick() == ClickType.MIDDLE) {
+                                        edit.replaceItem(KitEditor.Action.DISPLAY_NAME, player, event.getCurrentItem(), event.getSlot());
+                                    } else if (event.isRightClick()) {
+                                        edit.replaceItem(KitEditor.Action.DISPLAY_LORE, player, event.getCurrentItem(), event.getSlot());
+                                    }
+                                    event.setCancelled(true);
                                 }
-                                event.setCancelled(true);
                             }
                         }
                     }

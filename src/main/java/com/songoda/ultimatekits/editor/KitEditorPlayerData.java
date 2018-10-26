@@ -14,6 +14,9 @@ public class KitEditorPlayerData {
     private boolean showFuctions = false;
     private boolean muteSave = false;
 
+    private int toReplaceSlot = 0;
+    private ItemStack toReplace = null;
+
     public Kit getKit() {
         return kit;
     }
@@ -61,5 +64,21 @@ public class KitEditorPlayerData {
         this.inventory = inventory;
     }
 
-    public enum EditorType {OVERVIEW, GENERAL, SELLING, GUI, COMMAND, MONEY, DELAY, TITLE, PRICE, LINK, NOTIN}
+    public int getToReplaceSlot() {
+        return toReplaceSlot;
+    }
+
+    public void setToReplaceSlot(int toReplaceSlot) {
+        this.toReplaceSlot = toReplaceSlot;
+    }
+
+    public ItemStack getToReplace() {
+        return toReplace;
+    }
+
+    public void setToReplace(ItemStack toReplace) {
+        this.toReplace = toReplace;
+    }
+
+    public enum EditorType {OVERVIEW, GENERAL, SELLING, GUI, COMMAND, MONEY, DELAY, TITLE, PRICE, LINK, NOTIN, DISPLAY_ITEM, DISPLAY_NAME, DISPLAY_LORE}
 }

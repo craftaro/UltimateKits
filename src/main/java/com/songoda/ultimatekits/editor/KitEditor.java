@@ -24,6 +24,8 @@ import java.util.*;
  */
 public class KitEditor {
 
+    public enum Action { NONE, CHANCE, DISPLAY_ITEM, DISPLAY_NAME, DISPLAY_LORE}
+
     private final Map<UUID, KitEditorPlayerData> editorPlayerData = new HashMap<>();
 
     private UltimateKits instance;
@@ -32,9 +34,11 @@ public class KitEditor {
         this.instance = instance;
     }
 
-    public void openOverview(Kit kit, Player player, boolean backb, ItemStack command, int slot) {
+    public void openOverview(Kit kit, Player player, boolean backb, ItemStack toReplace, int slot) {
         try {
             KitEditorPlayerData playerData = getDataFor(player);
+            playerData.setToReplace(null);
+            playerData.setToReplaceSlot(0);
 
             //assign kit to object.
             playerData.setKit(kit);
@@ -77,14 +81,17 @@ public class KitEditor {
             i.setItem(8, exit);
 
             int num = 10;
-            List<ItemStack> list = kit.getReadableContents(player, true, true);
+            List<ItemStack> list = kit.getReadableContents(player, false,true, true);
             for (ItemStack iss : list) {
                 if (num == 17 || num == 36)
                     num++;
 
+                if (num == slot && toReplace != null) {
+                    iss = toReplace;
+                }
+
                 KitItem item = new KitItem(iss);
 
-                if (slot != 0 && slot == num) item.setChance(item.getChance() == 100 ? 5 : (item.getChance() + 5));
                 ItemStack is = item.getMoveableItem();
 
                 ItemMeta meta;
@@ -98,12 +105,22 @@ public class KitEditor {
                 else itemLore = new ArrayList<>();
                 itemLore.add(TextComponent.convertToInvisibleString("----"));
                 itemLore.add(TextComponent.formatText("&7Chance: &6" + item.getChance() + "%"));
+                if (playerData.isInFuction()) {
+                    itemLore.add(TextComponent.formatText("&7Display Item: &6" + (item.getDisplayItem() == null ? "null" : item.getDisplayItem().name())));
+                    itemLore.add(TextComponent.formatText("&7Display Name: &6" + TextComponent.formatText(item.getDisplayName())));
+                    itemLore.add(TextComponent.formatText("&7Display Lore: &6" + TextComponent.formatText(item.getDisplayLore())));
+                }
                 itemLore.add("");
                 if (playerData.isInFuction()) {
                     itemLore.add(TextComponent.formatText("&7Left-Click: &6To set a display item."));
                     itemLore.add(TextComponent.formatText("&7Middle-Click: &6To set a display name."));
                     itemLore.add(TextComponent.formatText("&7Right-Click: &6To set display lore."));
                     itemLore.add(TextComponent.formatText("&7Shift-Click: &6To set chance."));
+                    itemLore.add("");
+                    itemLore.add(TextComponent.formatText("&7Display options only show up on display."));
+                    itemLore.add(TextComponent.formatText("&7This can be useful if you want to explain"));
+                    itemLore.add(TextComponent.formatText("&7What an item does without putting it in the"));
+                    itemLore.add(TextComponent.formatText("&7permanent lore."));
                     itemLore.add("");
                     itemLore.add(TextComponent.formatText("&6Leave function mode to move items."));
                 }
@@ -130,8 +147,8 @@ public class KitEditor {
                     num++;
                 }
             }
-            if (command != null)
-                i.setItem(num, command);
+            if (toReplace != null && slot == 0)
+                i.setItem(num, toReplace);
 
             i.setItem(3, Methods.getGlass());
             i.setItem(5, Methods.getGlass());
@@ -168,6 +185,42 @@ public class KitEditor {
             updateInvButton(i, playerData);
         } catch (Exception e) {
             Debugger.runReport(e);
+        }
+    }
+
+    public void replaceItem(Action action, Player player, ItemStack itemStack, int slot) {
+        KitEditorPlayerData playerData = getDataFor(player);
+        playerData.setToReplace(itemStack);
+        playerData.setToReplaceSlot(slot);
+
+        if (itemStack.getItemMeta().hasLore()) {
+            ItemMeta meta = itemStack.getItemMeta();
+            List<String> newLore = new ArrayList<>();
+            for (String line : meta.getLore()) {
+                if (line.equals(TextComponent.convertToInvisibleString("----"))) break;
+                newLore.add(line);
+            }
+            meta.setLore(newLore);
+            itemStack.setItemMeta(meta);
+        }
+
+        KitItem item = new KitItem(itemStack);
+
+        switch (action) {
+            case CHANCE:
+                item.setChance(item.getChance() == 100 ? 5 : (item.getChance() + 5));
+                playerData.setMuteSave(true);
+                openOverview(getDataFor(player).getKit(), player, false, item.getMoveableItem(), slot);
+                break;
+            case DISPLAY_ITEM:
+                editDisplayItem(player);
+                break;
+            case DISPLAY_NAME:
+                editDisplayName(player);
+                break;
+            case DISPLAY_LORE:
+                editDisplayLore(player);
+                break;
         }
     }
 
@@ -664,7 +717,7 @@ public class KitEditor {
 
         Kit kit = playerData.getKit();
         if (kit.getKitAnimation() == KitAnimation.NONE) {
-            kit.setKitAnimation(KitAnimation.CSGO);
+            kit.setKitAnimation(KitAnimation.ROULETTE);
         } else {
             kit.setKitAnimation(KitAnimation.NONE);
         }
@@ -840,6 +893,72 @@ public class KitEditor {
 
             player.sendMessage("");
             player.sendMessage(Arconix.pl().getApi().format().formatText("Please type a link. Example: &ahttp://buy.viscernity.com/"));
+            player.sendMessage("");
+        } catch (Exception ex) {
+            Debugger.runReport(ex);
+        }
+    }
+
+    public void editDisplayItem(Player player) {
+        try {
+            KitEditorPlayerData playerData = getDataFor(player);
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
+                if (playerData.getEditorType() == KitEditorPlayerData.EditorType.LINK) {
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "Editing Timed out."));
+                    playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
+                }
+            }, 200L);
+            player.closeInventory();
+
+            playerData.setEditorType(KitEditorPlayerData.EditorType.DISPLAY_ITEM);
+
+            player.sendMessage("");
+            player.sendMessage(Arconix.pl().getApi().format().formatText("Please type a material. Example: &aStone"));
+            player.sendMessage("");
+        } catch (Exception ex) {
+            Debugger.runReport(ex);
+        }
+    }
+
+    public void editDisplayName(Player player) {
+        try {
+            KitEditorPlayerData playerData = getDataFor(player);
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
+                if (playerData.getEditorType() == KitEditorPlayerData.EditorType.LINK) {
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "Editing Timed out."));
+                    playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
+                }
+            }, 200L);
+            player.closeInventory();
+
+            playerData.setEditorType(KitEditorPlayerData.EditorType.DISPLAY_NAME);
+
+            player.sendMessage("");
+            player.sendMessage(Arconix.pl().getApi().format().formatText("Please type a name. Example: &aCool Item"));
+            player.sendMessage("");
+        } catch (Exception ex) {
+            Debugger.runReport(ex);
+        }
+    }
+
+    public void editDisplayLore(Player player) {
+        try {
+            KitEditorPlayerData playerData = getDataFor(player);
+
+            Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
+                if (playerData.getEditorType() == KitEditorPlayerData.EditorType.LINK) {
+                    player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "Editing Timed out."));
+                    playerData.setEditorType(KitEditorPlayerData.EditorType.NOTIN);
+                }
+            }, 200L);
+            player.closeInventory();
+
+            playerData.setEditorType(KitEditorPlayerData.EditorType.DISPLAY_LORE);
+
+            player.sendMessage("");
+            player.sendMessage(Arconix.pl().getApi().format().formatText("Please type in lore. Example: &aCool Lore"));
             player.sendMessage("");
         } catch (Exception ex) {
             Debugger.runReport(ex);

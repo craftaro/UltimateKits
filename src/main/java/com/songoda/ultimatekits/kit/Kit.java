@@ -206,7 +206,7 @@ public class Kit {
 
             guititle = Arconix.pl().getApi().format().formatText(guititle);
 
-            List<ItemStack> list = getReadableContents(p, true, false);
+            List<ItemStack> list = getReadableContents(p, true,true, false);
 
             int amt = 0;
             for (ItemStack is : list) {
@@ -415,12 +415,13 @@ public class Kit {
     }
 
 
-    public List<ItemStack> getReadableContents(Player player, boolean commands, boolean moveable) {
+    public List<ItemStack> getReadableContents(Player player, boolean preview, boolean commands, boolean moveable) {
         List<ItemStack> stacks = new ArrayList<>();
         try {
             for (KitItem item : getContents()) {
                 if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(plugin.getConfig().getString("Main.Currency Symbol"))) || commands) { //ToDO: I doubt this is correct.
                     ItemStack stack = moveable ? item.getMoveableItem() : item.getItem();
+                    if (preview) stack = item.getItemForDisplay();
 
                     ItemStack fin = stack;
                     if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && stack.getItemMeta().getLore() != null) {
@@ -457,7 +458,7 @@ public class Kit {
             int amt = innerContents.size();
             int amtToGive = key == null ? amt : key.getAmt();
 
-            AtomicReference<CrateAnimateTask> task = null;
+            CrateAnimateTask task = null;
 
             int num = 0;
             for (KitItem item : innerContents) {
@@ -485,12 +486,12 @@ public class Kit {
                     ItemStack parseStack = ((KitContentItem)item.getContent()).getItemStack();
                     if (parseStack.getType() == Material.AIR) continue;
 
-
                     amtToGive --;
 
                     if (kitAnimation != KitAnimation.NONE) {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
-                                () -> task.set(new CrateAnimateTask(plugin, player, this, item.getItem())), 210 * num);
+                        final CrateAnimateTask cTask = new CrateAnimateTask(plugin, player, this, item.getItem());
+                        task = cTask;
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, cTask::start, 140 * num);
                     } else {
                         Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
                         for (ItemStack item2 : overfilled.values()) {
@@ -500,8 +501,8 @@ public class Kit {
                     num ++;
                 }
             }
-            if (task.get() != null) {
-                task.get().setLast(true);
+            if (task != null) {
+                task.setLast(true);
             }
 
             player.updateInventory();

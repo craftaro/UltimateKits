@@ -52,14 +52,16 @@ public class CrateAnimateTask extends BukkitRunnable {
                     this.items.addLast(item);
             }
         }
+    }
 
-        instance = this;
+    public void start() {
+        if (instance == null) instance = this;
         instance.runTaskTimer(plugin, 0, 3);
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             slow = true;
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> finish = true, 20);
-        }, 130);
+        }, 60);
     }
 
     private int num = 0;

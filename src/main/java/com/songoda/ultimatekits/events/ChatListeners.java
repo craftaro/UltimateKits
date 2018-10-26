@@ -6,7 +6,9 @@ import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.editor.KitEditor;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.editor.KitEditorPlayerData;
+import com.songoda.ultimatekits.kit.KitItem;
 import com.songoda.ultimatekits.utils.Debugger;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,6 +46,32 @@ public class ChatListeners implements Listener {
             event.setCancelled(true);
 
             switch (playerData.getEditorType()) {
+                case DISPLAY_ITEM:
+                    ItemStack toReplace = null;
+                    try {
+                        Material material = Material.valueOf(msg.trim().toUpperCase());
+
+                        KitItem item = new KitItem(playerData.getToReplace());
+                        item.setDisplayItem(material);
+
+                        toReplace = item.getMoveableItem();
+                    } catch (Exception e) {
+                        player.sendMessage(Arconix.pl().getApi().format().formatText("&a" + msg + " &8is not a valid material."));
+                    }
+                    edit.openOverview(edit.getDataFor(player).getKit(), player, false, toReplace, playerData.getToReplaceSlot());
+                    break;
+                case DISPLAY_NAME:
+                    KitItem item = new KitItem(playerData.getToReplace());
+                    item.setDisplayName(msg);
+
+                    edit.openOverview(edit.getDataFor(player).getKit(), player, false, item.getMoveableItem(), playerData.getToReplaceSlot());
+                    break;
+                case DISPLAY_LORE:
+                    KitItem item2 = new KitItem(playerData.getToReplace());
+                    item2.setDisplayLore(msg);
+
+                    edit.openOverview(edit.getDataFor(player).getKit(), player, false, item2.getMoveableItem(), playerData.getToReplaceSlot());
+                    break;
                 case PRICE:
                     if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
                         player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&8You must have &aVault &8installed to utilize economy.."));

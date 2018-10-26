@@ -39,7 +39,7 @@ public class KitItem {
     public KitItem(ItemStack item) {
         ItemStack itemStack = item.clone();
         ItemMeta meta = itemStack.getItemMeta();
-        if (meta.getDisplayName().contains(";")) {
+        if (meta != null || meta.getDisplayName().contains(";")) {
             translateLine(meta.getDisplayName());
             String[] split = meta.getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "").split(";", 2);
             meta.setDisplayName(split[1].contains("faqe") ? null : meta.getDisplayName().split(";", 2)[1]);

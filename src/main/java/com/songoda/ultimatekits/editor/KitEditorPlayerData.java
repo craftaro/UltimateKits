@@ -44,16 +44,17 @@ public class KitEditorPlayerData {
     public boolean isInInventory() {
         return showInventory;
     }
+
+    public void setInInventory(boolean showInventory) {
+        this.showInventory = showInventory;
+    }
+
     public boolean isInFuction() {
         return showFuctions;
     }
 
     public void setInFunction(boolean showFuctions) {
         this.showFuctions = showFuctions;
-    }
-
-    public void setInInventory(boolean showInventory) {
-        this.showInventory = showInventory;
     }
 
     public ItemStack[] getInventory() {

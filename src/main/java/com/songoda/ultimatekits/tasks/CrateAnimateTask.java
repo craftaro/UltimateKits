@@ -19,22 +19,17 @@ import java.util.*;
 
 public class CrateAnimateTask extends BukkitRunnable {
 
-    private CrateAnimateTask instance;
-
     private final UltimateKits plugin;
-
     private final Player player;
-
     private final Inventory inventory;
-
     private final ArrayDeque<KitItem> items;
-
     private final ItemStack give;
-
+    private CrateAnimateTask instance;
     private boolean slow = false;
     private boolean finish = false;
     private boolean done = false;
     private boolean last = false;
+    private int num = 0;
 
     public CrateAnimateTask(UltimateKits plugin, Player player, Kit kit, ItemStack give) {
         this.plugin = plugin;
@@ -64,8 +59,6 @@ public class CrateAnimateTask extends BukkitRunnable {
         }, 60);
     }
 
-    private int num = 0;
-
     @Override
     public void run() {
         if (slow && num == 1) {
@@ -74,7 +67,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         }
         num = slow ? 1 : 0;
 
-        for (int i = 0; i < 27; i ++) {
+        for (int i = 0; i < 27; i++) {
             inventory.setItem(i, AInventory.toGlass(true, 0));
         }
 
@@ -93,7 +86,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         }
 
         List<KitItem> items = new ArrayList<>(this.items);
-        for (int i = 0; i < 9; i ++) {
+        for (int i = 0; i < 9; i++) {
             inventory.setItem(9 + i, items.get(i).getItem());
         }
 

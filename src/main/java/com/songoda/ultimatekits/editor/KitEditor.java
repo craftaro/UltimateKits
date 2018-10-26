@@ -24,10 +24,7 @@ import java.util.*;
  */
 public class KitEditor {
 
-    public enum Action { NONE, CHANCE, DISPLAY_ITEM, DISPLAY_NAME, DISPLAY_LORE}
-
     private final Map<UUID, KitEditorPlayerData> editorPlayerData = new HashMap<>();
-
     private UltimateKits instance;
 
     public KitEditor(UltimateKits instance) {
@@ -81,7 +78,7 @@ public class KitEditor {
             i.setItem(8, exit);
 
             int num = 10;
-            List<ItemStack> list = kit.getReadableContents(player, false,true, true);
+            List<ItemStack> list = kit.getReadableContents(player, false, true, true);
             for (ItemStack iss : list) {
                 if (num == 17 || num == 36)
                     num++;
@@ -726,7 +723,6 @@ public class KitEditor {
 
     }
 
-
     public void createMoney(Player player) {
         try {
             KitEditorPlayerData playerData = getDataFor(player);
@@ -972,4 +968,6 @@ public class KitEditor {
     public void removeFromInstance(Player player) {
         editorPlayerData.remove(player);
     }
+
+    public enum Action {NONE, CHANCE, DISPLAY_ITEM, DISPLAY_NAME, DISPLAY_LORE}
 }

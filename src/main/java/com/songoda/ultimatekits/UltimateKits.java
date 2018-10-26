@@ -1,17 +1,18 @@
 package com.songoda.ultimatekits;
 
+import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.api.utils.ConfigWrapper;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
+import com.songoda.ultimatekits.editor.BlockEditor;
+import com.songoda.ultimatekits.editor.KitEditor;
 import com.songoda.ultimatekits.events.*;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.HologramHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
-import com.songoda.ultimatekits.editor.BlockEditor;
-import com.songoda.ultimatekits.editor.KitEditor;
 import com.songoda.ultimatekits.kit.*;
 import com.songoda.ultimatekits.player.PlayerData;
 import com.songoda.ultimatekits.player.PlayerDataManager;
@@ -24,14 +25,15 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class UltimateKits extends JavaPlugin {
     private static UltimateKits INSTANCE;
 
     private static CommandSender console = Bukkit.getConsoleSender();
     private References references;
-    private DisplayItemHandler displayItemHandler;
 
     private ConfigWrapper langFile = new ConfigWrapper(this, "", "lang.yml");
     private ConfigWrapper kitFile = new ConfigWrapper(this, "", "kit.yml");
@@ -46,6 +48,7 @@ public class UltimateKits extends JavaPlugin {
     private BlockEditor blockEditor;
     private HologramHandler hologramHandler;
     private PlayerDataManager playerDataManager;
+    private DisplayItemHandler displayItemHandler;
 
     /**
      * Grab instance of UltimateKits
@@ -84,11 +87,11 @@ public class UltimateKits extends JavaPlugin {
         INSTANCE = this;
         Arconix.pl().hook(this);
 
-        console.sendMessage(Arconix.pl().getApi().format().formatText("&a============================="));
-        console.sendMessage(Arconix.pl().getApi().format().formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
-        console.sendMessage(Arconix.pl().getApi().format().formatText("&7Action: &aEnabling&7..."));
+        console.sendMessage(TextComponent.formatText("&a============================="));
+        console.sendMessage(TextComponent.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
+        console.sendMessage(TextComponent.formatText("&7Action: &aEnabling&7..."));
 
-        loadLanguageFile();
+        this.loadLanguageFile();
 
         new Convert(this);
 
@@ -109,11 +112,11 @@ public class UltimateKits extends JavaPlugin {
         this.playerDataManager = new PlayerDataManager();
         this.hologramHandler = new HologramHandler(this);
 
-        loadFromFile();
+        this.loadFromFile();
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
 
-        console.sendMessage(Arconix.pl().getApi().format().formatText("&a============================="));
+        console.sendMessage(TextComponent.formatText("&a============================="));
 
         getServer().getPluginManager().registerEvents(new BlockListeners(this), this);
         getServer().getPluginManager().registerEvents(new ChatListeners(this), this);
@@ -133,10 +136,10 @@ public class UltimateKits extends JavaPlugin {
         }
         saveToFile();
         kitManager.clearKits();
-        console.sendMessage(Arconix.pl().getApi().format().formatText("&a============================="));
-        console.sendMessage(Arconix.pl().getApi().format().formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
-        console.sendMessage(Arconix.pl().getApi().format().formatText("&7Action: &cDisabling&7..."));
-        console.sendMessage(Arconix.pl().getApi().format().formatText("&a============================="));
+        console.sendMessage(TextComponent.formatText("&a============================="));
+        console.sendMessage(TextComponent.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
+        console.sendMessage(TextComponent.formatText("&7Action: &cDisabling&7..."));
+        console.sendMessage(TextComponent.formatText("&a============================="));
     }
 
     /*
@@ -170,7 +173,7 @@ public class UltimateKits extends JavaPlugin {
                 Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents, KitAnimation.valueOf(kitAnimation));
                 kitManager.addKit(kit);
             } catch (Exception ex) {
-                console.sendMessage(Arconix.pl().getApi().format().formatText("&cYour kit &4" + kitName + " &cis setup incorrectly."));
+                console.sendMessage(TextComponent.formatText("&cYour kit &4" + kitName + " &cis setup incorrectly."));
                 Debugger.runReport(ex);
             }
         }
@@ -311,7 +314,6 @@ public class UltimateKits extends JavaPlugin {
         } catch (Exception ex) {
             Debugger.runReport(ex);
         }
-
     }
 
     /**

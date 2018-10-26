@@ -8,16 +8,12 @@ import java.util.UUID;
 
 public class PlayerData {
 
-    public enum GUILocation { NOT_IN, BUY_FINAL, KITS, DISPLAY }
-
-    private boolean isInCrate = false;
-
     private final UUID playerUUID;
+    private boolean isInCrate = false;
     private boolean kitMode;
     private Kit inKit = null;
     private int kitsPage = 0;
     private GUILocation guiLocation = GUILocation.NOT_IN;
-
     PlayerData(UUID playerUUID) {
         this.playerUUID = playerUUID;
     }
@@ -65,4 +61,6 @@ public class PlayerData {
     public void setInCrate(boolean inCrate) {
         isInCrate = inCrate;
     }
+
+    public enum GUILocation {NOT_IN, BUY_FINAL, KITS, DISPLAY}
 }

@@ -22,14 +22,13 @@ public class CommandManager implements CommandExecutor {
     public CommandManager(UltimateKits plugin) {
         this.plugin = plugin;
 
-        plugin.getCommand("UltimateKits").setExecutor(this);
-        plugin.getCommand("PreviewKit").setExecutor(this);
-        plugin.getCommand("Kits").setExecutor(this);
+        plugin.getCommand("kitadmin").setExecutor(this);
+        plugin.getCommand("kit").setExecutor(this);
+        plugin.getCommand("previewkit").setExecutor(this);
 
-        AbstractCommand commandUltimateKits = addCommand(new CommandUltimateKits());
-
-        addCommand(new CommandPreviewKit());
         addCommand(new CommandKits());
+        addCommand(new CommandPreviewKit());
+        AbstractCommand commandUltimateKits = addCommand(new CommandUltimateKits());
 
         addCommand(new CommandReload(commandUltimateKits));
         addCommand(new CommandSettings(commandUltimateKits));

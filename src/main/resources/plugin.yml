@@ -7,21 +7,21 @@ description: View a kit before you purchase it!
 author: Songoda
 api-version: 1.13
 commands:
-  ultimatekits:
+  kitadmin:
     description: View information on this plugin.
     default: true
-    aliases: [kp, uk]
+    aliases: [ultimatekits, kp, uk]
     usage: /<command> [reload]
+  kit:
+    description: Preview a kit
+    default: true
+    aliases: [kit]
+    usage: /<commands>
   previewkit:
     description: Preview a kit
     default: true
     aliases: [pk, preview]
     usage: /<command> [kit]
-  kits:
-    description: Preview a kit
-    default: true
-    aliases: [kit]
-    usage: /<command>
 permissions:
   ultimatekits.use:
     description: allows the user to preview kit

@@ -4,8 +4,7 @@ import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
-import com.songoda.ultimatekits.utils.Methods;
-import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -48,7 +47,7 @@ public class CommandEdit extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/uk edit";
+        return "/KitAdmin edit";
     }
 
     @Override

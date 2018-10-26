@@ -28,7 +28,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -36,21 +35,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Kit {
 
     private final String name, showableName;
-
+    private final UltimateKits plugin;
     private double price;
     private String link, title;
-
     private int delay;
-
     private boolean hidden;
-
     private Material displayItem;
-
     private List<KitItem> contents;
-
     private KitAnimation kitAnimation;
-
-    private final UltimateKits plugin;
 
     public Kit(String name, String title, String link, double price, Material displayItem, int delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
         this.name = name;
@@ -206,7 +198,7 @@ public class Kit {
 
             guititle = Arconix.pl().getApi().format().formatText(guititle);
 
-            List<ItemStack> list = getReadableContents(p, true,true, false);
+            List<ItemStack> list = getReadableContents(p, true, true, false);
 
             int amt = 0;
             for (ItemStack is : list) {
@@ -473,20 +465,20 @@ public class Kit {
                         } catch (NumberFormatException ex) {
                             Debugger.runReport(ex);
                         }
-                        amtToGive --;
+                        amtToGive--;
                         continue;
                     } else if (item.getContent() instanceof KitContentCommand) {
                         String parsed = ((KitContentCommand) item.getContent()).getCommand();
                         parsed = parsed.replace("{player}", player.getName());
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
-                        amtToGive --;
+                        amtToGive--;
                         continue;
                     }
 
-                    ItemStack parseStack = ((KitContentItem)item.getContent()).getItemStack();
+                    ItemStack parseStack = ((KitContentItem) item.getContent()).getItemStack();
                     if (parseStack.getType() == Material.AIR) continue;
 
-                    amtToGive --;
+                    amtToGive--;
 
                     if (kitAnimation != KitAnimation.NONE) {
                         final CrateAnimateTask cTask = new CrateAnimateTask(plugin, player, this, item.getItem());
@@ -498,7 +490,7 @@ public class Kit {
                             player.getWorld().dropItemNaturally(player.getLocation(), item2);
                         }
                     }
-                    num ++;
+                    num++;
                 }
             }
             if (task != null) {

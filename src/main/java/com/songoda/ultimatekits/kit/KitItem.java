@@ -1,14 +1,12 @@
 package com.songoda.ultimatekits.kit;
 
 import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.api.methods.math.AMath;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.type.KitContent;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.utils.Methods;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -66,7 +64,7 @@ public class KitItem {
             String option = sSplit[0].toLowerCase();
             String value = sSplit[1].trim();
 
-            switch(option) {
+            switch (option) {
                 case "chance":
                     chance = Integer.parseInt(value);
                     break;
@@ -107,7 +105,8 @@ public class KitItem {
     }
 
     public String getSerialized() {
-        if (chance == 0 && displayItem == null && displayName == null && displayLore == null) return this.content.getSerialized();
+        if (chance == 0 && displayItem == null && displayName == null && displayLore == null)
+            return this.content.getSerialized();
         return compileOptions() + ";" + this.content.getSerialized();
     }
 

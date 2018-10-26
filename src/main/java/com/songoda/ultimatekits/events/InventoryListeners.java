@@ -4,11 +4,11 @@ import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.editor.BlockEditor;
-import com.songoda.ultimatekits.editor.KitEditor;
-import com.songoda.ultimatekits.kit.KitsGUI;
 import com.songoda.ultimatekits.editor.BlockEditorPlayerData;
-import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.editor.KitEditor;
 import com.songoda.ultimatekits.editor.KitEditorPlayerData;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitsGUI;
 import com.songoda.ultimatekits.player.PlayerData;
 import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.ChatColor;
@@ -59,9 +59,9 @@ public class InventoryListeners implements Listener {
                 int page = playerData.getKitsPage();
 
                 if (event.getClick() == ClickType.MIDDLE && player.hasPermission("ultimatekits.admin")) {
-                    
+
                     playerData.setKitMode(!playerData.isKitsMode());
-                    
+
                     KitsGUI.show(player, page);
                     return;
                 }
@@ -311,7 +311,7 @@ public class InventoryListeners implements Listener {
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
         try {
-            if (instance.getPlayerDataManager().getPlayerAction((Player)event.getWhoClicked()).getGuiLocation() != PlayerData.GUILocation.DISPLAY)
+            if (instance.getPlayerDataManager().getPlayerAction((Player) event.getWhoClicked()).getGuiLocation() != PlayerData.GUILocation.DISPLAY)
                 return;
             event.setCancelled(true);
             if (instance.getReferences().isPlaySound())
@@ -325,7 +325,7 @@ public class InventoryListeners implements Listener {
     @EventHandler
     public void onInteract(InventoryInteractEvent event) {
         try {
-            if (instance.getPlayerDataManager().getPlayerAction((Player)event.getWhoClicked()).getGuiLocation() != PlayerData.GUILocation.DISPLAY)
+            if (instance.getPlayerDataManager().getPlayerAction((Player) event.getWhoClicked()).getGuiLocation() != PlayerData.GUILocation.DISPLAY)
                 return;
             event.setCancelled(true);
             if (instance.getReferences().isPlaySound())

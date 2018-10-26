@@ -9,7 +9,7 @@ public class References {
     private boolean playSound = false;
     private Sound sound = null;
 
-    public References() {
+    References() {
         try {
             prefix = Lang.PREFIX.getConfigValue() + " ";
 

@@ -182,6 +182,9 @@ public class InventoryListeners implements Listener {
                     if (!(event.getRawSlot() > event.getView().getTopInventory().getSize() - 1)) {
                         if ((event.getSlot() > 9 && event.getSlot() < 44) && event.getSlot() != 17 && event.getSlot() != 36) {
                             if (event.getCurrentItem().getType() != Material.AIR) {
+                                if (event.isShiftClick()) {
+                                    event.setCancelled(true);
+                                }
                                 if (editorData.isInFuction()) {
                                     if (event.isShiftClick()) {
                                         edit.replaceItem(KitEditor.Action.CHANCE, player, event.getCurrentItem(), event.getSlot());
@@ -206,6 +209,7 @@ public class InventoryListeners implements Listener {
                         if (editorData.isInInventory()) {
                             event.setCancelled(false);
                         } else {
+                            event.setCancelled(true);
                             switch (event.getSlot()) {
                                 case 9:
                                     edit.general(player);
@@ -239,6 +243,8 @@ public class InventoryListeners implements Listener {
                     }
                     if (event.getSlot() == 48) {
                         editorData.setInFunction(!editorData.isInFuction());
+                        editorData.setMuteSave(true);
+                        edit.saveKit(player, player.getOpenInventory().getTopInventory());
                         editorData.setMuteSave(true);
                         edit.openOverview(edit.getDataFor(player).getKit(), player, false, null, 0);
                     }

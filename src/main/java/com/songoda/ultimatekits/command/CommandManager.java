@@ -26,7 +26,7 @@ public class CommandManager implements CommandExecutor {
         plugin.getCommand("kit").setExecutor(this);
         plugin.getCommand("previewkit").setExecutor(this);
 
-        addCommand(new CommandKits());
+        addCommand(new CommandKit());
         addCommand(new CommandPreviewKit());
         AbstractCommand commandUltimateKits = addCommand(new CommandUltimateKits());
 

@@ -11,10 +11,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CommandKits extends AbstractCommand {
+public class CommandKit extends AbstractCommand {
 
-    public CommandKits() {
-        super("Kits", null, true, false);
+    public CommandKit() {
+        super("Kit", null, true, false);
     }
 
     @Override

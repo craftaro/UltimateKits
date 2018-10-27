@@ -522,14 +522,13 @@ public class Kit {
         return (last + delay) >= System.currentTimeMillis() ? (last + delay) - System.currentTimeMillis() : 0L;
     }
 
-    private void confirmBuy(String kitName, Player p) {
+    private void confirmBuy(String kitName, Player player) {
         try {
-
             double cost = price;
-            if (hasPermission(p) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+            if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
                 cost = 0;
             }
-            Inventory i = Bukkit.createInventory(null, 27, Arconix.pl().getApi().format().formatTitle(Lang.GUI_TITLE_YESNO.getConfigValue(cost)));
+            Inventory inventory = Bukkit.createInventory(null, 27, Arconix.pl().getApi().format().formatTitle(Lang.GUI_TITLE_YESNO.getConfigValue(cost)));
 
             String title = Arconix.pl().getApi().format().formatTitle("&c" + StringUtils.capitalize(kitName.toLowerCase()));
             ItemStack item = new ItemStack(Material.DIAMOND_HELMET);
@@ -541,26 +540,26 @@ public class Kit {
 
             int nu = 0;
             while (nu != 27) {
-                i.setItem(nu, Methods.getGlass());
+                inventory.setItem(nu, Methods.getGlass());
                 nu++;
             }
 
-            i.setItem(0, Methods.getBackgroundGlass(true));
-            i.setItem(1, Methods.getBackgroundGlass(true));
-            i.setItem(2, Methods.getBackgroundGlass(false));
-            i.setItem(6, Methods.getBackgroundGlass(false));
-            i.setItem(7, Methods.getBackgroundGlass(true));
-            i.setItem(8, Methods.getBackgroundGlass(true));
-            i.setItem(9, Methods.getBackgroundGlass(true));
-            i.setItem(10, Methods.getBackgroundGlass(false));
-            i.setItem(16, Methods.getBackgroundGlass(false));
-            i.setItem(17, Methods.getBackgroundGlass(true));
-            i.setItem(18, Methods.getBackgroundGlass(true));
-            i.setItem(19, Methods.getBackgroundGlass(true));
-            i.setItem(20, Methods.getBackgroundGlass(false));
-            i.setItem(24, Methods.getBackgroundGlass(false));
-            i.setItem(25, Methods.getBackgroundGlass(true));
-            i.setItem(26, Methods.getBackgroundGlass(true));
+            inventory.setItem(0, Methods.getBackgroundGlass(true));
+            inventory.setItem(1, Methods.getBackgroundGlass(true));
+            inventory.setItem(2, Methods.getBackgroundGlass(false));
+            inventory.setItem(6, Methods.getBackgroundGlass(false));
+            inventory.setItem(7, Methods.getBackgroundGlass(true));
+            inventory.setItem(8, Methods.getBackgroundGlass(true));
+            inventory.setItem(9, Methods.getBackgroundGlass(true));
+            inventory.setItem(10, Methods.getBackgroundGlass(false));
+            inventory.setItem(16, Methods.getBackgroundGlass(false));
+            inventory.setItem(17, Methods.getBackgroundGlass(true));
+            inventory.setItem(18, Methods.getBackgroundGlass(true));
+            inventory.setItem(19, Methods.getBackgroundGlass(true));
+            inventory.setItem(20, Methods.getBackgroundGlass(false));
+            inventory.setItem(24, Methods.getBackgroundGlass(false));
+            inventory.setItem(25, Methods.getBackgroundGlass(true));
+            inventory.setItem(26, Methods.getBackgroundGlass(true));
 
             ItemStack item2 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Buy Icon")), 1);
             ItemMeta itemmeta2 = item2.getItemMeta();
@@ -572,12 +571,14 @@ public class Kit {
             itemmeta3.setDisplayName(Lang.NO_GUI.getConfigValue());
             item3.setItemMeta(itemmeta3);
 
-            i.setItem(4, item);
-            i.setItem(11, item2);
-            i.setItem(15, item3);
+            inventory.setItem(4, item);
+            inventory.setItem(11, item2);
+            inventory.setItem(15, item3);
+
+            player.openInventory(inventory);
 
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                PlayerData playerData = plugin.getPlayerDataManager().getPlayerAction(p);
+                PlayerData playerData = plugin.getPlayerDataManager().getPlayerAction(player);
                 playerData.setInKit(this);
                 playerData.setGuiLocation(PlayerData.GUILocation.BUY_FINAL);
             }, 1);

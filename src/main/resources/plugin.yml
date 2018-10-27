@@ -15,7 +15,7 @@ commands:
   kit:
     description: Preview a kit
     default: true
-    aliases: [kit]
+    aliases: [kits]
     usage: /<commands>
   previewkit:
     description: Preview a kit

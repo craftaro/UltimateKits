@@ -24,6 +24,7 @@ public class CommandRemove extends AbstractCommand {
         Player player = (Player) sender;
         Block block = player.getTargetBlock(null, 200);
         Kit kit = instance.getKitManager().removeKitFromLocation(block.getLocation());
+        if (kit == null) return ReturnType.FAILURE;
         UltimateKits.getInstance().getHologramHandler().updateHolograms();
         player.sendMessage(Arconix.pl().getApi().format().formatText(UltimateKits.getInstance().getReferences().getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType().toString() + "&8."));
         return ReturnType.SUCCESS;

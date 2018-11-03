@@ -37,7 +37,11 @@ public final class KitManager {
     }
 
     public Kit removeKitFromLocation(Location location) {
-        getKit(roundLocation(location)).reset();
+        KitBlockData kit = getKit(roundLocation(location));
+
+        if (kit == null) return null;
+
+        kit.reset();
 
         KitBlockData removed = kitsAtLocations.remove(roundLocation(location));
         return (removed != null ? removed.getKit() : null);

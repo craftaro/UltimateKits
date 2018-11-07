@@ -58,6 +58,8 @@ public enum Lang {
 
     COMMAND("Command", "&7Command"),
 
+    CHANCE("Chance", "Chance"),
+
     MONEY("Money", "&6Money"),
 
     LINK("Link", "&9Link"),

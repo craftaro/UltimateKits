@@ -316,17 +316,25 @@ public class Kit {
                     if (num == (max - 18))
                         num++;
                 }
-                if (is.getAmount() > 64) {
-                    if (is.hasItemMeta() && is.getItemMeta().hasLore()) {
-                        ArrayList<String> lore = new ArrayList<>();
-                        for (String str : is.getItemMeta().getLore()) {
-                            str = str.replace("{PLAYER}", p.getName());
-                            str = str.replace("<PLAYER>", p.getName());
-                            lore.add(str);
-                        }
-                        is.getItemMeta().setLore(lore);
 
-                    }
+                ItemMeta meta = is.hasItemMeta() ? is.getItemMeta() : Bukkit.getItemFactory().getItemMeta(is.getType());
+                ArrayDeque<String> lore;
+                if (meta.hasLore()) {
+                    lore = new ArrayDeque<>(meta.getLore());
+                } else {
+                    lore = new ArrayDeque<>();
+                }
+
+                List<String> newLore = new ArrayList<>();
+                for (String str : lore) {
+                    str = str.replace("{PLAYER}", p.getName()).replace("<PLAYER>", p.getName());
+                    newLore.add(str);
+                }
+
+                meta.setLore(newLore);
+                is.setItemMeta(meta);
+
+                if (is.getAmount() > 64) {
                     int overflow = is.getAmount() % 64;
                     int stackamt = is.getAmount() / 64;
                     int num3 = 0;

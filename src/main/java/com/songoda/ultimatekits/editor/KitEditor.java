@@ -101,7 +101,7 @@ public class KitEditor {
                 if (meta.hasLore()) itemLore = meta.getLore();
                 else itemLore = new ArrayList<>();
                 itemLore.add(TextComponent.convertToInvisibleString("----"));
-                itemLore.add(TextComponent.formatText("&7Chance: &6" + item.getChance() + "%"));
+                itemLore.add(TextComponent.formatText("&7" + Lang.CHANCE.getConfigValue() + ": &6" + item.getChance() + "%"));
                 if (playerData.isInFuction()) {
                     itemLore.add(TextComponent.formatText("&7Display Item: &6" + (item.getDisplayItem() == null ? "null" : item.getDisplayItem().name())));
                     itemLore.add(TextComponent.formatText("&7Display Name: &6" + TextComponent.formatText(item.getDisplayName())));

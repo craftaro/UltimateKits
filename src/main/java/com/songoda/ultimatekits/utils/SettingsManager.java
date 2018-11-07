@@ -222,6 +222,7 @@ public class SettingsManager implements Listener {
         o7("EnableSound", "Main.Sounds Enabled", true),
         o8("Sound", "Main.Sound Played While Clicking In Inventories", "ENTITY_ENDERMAN_TELEPORT"),
         o85("-", "Main.Prevent The Redeeming of a Kit When Inventory Is Full", true),
+        o342("-", "Main.Display Chance In Preview", true),
         CURRENCY_SYMBOL("-", "Main.Currency Symbol", "$"),
 
         o9("Exit-Icon", "Interfaces.Exit Icon", "OAK_DOOR"),

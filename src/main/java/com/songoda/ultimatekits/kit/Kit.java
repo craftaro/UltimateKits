@@ -595,33 +595,33 @@ public class Kit {
         }
     }
 
-    public void buyWithEconomy(Player p) {
+    public void buyWithEconomy(Player player) {
         try {
             if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) return;
             RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-
             net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
-            if (!econ.has(p, price) && !hasPermission(p)) {
-                if (!hasPermission(p))
-                    p.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NO_PERM.getConfigValue(showableName)));
-                else
-                    p.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.CANNOT_AFFORD.getConfigValue(showableName)));
+            
+            if (!hasPermission(player)) {
+                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NO_PERM.getConfigValue(showableName)));
+                return;
+            } else if (!econ.has(player, price)) {
+                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.CANNOT_AFFORD.getConfigValue(showableName)));
                 return;
             }
             if (this.delay > 0) {
 
-                if (getNextUse(p) == -1) {
-                    p.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
-                } else if (getNextUse(p) != 0) {
-                    p.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(p)))));
+                if (getNextUse(player) == -1) {
+                    player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
+                } else if (getNextUse(player) != 0) {
+                    player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(player)))));
                     return;
                 }
             }
             if (delay != 0) {
-                updateDelay(p); //updates delay on buy
+                updateDelay(player); //updates delay on buy
             }
-            econ.withdrawPlayer(p, price);
-            give(p, false, true, false);
+            econ.withdrawPlayer(player, price);
+            give(player, false, true, false);
 
         } catch (Exception ex) {
             Debugger.runReport(ex);

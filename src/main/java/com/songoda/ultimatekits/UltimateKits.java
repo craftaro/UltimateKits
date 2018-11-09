@@ -308,7 +308,7 @@ public class UltimateKits extends JavaPlugin {
             langFile.reloadConfig();
             loadLanguageFile();
             this.references = new References();
-            reloadConfig();
+            this.setupConfig();
             loadFromFile();
             hologramHandler.updateHolograms();
         } catch (Exception ex) {

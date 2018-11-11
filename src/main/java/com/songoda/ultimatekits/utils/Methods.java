@@ -231,8 +231,6 @@ public class Methods {
                     }
                     break;
             }
-        } catch (NoSuchFieldError e) {
-            System.out.println("No such field.");
         } catch (Exception e) {
             Debugger.runReport(e);
         }

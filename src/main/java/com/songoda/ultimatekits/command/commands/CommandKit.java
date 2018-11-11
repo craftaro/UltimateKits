@@ -19,7 +19,7 @@ public class CommandKit extends AbstractCommand {
 
     @Override
     protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player) && args.length != 2) {
             sender.sendMessage("Kits:");
             for (Kit kit : instance.getKitManager().getKits()) {
                 sender.sendMessage(" - " + kit.getName());

@@ -14,11 +14,18 @@ import org.bukkit.entity.Player;
 public class CommandKit extends AbstractCommand {
 
     public CommandKit() {
-        super("Kit", null, true, false);
+        super("Kit", null, false, false);
     }
 
     @Override
     protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Kits:");
+            for (Kit kit : instance.getKitManager().getKits()) {
+                sender.sendMessage(" - " + kit.getName());
+            }
+            return ReturnType.SUCCESS;
+        }
         if (args.length == 0) {
             KitsGUI.show((Player) sender, 1);
             return ReturnType.SUCCESS;

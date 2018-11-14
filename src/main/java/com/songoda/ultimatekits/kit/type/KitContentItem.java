@@ -7,6 +7,8 @@ public class KitContentItem implements KitContent {
 
     private ItemStack itemStack;
 
+    private String serialized = null;
+
     public KitContentItem(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
@@ -17,7 +19,9 @@ public class KitContentItem implements KitContent {
 
     @Override
     public String getSerialized() {
-        return Methods.serializeItemStack(itemStack);
+        if (serialized != null) return serialized;
+        serialized = Methods.serializeItemStack(itemStack);
+        return serialized;
     }
 
     @Override

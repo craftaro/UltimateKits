@@ -3,7 +3,6 @@ stages:
 
 variables:
     name: "UltimateKits"
-    suffex: "Legacy"
     path: "/builds/Songoda/$name"
     version: "2.0.4"
 
@@ -16,7 +15,7 @@ build:
     - find $path/ -depth -path '*original*' -delete
     - mv -v $path/target/*.jar $path
   artifacts:
-    name: $name-$suffex-$version
+    name: $name-$version
     paths:
     - "$path/*.jar"
     - "$path/Read_this_before_your_first_use.txt"

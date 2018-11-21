@@ -48,6 +48,7 @@ public class DisplayItemHandler {
         Kit kit = kitBlockData.getKit();
 
         List<ItemStack> list = kit.getReadableContents(null, false, false, false);
+        if (list.isEmpty()) return;
         for (Entity e : location.getChunk().getEntities()) {
             if (e.getType() != EntityType.DROPPED_ITEM
                     || e.getLocation().getX() != location.getX()

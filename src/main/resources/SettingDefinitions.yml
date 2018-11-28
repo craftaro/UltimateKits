@@ -4,7 +4,7 @@ Lock-KP-Commands: 'Setting this to true will prevent players from using any /KP 
 Exit-Icon: 'This is the icon for exiting in kitPreview'
 Buy-Icon: 'This is the icon for buying things in kitPreview'
 Debug-Mode: 'If this is enabled bugs will output to the console.'
-Glass-Type: 'This is the id of the glass used for the background in the guis .'
+Glass-Type: 'This is the id of the glass used for the background in the inventories .'
 Rainbow-Glass: 'If this is enabled the glass background will be randomized colors.'
 Only-Show-Kits-With-Perms: 'If this is set to true kit in the /kit gui will only show up if the user has perms for them.'
 Dont-Preview-Commands: 'When enabled this will prevent commands from being previewed in UltimateKits'

@@ -4,14 +4,16 @@ import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.gui.GUIConfirmBuy;
+import com.songoda.ultimatekits.gui.GUIDisplayKit;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
-import com.songoda.ultimatekits.player.PlayerData;
 import com.songoda.ultimatekits.tasks.CrateAnimateTask;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.StringUtils;
@@ -64,7 +66,7 @@ public class Kit {
 
     public void buy(Player player) {
         try {
-            if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+            if (hasPermission(player) && !player.isOp() && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
                 give(player, false, false, false);
                 return;
             }
@@ -80,7 +82,7 @@ public class Kit {
                 player.sendMessage("");
                 player.closeInventory();
             } else if (price != 0) {
-                confirmBuy(name, player);
+                new GUIConfirmBuy(plugin, player, this);
             } else {
                 player.sendMessage(Lang.NO_PERM.getConfigValue());
             }
@@ -175,202 +177,22 @@ public class Kit {
     }
 
     @SuppressWarnings("Duplicates")
-    public void display(Player p, boolean back) {
+    public void display(Player player, AbstractGUI back) {
         try {
-            if (!p.hasPermission("previewkit.use")
-                    && !p.hasPermission("previewkit." + name)
-                    && !p.hasPermission("ultimatekits.use")
-                    && !p.hasPermission("ultimatekits." + name)) {
-                p.sendMessage(plugin.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
+            if (!player.hasPermission("previewkit.use")
+                    && !player.hasPermission("previewkit." + name)
+                    && !player.hasPermission("ultimatekits.use")
+                    && !player.hasPermission("ultimatekits." + name)) {
+                player.sendMessage(plugin.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
                 return;
             }
             if (name == null) {
-                p.sendMessage(plugin.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(showableName));
+                player.sendMessage(plugin.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(showableName));
                 return;
             }
-            PlayerData playerData = plugin.getPlayerDataManager().getPlayerAction(p);
-            playerData.setInKit(this);
-            p.sendMessage(plugin.getReferences().getPrefix() + Lang.PREVIEWING_KIT.getConfigValue(showableName));
-            String guititle = Arconix.pl().getApi().format().formatTitle(Lang.PREVIEW_TITLE.getConfigValue(showableName));
-            if (title != null) {
-                guititle = Lang.PREVIEW_TITLE.getConfigValue(Arconix.pl().getApi().format().formatText(title, true));
-            }
 
-            guititle = Arconix.pl().getApi().format().formatText(guititle);
-
-            List<ItemStack> list = getReadableContents(p, true, true, false);
-
-            int amt = 0;
-            for (ItemStack is : list) {
-                if (is.getAmount() > 64) {
-                    int overflow = is.getAmount() % 64;
-                    int stackamt = is.getAmount() / 64;
-                    int num3 = 0;
-                    while (num3 != stackamt) {
-                        amt++;
-                        num3++;
-                    }
-                    if (overflow != 0) {
-                        amt++;
-                    }
-                } else {
-                    amt++;
-                }
-            }
-            boolean buyable = false;
-            if (link != null || price != 0) {
-                buyable = true;
-            }
-            int min = 0;
-            if (plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-                min = 9;
-                if (!buyable) {
-                    min = min + 9;
-                }
-            }
-            Inventory i = Bukkit.createInventory(null, 54 - min, Arconix.pl().getApi().format().formatTitle(guititle));
-            int max = 54 - min;
-            if (amt <= 7) {
-                i = Bukkit.createInventory(null, 27 - min, Arconix.pl().getApi().format().formatTitle(guititle));
-                max = 27 - min;
-            } else if (amt <= 16) {
-                i = Bukkit.createInventory(null, 36 - min, Arconix.pl().getApi().format().formatTitle(guititle));
-                max = 36 - min;
-            } else if (amt <= 23) {
-                i = Bukkit.createInventory(null, 45 - min, Arconix.pl().getApi().format().formatTitle(guititle));
-                max = 45 - min;
-            }
-
-
-            int num = 0;
-            if (!plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-                ItemStack exit = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
-                ItemMeta exitmeta = exit.getItemMeta();
-                exitmeta.setDisplayName(Lang.EXIT.getConfigValue());
-                exit.setItemMeta(exitmeta);
-                while (num != 10) {
-                    i.setItem(num, Methods.getGlass());
-                    num++;
-                }
-                int num2 = max - 10;
-                while (num2 != max) {
-                    i.setItem(num2, Methods.getGlass());
-                    num2++;
-                }
-                i.setItem(8, exit);
-
-
-                i.setItem(0, Methods.getBackgroundGlass(true));
-                i.setItem(1, Methods.getBackgroundGlass(true));
-                i.setItem(9, Methods.getBackgroundGlass(true));
-
-                i.setItem(7, Methods.getBackgroundGlass(true));
-                i.setItem(17, Methods.getBackgroundGlass(true));
-
-                i.setItem(max - 18, Methods.getBackgroundGlass(true));
-                i.setItem(max - 9, Methods.getBackgroundGlass(true));
-                i.setItem(max - 8, Methods.getBackgroundGlass(true));
-
-                i.setItem(max - 10, Methods.getBackgroundGlass(true));
-                i.setItem(max - 2, Methods.getBackgroundGlass(true));
-                i.setItem(max - 1, Methods.getBackgroundGlass(true));
-
-                i.setItem(2, Methods.getBackgroundGlass(false));
-                i.setItem(6, Methods.getBackgroundGlass(false));
-                i.setItem(max - 7, Methods.getBackgroundGlass(false));
-                i.setItem(max - 3, Methods.getBackgroundGlass(false));
-            }
-
-            if (buyable) {
-                ItemStack link = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Buy Icon")), 1);
-                ItemMeta linkmeta = link.getItemMeta();
-                linkmeta.setDisplayName(Lang.BUYNOW.getConfigValue());
-                ArrayList<String> lore = new ArrayList<>();
-                if (hasPermission(p) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
-                    lore.add(Lang.CLICKECO.getConfigValue("0"));
-                    if (p.isOp()) {
-                        lore.add("");
-                        lore.add(Arconix.pl().getApi().format().formatText("&7This is free because"));
-                        lore.add(Arconix.pl().getApi().format().formatText("&7you have perms for it."));
-                        lore.add(Arconix.pl().getApi().format().formatText("&7Everyone else buys"));
-                        lore.add(Arconix.pl().getApi().format().formatText("&7this for &a$" + Arconix.pl().getApi().format().formatEconomy(price) + "&7."));
-                    }
-                } else {
-                    lore.add(Lang.CLICKECO.getConfigValue(Arconix.pl().getApi().format().formatEconomy(price)));
-                }
-                if (delay != 0 && p.isOp()) {
-                    lore.add("");
-                    lore.add(Arconix.pl().getApi().format().formatText("&7You do not have a delay"));
-                    lore.add(Arconix.pl().getApi().format().formatText("&7because you have perms"));
-                    lore.add(Arconix.pl().getApi().format().formatText("&7to bypass the delay."));
-                }
-                linkmeta.setLore(lore);
-                link.setItemMeta(linkmeta);
-                i.setItem(max - 5, link);
-            }
-
-            for (ItemStack is : list) {
-                if (!plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-                    if (num == 17)
-                        num++;
-                    if (num == (max - 18))
-                        num++;
-                }
-
-                ItemMeta meta = is.hasItemMeta() ? is.getItemMeta() : Bukkit.getItemFactory().getItemMeta(is.getType());
-                ArrayDeque<String> lore;
-                if (meta.hasLore()) {
-                    lore = new ArrayDeque<>(meta.getLore());
-                } else {
-                    lore = new ArrayDeque<>();
-                }
-
-                List<String> newLore = new ArrayList<>();
-                for (String str : lore) {
-                    str = str.replace("{PLAYER}", p.getName()).replace("<PLAYER>", p.getName());
-                    newLore.add(str);
-                }
-
-                meta.setLore(newLore);
-                is.setItemMeta(meta);
-
-                if (is.getAmount() > 64) {
-                    int overflow = is.getAmount() % 64;
-                    int stackamt = is.getAmount() / 64;
-                    int num3 = 0;
-                    while (num3 != stackamt) {
-                        is.setAmount(64);
-                        i.setItem(num, is);
-                        num++;
-                        num3++;
-                    }
-                    if (overflow != 0) {
-                        is.setAmount(overflow);
-                        i.setItem(num, is);
-                        num++;
-                    }
-                    continue;
-                }
-                if (!plugin.getConfig().getBoolean("Main.Dont Preview Commands In Kits") || is.getType() != Material.PAPER || !is.getItemMeta().hasDisplayName() || !is.getItemMeta().getDisplayName().equals(Lang.COMMAND.getConfigValue())) {
-                    i.setItem(num, is);
-                    num++;
-                }
-            }
-
-            if (back && !plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-
-                ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
-                ItemStack skull2 = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
-                SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
-                skull2.setDurability((short) 3);
-                skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
-                skull2.setItemMeta(skull2Meta);
-                i.setItem(0, skull2);
-            }
-
-            p.openInventory(i);
-
-            playerData.setGuiLocation(PlayerData.GUILocation.DISPLAY);
+            player.sendMessage(plugin.getReferences().getPrefix() + Lang.PREVIEWING_KIT.getConfigValue(showableName));
+            new GUIDisplayKit(plugin, back, player, this);
         } catch (Exception ex) {
             Debugger.runReport(ex);
         }
@@ -530,77 +352,12 @@ public class Kit {
         return (last + delay) >= System.currentTimeMillis() ? (last + delay) - System.currentTimeMillis() : 0L;
     }
 
-    private void confirmBuy(String kitName, Player player) {
-        try {
-            double cost = price;
-            if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
-                cost = 0;
-            }
-            Inventory inventory = Bukkit.createInventory(null, 27, Arconix.pl().getApi().format().formatTitle(Lang.GUI_TITLE_YESNO.getConfigValue(cost)));
-
-            String title = Arconix.pl().getApi().format().formatTitle("&c" + StringUtils.capitalize(kitName.toLowerCase()));
-            ItemStack item = new ItemStack(Material.DIAMOND_HELMET);
-            if (displayItem != null) item = new ItemStack(displayItem);
-            ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(title);
-            ArrayList<String> lore = new ArrayList<>();
-            lore.add(Arconix.pl().getApi().format().formatText("&a$" + Arconix.pl().getApi().format().formatEconomy(cost)));
-
-            int nu = 0;
-            while (nu != 27) {
-                inventory.setItem(nu, Methods.getGlass());
-                nu++;
-            }
-
-            inventory.setItem(0, Methods.getBackgroundGlass(true));
-            inventory.setItem(1, Methods.getBackgroundGlass(true));
-            inventory.setItem(2, Methods.getBackgroundGlass(false));
-            inventory.setItem(6, Methods.getBackgroundGlass(false));
-            inventory.setItem(7, Methods.getBackgroundGlass(true));
-            inventory.setItem(8, Methods.getBackgroundGlass(true));
-            inventory.setItem(9, Methods.getBackgroundGlass(true));
-            inventory.setItem(10, Methods.getBackgroundGlass(false));
-            inventory.setItem(16, Methods.getBackgroundGlass(false));
-            inventory.setItem(17, Methods.getBackgroundGlass(true));
-            inventory.setItem(18, Methods.getBackgroundGlass(true));
-            inventory.setItem(19, Methods.getBackgroundGlass(true));
-            inventory.setItem(20, Methods.getBackgroundGlass(false));
-            inventory.setItem(24, Methods.getBackgroundGlass(false));
-            inventory.setItem(25, Methods.getBackgroundGlass(true));
-            inventory.setItem(26, Methods.getBackgroundGlass(true));
-
-            ItemStack item2 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Buy Icon")), 1);
-            ItemMeta itemmeta2 = item2.getItemMeta();
-            itemmeta2.setDisplayName(Lang.YES_GUI.getConfigValue());
-            item2.setItemMeta(itemmeta2);
-
-            ItemStack item3 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
-            ItemMeta itemmeta3 = item3.getItemMeta();
-            itemmeta3.setDisplayName(Lang.NO_GUI.getConfigValue());
-            item3.setItemMeta(itemmeta3);
-
-            inventory.setItem(4, item);
-            inventory.setItem(11, item2);
-            inventory.setItem(15, item3);
-
-            player.openInventory(inventory);
-
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                PlayerData playerData = plugin.getPlayerDataManager().getPlayerAction(player);
-                playerData.setInKit(this);
-                playerData.setGuiLocation(PlayerData.GUILocation.BUY_FINAL);
-            }, 1);
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
-        }
-    }
-
     public void buyWithEconomy(Player player) {
         try {
             if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) return;
             RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
             net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
-            
+
             if (!hasPermission(player)) {
                 player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NO_PERM.getConfigValue(showableName)));
                 return;

@@ -30,7 +30,6 @@ public class DisplayItemHandler {
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(UltimateKits.getInstance(), this::displayItems, 30L, 30L);
     }
 
-
     private void displayItems() {
         try {
             for (KitBlockData kitBlockData : instance.getKitManager().getKitLocations().values()) {

@@ -25,7 +25,7 @@ public class CommandPreviewKit extends AbstractCommand {
             player.sendMessage(plugin.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue());
             return ReturnType.FAILURE;
         }
-        kit.display(player, false);
+        kit.display(player, null);
         return ReturnType.SUCCESS;
     }
 

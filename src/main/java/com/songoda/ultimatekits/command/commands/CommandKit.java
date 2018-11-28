@@ -4,8 +4,8 @@ import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
+import com.songoda.ultimatekits.gui.GUIKitSelector;
 import com.songoda.ultimatekits.kit.Kit;
-import com.songoda.ultimatekits.kit.KitsGUI;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -27,7 +27,7 @@ public class CommandKit extends AbstractCommand {
             return ReturnType.SUCCESS;
         }
         if (args.length == 0) {
-            KitsGUI.show((Player) sender, 1);
+            new GUIKitSelector(instance, (Player) sender);
             return ReturnType.SUCCESS;
         }
         if (args.length == 1) {

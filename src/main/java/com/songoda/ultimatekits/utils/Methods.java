@@ -3,10 +3,7 @@ package com.songoda.ultimatekits.utils;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.UltimateKits;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Banner;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -21,6 +18,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -193,7 +191,7 @@ public class Methods {
                 case PLAYER_HEAD:
                     SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
                     if (skullMeta != null && skullMeta.hasOwner()) {
-                        str.append("player:").append(skullMeta.getOwner()).append(" ");
+                        str.append("player:").append(skullMeta.getOwningPlayer().getUniqueId().toString()).append(" ");
                     }
                     break;
                 case LEATHER_HELMET:
@@ -295,7 +293,10 @@ public class Methods {
                         break;
                     case "player":
                         if (item.getType() == Material.PLAYER_HEAD) {
-                            ((SkullMeta) meta).setOwner(value);
+                            if (value.length() == 36)
+                                ((SkullMeta) meta).setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(value)));
+                            else
+                                ((SkullMeta) meta).setOwner(value);
                         }
                         break;
                     case "author":

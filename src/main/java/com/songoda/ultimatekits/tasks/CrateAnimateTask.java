@@ -11,8 +11,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -31,13 +36,14 @@ public class CrateAnimateTask extends BukkitRunnable {
     private boolean last = false;
     private int num = 0;
 
+    private Listener listener;
+
     public CrateAnimateTask(UltimateKits plugin, Player player, Kit kit, ItemStack give) {
         this.plugin = plugin;
         this.player = player;
         this.give = give;
         this.inventory = Bukkit.createInventory(null, 27, TextComponent.formatText(kit.getShowableName()));
 
-        plugin.getPlayerDataManager().getPlayerAction(player).setInCrate(true);
         List<KitItem> items = kit.getContents();
         Collections.shuffle(items);
         this.items = new ArrayDeque<>(items);
@@ -47,6 +53,17 @@ public class CrateAnimateTask extends BukkitRunnable {
                     this.items.addLast(item);
             }
         }
+
+        this.listener = new Listener() {
+            @EventHandler
+            public void onInventoryClick(InventoryClickEvent event) {
+                if (!(event.getWhoClicked() instanceof Player) && event.getWhoClicked() == player) return;
+
+                event.setCancelled(true);
+            }
+        };
+
+        Bukkit.getPluginManager().registerEvents(listener, UltimateKits.getInstance());
     }
 
     public void start() {
@@ -71,7 +88,7 @@ public class CrateAnimateTask extends BukkitRunnable {
             inventory.setItem(i, AInventory.toGlass(true, 0));
         }
 
-        for (int i = 9; i < 18; i ++) {
+        for (int i = 9; i < 18; i++) {
             inventory.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
         }
 
@@ -112,7 +129,8 @@ public class CrateAnimateTask extends BukkitRunnable {
     private void finish() {
         instance.cancel();
         if (last) {
-            plugin.getPlayerDataManager().getPlayerAction(player).setInCrate(false);
+            HandlerList.unregisterAll(listener);
+            listener = null;
             player.closeInventory();
         }
     }

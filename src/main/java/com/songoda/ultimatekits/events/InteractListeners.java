@@ -3,6 +3,7 @@ package com.songoda.ultimatekits.events;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.gui.GUIBlockEditor;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
@@ -74,14 +75,14 @@ public class InteractListeners implements Listener {
                 } else if (kit.getLink() != null || kit.getPrice() != 0) {
                     kit.buy(player);
                 } else {
-                    kit.display(player, false);
+                    kit.display(player, null);
                 }
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (block.getState() instanceof InventoryHolder || block.getType() == Material.ENDER_CHEST) {
                     event.setCancelled(true);
                 }
                 if (player.isSneaking() && player.hasPermission("ultimatekits.admin")) {
-                    instance.getBlockEditor().openOverview(player, block.getLocation());
+                    new GUIBlockEditor(instance, player, block.getLocation());
                     return;
                 }
                 if (player.getItemInHand() != null && player.getItemInHand().getType() != null && player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
@@ -89,7 +90,7 @@ public class InteractListeners implements Listener {
                     kit.give(player, true, false, false);
                     return;
                 }
-                kit.display(player, false);
+                kit.display(player, null);
 
             }
         } catch (Exception x) {

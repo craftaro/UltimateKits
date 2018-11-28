@@ -5,8 +5,6 @@ import com.songoda.arconix.api.utils.ConfigWrapper;
 import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
-import com.songoda.ultimatekits.editor.BlockEditor;
-import com.songoda.ultimatekits.editor.KitEditor;
 import com.songoda.ultimatekits.events.*;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.HologramHandler;
@@ -14,8 +12,6 @@ import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
 import com.songoda.ultimatekits.kit.*;
-import com.songoda.ultimatekits.player.PlayerData;
-import com.songoda.ultimatekits.player.PlayerDataManager;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.SettingsManager;
 import org.bukkit.Bukkit;
@@ -44,10 +40,7 @@ public class UltimateKits extends JavaPlugin {
     private KitManager kitManager;
     private CommandManager commandManager;
     private KeyManager keyManager;
-    private KitEditor kitEditor;
-    private BlockEditor blockEditor;
     private HologramHandler hologramHandler;
-    private PlayerDataManager playerDataManager;
     private DisplayItemHandler displayItemHandler;
 
     /**
@@ -106,10 +99,7 @@ public class UltimateKits extends JavaPlugin {
 
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
-        this.kitEditor = new KitEditor(this);
-        this.blockEditor = new BlockEditor(this);
         this.commandManager = new CommandManager(this);
-        this.playerDataManager = new PlayerDataManager();
         this.hologramHandler = new HologramHandler(this);
 
         this.loadFromFile();
@@ -123,17 +113,12 @@ public class UltimateKits extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntityListeners(this), this);
         getServer().getPluginManager().registerEvents(new InteractListeners(this), this);
         getServer().getPluginManager().registerEvents(new InventoryListeners(this), this);
-        getServer().getPluginManager().registerEvents(new QuitListeners(this), this);
     }
 
     /*
      * On plugin disable.
      */
     public void onDisable() {
-        for (PlayerData playerData : playerDataManager.getRegisteredPlayers()) {
-            if (playerData.getGuiLocation() == PlayerData.GUILocation.NOT_IN) continue;
-            playerData.getPlayer().closeInventory();
-        }
         saveToFile();
         kitManager.clearKits();
         console.sendMessage(TextComponent.formatText("&a============================="));
@@ -344,24 +329,6 @@ public class UltimateKits extends JavaPlugin {
     }
 
     /**
-     * Get KitEditor.
-     *
-     * @return KitEditor.
-     */
-    public KitEditor getKitEditor() {
-        return kitEditor;
-    }
-
-    /**
-     * Get BlockEditor.
-     *
-     * @return BlockEditor.
-     */
-    public BlockEditor getBlockEditor() {
-        return blockEditor;
-    }
-
-    /**
      * Grab instance of Data File Configuration Wrapper
      *
      * @return instance of DataFile
@@ -380,10 +347,6 @@ public class UltimateKits extends JavaPlugin {
 
     public HologramHandler getHologramHandler() {
         return hologramHandler;
-    }
-
-    public PlayerDataManager getPlayerDataManager() {
-        return playerDataManager;
     }
 
     public References getReferences() {

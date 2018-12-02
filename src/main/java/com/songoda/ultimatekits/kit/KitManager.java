@@ -20,7 +20,7 @@ public final class KitManager {
     }
 
     public void removeLocationsFromKit(Kit kit) {
-        for (Map.Entry<Location, KitBlockData> entry : kitsAtLocations.entrySet()) {
+        for (Map.Entry<Location, KitBlockData> entry : new ArrayList<>(kitsAtLocations.entrySet())) {
             if (entry.getValue().getKit() == kit) {
                 entry.getValue().reset();
                 kitsAtLocations.remove(entry.getKey());

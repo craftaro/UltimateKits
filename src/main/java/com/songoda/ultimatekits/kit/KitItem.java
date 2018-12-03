@@ -33,7 +33,7 @@ public class KitItem {
         } else if (line.startsWith("/")) {
             this.content = new KitContentCommand(line.substring(1));
         } else {
-            this.content = new KitContentItem(Methods.deserializeItemStack(line));
+            this.content = new KitContentItem(Methods.deserializeLegacyItemStack(line));
         }
     }
 

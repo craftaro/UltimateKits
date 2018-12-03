@@ -53,7 +53,7 @@ public class Convert {
 		for (String kit : kits) {
 			List<String> serializedItems = new ArrayList<>();
 			for (ItemStack item : hook.getItems(kit)) {
-				serializedItems.add(Methods.serializeItemStackToJson(item));
+				serializedItems.add(instance.getItemSerializer().serializeItemStackToJson(item));
 			}
 			instance.getKitFile().getConfig().set("Kits." + kit + ".items", serializedItems);
 			instance.getKitFile().getConfig().set("Kits." + kit + ".delay", hook.getDelay(kit));

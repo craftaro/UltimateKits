@@ -13,6 +13,7 @@ import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
 import com.songoda.ultimatekits.kit.*;
 import com.songoda.ultimatekits.utils.Debugger;
+import com.songoda.ultimatekits.utils.ItemSerializer;
 import com.songoda.ultimatekits.utils.SettingsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,6 +43,8 @@ public class UltimateKits extends JavaPlugin {
     private KeyManager keyManager;
     private HologramHandler hologramHandler;
     private DisplayItemHandler displayItemHandler;
+    
+    private ItemSerializer itemSerializer;
 
     /**
      * Grab instance of UltimateKits
@@ -101,6 +104,13 @@ public class UltimateKits extends JavaPlugin {
         this.keyManager = new KeyManager();
         this.commandManager = new CommandManager(this);
         this.hologramHandler = new HologramHandler(this);
+        
+        try {
+			this.itemSerializer = new ItemSerializer();
+		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+			console.sendMessage(TextComponent.formatText("&cCould not load the serialization class! Please report this error."));
+			e.printStackTrace();
+		}
 
         this.loadFromFile();
 
@@ -336,6 +346,7 @@ public class UltimateKits extends JavaPlugin {
     public ConfigWrapper getDataFile() {
         return dataFile;
     }
+    
 
     public SettingsManager getSettingsManager() {
         return settingsManager;
@@ -347,6 +358,15 @@ public class UltimateKits extends JavaPlugin {
 
     public HologramHandler getHologramHandler() {
         return hologramHandler;
+    }
+    
+    /**
+     * Grab instance of the item serializer
+     * 
+     * @return instance of ItemSerializer
+     */
+    public ItemSerializer getItemSerializer() {
+    	return this.itemSerializer;
     }
 
     public References getReferences() {

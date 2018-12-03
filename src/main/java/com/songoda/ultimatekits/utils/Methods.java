@@ -1,24 +1,32 @@
 package com.songoda.ultimatekits.utils;
 
-import com.songoda.arconix.plugin.Arconix;
-import com.songoda.ultimatekits.UltimateKits;
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.*;
-import org.bukkit.block.Banner;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.UUID;
+import com.songoda.arconix.plugin.Arconix;
+import com.songoda.ultimatekits.UltimateKits;
+
+import net.milkbowl.vault.economy.Economy;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -68,173 +76,88 @@ public class Methods {
         econ.depositPlayer(p, amount);
         return true;
     }
-
-    public static String serializeItemStack(ItemStack item) {
-        StringBuilder str = new StringBuilder(item.getType().name());
-        if (item.getDurability() != 0)
-            str.append(":").append(item.getDurability()).append(" ");
-        else
-            str.append(" ");
-
-        str.append(item.getAmount()).append(" ");
-
-        if (item.hasItemMeta()) {
-            ItemMeta meta = item.getItemMeta();
-            if (meta.hasDisplayName())
-                str.append("title:").append(fixLine(meta.getDisplayName())).append(" ");
-            if (meta.hasLore()) {
-                str.append("lore:");
-                int num = 0;
-                for (String line : meta.getLore()) {
-                    num++;
-                    str.append(fixLine(line));
-                    if (meta.getLore().size() != num)
-                        str.append("|");
-                }
-                str.append(" ");
-            }
-
-            for (Enchantment ench : item.getEnchantments().keySet()) {
-                str.append(ench.getName()).append(":").append(item.getEnchantmentLevel(ench)).append(" ");
-            }
-
-            Set<ItemFlag> flags = meta.getItemFlags();
-            if (flags != null && !flags.isEmpty()) {
-                str.append("itemflags:");
-                boolean first = true;
-                for (ItemFlag flag : flags) {
-                    if (!first) {
-                        str.append(",");
-                    }
-                    str.append(flag.name());
-                    first = false;
-                }
-            }
-        }
-
-        try {
-            switch (item.getType()) {
-                case WRITTEN_BOOK:
-                    BookMeta bookMeta = (BookMeta) item.getItemMeta();
-                    if (bookMeta.hasTitle()) {
-                        str.append("title:").append(bookMeta.getTitle().replace(" ", "_")).append(" ");
-                    }
-                    if (bookMeta.hasAuthor()) {
-                        str.append("author:").append(bookMeta.getAuthor()).append(" ");
-                    }
-                    if (bookMeta.hasPages()) {
-                        StringBuilder title = new StringBuilder(bookMeta.getAuthor());
-                        int num = 0;
-                        while (UltimateKits.getInstance().getDataFile().getConfig().contains("Books.pages." + title)) {
-                            title.append(num);
-                        }
-                        str.append("id:").append(bookMeta.getAuthor()).append(" ");
-                        int pNum = 0;
-                        for (String page : bookMeta.getPages()) {
-                            pNum++;
-                            UltimateKits.getInstance().getDataFile().getConfig().set("Books.pages." + title + "." + pNum, page);
-                        }
-                    }
-                    break;
-                case ENCHANTED_BOOK:
-                    EnchantmentStorageMeta enchantmentStorageMeta = (EnchantmentStorageMeta) item.getItemMeta();
-                    for (Enchantment e : enchantmentStorageMeta.getStoredEnchants().keySet()) {
-                        str.append(e.getName().toLowerCase()).append(":").append(enchantmentStorageMeta.getStoredEnchantLevel(e)).append(" ");
-                    }
-                    break;
-                case FIREWORK_ROCKET:
-                    FireworkMeta fireworkMeta = (FireworkMeta) item.getItemMeta();
-                    if (fireworkMeta.hasEffects()) {
-                        for (FireworkEffect effect : fireworkMeta.getEffects()) {
-                            if (effect.getColors() != null && !effect.getColors().isEmpty()) {
-                                str.append("color:");
-                                boolean first = true;
-                                for (Color c : effect.getColors()) {
-                                    if (!first) {
-                                        str.append(",");
-                                    }
-                                    str.append(c.asRGB());
-                                    first = false;
-                                }
-                                str.append(" ");
-                            }
-
-                            str.append("shape: ").append(effect.getType().name()).append(" ");
-                            if (effect.getFadeColors() != null && !effect.getFadeColors().isEmpty()) {
-                                str.append("fade:");
-                                boolean first = true;
-                                for (Color c : effect.getFadeColors()) {
-                                    if (!first) {
-                                        str.append(",");
-                                    }
-                                    str.append(c.asRGB());
-                                    first = false;
-                                }
-                                str.append(" ");
-                            }
-                        }
-                        str.append("power: ").append(fireworkMeta.getPower()).append(" ");
-                    }
-                    break;
-                case POTION:
-                    PotionMeta potion = ((PotionMeta) item.getItemMeta());
-                    if (potion.hasColor()) {
-                        str.append("color:").append(potion.getColor().asRGB()).append(" ");
-                    }
-                    if (potion.getBasePotionData() != null
-                            && potion.getBasePotionData().getType() != null
-                            && potion.getBasePotionData().getType().getEffectType() != null) {
-                        PotionEffectType e = potion.getBasePotionData().getType().getEffectType();
-                        str.append("effect:").append(e.getName().toLowerCase()).append(" ").append("duration:").append(e.getDurationModifier()).append(" ");
-                    }
-                    break;
-                case PLAYER_HEAD:
-                    SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
-                    if (skullMeta != null && skullMeta.hasOwner()) {
-                        str.append("player:").append(skullMeta.getOwningPlayer().getUniqueId().toString()).append(" ");
-                    }
-                    break;
-                case LEATHER_HELMET:
-                case LEATHER_CHESTPLATE:
-                case LEATHER_LEGGINGS:
-                case LEATHER_BOOTS:
-                    LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) item.getItemMeta();
-                    int rgb = leatherArmorMeta.getColor().asRGB();
-                    str.append("color:").append(rgb).append(" ");
-                    break;
-                case LEGACY_BANNER: //ToDO: shouldnt be done like this, but i dont have time to do this corecctly.
-                    BannerMeta bannerMeta = (BannerMeta) item.getItemMeta();
-                    if (bannerMeta != null) {
-                        int basecolor = bannerMeta.getBaseColor().getColor().asRGB();
-                        str.append("basecolor:").append(basecolor).append(" ");
-                        for (org.bukkit.block.banner.Pattern p : bannerMeta.getPatterns()) {
-                            String type = p.getPattern().getIdentifier();
-                            int color = p.getColor().getColor().asRGB();
-                            str.append(type).append(",").append(color).append(" ");
-                        }
-                    }
-                    break;
-                case SHIELD:
-                    BlockStateMeta shieldMeta = (BlockStateMeta) item.getItemMeta();
-                    Banner shieldBannerMeta = (Banner) shieldMeta.getBlockState();
-                    int basecolor = 0;
-                    if (shieldBannerMeta.getBaseColor() != null) {
-                        basecolor = shieldBannerMeta.getBaseColor().getColor().asRGB();
-                    }
-                    str.append("basecolor:").append(basecolor).append(" ");
-                    for (org.bukkit.block.banner.Pattern p : shieldBannerMeta.getPatterns()) {
-                        String type = p.getPattern().getIdentifier();
-                        int color = p.getColor().getColor().asRGB();
-                        str.append(type).append(",").append(color).append(" ");
-                    }
-                    break;
-            }
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
-        return str.toString().replace("§", "&").trim();
+    
+    /**
+     * Inserts the version declaration for any string containing NMS
+     * 
+     * @param s the string to format, must contain NMS.
+     * @return formatted string
+     */
+    public static String formatNMS(String s) {
+		String packageName = Bukkit.getServer().getClass().getPackage().getName();
+        String nmsVersion = packageName.substring(packageName.lastIndexOf('.') + 1);
+        return s.replace("NMS", nmsVersion);
     }
 
+    /**
+     * Deserializes a JSON String
+     * 
+     * @param jsonString the JSON String to parse
+     * @return the deserialized ItemStack
+     */
+    public static ItemStack deserializeItemStackFromJson(String jsonString) {
+        try {
+        	Method parseString = Class.forName(formatNMS("net.minecraft.server.NMS.MojangsonParser")).getMethod("parse", String.class);
+        	Object nbtTagCompound = parseString.invoke(null, jsonString);
+        	
+        	Method toItemStack = Class.forName(formatNMS("net.minecraft.server.NMS.ItemStack")).getMethod("a", nbtTagCompound.getClass());
+        	Object citemStack = toItemStack.invoke(null, nbtTagCompound);
+        	
+        	Method tobItemStack = Class.forName(formatNMS("org.bukkit.craftbukkit.NMS.inventory.CraftItemStack")).getMethod("asBukkitCopy", citemStack.getClass());
+        	return (ItemStack) tobItemStack.invoke(null, citemStack);
+        	
+        } catch (Exception ex) {
+        	ex.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Serializes an item stack
+     * 
+     * @param is the ItemStack to parse
+     * @return condensed JSON String
+     */
+    public static String serializeItemStackToJson(ItemStack itemStack) {
+    	try {
+			Method tocItemStack = Class.forName(formatNMS("org.bukkit.craftbukkit.NMS.inventory.CraftItemStack")).getDeclaredMethod("asNMSCopy", Class.forName("org.bukkit.inventory.ItemStack"));
+			Object citemStack = tocItemStack.invoke(null, itemStack);
+			
+			Object nbtTagCompoundObject = Class.forName(formatNMS("net.minecraft.server.NMS.NBTTagCompound")).newInstance();
+			Method saveTagToStack = citemStack.getClass().getMethod("save", nbtTagCompoundObject.getClass());
+			saveTagToStack.invoke(citemStack, nbtTagCompoundObject);
+			
+			return (String) nbtTagCompoundObject.getClass().getMethod("toString").invoke(nbtTagCompoundObject);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+ 
+    }
+    
+    
+    /**
+     * Deserializes a string to an item stack, support both formats
+     * 
+     * @param string the formatted string
+     * @return the deserialized ItemStack
+     */
+    public static ItemStack deserializeLegacyItemStack(String string) {
+    	if(string.contains("{")) {
+    		// string is json
+    		return deserializeItemStackFromJson(string);
+    	}
+    	// old format
+    	return deserializeItemStack(string);
+    }
+    
+    /**
+     * This method is not able to handle skulls or in general nbt tags.
+     * Method is still existing for converting purposes.
+     *
+     * @deprecated use {@link #serializeItemStackToJson(ItemStack is)} instead.  
+     */
+    @Deprecated
     public static ItemStack deserializeItemStack(String string) {
         string = string.replace("&", "§");
         String[] splited = string.split("\\s+");

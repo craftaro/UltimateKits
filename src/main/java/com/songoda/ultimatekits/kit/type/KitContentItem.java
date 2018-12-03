@@ -20,7 +20,7 @@ public class KitContentItem implements KitContent {
     @Override
     public String getSerialized() {
         if (serialized != null) return serialized;
-        serialized = Methods.serializeItemStack(itemStack);
+        serialized = Methods.serializeItemStackToJson(itemStack);
         return serialized;
     }
 

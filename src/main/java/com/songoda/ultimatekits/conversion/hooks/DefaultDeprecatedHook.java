@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DefaultHook implements Hook {
+public class DefaultDeprecatedHook implements Hook {
 
     public Set<ItemStack> getItems(String kitName) {
         Set<ItemStack> items = new HashSet<>();
@@ -15,7 +15,7 @@ public class DefaultHook implements Hook {
         for (Kits kit : Kits.values()) {
             if (!kit.name().equalsIgnoreCase(kitName)) continue;
             for (String string : kit.items) {
-                items.add(Methods.deserializeItemStackFromJson(string));
+                items.add(Methods.deserializeItemStack(string));
             }
         }
 

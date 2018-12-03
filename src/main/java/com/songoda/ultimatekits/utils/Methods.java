@@ -114,8 +114,8 @@ public class Methods {
 
     /**
      * Serializes an item stack
-     * 
-     * @param is the ItemStack to parse
+     *
+     * @param itemStack the ItemStack to parse
      * @return condensed JSON String
      */
     public static String serializeItemStackToJson(ItemStack itemStack) {

@@ -1,11 +1,9 @@
 package com.songoda.ultimatekits.conversion;
 
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.conversion.hooks.DefaultDeprecatedHook;
 import com.songoda.ultimatekits.conversion.hooks.DefaultHook;
 import com.songoda.ultimatekits.conversion.hooks.EssentialsHook;
 import com.songoda.ultimatekits.conversion.hooks.UltimateCoreHook;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -45,7 +43,7 @@ public class Convert {
 		if (!instance.getKitFile().getConfig().contains("Kits")) {
 			this.convertKits(kits);
 		}else if(!isInJsonFormat()) {
-			hook = new DefaultDeprecatedHook();
+			hook = new DefaultHook();
 			this.convertKits(hook.getKits());
 		}
 	}

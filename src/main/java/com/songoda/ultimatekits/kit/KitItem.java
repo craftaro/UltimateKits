@@ -7,7 +7,6 @@ import com.songoda.ultimatekits.kit.type.KitContent;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +32,7 @@ public class KitItem {
         } else if (line.startsWith("/")) {
             this.content = new KitContentCommand(line.substring(1));
         } else {
-            this.content = new KitContentItem(Methods.deserializeLegacyItemStack(line));
+            this.content = new KitContentItem(UltimateKits.getInstance().getItemSerializer().deserializeLegacyItemStack(line));
         }
     }
 

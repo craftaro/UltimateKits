@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.kit.type;
 
+import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,7 +21,7 @@ public class KitContentItem implements KitContent {
     @Override
     public String getSerialized() {
         if (serialized != null) return serialized;
-        serialized = Methods.serializeItemStackToJson(itemStack);
+        serialized = UltimateKits.getInstance().getItemSerializer().serializeItemStackToJson(itemStack);
         return serialized;
     }
 

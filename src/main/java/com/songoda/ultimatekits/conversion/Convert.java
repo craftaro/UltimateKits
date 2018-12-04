@@ -2,6 +2,7 @@ package com.songoda.ultimatekits.conversion;
 
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.conversion.hooks.DefaultDeprecatedHook;
+import com.songoda.ultimatekits.conversion.hooks.DefaultHook;
 import com.songoda.ultimatekits.conversion.hooks.EssentialsHook;
 import com.songoda.ultimatekits.conversion.hooks.UltimateCoreHook;
 import com.songoda.ultimatekits.utils.Methods;
@@ -22,18 +23,18 @@ public class Convert {
 		if (instance.getServer().getPluginManager().getPlugin("Essentials") != null) {
 			try {
 				Class.forName("com.earth2me.essentials.metrics.MetricsListener");
-				hook = new DefaultDeprecatedHook();
+				hook = new DefaultHook();
 			} catch (ClassNotFoundException ex) {
 				hook = new EssentialsHook();
 			}
 		} else if (instance.getServer().getPluginManager().getPlugin("UltimateCore") != null) {
 			hook = new UltimateCoreHook();
 		} else {
-			hook = new DefaultDeprecatedHook();
+			hook = new DefaultHook();
 		}
 
 		if (hook.getKits().size() == 0)
-			hook = new DefaultDeprecatedHook();
+			hook = new DefaultHook();
 
 		convertKits();
 	}

@@ -89,6 +89,13 @@ public class UltimateKits extends JavaPlugin {
 
         this.loadLanguageFile();
 
+        try {
+            this.itemSerializer = new ItemSerializer();
+        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+            console.sendMessage(TextComponent.formatText("&cCould not load the serialization class! Please report this error."));
+            e.printStackTrace();
+        }
+
         new Convert(this);
 
         this.references = new References();
@@ -104,13 +111,6 @@ public class UltimateKits extends JavaPlugin {
         this.keyManager = new KeyManager();
         this.commandManager = new CommandManager(this);
         this.hologramHandler = new HologramHandler(this);
-        
-        try {
-			this.itemSerializer = new ItemSerializer();
-		} catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-			console.sendMessage(TextComponent.formatText("&cCould not load the serialization class! Please report this error."));
-			e.printStackTrace();
-		}
 
         this.loadFromFile();
 

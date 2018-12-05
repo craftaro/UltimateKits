@@ -74,12 +74,12 @@ public abstract class AbstractGUI implements Listener {
                         }
                     }
                 }
-
+                
                 Map<Range, Clickable> entries = new HashMap<>(gui.clickables);
 
                 for (Map.Entry<Range, Clickable> entry : entries.entrySet()) {
                     Range range = entry.getKey();
-                    if (!range.isBottom() && bottom || range.getClickType() != null && range.getClickType() != event.getClick())
+                    if (range.isBottom() && !bottom || !range.isBottom() && bottom || range.getClickType() != null && range.getClickType() != event.getClick())
                         continue;
                     if (event.getSlot() >= range.getMin() && event.getSlot() <= range.getMax()) {
                         entry.getValue().Clickable(player, inventory, event.getCursor(), event.getSlot(), event.getClick());

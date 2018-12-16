@@ -15,7 +15,7 @@ public class DefaultHook implements Hook {
         for (Kits kit : Kits.values()) {
             if (!kit.name().equalsIgnoreCase(kitName)) continue;
             for (String string : kit.items) {
-                items.add(UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(string));
+                items.add(UltimateKits.getInstance().getItemSerializer().deserializeItemStack(string));
             }
         }
 

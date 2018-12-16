@@ -65,7 +65,6 @@ public class GUIKitSelector extends AbstractGUI {
         init(Lang.KITS_TITLE.getConfigValue(), max);
 
         timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            Bukkit.broadcastMessage("af");
             if (inventory.getViewers().isEmpty()) return;
             constructGUI();
         }, 20L, 20L);

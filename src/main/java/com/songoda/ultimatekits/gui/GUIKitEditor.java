@@ -57,6 +57,8 @@ public class GUIKitEditor extends AbstractGUI {
         this.slot = slot;
 
         init(title, 54);
+        saveItemsInstance();
+        getInvItems();
     }
 
     @Override
@@ -164,6 +166,7 @@ public class GUIKitEditor extends AbstractGUI {
             if (num == 17 || num == 36)
                 num++;
             inventory.setItem(num, toReplace);
+            toReplace = null;
         }
 
         inventory.setItem(3, Methods.getGlass());
@@ -193,7 +196,6 @@ public class GUIKitEditor extends AbstractGUI {
         inventory.setItem(54 - 7, Methods.getBackgroundGlass(false));
         inventory.setItem(54 - 3, Methods.getBackgroundGlass(false));
 
-        if (!isInInventory) getInvItems();
         updateInvButton();
     }
 
@@ -230,11 +232,12 @@ public class GUIKitEditor extends AbstractGUI {
         }
     }
 
-
-    private void getInvItems() {
+    private void saveItemsInstance() {
         inventoryItems = player.getInventory().getContents().clone();
         player.getInventory().clear();
+    }
 
+    private void getInvItems() {
         isInInventory = false;
 
         createButton(9, player.getInventory(), Material.REDSTONE_TORCH, "&6General Options",
@@ -516,7 +519,10 @@ public class GUIKitEditor extends AbstractGUI {
                 player.getInventory().setContents(inventoryItems);
                 isInInventory = true;
                 player.updateInventory();
-            } else getInvItems();
+            } else {
+                saveItemsInstance();
+                getInvItems();
+            }
             updateInvButton();
         });
     }

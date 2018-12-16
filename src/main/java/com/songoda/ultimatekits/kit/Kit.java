@@ -66,7 +66,7 @@ public class Kit {
 
     public void buy(Player player) {
         try {
-            if (hasPermission(player) && !player.isOp() && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+            if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
                 give(player, false, false, false);
                 return;
             }

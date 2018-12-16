@@ -7,7 +7,6 @@ import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,6 +24,7 @@ public class GUIKitSelector extends AbstractGUI {
     private Player player;
     private UltimateKits plugin;
 
+    private int timer;
     private int page = 1;
     private int max;
     private List<String> kitList;
@@ -63,9 +63,15 @@ public class GUIKitSelector extends AbstractGUI {
         if (glassless) max -= 18;
 
         init(Lang.KITS_TITLE.getConfigValue(), max);
+
+        timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            Bukkit.broadcastMessage("af");
+            if (inventory.getViewers().isEmpty()) return;
+            constructGUI();
+        }, 20L, 20L);
     }
 
-    public void setUpPage() {
+    private void setUpPage() {
         int ino = 14;
         if (plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) ino = 54;
         int num = 0;
@@ -295,7 +301,7 @@ public class GUIKitSelector extends AbstractGUI {
 
     @Override
     protected void registerOnCloses() {
-
+        registerOnClose(((player1, inventory1) -> Bukkit.getScheduler().cancelTask(timer)));
     }
 
 }

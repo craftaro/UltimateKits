@@ -273,17 +273,20 @@ public class Kit {
         }
     }
 
-    public void givePartKit(Player player, Key key) {
+    private void givePartKit(Player player, Key key) {
         try {
             List<KitItem> innerContents = new ArrayList<>(getContents());
-            Collections.shuffle(innerContents);
             int amt = innerContents.size();
             int amtToGive = key == null ? amt : key.getAmt();
 
+
+            if (amt != amtToGive)
+                Collections.shuffle(innerContents);
+
             CrateAnimateTask task = null;
 
-            int num = 0;
-            for (KitItem item : innerContents) {
+            for (int i = 0; i < innerContents.size(); i ++) {
+            KitItem item = innerContents.get(i);
                 if (amtToGive == 0) continue;
                 int ch = item.getChance() == 0 ? 100 : item.getChance();
                 double rand = Math.random() * 100;
@@ -313,14 +316,13 @@ public class Kit {
                     if (kitAnimation != KitAnimation.NONE) {
                         final CrateAnimateTask cTask = new CrateAnimateTask(plugin, player, this, item.getItem());
                         task = cTask;
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, cTask::start, 140 * num);
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, cTask::start, 140 * i);
                     } else {
                         Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
                         for (ItemStack item2 : overfilled.values()) {
                             player.getWorld().dropItemNaturally(player.getLocation(), item2);
                         }
                     }
-                    num++;
                 }
             }
             if (task != null) {

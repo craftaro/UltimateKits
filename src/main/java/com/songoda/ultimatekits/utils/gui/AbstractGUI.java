@@ -116,7 +116,7 @@ public abstract class AbstractGUI implements Listener {
         if (inventory == null
                 || inventory.getSize() != slots
                 || ChatColor.translateAlternateColorCodes('&', title) != inventory.getTitle()) {
-            this.inventory = Bukkit.getServer().createInventory(new com.songoda.epicspawners.utils.gui.AbstractGUI.GUIHolder(), slots, ChatColor.translateAlternateColorCodes('&', title));
+            this.inventory = Bukkit.getServer().createInventory(new GUIHolder(), slots, ChatColor.translateAlternateColorCodes('&', title));
             registerClickables();
             registerOnCloses();
         }

@@ -1,7 +1,6 @@
 package com.songoda.ultimatekits.utils.gui;
 
 import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.epicspawners.EpicSpawnersPlugin;
 import com.songoda.ultimatekits.UltimateKits;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

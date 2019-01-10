@@ -121,7 +121,7 @@ public abstract class AbstractGUI implements Listener {
             registerOnCloses();
         }
         constructGUI();
-        initializeListeners(EpicSpawnersPlugin.getInstance());
+        initializeListeners(UltimateKits.getInstance());
         player.openInventory(inventory);
     }
 

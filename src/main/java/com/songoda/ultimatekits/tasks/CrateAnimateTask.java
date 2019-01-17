@@ -33,15 +33,16 @@ public class CrateAnimateTask extends BukkitRunnable {
     private boolean slow = false;
     private boolean finish = false;
     private boolean done = false;
-    private boolean last = false;
+    private boolean last;
     private int num = 0;
 
     private Listener listener;
 
-    public CrateAnimateTask(UltimateKits plugin, Player player, Kit kit, ItemStack give) {
+    public CrateAnimateTask(UltimateKits plugin, Player player, Kit kit, ItemStack give, boolean last) {
         this.plugin = plugin;
         this.player = player;
         this.give = give;
+        this.last = last;
         this.inventory = Bukkit.createInventory(null, 27, TextComponent.formatText(kit.getShowableName()));
 
         List<KitItem> items = kit.getContents();
@@ -128,14 +129,11 @@ public class CrateAnimateTask extends BukkitRunnable {
 
     private void finish() {
         instance.cancel();
+        HandlerList.unregisterAll(listener);
         if (last) {
-            HandlerList.unregisterAll(listener);
+            Bukkit.broadcastMessage("last");
             listener = null;
             player.closeInventory();
         }
-    }
-
-    public void setLast(boolean last) {
-        this.last = last;
     }
 }

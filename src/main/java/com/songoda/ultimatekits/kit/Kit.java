@@ -283,8 +283,6 @@ public class Kit {
             if (amt != amtToGive)
                 Collections.shuffle(innerContents);
 
-            CrateAnimateTask task = null;
-
             for (int i = 0; i < innerContents.size(); i ++) {
             KitItem item = innerContents.get(i);
                 if (amtToGive == 0) continue;
@@ -314,8 +312,7 @@ public class Kit {
                     amtToGive--;
 
                     if (kitAnimation != KitAnimation.NONE) {
-                        final CrateAnimateTask cTask = new CrateAnimateTask(plugin, player, this, item.getItem());
-                        task = cTask;
+                        final CrateAnimateTask cTask = new CrateAnimateTask(plugin, player, this, item.getItem(), i == (innerContents.size() - 1));
                         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, cTask::start, 140 * i);
                     } else {
                         Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
@@ -324,9 +321,6 @@ public class Kit {
                         }
                     }
                 }
-            }
-            if (task != null) {
-                task.setLast(true);
             }
 
             player.updateInventory();

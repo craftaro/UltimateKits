@@ -131,7 +131,6 @@ public class CrateAnimateTask extends BukkitRunnable {
         instance.cancel();
         HandlerList.unregisterAll(listener);
         if (last) {
-            Bukkit.broadcastMessage("last");
             listener = null;
             player.closeInventory();
         }

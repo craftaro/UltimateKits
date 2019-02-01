@@ -279,8 +279,7 @@ public class Kit {
             int amt = innerContents.size();
             int amtToGive = key == null ? amt : key.getAmt();
 
-
-            if (amt != amtToGive)
+            if (amt != amtToGive || kitAnimation != KitAnimation.NONE)
                 Collections.shuffle(innerContents);
 
             for (int i = 0; i < innerContents.size(); i ++) {
@@ -312,8 +311,8 @@ public class Kit {
                     amtToGive--;
 
                     if (kitAnimation != KitAnimation.NONE) {
-                        final CrateAnimateTask cTask = new CrateAnimateTask(plugin, player, this, item.getItem(), i == (innerContents.size() - 1));
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, cTask::start, 140 * i);
+                        new CrateAnimateTask(plugin, player, this, item.getItem());
+                        return;
                     } else {
                         Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
                         for (ItemStack item2 : overfilled.values()) {

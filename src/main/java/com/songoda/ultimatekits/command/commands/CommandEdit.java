@@ -48,7 +48,7 @@ public class CommandEdit extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/KitAdmin edit";
+        return "/KitAdmin edit <kit>";
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.events;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.gui.GUIBlockEditor;
@@ -8,6 +7,7 @@ import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
 import com.songoda.ultimatekits.utils.Debugger;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -58,7 +58,7 @@ public class InteractListeners implements Listener {
 
                 if (kitBlockData.getType() != KitType.PREVIEW) {
                     if (kitBlockData.getType() == KitType.CRATE) {
-                        player.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + Lang.NOT_KEY.getConfigValue()));
+                        player.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + Lang.NOT_KEY.getConfigValue()));
                     } else if (kitBlockData.getType() == KitType.CLAIM) {
                         if (!player.hasPermission("essentials.kit." + kit.getName().toLowerCase()) || !player.hasPermission("ultimatekits.kit." + kit.getName().toLowerCase())) {
                             player.sendMessage(instance.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
@@ -69,7 +69,7 @@ public class InteractListeners implements Listener {
                             kit.updateDelay(player);
                         } else {
                             long time = kit.getNextUse(player);
-                            player.sendMessage(instance.getReferences().getPrefix() + Lang.NOT_YET.getConfigValue(Arconix.pl().getApi().format().readableTime(time)));
+                            player.sendMessage(instance.getReferences().getPrefix() + Lang.NOT_YET.getConfigValue(Methods.makeReadable(time)));
                         }
                     }
                 } else if (kit.getLink() != null || kit.getPrice() != 0) {

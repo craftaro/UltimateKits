@@ -1,10 +1,10 @@
 package com.songoda.ultimatekits.events;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.utils.Debugger;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,8 +31,8 @@ public class BlockListeners implements Listener {
             if (kitBlockData == null) return;
             Kit kit = kitBlockData.getKit();
             instance.getKitManager().removeKitFromLocation(block.getLocation());
-            instance.getHologramHandler().updateHolograms();
-            event.getPlayer().sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType() + "&8."));
+            instance.getHologram().remove(kitBlockData);
+            event.getPlayer().sendMessage(Methods.formatText(instance.getReferences().getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType() + "&8."));
 
         } catch (Exception e) {
             Debugger.runReport(e);

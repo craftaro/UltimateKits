@@ -1,7 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
@@ -58,7 +56,7 @@ public class GUIGUIOptions extends AbstractGUI {
 
         ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
         ItemStack back = head2;
-        back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        back = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
         skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
@@ -68,45 +66,45 @@ public class GUIGUIOptions extends AbstractGUI {
 
         ArrayList<String> lore = new ArrayList<>();
         if (kit.getTitle() != null)
-            lore.add(TextComponent.formatText("&7Currently: &a" + kit.getTitle() + "&7."));
+            lore.add(Methods.formatText("&7Currently: &a" + kit.getTitle() + "&7."));
         else
-            lore.add(TextComponent.formatText("&7Currently: &cNot set&7."));
-        lore.add(TextComponent.formatText(""));
-        lore.add(TextComponent.formatText("&7Left-Click: &9to set"));
-        lore.add(TextComponent.formatText("&9the kit title for holograms"));
-        lore.add(TextComponent.formatText("&9and the kit / kit GUIs."));
-        lore.add(TextComponent.formatText(""));
-        lore.add(TextComponent.formatText("&7Right-Click: &9to reset."));
+            lore.add(Methods.formatText("&7Currently: &cNot set&7."));
+        lore.add(Methods.formatText(""));
+        lore.add(Methods.formatText("&7Left-Click: &9to set"));
+        lore.add(Methods.formatText("&9the kit title for holograms"));
+        lore.add(Methods.formatText("&9and the kit / kit GUIs."));
+        lore.add(Methods.formatText(""));
+        lore.add(Methods.formatText("&7Right-Click: &9to reset."));
 
         createButton(11, Material.NAME_TAG, "&9&lSet Title", lore);
 
         lore = new ArrayList<>();
         if (kit.getDisplayItem() != null) {
-            lore.add(TextComponent.formatText("&7Currently set to: &a" + kit.getDisplayItem().toString() + "&7."));
+            lore.add(Methods.formatText("&7Currently set to: &a" + kit.getDisplayItem().toString() + "&7."));
         } else {
-            lore.add(TextComponent.formatText("&7Currently &cDisabled&7."));
+            lore.add(Methods.formatText("&7Currently &cDisabled&7."));
         }
         lore.add("");
-        lore.add(TextComponent.formatText("&7Left-Click to: &9Set a"));
-        lore.add(TextComponent.formatText("&9display item for this kit"));
-        lore.add(TextComponent.formatText("&9to the item in your hand."));
+        lore.add(Methods.formatText("&7Left-Click to: &9Set a"));
+        lore.add(Methods.formatText("&9display item for this kit"));
+        lore.add(Methods.formatText("&9to the item in your hand."));
         lore.add("");
-        lore.add(TextComponent.formatText("&7Right-Click to: &9Remove the item."));
+        lore.add(Methods.formatText("&7Right-Click to: &9Remove the item."));
 
         createButton(13, Material.BEACON, "&9&lSet DisplayItem", lore);
 
         lore = new ArrayList<>();
         if (kit.isHidden()) {
-            lore.add(TextComponent.formatText("&7Currently: &cHidden&7."));
+            lore.add(Methods.formatText("&7Currently: &cHidden&7."));
         } else {
-            lore.add(TextComponent.formatText("&7Currently: &aVisible&7."));
+            lore.add(Methods.formatText("&7Currently: &aVisible&7."));
         }
         lore.add("");
-        lore.add(TextComponent.formatText("&7A hidden kit will not"));
-        lore.add(TextComponent.formatText("&7show up in the /kit gui."));
-        lore.add(TextComponent.formatText("&7This is usually optimal for"));
-        lore.add(TextComponent.formatText("&7preventing players from seeing"));
-        lore.add(TextComponent.formatText("&7non obtainable kit or starter kit."));
+        lore.add(Methods.formatText("&7A hidden kit will not"));
+        lore.add(Methods.formatText("&7show up in the /kit gui."));
+        lore.add(Methods.formatText("&7This is usually optimal for"));
+        lore.add(Methods.formatText("&7preventing players from seeing"));
+        lore.add(Methods.formatText("&7non obtainable kit or starter kit."));
 
         createButton(15, Material.COAL, "&9&lHide kit", lore);
     }
@@ -123,8 +121,8 @@ public class GUIGUIOptions extends AbstractGUI {
                     String msg = event.getName();
                     kit.setTitle(msg);
                     plugin.saveConfig();
-                    player.sendMessage(TextComponent.formatText(plugin.getReferences().getPrefix() + "&8Title &5" + msg + "&8 added to Kit &a" + kit.getShowableName() + "&8."));
-                    plugin.getHologramHandler().updateHolograms();
+                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Title &5" + msg + "&8 added to Kit &a" + kit.getShowableName() + "&8."));
+                    plugin.getHologram().update(kit);
                 });
 
                 gui.setOnClose((player2, inventory3) -> init(inventory.getTitle(), inventory.getSize()));
@@ -138,7 +136,7 @@ public class GUIGUIOptions extends AbstractGUI {
                 gui.open();
             } else {
                 kit.setTitle("");
-                plugin.getHologramHandler().updateHolograms();
+                plugin.getHologram().update(kit);
                 constructGUI();
             }
         }));
@@ -147,14 +145,14 @@ public class GUIGUIOptions extends AbstractGUI {
             if (type.isLeftClick()) {
                 ItemStack is = player.getItemInHand();
                 if (is == null || is.getType() == Material.AIR) {
-                    player.sendMessage(TextComponent.formatText(plugin.getReferences().getPrefix() + "&8You must be holding an item to use this function."));
+                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8You must be holding an item to use this function."));
                     return;
                 }
                 kit.setDisplayItem(is.getType());
-                player.sendMessage(TextComponent.formatText(plugin.getReferences().getPrefix() + "&8Custom Item Display set for kit &a" + kit.getShowableName() + "&8."));
+                player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Custom Item Display set for kit &a" + kit.getShowableName() + "&8."));
             } else {
                 kit.setDisplayItem(null);
-                player.sendMessage(TextComponent.formatText(plugin.getReferences().getPrefix() + "&8Custom Item Display removed from kit &a" + kit.getShowableName() + "&8."));
+                player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Custom Item Display removed from kit &a" + kit.getShowableName() + "&8."));
             }
             constructGUI();
         }));

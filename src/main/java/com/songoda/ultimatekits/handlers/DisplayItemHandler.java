@@ -1,10 +1,10 @@
 package com.songoda.ultimatekits.handlers;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.utils.Debugger;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -69,7 +69,7 @@ public class DisplayItemHandler {
             }
             ItemMeta meta = is.getItemMeta();
             is.setAmount(1);
-            meta.setDisplayName(TextComponent.convertToInvisibleString(Integer.toString(inum)));
+            meta.setDisplayName(Methods.convertToInvisibleString(Integer.toString(inum)));
             is.setItemMeta(meta);
             i.setItemStack(is);
             i.setPickupDelay(9999);
@@ -80,7 +80,7 @@ public class DisplayItemHandler {
         ItemStack is = list.get(0);
         is.setAmount(1);
         ItemMeta meta = is.getItemMeta();
-        meta.setDisplayName(TextComponent.convertToInvisibleString("0"));
+        meta.setDisplayName(Methods.convertToInvisibleString("0"));
         is.setItemMeta(meta);
         Item item = location.getWorld().dropItem(location.add(0, 1, 0), list.get(0));
         Vector vec = new Vector(0, 0, 0);

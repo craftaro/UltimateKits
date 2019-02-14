@@ -1,12 +1,12 @@
 package com.songoda.ultimatekits.kit;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.type.KitContent;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -152,7 +152,7 @@ public class KitItem {
         ItemStack item = content.getItemForDisplay();
         ItemMeta meta = item.getItemMeta();
         if (chance != 0 || displayItem != null || displayName != null || displayLore != null) {
-            meta.setDisplayName(meta.hasDisplayName() ? TextComponent.convertToInvisibleString(compileOptions() + ";") + meta.getDisplayName() : TextComponent.convertToInvisibleString(compileOptions() + ";faqe") + item.getType().name().replace("_", " "));
+            meta.setDisplayName(meta.hasDisplayName() ? Methods.convertToInvisibleString(compileOptions() + ";") + meta.getDisplayName() : Methods.convertToInvisibleString(compileOptions() + ";faqe") + item.getType().name().replace("_", " "));
         }
         item.setItemMeta(meta);
         return item;
@@ -166,10 +166,10 @@ public class KitItem {
             item.setType(displayItem);
         }
         if (displayName != null) {
-            meta.setDisplayName(TextComponent.formatText(displayName));
+            meta.setDisplayName(Methods.formatText(displayName));
         }
         if (displayLore != null) {
-            meta.setLore(Arrays.asList(TextComponent.formatText(displayLore)));
+            meta.setLore(Arrays.asList(Methods.formatText(displayLore)));
         }
 
         if (UltimateKits.getInstance().getConfig().getBoolean("Main.Display Chance In Preview")) {
@@ -181,7 +181,7 @@ public class KitItem {
             }
 
             if (lore.size() != 0) lore.addFirst("");
-            lore.addFirst(TextComponent.formatText("&7" + Lang.CHANCE.getConfigValue() + ": &6" + (chance == 0 ? 100 : chance) + "%"));
+            lore.addFirst(Methods.formatText("&7" + Lang.CHANCE.getConfigValue() + ": &6" + (chance == 0 ? 100 : chance) + "%"));
             meta.setLore(new ArrayList<>(lore));
         }
 

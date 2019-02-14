@@ -113,9 +113,10 @@
             <version>7.3.0</version>
         </dependency>
         <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>epicspawners</artifactId>
+            <groupId>com.gmail.filoghost.holographicdisplays</groupId>
+            <artifactId>holographicdisplays-api</artifactId>
             <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.gmail.nossr50</groupId>

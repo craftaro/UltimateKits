@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
@@ -66,10 +65,10 @@ public class CommandKit extends AbstractCommand {
             }
             Kit kit = instance.getKitManager().getKit(kitName);
             kit.give(player2, false, false, true);
-            sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&7You gave &9" + player2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7."));
+            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&7You gave &9" + player2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7."));
             return ReturnType.SUCCESS;
         }
-        sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.SYNTAX.getConfigValue()));
+        sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText(Lang.SYNTAX.getConfigValue()));
         return ReturnType.SUCCESS;
     }
 

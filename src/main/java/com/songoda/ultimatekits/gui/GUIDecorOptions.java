@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
@@ -51,34 +50,34 @@ public class GUIDecorOptions extends AbstractGUI {
                 Lang.EXIT.getConfigValue());
 
         ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
-        ItemStack back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        ItemStack back = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         inventory.setItem(0, back);
 
         createButton(0, back, Lang.BACK.getConfigValue());
 
         ArrayList<String> lore = new ArrayList<>();
         if (kitBlockData.showHologram()) {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &aEnabled&7."));
+            lore.add(Methods.formatText("&7Currently: &aEnabled&7."));
         } else {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently &cDisabled&7."));
+            lore.add(Methods.formatText("&7Currently &cDisabled&7."));
         }
 
         createButton(10, Material.SIGN, "&9&lToggle Holograms", lore);
 
         lore = new ArrayList<>();
         if (kitBlockData.hasParticles()) {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &aEnabled&7."));
+            lore.add(Methods.formatText("&7Currently: &aEnabled&7."));
         } else {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently &cDisabled&7."));
+            lore.add(Methods.formatText("&7Currently &cDisabled&7."));
         }
 
         createButton(12, Material.POTION, "&9&lToggle Particles", lore);
 
         lore = new ArrayList<>();
         if (kitBlockData.isDisplayingItems()) {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &aEnabled&7."));
+            lore.add(Methods.formatText("&7Currently: &aEnabled&7."));
         } else {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently &cDisabled&7."));
+            lore.add(Methods.formatText("&7Currently &cDisabled&7."));
         }
 
         createButton(14, Material.DIAMOND, "&9&lToggle DisplayItems", lore);
@@ -90,16 +89,16 @@ public class GUIDecorOptions extends AbstractGUI {
 
         lore = new ArrayList<>();
         if (kitBlockData.isItemOverride()) {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &aEnabled&7."));
+            lore.add(Methods.formatText("&7Currently: &aEnabled&7."));
         } else {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently &cDisabled&7."));
+            lore.add(Methods.formatText("&7Currently &cDisabled&7."));
         }
         lore.add("");
-        lore.add(Arconix.pl().getApi().format().formatText("&7Enabling this option will "));
-        lore.add(Arconix.pl().getApi().format().formatText("&7override the DisplayItems"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7above your kit to the single"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7DisplayItem set in this kit"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7GUI options."));
+        lore.add(Methods.formatText("&7Enabling this option will "));
+        lore.add(Methods.formatText("&7override the DisplayItems"));
+        lore.add(Methods.formatText("&7above your kit to the single"));
+        lore.add(Methods.formatText("&7DisplayItem set in this kit"));
+        lore.add(Methods.formatText("&7GUI options."));
 
         createButton(16, material, "&9&lToggle DisplayItem Override", lore);
     }
@@ -115,7 +114,7 @@ public class GUIDecorOptions extends AbstractGUI {
             } else {
                 kitBlockData.setShowHologram(true);
             }
-            UltimateKits.getInstance().getHologramHandler().updateHolograms();
+            UltimateKits.getInstance().getHologram().update(kitBlockData);
             constructGUI();
         });
 
@@ -132,8 +131,7 @@ public class GUIDecorOptions extends AbstractGUI {
             boolean isHolo = kitBlockData.showHologram();
 
             if (isHolo) {
-                kitBlockData.setShowHologram(false);
-                UltimateKits.getInstance().getHologramHandler().updateHolograms();
+                UltimateKits.getInstance().getHologram().remove(kitBlockData);
             }
             if (kitBlockData.isDisplayingItems()) {
                 kitBlockData.setDisplayingItems(false);
@@ -141,8 +139,7 @@ public class GUIDecorOptions extends AbstractGUI {
                 kitBlockData.setDisplayingItems(true);
             }
             if (isHolo) {
-                kitBlockData.setShowHologram(true);
-                UltimateKits.getInstance().getHologramHandler().updateHolograms();
+                UltimateKits.getInstance().getHologram().add(kitBlockData);
             }
             constructGUI();
         });

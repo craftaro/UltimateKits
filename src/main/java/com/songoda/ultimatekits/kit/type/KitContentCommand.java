@@ -1,7 +1,7 @@
 package com.songoda.ultimatekits.kit.type;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.ultimatekits.Lang;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -32,7 +32,7 @@ public class KitContentCommand implements KitContent {
         ArrayList<String> lore = new ArrayList<>();
         int index = 0;
         while (index < command.length()) {
-            lore.add(TextComponent.formatText("&a" + (index == 0 ? "/" : "") + "&a" + command.substring(index, Math.min(index + 30, command.length()))));
+            lore.add(Methods.formatText("&a" + (index == 0 ? "/" : "") + "&a" + command.substring(index, Math.min(index + 30, command.length()))));
             index += 30;
         }
         meta.setLore(lore);

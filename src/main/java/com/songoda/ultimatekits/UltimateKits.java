@@ -1,25 +1,22 @@
 package com.songoda.ultimatekits;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.api.utils.ConfigWrapper;
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.events.*;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
-import com.songoda.ultimatekits.handlers.HologramHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
+import com.songoda.ultimatekits.hologram.Hologram;
+import com.songoda.ultimatekits.hologram.HologramArconix;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
 import com.songoda.ultimatekits.kit.*;
-import com.songoda.ultimatekits.utils.Debugger;
-import com.songoda.ultimatekits.utils.ItemSerializer;
-import com.songoda.ultimatekits.utils.SettingsManager;
+import com.songoda.ultimatekits.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -41,8 +38,8 @@ public class UltimateKits extends JavaPlugin {
     private KitManager kitManager;
     private CommandManager commandManager;
     private KeyManager keyManager;
-    private HologramHandler hologramHandler;
     private DisplayItemHandler displayItemHandler;
+    private Hologram hologram;
     
     private ItemSerializer itemSerializer;
 
@@ -81,18 +78,17 @@ public class UltimateKits extends JavaPlugin {
         if (!checkVersion()) return;
 
         INSTANCE = this;
-        Arconix.pl().hook(this);
 
-        console.sendMessage(TextComponent.formatText("&a============================="));
-        console.sendMessage(TextComponent.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
-        console.sendMessage(TextComponent.formatText("&7Action: &aEnabling&7..."));
+        console.sendMessage(Methods.formatText("&a============================="));
+        console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
+        console.sendMessage(Methods.formatText("&7Action: &aEnabling&7..."));
 
         this.loadLanguageFile();
 
         try {
             this.itemSerializer = new ItemSerializer();
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            console.sendMessage(TextComponent.formatText("&cCould not load the serialization class! Please report this error."));
+            console.sendMessage(Methods.formatText("&cCould not load the serialization class! Please report this error."));
             e.printStackTrace();
         }
 
@@ -110,19 +106,26 @@ public class UltimateKits extends JavaPlugin {
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
         this.commandManager = new CommandManager(this);
-        this.hologramHandler = new HologramHandler(this);
 
+        PluginManager pluginManager = getServer().getPluginManager();
+        
+        // Register Hologram Plugin
+        if (pluginManager.isPluginEnabled("Arconix"))
+            hologram = new HologramArconix(this);
+
+        // Event registration
+        pluginManager.registerEvents(new BlockListeners(this), this);
+        pluginManager.registerEvents(new ChatListeners(this), this);
+        pluginManager.registerEvents(new EntityListeners(this), this);
+        pluginManager.registerEvents(new InteractListeners(this), this);
+        pluginManager.registerEvents(new InventoryListeners(this), this);
+        
         this.loadFromFile();
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
 
-        console.sendMessage(TextComponent.formatText("&a============================="));
+        console.sendMessage(Methods.formatText("&a============================="));
 
-        getServer().getPluginManager().registerEvents(new BlockListeners(this), this);
-        getServer().getPluginManager().registerEvents(new ChatListeners(this), this);
-        getServer().getPluginManager().registerEvents(new EntityListeners(this), this);
-        getServer().getPluginManager().registerEvents(new InteractListeners(this), this);
-        getServer().getPluginManager().registerEvents(new InventoryListeners(this), this);
     }
 
     /*
@@ -131,10 +134,10 @@ public class UltimateKits extends JavaPlugin {
     public void onDisable() {
         saveToFile();
         kitManager.clearKits();
-        console.sendMessage(TextComponent.formatText("&a============================="));
-        console.sendMessage(TextComponent.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
-        console.sendMessage(TextComponent.formatText("&7Action: &cDisabling&7..."));
-        console.sendMessage(TextComponent.formatText("&a============================="));
+        console.sendMessage(Methods.formatText("&a============================="));
+        console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
+        console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
+        console.sendMessage(Methods.formatText("&a============================="));
     }
 
     /*
@@ -168,7 +171,7 @@ public class UltimateKits extends JavaPlugin {
                 Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents, KitAnimation.valueOf(kitAnimation));
                 kitManager.addKit(kit);
             } catch (Exception ex) {
-                console.sendMessage(TextComponent.formatText("&cYour kit &4" + kitName + " &cis setup incorrectly."));
+                console.sendMessage(Methods.formatText("&cYour kit &4" + kitName + " &cis setup incorrectly."));
                 Debugger.runReport(ex);
             }
         }
@@ -178,7 +181,7 @@ public class UltimateKits extends JavaPlugin {
          */
         if (dataFile.getConfig().contains("BlockData")) {
             for (String key : dataFile.getConfig().getConfigurationSection("BlockData").getKeys(false)) {
-                Location location = Arconix.pl().getApi().serialize().unserializeLocation(key);
+                Location location = Methods.unserializeLocation(key);
                 Kit kit = kitManager.getKit(dataFile.getConfig().getString("BlockData." + key + ".kit"));
                 KitType type = KitType.valueOf(dataFile.getConfig().getString("BlockData." + key + ".type", "PREVIEW"));
                 boolean holograms = dataFile.getConfig().getBoolean("BlockData." + key + ".holograms");
@@ -247,7 +250,7 @@ public class UltimateKits extends JavaPlugin {
          * Save kit locations from KitManager to Configuration.
          */
         for (KitBlockData kitBlockData : kitManager.getKitLocations().values()) {
-            String locationStr = Arconix.pl().getApi().serialize().serializeLocation(kitBlockData.getLocation());
+            String locationStr = Methods.serializeLocation(kitBlockData.getLocation());
             dataFile.getConfig().set("BlockData." + locationStr + ".type", kitBlockData.getType().name());
             dataFile.getConfig().set("BlockData." + locationStr + ".kit", kitBlockData.getKit().getName());
             dataFile.getConfig().set("BlockData." + locationStr + ".holograms", kitBlockData.showHologram());
@@ -305,7 +308,6 @@ public class UltimateKits extends JavaPlugin {
             this.references = new References();
             this.setupConfig();
             loadFromFile();
-            hologramHandler.updateHolograms();
         } catch (Exception ex) {
             Debugger.runReport(ex);
         }
@@ -356,10 +358,10 @@ public class UltimateKits extends JavaPlugin {
         return commandManager;
     }
 
-    public HologramHandler getHologramHandler() {
-        return hologramHandler;
+    public Hologram getHologram() {
+        return hologram;
     }
-    
+
     /**
      * Grab instance of the item serializer
      * 

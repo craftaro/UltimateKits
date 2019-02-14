@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.KitBlockData;
@@ -49,21 +48,21 @@ public class GUIBlockEditor extends AbstractGUI {
                 Lang.EXIT.getConfigValue());
 
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(Arconix.pl().getApi().format().formatText("&7Click to swap this kit blocks function."));
+        lore.add(Methods.formatText("&7Click to swap this kit blocks function."));
         lore.add("");
 
         if (kitBlockData.getType() == KitType.PREVIEW) {
-            lore.add(Arconix.pl().getApi().format().formatText("&6Preview"));
-            lore.add(Arconix.pl().getApi().format().formatText("&7Crate"));
-            lore.add(Arconix.pl().getApi().format().formatText("&7Claim"));
+            lore.add(Methods.formatText("&6Preview"));
+            lore.add(Methods.formatText("&7Crate"));
+            lore.add(Methods.formatText("&7Claim"));
         } else if (kitBlockData.getType() == KitType.CRATE) {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Preview"));
-            lore.add(Arconix.pl().getApi().format().formatText("&6Crate"));
-            lore.add(Arconix.pl().getApi().format().formatText("&7Claim"));
+            lore.add(Methods.formatText("&7Preview"));
+            lore.add(Methods.formatText("&6Crate"));
+            lore.add(Methods.formatText("&7Claim"));
         } else if (kitBlockData.getType() == KitType.CLAIM) {
-            lore.add(Arconix.pl().getApi().format().formatText("&7Preview"));
-            lore.add(Arconix.pl().getApi().format().formatText("&7Crate"));
-            lore.add(Arconix.pl().getApi().format().formatText("&6Claim"));
+            lore.add(Methods.formatText("&7Preview"));
+            lore.add(Methods.formatText("&7Crate"));
+            lore.add(Methods.formatText("&6Claim"));
         }
 
         createButton(11, Material.COMPARATOR, "&5&lSwitch kit type", lore);
@@ -89,7 +88,7 @@ public class GUIBlockEditor extends AbstractGUI {
             else if (kitBlockData.getType() == KitType.CLAIM) kitBlockData.setType(KitType.PREVIEW);
 
             instance.saveConfig();
-            instance.getHologramHandler().updateHolograms();
+            instance.getHologram().update(kitBlockData);
             constructGUI();
         });
         registerClickable(13, (player, inventory, cursor, slot, type) -> {

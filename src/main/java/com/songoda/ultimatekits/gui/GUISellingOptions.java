@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
@@ -57,7 +56,7 @@ public class GUISellingOptions extends AbstractGUI {
 
         ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
         ItemStack back = head2;
-        back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        back = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
         skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
@@ -68,40 +67,40 @@ public class GUISellingOptions extends AbstractGUI {
         ArrayList<String> lore = new ArrayList<>();
         if (kit.getPrice() != 0 ||
                 kit.getLink() != null)
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently &aFor Sale&7."));
+            lore.add(Methods.formatText("&7Currently &aFor Sale&7."));
         else
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently &cNot For Sale&7."));
-        lore.add(Arconix.pl().getApi().format().formatText(""));
-        lore.add(Arconix.pl().getApi().format().formatText("&7Clicking this option will"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7remove this kit from sale."));
+            lore.add(Methods.formatText("&7Currently &cNot For Sale&7."));
+        lore.add(Methods.formatText(""));
+        lore.add(Methods.formatText("&7Clicking this option will"));
+        lore.add(Methods.formatText("&7remove this kit from sale."));
 
         createButton(11, Material.BARRIER, "&c&lSet not for sale", lore);
 
         lore = new ArrayList<>();
         if (kit.getLink() != null)
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &a" + kit.getLink() + "&7."));
+            lore.add(Methods.formatText("&7Currently: &a" + kit.getLink() + "&7."));
         else
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &cNot set&7."));
-        lore.add(Arconix.pl().getApi().format().formatText(""));
-        lore.add(Arconix.pl().getApi().format().formatText("&7Clicking this option will"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7allow you to set a link"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7that players will receive"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7when attempting to purchase"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7this kit."));
+            lore.add(Methods.formatText("&7Currently: &cNot set&7."));
+        lore.add(Methods.formatText(""));
+        lore.add(Methods.formatText("&7Clicking this option will"));
+        lore.add(Methods.formatText("&7allow you to set a link"));
+        lore.add(Methods.formatText("&7that players will receive"));
+        lore.add(Methods.formatText("&7when attempting to purchase"));
+        lore.add(Methods.formatText("&7this kit."));
 
         createButton(13, Material.PAPER, "&a&lSet kit link", lore);
 
         lore = new ArrayList<>();
         if (kit.getPrice() != 0)
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &a$" + Arconix.pl().getApi().format().formatEconomy(kit.getPrice()) + "&7."));
+            lore.add(Methods.formatText("&7Currently: &a$" + Methods.formatEconomy(kit.getPrice()) + "&7."));
         else
-            lore.add(Arconix.pl().getApi().format().formatText("&7Currently: &cNot set&7."));
-        lore.add(Arconix.pl().getApi().format().formatText(""));
-        lore.add(Arconix.pl().getApi().format().formatText("&7Clicking this option will"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7allow you to set a price"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7that players will be able to"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7purchase this kit for"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7requires &aVault&7."));
+            lore.add(Methods.formatText("&7Currently: &cNot set&7."));
+        lore.add(Methods.formatText(""));
+        lore.add(Methods.formatText("&7Clicking this option will"));
+        lore.add(Methods.formatText("&7allow you to set a price"));
+        lore.add(Methods.formatText("&7that players will be able to"));
+        lore.add(Methods.formatText("&7purchase this kit for"));
+        lore.add(Methods.formatText("&7requires &aVault&7."));
 
         createButton(15, Material.SUNFLOWER, "&a&lSet kit price", lore);
     }
@@ -117,18 +116,18 @@ public class GUISellingOptions extends AbstractGUI {
                 String msg = event.getName();
 
                 if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&8You must have &aVault &8installed to utilize economy.."));
-                } else if (!Arconix.pl().getApi().doMath().isNumeric(msg)) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText("&a" + msg + " &8is not a number. Please do not include a &a$&8."));
+                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&8You must have &aVault &8installed to utilize economy.."));
+                } else if (!Methods.isNumeric(msg)) {
+                    player.sendMessage(Methods.formatText("&a" + msg + " &8is not a number. Please do not include a &a$&8."));
                 } else {
 
                     if (kit.getLink() != null) {
                         kit.setLink(null);
-                        player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8LINK has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
+                        player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8LINK has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
                     }
                     Double eco = Double.parseDouble(msg);
                     kit.setPrice(eco);
-                    plugin.getHologramHandler().updateHolograms();
+                    plugin.getHologram().update(kit);
                 }
             });
 
@@ -149,10 +148,10 @@ public class GUISellingOptions extends AbstractGUI {
 
                 if (kit.getPrice() != 0) {
                     kit.setPrice(0);
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8ECO has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
+                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8ECO has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
                 }
                 kit.setLink(msg);
-                plugin.getHologramHandler().updateHolograms();
+                plugin.getHologram().update(kit);
             });
 
             gui.setOnClose((player2, inventory3) -> init(inventory.getTitle(), inventory.getSize()));

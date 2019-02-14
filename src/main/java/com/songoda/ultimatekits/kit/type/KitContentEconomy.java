@@ -1,8 +1,8 @@
 package com.songoda.ultimatekits.kit.type;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -35,7 +35,7 @@ public class KitContentEconomy implements KitContent {
 
         int index = 0;
         while (index < String.valueOf(amount).length()) {
-            lore.add(TextComponent.formatText("&a" + (index == 0 ? UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol") : "") + "&a" + String.valueOf(amount).substring(index, Math.min(index + 30, String.valueOf(amount).length()))));
+            lore.add(Methods.formatText("&a" + (index == 0 ? UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol") : "") + "&a" + String.valueOf(amount).substring(index, Math.min(index + 30, String.valueOf(amount).length()))));
             index += 30;
         }
         meta.setLore(lore);

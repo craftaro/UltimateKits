@@ -1,7 +1,5 @@
 package com.songoda.ultimatekits.utils;
 
-import com.songoda.arconix.api.utils.ConfigWrapper;
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.UltimateKits;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -117,9 +115,9 @@ public class SettingsManager implements Listener {
         this.current.put(p, ChatColor.stripColor(current));
         p.closeInventory();
         p.sendMessage("");
-        p.sendMessage(Arconix.pl().getApi().format().formatText("&7Please enter a value for &6" + current + "&7."));
+        p.sendMessage(Methods.formatText("&7Please enter a value for &6" + current + "&7."));
         if (instance.getConfig().get(current).getClass().getName().equals("java.lang.Integer")) {
-            p.sendMessage(Arconix.pl().getApi().format().formatText("&cUse only numbers."));
+            p.sendMessage(Methods.formatText("&cUse only numbers."));
         }
         p.sendMessage("");
     }
@@ -136,8 +134,8 @@ public class SettingsManager implements Listener {
         for (String key : instance.getConfig().getConfigurationSection("").getKeys(false)) {
             ItemStack item = new ItemStack(Material.WHITE_WOOL, 1, (byte) (spot - 9)); //ToDo: Make this function as it was meant to.
             ItemMeta meta = item.getItemMeta();
-            meta.setLore(Collections.singletonList(Arconix.pl().getApi().format().formatText("&6Click To Edit This Category.")));
-            meta.setDisplayName(Arconix.pl().getApi().format().formatText("&f&l" + key));
+            meta.setLore(Collections.singletonList(Methods.formatText("&6Click To Edit This Category.")));
+            meta.setDisplayName(Methods.formatText("&f&l" + key));
             item.setItemMeta(meta);
             i.setItem(spot, item);
             spot++;
@@ -153,7 +151,7 @@ public class SettingsManager implements Listener {
             String fKey = cat.get(p) + "." + key;
             ItemStack item = new ItemStack(Material.DIAMOND_HELMET);
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(Arconix.pl().getApi().format().formatText("&6" + key));
+            meta.setDisplayName(Methods.formatText("&6" + key));
             ArrayList<String> lore = new ArrayList<>();
             switch (instance.getConfig().get(fKey).getClass().getName()) {
                 case "java.lang.Boolean":
@@ -162,21 +160,21 @@ public class SettingsManager implements Listener {
                     boolean bool = (Boolean) instance.getConfig().get(fKey);
 
                     if (!bool)
-                        lore.add(Arconix.pl().getApi().format().formatText("&c" + false));
+                        lore.add(Methods.formatText("&c" + false));
                     else
-                        lore.add(Arconix.pl().getApi().format().formatText("&a" + true));
+                        lore.add(Methods.formatText("&a" + true));
 
                     break;
                 case "java.lang.String":
                     item.setType(Material.PAPER);
                     String str = (String) instance.getConfig().get(fKey);
-                    lore.add(Arconix.pl().getApi().format().formatText("&9" + str));
+                    lore.add(Methods.formatText("&9" + str));
                     break;
                 case "java.lang.Integer":
                     item.setType(Material.CLOCK);
 
                     int in = (Integer) instance.getConfig().get(fKey);
-                    lore.add(Arconix.pl().getApi().format().formatText("&5" + in));
+                    lore.add(Methods.formatText("&5" + in));
                     break;
                 default:
                     continue;
@@ -188,7 +186,7 @@ public class SettingsManager implements Listener {
                 Matcher m = regex.matcher(text);
                 while (m.find()) {
                     if (m.end() != text.length() || m.group().length() != 0)
-                        lore.add(Arconix.pl().getApi().format().formatText("&7" + m.group()));
+                        lore.add(Methods.formatText("&7" + m.group()));
                 }
             }
             meta.setLore(lore);

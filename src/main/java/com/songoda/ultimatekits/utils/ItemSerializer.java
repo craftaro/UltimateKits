@@ -19,7 +19,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.UltimateKits;
 
 public class ItemSerializer {
@@ -148,7 +147,7 @@ public class ItemSerializer {
             item.setDurability(Short.parseShort(val[1]));
         }
         if (splited.length >= 2) {
-            if (Arconix.pl().getApi().doMath().isNumeric(splited[1])) {
+            if (Methods.isNumeric(splited[1])) {
                 item.setAmount(Integer.parseInt(splited[1]));
             }
 
@@ -184,7 +183,7 @@ public class ItemSerializer {
                         String[] parts = value.split("\\|");
                         ArrayList<String> lore = new ArrayList<>();
                         for (String line : parts)
-                            lore.add(Arconix.pl().getApi().format().formatText(line));
+                            lore.add(Methods.formatText(line));
                         meta.setLore(lore);
                         break;
                     case "player":

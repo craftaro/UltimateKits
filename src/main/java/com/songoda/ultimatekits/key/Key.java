@@ -1,9 +1,9 @@
 package com.songoda.ultimatekits.key;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Debugger;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -37,16 +37,16 @@ public class Key {
 
             String kitName;
             if (kit != null)
-                kitName = Arconix.pl().getApi().format().formatText(kit.getShowableName(), true);
+                kitName = Methods.formatText(kit.getShowableName(), true);
             else
                 kitName = "Any";
 
             ItemMeta meta = is.getItemMeta();
-            meta.setDisplayName(Arconix.pl().getApi().format().formatText(Lang.KEY_TITLE.getConfigValue(kitName)));
+            meta.setDisplayName(Methods.formatText(Lang.KEY_TITLE.getConfigValue(kitName)));
 
             meta.addEnchant(Enchantment.DURABILITY, 1, true);
             List<String> lore = new ArrayList<>();
-            lore.add(Arconix.pl().getApi().format().formatText("&e" + name + " &fKey"));
+            lore.add(Methods.formatText("&e" + name + " &fKey"));
 
             String desc1 = Lang.KEY_DESC1.getConfigValue(kitName);
 
@@ -55,13 +55,13 @@ public class Key {
             else
                 desc1 = desc1.replace("[", "").replace("]", "");
 
-            lore.add(Arconix.pl().getApi().format().formatText(desc1));
+            lore.add(Methods.formatText(desc1));
             if (this.amt == -1)
-                lore.add(Arconix.pl().getApi().format().formatText(Lang.KEY_DESC2.getConfigValue()));
+                lore.add(Methods.formatText(Lang.KEY_DESC2.getConfigValue()));
             else
-                lore.add(Arconix.pl().getApi().format().formatText(Lang.KEY_DESC3.getConfigValue()));
+                lore.add(Methods.formatText(Lang.KEY_DESC3.getConfigValue()));
             if (kitAmount > 1)
-                lore.add(Arconix.pl().getApi().format().formatText(Lang.KEY_DESC4.getConfigValue(this.kitAmount)));
+                lore.add(Methods.formatText(Lang.KEY_DESC4.getConfigValue(this.kitAmount)));
             meta.setLore(lore);
 
             is.setItemMeta(meta);

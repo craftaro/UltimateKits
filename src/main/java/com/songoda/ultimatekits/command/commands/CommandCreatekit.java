@@ -1,11 +1,11 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.gui.GUIKitEditor;
 import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,7 +25,7 @@ public class CommandCreatekit extends AbstractCommand {
             return ReturnType.FAILURE;
         }
 
-        player.sendMessage(UltimateKits.getInstance().getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&aThat kit doesn't exist. Creating it now."));
+        player.sendMessage(UltimateKits.getInstance().getReferences().getPrefix() + Methods.formatText("&aThat kit doesn't exist. Creating it now."));
         Kit kit = new Kit(kitStr.trim());
         UltimateKits.getInstance().getKitManager().addKit(kit);
         new GUIKitEditor(instance, player, kit, null, null, 0);

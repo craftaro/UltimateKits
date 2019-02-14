@@ -1,7 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
@@ -71,7 +69,7 @@ public class GUIKitEditor extends AbstractGUI {
 
         ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
         ItemStack back;
-        back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        back = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
         skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
@@ -79,16 +77,16 @@ public class GUIKitEditor extends AbstractGUI {
 
         ItemStack it = new ItemStack(Material.CHEST, 1);
         ItemMeta itmeta = it.getItemMeta();
-        itmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&5&l" + kit.getName()));
+        itmeta.setDisplayName(Methods.formatText("&5&l" + kit.getName()));
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(Arconix.pl().getApi().format().formatText("&fPermissions:"));
-        lore.add(Arconix.pl().getApi().format().formatText("&7ultimatekits.kit." + kit.getName().toLowerCase()));
+        lore.add(Methods.formatText("&fPermissions:"));
+        lore.add(Methods.formatText("&7ultimatekits.kit." + kit.getName().toLowerCase()));
         itmeta.setLore(lore);
         it.setItemMeta(itmeta);
 
         ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1);
         ItemMeta glassmeta = glass.getItemMeta();
-        glassmeta.setDisplayName(Arconix.pl().getApi().format().formatText("&" + kit.getName().replaceAll(".(?!$)", "$0&")));
+        glassmeta.setDisplayName(Methods.formatText("&" + kit.getName().replaceAll(".(?!$)", "$0&")));
         glass.setItemMeta(glassmeta);
 
         if (this.back != null)
@@ -118,26 +116,26 @@ public class GUIKitEditor extends AbstractGUI {
 
             if (meta.hasLore()) itemLore = meta.getLore();
             else itemLore = new ArrayList<>();
-            itemLore.add(TextComponent.convertToInvisibleString("----"));
-            itemLore.add(TextComponent.formatText("&7" + Lang.CHANCE.getConfigValue() + ": &6" + item.getChance() + "%"));
+            itemLore.add(Methods.convertToInvisibleString("----"));
+            itemLore.add(Methods.formatText("&7" + Lang.CHANCE.getConfigValue() + ": &6" + item.getChance() + "%"));
             if (isInFuction) {
-                itemLore.add(TextComponent.formatText("&7Display Item: &6" + (item.getDisplayItem() == null ? "null" : item.getDisplayItem().name())));
-                itemLore.add(TextComponent.formatText("&7Display Name: &6" + TextComponent.formatText(item.getDisplayName())));
-                itemLore.add(TextComponent.formatText("&7Display Lore: &6" + TextComponent.formatText(item.getDisplayLore())));
+                itemLore.add(Methods.formatText("&7Display Item: &6" + (item.getDisplayItem() == null ? "null" : item.getDisplayItem().name())));
+                itemLore.add(Methods.formatText("&7Display Name: &6" + Methods.formatText(item.getDisplayName())));
+                itemLore.add(Methods.formatText("&7Display Lore: &6" + Methods.formatText(item.getDisplayLore())));
             }
             itemLore.add("");
             if (isInFuction) {
-                itemLore.add(TextComponent.formatText("&7Left-Click: &6To set a display item."));
-                itemLore.add(TextComponent.formatText("&7Middle-Click: &6To set a display name."));
-                itemLore.add(TextComponent.formatText("&7Right-Click: &6To set display lore."));
-                itemLore.add(TextComponent.formatText("&7Shift-Click: &6To set chance."));
+                itemLore.add(Methods.formatText("&7Left-Click: &6To set a display item."));
+                itemLore.add(Methods.formatText("&7Middle-Click: &6To set a display name."));
+                itemLore.add(Methods.formatText("&7Right-Click: &6To set display lore."));
+                itemLore.add(Methods.formatText("&7Shift-Click: &6To set chance."));
                 itemLore.add("");
-                itemLore.add(TextComponent.formatText("&7Display options only show up on display."));
-                itemLore.add(TextComponent.formatText("&7This can be useful if you want to explain"));
-                itemLore.add(TextComponent.formatText("&7What an item does without putting it in the"));
-                itemLore.add(TextComponent.formatText("&7permanent lore."));
+                itemLore.add(Methods.formatText("&7Display options only show up on display."));
+                itemLore.add(Methods.formatText("&7This can be useful if you want to explain"));
+                itemLore.add(Methods.formatText("&7What an item does without putting it in the"));
+                itemLore.add(Methods.formatText("&7permanent lore."));
                 itemLore.add("");
-                itemLore.add(TextComponent.formatText("&6Leave function mode to move items."));
+                itemLore.add(Methods.formatText("&6Leave function mode to move items."));
             }
             meta.setLore(itemLore);
             is.setItemMeta(meta);
@@ -279,7 +277,7 @@ public class GUIKitEditor extends AbstractGUI {
 
         kit.saveKit(Arrays.asList(items));
         if (!muteSave)
-            player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8Changes to &a" + kit.getShowableName() + " &8saved successfully."));
+            player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Changes to &a" + kit.getShowableName() + " &8saved successfully."));
         muteSave = false;
     }
 
@@ -288,7 +286,7 @@ public class GUIKitEditor extends AbstractGUI {
             ItemMeta meta = itemStack.getItemMeta();
             List<String> newLore = new ArrayList<>();
             for (String line : meta.getLore()) {
-                if (line.equals(TextComponent.convertToInvisibleString("----"))) break;
+                if (line.equals(Methods.convertToInvisibleString("----"))) break;
                 newLore.add(line);
             }
             meta.setLore(newLore);
@@ -319,7 +317,7 @@ public class GUIKitEditor extends AbstractGUI {
 
                             toReplace = item2.getMoveableItem();
                         } catch (Exception e) {
-                            player.sendMessage(Arconix.pl().getApi().format().formatText("&a" + msg + " &8is not a valid material."));
+                            player.sendMessage(Methods.formatText("&a" + msg + " &8is not a valid material."));
                         }
                         this.slot = slot;
                         this.toReplace = toReplace;
@@ -427,7 +425,7 @@ public class GUIKitEditor extends AbstractGUI {
                     meta2.setDisplayName(Lang.MONEY.getConfigValue());
                     parseStack2.setItemMeta(meta2);
 
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8Money &5$" + msg + "&8 has been added to your kit."));
+                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Money &5$" + msg + "&8 has been added to your kit."));
 
                     this.slot = 0;
                     this.toReplace = parseStack2;
@@ -463,7 +461,7 @@ public class GUIKitEditor extends AbstractGUI {
                     meta.setDisplayName(Lang.COMMAND.getConfigValue());
                     parseStack.setItemMeta(meta);
 
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + "&8Command &5" + msg + "&8 has been added to your kit."));
+                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Command &5" + msg + "&8 has been added to your kit."));
 
                     this.slot = 0;
                     this.toReplace = parseStack;

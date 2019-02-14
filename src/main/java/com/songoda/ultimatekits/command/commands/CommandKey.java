@@ -1,11 +1,11 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,25 +27,25 @@ public class CommandKey extends AbstractCommand {
             return ReturnType.FAILURE;
         }
         if (Bukkit.getPlayer(args[3]) == null && !args[3].trim().equalsIgnoreCase("all")) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&cThat username does not exist, or the user is offline!"));
+            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&cThat username does not exist, or the user is offline!"));
             return ReturnType.FAILURE;
         }
         int amt = 1;
         if (args.length == 5) {
-            if (!Arconix.pl().getApi().doMath().isNumeric(args[4])) {
+            if (!Methods.isNumeric(args[4])) {
                 amt = 0;
             } else {
                 amt = Integer.parseInt(args[4]);
             }
         }
         if (amt == 0) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&a" + args[3] + " &cis not a number."));
+            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&a" + args[3] + " &cis not a number."));
             return ReturnType.FAILURE;
         }
 
         Key key = instance.getKeyManager().getKey(args[2]);
         if (key == null) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&a" + args[3] + " &cis not a key."));
+            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&a" + args[3] + " &cis not a key."));
             return ReturnType.FAILURE;
         }
 

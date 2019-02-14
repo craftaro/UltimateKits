@@ -2,6 +2,7 @@ package com.songoda.ultimatekits.kit;
 
 import com.songoda.ultimatekits.UltimateKits;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 public class KitBlockData {
 
@@ -30,7 +31,7 @@ public class KitBlockData {
         setDisplayingItems(false);
         setHasParticles(false);
         UltimateKits.getInstance().getDisplayItemHandler().displayItem(this);
-        UltimateKits.getInstance().getHologramHandler().updateHolograms();
+        UltimateKits.getInstance().getHologram().remove(this);
     }
 
     public Kit getKit() {
@@ -39,6 +40,22 @@ public class KitBlockData {
 
     public Location getLocation() {
         return location.clone();
+    }
+    
+    public int getX() {
+        return location.getBlockX();
+    }
+
+    public int getY() {
+        return location.getBlockY();
+    }
+
+    public int getZ() {
+        return location.getBlockZ();
+    }
+
+    public World getWorld() {
+        return location.getWorld();
     }
 
     public boolean showHologram() {
@@ -80,5 +97,6 @@ public class KitBlockData {
     public void setType(KitType type) {
         this.type = type;
     }
+    
 
 }

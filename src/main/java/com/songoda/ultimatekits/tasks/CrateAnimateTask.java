@@ -1,11 +1,10 @@
 package com.songoda.ultimatekits.tasks;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.api.methods.inventory.AInventory;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitItem;
+import com.songoda.ultimatekits.utils.Methods;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -41,7 +40,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         this.plugin = plugin;
         this.player = player;
         this.give = give;
-        this.inventory = Bukkit.createInventory(null, 27, TextComponent.formatText(kit.getShowableName()));
+        this.inventory = Bukkit.createInventory(null, 27, Methods.formatText(kit.getShowableName()));
 
         List<KitItem> items = kit.getContents();
         Collections.shuffle(items);
@@ -85,7 +84,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         num = slow ? 1 : 0;
 
         for (int i = 0; i < 27; i++) {
-            inventory.setItem(i, AInventory.toGlass(true, 0));
+            inventory.setItem(i, Methods.toGlass(true, 0));
         }
 
         for (int i = 9; i < 18; i++) {
@@ -115,7 +114,7 @@ public class CrateAnimateTask extends BukkitRunnable {
                         player.getWorld().dropItemNaturally(player.getLocation(), item2);
                     }
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10f, 10f);
-                    player.sendMessage(plugin.getReferences().getPrefix() + TextComponent.formatText(Lang.CRATE_WON.getConfigValue(WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))));
+                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.CRATE_WON.getConfigValue(WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))));
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::finish, 50);
                 }
                 done = true;

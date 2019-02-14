@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
@@ -56,7 +55,7 @@ public class GUIGeneralOptions extends AbstractGUI {
 
         ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
         ItemStack back = head2;
-        back = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        back = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
         skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
@@ -90,10 +89,10 @@ public class GUIGeneralOptions extends AbstractGUI {
 
                 if (msg.trim().equalsIgnoreCase(kit.getName())) {
                     plugin.getKitManager().removeKit(kit);
-                    plugin.getHologramHandler().updateHolograms();
-                    player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&cKit destroyed successfully."));
+                    plugin.getHologram().update(kit);
+                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cKit destroyed successfully."));
                 } else {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&cKit was not Destroyed."));
+                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cKit was not Destroyed."));
                 }
             });
 
@@ -118,8 +117,8 @@ public class GUIGeneralOptions extends AbstractGUI {
             AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
                 String msg = event.getName();
 
-                if (!Arconix.pl().getApi().doMath().isNumeric(msg)) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText("&a" + msg + " &8is not a number. Please do not include a &a$&8."));
+                if (!Methods.isNumeric(msg)) {
+                    player.sendMessage(Methods.formatText("&a" + msg + " &8is not a number. Please do not include a &a$&8."));
                 } else {
                     kit.setDelay(Integer.parseInt(msg));
                 }

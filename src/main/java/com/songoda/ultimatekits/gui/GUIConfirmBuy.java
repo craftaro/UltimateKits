@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
@@ -35,13 +34,13 @@ public class GUIConfirmBuy extends AbstractGUI {
             cost = 0;
         }
 
-        String title = Arconix.pl().getApi().format().formatTitle("&c" + StringUtils.capitalize(kit.getName().toLowerCase()));
+        String title = Methods.formatTitle("&c" + StringUtils.capitalize(kit.getName().toLowerCase()));
         ItemStack item = new ItemStack(Material.DIAMOND_HELMET);
         if (kit.getDisplayItem() != null) item = new ItemStack(kit.getDisplayItem());
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(title);
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(Arconix.pl().getApi().format().formatText("&a$" + Arconix.pl().getApi().format().formatEconomy(cost)));
+        lore.add(Methods.formatText("&a$" + Methods.formatEconomy(cost)));
 
         int nu = 0;
         while (nu != 27) {
@@ -89,7 +88,7 @@ public class GUIConfirmBuy extends AbstractGUI {
         }));
 
         registerClickable(15, ((player1, inventory1, cursor, slot, type) -> {
-            player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + Lang.BUYCANCELLED.getConfigValue()));
+            player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + Lang.BUYCANCELLED.getConfigValue()));
             player.closeInventory();
         }));
     }

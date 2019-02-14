@@ -1,7 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
@@ -141,18 +139,18 @@ public class GUIKitSelector extends AbstractGUI {
 
             Kit kit = plugin.getKitManager().getKit(kitItem);
 
-            String title = Lang.GUI_KIT_NAME.getConfigValue(Arconix.pl().getApi().format().formatText(kitItem, true));
+            String title = Lang.GUI_KIT_NAME.getConfigValue(Methods.formatText(kitItem, true));
             if (kit.getTitle() != null)
-                title = Arconix.pl().getApi().format().formatText(kit.getTitle());
+                title = Methods.formatText(kit.getTitle());
 
             ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
             if (kit.getDisplayItem() != null)
                 item.setType(kit.getDisplayItem());
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(TextComponent.convertToInvisibleString(kitItem + ":") + Arconix.pl().getApi().format().formatText(title));
+            meta.setDisplayName(Methods.convertToInvisibleString(kitItem + ":") + Methods.formatText(title));
             ArrayList<String> lore = new ArrayList<>();
             if (kit.getPrice() != 0)
-                lore.add(Arconix.pl().getApi().format().formatText("&7This kit costs &a$" + kit.getPrice() + "&7."));
+                lore.add(Methods.formatText("&7This kit costs &a$" + kit.getPrice() + "&7."));
             else if (kit.getLink() != null)
                 lore.add(Lang.LINK.getConfigValue());
 
@@ -162,41 +160,41 @@ public class GUIKitSelector extends AbstractGUI {
                     String[] parts = Lang.ABOUT_KIT.getConfigValue().split("\\|");
                     lore.add("");
                     for (String line : parts)
-                        lore.add(Arconix.pl().getApi().format().formatText(line));
+                        lore.add(Methods.formatText(line));
                 }
                 if (kit.hasPermission(player)) {
                     if (kit.getNextUse(player) == -1) {
-                        lore.add(Arconix.pl().getApi().format().formatText(Lang.ONCE.getConfigValue()));
+                        lore.add(Methods.formatText(Lang.ONCE.getConfigValue()));
                     } else if (kit.getNextUse(player) > 0) {
                         if (!Lang.PLEASE_WAIT.getConfigValue().trim().equals("")) {
-                            lore.add(Arconix.pl().getApi().format().formatText(Lang.PLEASE_WAIT.getConfigValue(Arconix.pl().getApi().format().readableTime(kit.getNextUse(player)))));
+                            lore.add(Methods.formatText(Lang.PLEASE_WAIT.getConfigValue(Methods.makeReadable(kit.getNextUse(player)))));
                         }
                     } else if (!Lang.READY.getConfigValue().trim().equals("")) {
-                        lore.add(Arconix.pl().getApi().format().formatText(Lang.READY.getConfigValue()));
+                        lore.add(Methods.formatText(Lang.READY.getConfigValue()));
                     }
                 } else
-                    lore.add(Arconix.pl().getApi().format().formatText(Lang.NO_ACCESS.getConfigValue()));
+                    lore.add(Methods.formatText(Lang.NO_ACCESS.getConfigValue()));
                 lore.add("");
-                lore.add(Arconix.pl().getApi().format().formatText(Lang.LEFT_PREVIEW.getConfigValue()));
+                lore.add(Methods.formatText(Lang.LEFT_PREVIEW.getConfigValue()));
                 if (kit.hasPermission(player)) {
-                    lore.add(Arconix.pl().getApi().format().formatText(Lang.RIGHT_CLAIM.getConfigValue()));
+                    lore.add(Methods.formatText(Lang.RIGHT_CLAIM.getConfigValue()));
                 } else if (kit.getPrice() != 0 || kit.getLink() != null) {
-                    lore.add(Arconix.pl().getApi().format().formatText(Lang.RIGHT_BUY.getConfigValue()));
+                    lore.add(Methods.formatText(Lang.RIGHT_BUY.getConfigValue()));
                 }
 
                 if (player.hasPermission("ultimatekits.admin")) {
                     lore.add("");
-                    lore.add(Arconix.pl().getApi().format().formatText("&6Middle Click &7to edit positioning."));
+                    lore.add(Methods.formatText("&6Middle Click &7to edit positioning."));
                 }
             } else {
-                lore.add(Arconix.pl().getApi().format().formatText("&6&lEdit Mode"));
+                lore.add(Methods.formatText("&6&lEdit Mode"));
 
                 lore.add("");
-                lore.add(Arconix.pl().getApi().format().formatText("&6Left Click &7to move kit left"));
-                lore.add(Arconix.pl().getApi().format().formatText("&6Right Click &7to move kit right"));
+                lore.add(Methods.formatText("&6Left Click &7to move kit left"));
+                lore.add(Methods.formatText("&6Right Click &7to move kit right"));
                 lore.add("");
 
-                lore.add(Arconix.pl().getApi().format().formatText("&6Middle Click &7to go back."));
+                lore.add(Methods.formatText("&6Middle Click &7to go back."));
             }
             meta.setLore(lore);
             item.setItemMeta(meta);
@@ -211,23 +209,23 @@ public class GUIKitSelector extends AbstractGUI {
         boolean hit = false;
         for (String line : parts) {
             if (!hit)
-                infometa.setDisplayName(Arconix.pl().getApi().format().formatText(line));
+                infometa.setDisplayName(Methods.formatText(line));
             else
-                lore.add(Arconix.pl().getApi().format().formatText(line));
+                lore.add(Methods.formatText(line));
             hit = true;
         }
         infometa.setLore(lore);
         info.setItemMeta(infometa);
 
         ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
-        ItemStack skull = Arconix.pl().getApi().getGUI().addTexture(head, "http://textures.minecraft.net/texture/1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b");
+        ItemStack skull = Methods.addTexture(head, "http://textures.minecraft.net/texture/1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b");
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         skull.setDurability((short) 3);
         skullMeta.setDisplayName(Lang.NEXT.getConfigValue());
         skull.setItemMeta(skullMeta);
 
         ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
-        ItemStack skull2 = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        ItemStack skull2 = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
         skull2.setDurability((short) 3);
         skull2Meta.setDisplayName(Lang.LAST.getConfigValue());

@@ -1,9 +1,9 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ public class CommandSet extends AbstractCommand {
         }
         Block b = player.getTargetBlock(null, 200);
         instance.getKitManager().addKitToLocation(instance.getKitManager().getKit(kit), b.getLocation());
-        sender.sendMessage(Arconix.pl().getApi().format().formatText(instance.getReferences().getPrefix() + "&8Kit &a" + kit + " &8set to: &a" + b.getType().toString() + "&8."));
+        sender.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + "&8Kit &a" + kit + " &8set to: &a" + b.getType().toString() + "&8."));
         return ReturnType.SUCCESS;
     }
 

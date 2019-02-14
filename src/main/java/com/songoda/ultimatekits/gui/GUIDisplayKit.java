@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
@@ -35,9 +34,9 @@ public class GUIDisplayKit extends AbstractGUI {
         this.plugin = plugin;
         this.back = back;
 
-        String guititle = Arconix.pl().getApi().format().formatTitle(Lang.PREVIEW_TITLE.getConfigValue(kit.getShowableName()));
+        String guititle = Methods.formatTitle(Lang.PREVIEW_TITLE.getConfigValue(kit.getShowableName()));
         if (kit.getTitle() != null) {
-            guititle = Lang.PREVIEW_TITLE.getConfigValue(Arconix.pl().getApi().format().formatText(kit.getTitle(), true));
+            guititle = Lang.PREVIEW_TITLE.getConfigValue(Methods.formatText(kit.getTitle(), true));
         }
 
         list = kit.getReadableContents(player, true, true, false);
@@ -133,19 +132,19 @@ public class GUIDisplayKit extends AbstractGUI {
                 lore.add(Lang.CLICKECO.getConfigValue("0"));
                 if (player.isOp()) {
                     lore.add("");
-                    lore.add(Arconix.pl().getApi().format().formatText("&7This is free because"));
-                    lore.add(Arconix.pl().getApi().format().formatText("&7you have perms for it."));
-                    lore.add(Arconix.pl().getApi().format().formatText("&7Everyone else buys"));
-                    lore.add(Arconix.pl().getApi().format().formatText("&7this for &a$" + Arconix.pl().getApi().format().formatEconomy(kit.getPrice()) + "&7."));
+                    lore.add(Methods.formatText("&7This is free because"));
+                    lore.add(Methods.formatText("&7you have perms for it."));
+                    lore.add(Methods.formatText("&7Everyone else buys"));
+                    lore.add(Methods.formatText("&7this for &a$" + Methods.formatEconomy(kit.getPrice()) + "&7."));
                 }
             } else {
-                lore.add(Lang.CLICKECO.getConfigValue(Arconix.pl().getApi().format().formatEconomy(kit.getPrice())));
+                lore.add(Lang.CLICKECO.getConfigValue(Methods.formatEconomy(kit.getPrice())));
             }
             if (kit.getDelay() != 0 && player.isOp()) {
                 lore.add("");
-                lore.add(Arconix.pl().getApi().format().formatText("&7You do not have a delay"));
-                lore.add(Arconix.pl().getApi().format().formatText("&7because you have perms"));
-                lore.add(Arconix.pl().getApi().format().formatText("&7to bypass the delay."));
+                lore.add(Methods.formatText("&7You do not have a delay"));
+                lore.add(Methods.formatText("&7because you have perms"));
+                lore.add(Methods.formatText("&7to bypass the delay."));
             }
             linkmeta.setLore(lore);
             link.setItemMeta(linkmeta);
@@ -203,7 +202,7 @@ public class GUIDisplayKit extends AbstractGUI {
         if (back != null && !plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
 
             ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
-            ItemStack skull2 = Arconix.pl().getApi().getGUI().addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+            ItemStack skull2 = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
             skull2.setDurability((short) 3);
             skull2Meta.setDisplayName(Lang.BACK.getConfigValue());

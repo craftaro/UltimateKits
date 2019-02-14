@@ -1,7 +1,5 @@
 package com.songoda.ultimatekits.kit;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.gui.GUIConfirmBuy;
@@ -48,7 +46,7 @@ public class Kit {
 
     public Kit(String name, String title, String link, double price, Material displayItem, int delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
         this.name = name;
-        this.showableName = Arconix.pl().getApi().format().formatText(name, true);
+        this.showableName = Methods.formatText(name, true);
         this.price = price;
         this.link = link;
         this.kitAnimation = kitAnimation;
@@ -78,7 +76,7 @@ public class Kit {
 
             if (link != null) {
                 player.sendMessage("");
-                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&a" + link));
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&a" + link));
                 player.sendMessage("");
                 player.closeInventory();
             } else if (price != 0) {
@@ -124,7 +122,7 @@ public class Kit {
     public void give(Player player, boolean useKey, boolean economy, boolean console) {
         try {
             if (plugin.getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player, useKey)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.INVENTORY_FULL.getConfigValue()));
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.INVENTORY_FULL.getConfigValue()));
                 return;
             }
             if (plugin.getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE) {
@@ -138,12 +136,12 @@ public class Kit {
                 Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(player.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
 
                 if (!player.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue(showableName)) && !player.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue("Any"))) {
-                    player.sendMessage(Arconix.pl().getApi().format().formatText(plugin.getReferences().getPrefix() + Lang.WRONG_KEY.getConfigValue()));
+                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + Lang.WRONG_KEY.getConfigValue()));
                     return;
                 }
                 for (int i = 0; i < key.getKitAmount(); i++)
                     givePartKit(player, key);
-                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.KEY_SUCCESS.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.KEY_SUCCESS.getConfigValue(showableName)));
                 if (player.getInventory().getItemInHand().getAmount() != 1) {
                     ItemStack is = player.getItemInHand();
                     is.setAmount(is.getAmount() - 1);
@@ -155,19 +153,19 @@ public class Kit {
             }
 
             if (getNextUse(player) == -1 && !economy && !console) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
             } else if (getNextUse(player) <= 0 || economy || console) {
                 giveKit(player);
                 if (economy) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.PURCHASE_SUCCESS.getConfigValue(showableName)));
+                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.PURCHASE_SUCCESS.getConfigValue(showableName)));
                 } else {
                     updateDelay(player);
                     if (kitAnimation == KitAnimation.NONE) {
-                        player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.GIVE_SUCCESS.getConfigValue(showableName)));
+                        player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.GIVE_SUCCESS.getConfigValue(showableName)));
                     }
                 }
             } else {
-                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(player)))));
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.DELAY.getConfigValue(Methods.makeReadable(getNextUse(player)))));
             }
 
         } catch (Exception ex) {
@@ -209,7 +207,7 @@ public class Kit {
                         ItemMeta meta = is.getItemMeta();
                         List<String> newLore = new ArrayList<>();
                         for (String line : meta.getLore()) {
-                            if (line.equals(TextComponent.convertToInvisibleString("----"))) break;
+                            if (line.equals(Methods.convertToInvisibleString("----"))) break;
                             newLore.add(line);
                         }
                         meta.setLore(newLore);
@@ -291,7 +289,7 @@ public class Kit {
                     if (item.getContent() instanceof KitContentEconomy) {
                         try {
                             Methods.pay(player, ((KitContentEconomy) item.getContent()).getAmount());
-                            player.sendMessage(Lang.ECO_SENT.getConfigValue(Arconix.pl().getApi().format().formatEconomy(((KitContentEconomy) item.getContent()).getAmount())));
+                            player.sendMessage(Lang.ECO_SENT.getConfigValue(Methods.formatEconomy(((KitContentEconomy) item.getContent()).getAmount())));
                         } catch (NumberFormatException ex) {
                             Debugger.runReport(ex);
                         }
@@ -354,18 +352,18 @@ public class Kit {
             net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
 
             if (!hasPermission(player)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NO_PERM.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.NO_PERM.getConfigValue(showableName)));
                 return;
             } else if (!econ.has(player, price)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.CANNOT_AFFORD.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.CANNOT_AFFORD.getConfigValue(showableName)));
                 return;
             }
             if (this.delay > 0) {
 
                 if (getNextUse(player) == -1) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
+                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
                 } else if (getNextUse(player) != 0) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText(Lang.DELAY.getConfigValue(Arconix.pl().getApi().format().readableTime(getNextUse(player)))));
+                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.DELAY.getConfigValue(Methods.makeReadable(getNextUse(player)))));
                     return;
                 }
             }

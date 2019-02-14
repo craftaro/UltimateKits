@@ -219,10 +219,10 @@ public class Kit {
                         for (String line : is.getItemMeta().getLore()) {
                             command.append(line);
                         }
-                        list.add(new KitItem(ChatColor.stripColor(command.toString())));
+                        list.add(new KitItem(is, ChatColor.stripColor(command.toString())));
                     } else if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).endsWith("Money")) {
                         String money = is.getItemMeta().getLore().get(0);
-                        list.add(new KitItem(ChatColor.stripColor(money)));
+                        list.add(new KitItem(is, ChatColor.stripColor(money)));
                     } else {
                         list.add(new KitItem(is));
                     }

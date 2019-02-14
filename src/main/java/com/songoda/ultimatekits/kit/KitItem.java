@@ -36,6 +36,21 @@ public class KitItem {
         }
     }
 
+    public KitItem(ItemStack item, String line) {
+        ItemStack itemStack = item.clone();
+        ItemMeta meta = itemStack.getItemMeta();
+        if (itemStack.hasItemMeta() && meta.hasDisplayName() && meta.getDisplayName().contains(";")) {
+            translateLine(meta.getDisplayName());
+        }
+        if (line.startsWith(UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol"))) {
+            this.content = new KitContentEconomy(Double.parseDouble(line.substring(1).trim()));
+        } else if (line.startsWith("/")) {
+            this.content = new KitContentCommand(line.substring(1));
+        } else {
+            this.content = new KitContentItem(UltimateKits.getInstance().getItemSerializer().deserializeLegacyItemStack(line));
+        }
+    }
+
     public KitItem(ItemStack item) {
         ItemStack itemStack = item.clone();
         ItemMeta meta = itemStack.getItemMeta();

@@ -55,7 +55,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         this.listener = new Listener() {
             @EventHandler
             public void onInventoryClick(InventoryClickEvent event) {
-                if (!(event.getWhoClicked() instanceof Player) && event.getWhoClicked() == player) return;
+                if (!(event.getWhoClicked() instanceof Player) || event.getWhoClicked() != player) return;
 
                 event.setCancelled(true);
             }

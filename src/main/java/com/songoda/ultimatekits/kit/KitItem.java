@@ -78,6 +78,7 @@ public class KitItem {
         for (String s : kitOptions) {
             if (s.equals("")) continue;
             String[] sSplit = s.split(":", 2);
+            if (sSplit.length != 2) return line;
             String option = sSplit[0].toLowerCase();
             String value = sSplit[1].trim();
 

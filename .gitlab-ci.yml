@@ -4,7 +4,7 @@ stages:
 variables:
     name: "UltimateKits"
     path: "/builds/Songoda/$name"
-    version: "2.2.5"
+    version: "2.2.6"
 
 build:
   stage: build

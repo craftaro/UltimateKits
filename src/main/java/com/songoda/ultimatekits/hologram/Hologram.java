@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.hologram;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
@@ -91,31 +90,26 @@ public abstract class Hologram {
                     break;
                 case "{RIGHT-CLICK}":
                     if (kitType == KitType.CRATE) {
-                        lines.add(Methods.formatText(Lang.OPEN_CRATE_HOLOGRAM.getConfigValue()));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.crate")));
                         break;
                     }
                     if (kit.getLink() != null) {
-                        lines.add(Methods.formatText(Lang.BUY_LINK_HOLOGRAM.getConfigValue()));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.buylink")));
                         break;
                     }
                     if (kit.getPrice() != 0) {
-                        double cost = kit.getPrice();
-                        if (cost != 0) {
-                            lines.add(Methods.formatText(Lang.BUY_ECO_HOLOGRAM.getConfigValue(Methods.formatEconomy(cost))));
-                        } else {
-                            lines.add(Lang.BUY_ECO_HOLOGRAM.getConfigValue(Methods.formatText(Lang.FREE.getConfigValue())));
-                        }
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.buyeco", kit.getPrice() != 0 ? Methods.formatEconomy(kit.getPrice()) : instance.getLocale().getMessage("general.type.free"))));
                     }
                     break;
                 case "{LEFT-CLICK}":
                     if (kitType == KitType.CLAIM) {
-                        lines.add(Methods.formatText(Lang.DAILY_HOLOGRAM.getConfigValue(kit)));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.daily")));
                         break;
                     }
                     if (kit.getLink() == null && kit.getPrice() == 0) {
-                        lines.add(Methods.formatText(Lang.PREVIEW_ONLY_HOLOGRAM.getConfigValue(kit)));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.previewonly")));
                     } else {
-                        lines.add(Methods.formatText(Lang.PREVIEW_HOLOGRAM.getConfigValue(kit)));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.preview")));
                     }
                     break;
                 default:

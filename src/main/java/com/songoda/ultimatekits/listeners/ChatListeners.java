@@ -1,4 +1,4 @@
-package com.songoda.ultimatekits.events;
+package com.songoda.ultimatekits.listeners;
 
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.utils.Debugger;

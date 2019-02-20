@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.kit.type;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Material;
@@ -39,7 +38,7 @@ public class KitContentEconomy implements KitContent {
             index += 30;
         }
         meta.setLore(lore);
-        meta.setDisplayName(Lang.MONEY.getConfigValue());
+        meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("general.type.money"));
         parseStack.setItemMeta(meta);
         return parseStack;
     }

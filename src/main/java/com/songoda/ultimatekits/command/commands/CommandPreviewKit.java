@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.kit.Kit;
@@ -17,12 +16,12 @@ public class CommandPreviewKit extends AbstractCommand {
     protected ReturnType runCommand(UltimateKits plugin, CommandSender sender, String... args) {
         Player player = (Player) sender;
         if (args.length != 1) {
-            player.sendMessage(plugin.getReferences().getPrefix() + Lang.PREVIEW_NO_KIT_SUPPLIED.getConfigValue());
+            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.kit.nokitsupplied"));
             return ReturnType.FAILURE;
         }
         Kit kit = plugin.getKitManager().getKit(args[0].toLowerCase().trim());
         if (kit == null) {
-            player.sendMessage(plugin.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue());
+            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.kit.kitdoesntexist"));
             return ReturnType.FAILURE;
         }
         kit.display(player, null);

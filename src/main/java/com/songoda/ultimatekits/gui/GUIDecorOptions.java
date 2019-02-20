@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
@@ -47,13 +46,13 @@ public class GUIDecorOptions extends AbstractGUI {
         inventory.setItem(26, Methods.getBackgroundGlass(true));
 
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                Lang.EXIT.getConfigValue());
+                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
 
         ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
         ItemStack back = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         inventory.setItem(0, back);
 
-        createButton(0, back, Lang.BACK.getConfigValue());
+        createButton(0, back, UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
 
         ArrayList<String> lore = new ArrayList<>();
         if (kitBlockData.showHologram()) {

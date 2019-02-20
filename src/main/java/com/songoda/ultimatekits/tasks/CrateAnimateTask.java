@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.tasks;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitItem;
@@ -114,7 +113,7 @@ public class CrateAnimateTask extends BukkitRunnable {
                         player.getWorld().dropItemNaturally(player.getLocation(), item2);
                     }
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10f, 10f);
-                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.CRATE_WON.getConfigValue(WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))));
+                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.create.won", WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " "))));
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::finish, 50);
                 }
                 done = true;

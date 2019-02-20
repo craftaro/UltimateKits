@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.key.Key;
@@ -23,7 +22,7 @@ public class CommandKey extends AbstractCommand {
         }
         Kit kit = instance.getKitManager().getKit(args[1]);
         if (kit == null && !args[1].toLowerCase().equals("all")) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kit));
+            sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
             return ReturnType.FAILURE;
         }
         if (Bukkit.getPlayer(args[3]) == null && !args[3].trim().equalsIgnoreCase("all")) {
@@ -53,12 +52,12 @@ public class CommandKey extends AbstractCommand {
         if (!args[3].trim().equals("all")) {
             Player p = Bukkit.getPlayer(args[3]);
             p.getInventory().addItem(key.getKeyItem(kit, amt));
-            p.sendMessage(instance.getReferences().getPrefix() + Lang.KEY_GIVEN.getConfigValue((kit == null ? "Any" : kit.getShowableName())));
+            p.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.key.given", kit == null ? "Any" : kit.getShowableName()));
             return ReturnType.SUCCESS;
         }
         for (Player pl : instance.getServer().getOnlinePlayers()) {
             pl.getInventory().addItem(key.getKeyItem(kit, amt));
-            pl.sendMessage(instance.getReferences().getPrefix() + Lang.KEY_GIVEN.getConfigValue((kit == null ? "Any" : kit.getShowableName())));
+            pl.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.key.given", kit == null ? "Any" : kit.getShowableName()));
         }
         return ReturnType.SUCCESS;
     }

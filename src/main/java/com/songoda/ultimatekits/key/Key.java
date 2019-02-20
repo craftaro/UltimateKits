@@ -1,6 +1,6 @@
 package com.songoda.ultimatekits.key;
 
-import com.songoda.ultimatekits.Lang;
+import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
@@ -31,6 +31,7 @@ public class Key {
 
 
     public ItemStack getKeyItem(Kit kit, int amt) {
+        UltimateKits plugin = UltimateKits.getInstance();
         ItemStack is = null;
         try {
             is = new ItemStack(Material.TRIPWIRE_HOOK, amt);
@@ -42,13 +43,13 @@ public class Key {
                 kitName = "Any";
 
             ItemMeta meta = is.getItemMeta();
-            meta.setDisplayName(Methods.formatText(Lang.KEY_TITLE.getConfigValue(kitName)));
+            meta.setDisplayName(plugin.getLocale().getMessage("interface.key.title", kitName));
 
             meta.addEnchant(Enchantment.DURABILITY, 1, true);
             List<String> lore = new ArrayList<>();
             lore.add(Methods.formatText("&e" + name + " &fKey"));
 
-            String desc1 = Lang.KEY_DESC1.getConfigValue(kitName);
+            String desc1 = plugin.getLocale().getMessage("interface.key.description1", kitName);
 
             if (kitName.equals("Any"))
                 desc1 = desc1.replaceAll("\\[.*?\\]", "");
@@ -57,11 +58,11 @@ public class Key {
 
             lore.add(Methods.formatText(desc1));
             if (this.amt == -1)
-                lore.add(Methods.formatText(Lang.KEY_DESC2.getConfigValue()));
+                lore.add(plugin.getLocale().getMessage("interface.key.description2"));
             else
-                lore.add(Methods.formatText(Lang.KEY_DESC3.getConfigValue()));
+                lore.add(plugin.getLocale().getMessage("interface.key.description3"));
             if (kitAmount > 1)
-                lore.add(Methods.formatText(Lang.KEY_DESC4.getConfigValue(this.kitAmount)));
+                lore.add(plugin.getLocale().getMessage("interface.key.description4", this.kitAmount));
             meta.setLore(lore);
 
             is.setItemMeta(meta);

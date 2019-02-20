@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.kit;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.gui.GUIConfirmBuy;
 import com.songoda.ultimatekits.gui.GUIDisplayKit;
@@ -70,7 +69,7 @@ public class Kit {
             }
 
             if (!player.hasPermission("ultimatekits.buy." + name)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
+                player.sendMessage(plugin.getReferences().getPrefix() + UltimateKits.getInstance().getLocale().getMessage("command.general.noperms"));
                 return;
             }
 
@@ -82,7 +81,7 @@ public class Kit {
             } else if (price != 0) {
                 new GUIConfirmBuy(plugin, player, this);
             } else {
-                player.sendMessage(Lang.NO_PERM.getConfigValue());
+                player.sendMessage(UltimateKits.getInstance().getLocale().getMessage("command.general.noperms"));
             }
         } catch (Exception ex) {
             Debugger.runReport(ex);
@@ -122,7 +121,7 @@ public class Kit {
     public void give(Player player, boolean useKey, boolean economy, boolean console) {
         try {
             if (plugin.getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player, useKey)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.INVENTORY_FULL.getConfigValue()));
+                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.full"));
                 return;
             }
             if (plugin.getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE) {
@@ -135,13 +134,14 @@ public class Kit {
 
                 Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(player.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
 
-                if (!player.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue(showableName)) && !player.getItemInHand().getItemMeta().getDisplayName().equals(Lang.KEY_TITLE.getConfigValue("Any"))) {
-                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + Lang.WRONG_KEY.getConfigValue()));
+                if (!player.getItemInHand().getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title", showableName))
+                        && !player.getItemInHand().getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title", "Any"))) {
+                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.crate.wrongkey")));
                     return;
                 }
                 for (int i = 0; i < key.getKitAmount(); i++)
                     givePartKit(player, key);
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.KEY_SUCCESS.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.key.success", showableName));
                 if (player.getInventory().getItemInHand().getAmount() != 1) {
                     ItemStack is = player.getItemInHand();
                     is.setAmount(is.getAmount() - 1);
@@ -153,19 +153,19 @@ public class Kit {
             }
 
             if (getNextUse(player) == -1 && !economy && !console) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.nottwice"));
             } else if (getNextUse(player) <= 0 || economy || console) {
                 giveKit(player);
                 if (economy) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.PURCHASE_SUCCESS.getConfigValue(showableName)));
+                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.purchasesuccess", showableName));
                 } else {
                     updateDelay(player);
                     if (kitAnimation == KitAnimation.NONE) {
-                        player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.GIVE_SUCCESS.getConfigValue(showableName)));
+                        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.givesuccess", showableName));
                     }
                 }
             } else {
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.DELAY.getConfigValue(Methods.makeReadable(getNextUse(player)))));
+                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.delay", Methods.makeReadable(getNextUse(player))));
             }
 
         } catch (Exception ex) {
@@ -181,15 +181,15 @@ public class Kit {
                     && !player.hasPermission("previewkit." + name)
                     && !player.hasPermission("ultimatekits.use")
                     && !player.hasPermission("ultimatekits." + name)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
+                player.sendMessage(plugin.getReferences().getPrefix() + UltimateKits.getInstance().getLocale().getMessage("command.general.noperms"));
                 return;
             }
             if (name == null) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(showableName));
+                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.kit.kitdoesntexist"));
                 return;
             }
 
-            player.sendMessage(plugin.getReferences().getPrefix() + Lang.PREVIEWING_KIT.getConfigValue(showableName));
+            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.preview.kit", showableName));
             new GUIDisplayKit(plugin, back, player, this);
         } catch (Exception ex) {
             Debugger.runReport(ex);
@@ -289,7 +289,7 @@ public class Kit {
                     if (item.getContent() instanceof KitContentEconomy) {
                         try {
                             Methods.pay(player, ((KitContentEconomy) item.getContent()).getAmount());
-                            player.sendMessage(Lang.ECO_SENT.getConfigValue(Methods.formatEconomy(((KitContentEconomy) item.getContent()).getAmount())));
+                            player.sendMessage(plugin.getLocale().getMessage("event.claim.eco", Methods.formatEconomy(((KitContentEconomy) item.getContent()).getAmount())));
                         } catch (NumberFormatException ex) {
                             Debugger.runReport(ex);
                         }
@@ -352,18 +352,18 @@ public class Kit {
             net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
 
             if (!hasPermission(player)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.NO_PERM.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(UltimateKits.getInstance().getLocale().getMessage(UltimateKits.getInstance().getLocale().getMessage("command.general.noperms"))));
                 return;
             } else if (!econ.has(player, price)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.CANNOT_AFFORD.getConfigValue(showableName)));
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(plugin.getLocale().getMessage("event.claim.cannotafford", showableName)));
                 return;
             }
             if (this.delay > 0) {
 
                 if (getNextUse(player) == -1) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.NOT_TWICE.getConfigValue(showableName)));
+                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(plugin.getLocale().getMessage("event.claim.nottwice")));
                 } else if (getNextUse(player) != 0) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(Lang.DELAY.getConfigValue(Methods.makeReadable(getNextUse(player)))));
+                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.delay", Methods.makeReadable(getNextUse(player))));
                     return;
                 }
             }

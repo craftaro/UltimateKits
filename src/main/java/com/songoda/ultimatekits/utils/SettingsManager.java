@@ -231,6 +231,8 @@ public class SettingsManager implements Listener {
         o14("Rainbow-Glass", "Interfaces.Replace Glass Type 1 With Rainbow Glass", false),
         o15("glassless", "Interfaces.Do Not Use Glass Borders", false),
 
+        DOWNLOAD_FILES("-", "System.Download Needed Data Files", true),
+        LANGUGE_MODE("-", "System.Language Mode", "en_US"),
         o16("Debug-Mode", "System.Debugger Enabled", false);
 
         private String setting;

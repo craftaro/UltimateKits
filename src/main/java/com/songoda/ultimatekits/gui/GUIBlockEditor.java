@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
@@ -45,7 +44,7 @@ public class GUIBlockEditor extends AbstractGUI {
         inventory.setItem(26, Methods.getBackgroundGlass(true));
 
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                Lang.EXIT.getConfigValue());
+                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Methods.formatText("&7Click to swap this kit blocks function."));

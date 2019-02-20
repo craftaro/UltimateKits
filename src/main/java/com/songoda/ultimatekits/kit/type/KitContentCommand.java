@@ -1,6 +1,6 @@
 package com.songoda.ultimatekits.kit.type;
 
-import com.songoda.ultimatekits.Lang;
+import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -36,7 +36,7 @@ public class KitContentCommand implements KitContent {
             index += 30;
         }
         meta.setLore(lore);
-        meta.setDisplayName(Lang.COMMAND.getConfigValue());
+        meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("general.type.command"));
         stack.setItemMeta(meta);
         return stack;
     }

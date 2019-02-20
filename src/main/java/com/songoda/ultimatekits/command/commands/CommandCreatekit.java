@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.gui.GUIKitEditor;
@@ -21,7 +20,7 @@ public class CommandCreatekit extends AbstractCommand {
         if (args.length != 2) return ReturnType.SYNTAX_ERROR;
         String kitStr = args[1].toLowerCase();
         if (instance.getKitManager().getKit(kitStr) != null) {
-            player.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_ALREADY_EXISTS.getConfigValue(kitStr));
+            player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitalreadyexists"));
             return ReturnType.FAILURE;
         }
 

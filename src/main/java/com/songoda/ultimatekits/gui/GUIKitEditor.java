@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitAnimation;
@@ -65,14 +64,14 @@ public class GUIKitEditor extends AbstractGUI {
         player.updateInventory();
 
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                Lang.EXIT.getConfigValue());
+                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
 
         ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
         ItemStack back;
         back = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
-        skull2Meta.setDisplayName(Lang.BACK.getConfigValue());
+        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
         back.setItemMeta(skull2Meta);
 
         ItemStack it = new ItemStack(Material.CHEST, 1);
@@ -117,7 +116,7 @@ public class GUIKitEditor extends AbstractGUI {
             if (meta.hasLore()) itemLore = meta.getLore();
             else itemLore = new ArrayList<>();
             itemLore.add(Methods.convertToInvisibleString("----"));
-            itemLore.add(Methods.formatText("&7" + Lang.CHANCE.getConfigValue() + ": &6" + item.getChance() + "%"));
+            itemLore.add(Methods.formatText("&7" + plugin.getLocale().getMessage("general.type.chance") + ": &6" + item.getChance() + "%"));
             if (isInFuction) {
                 itemLore.add(Methods.formatText("&7Display Item: &6" + (item.getDisplayItem() == null ? "null" : item.getDisplayItem().name())));
                 itemLore.add(Methods.formatText("&7Display Name: &6" + Methods.formatText(item.getDisplayName())));
@@ -422,7 +421,7 @@ public class GUIKitEditor extends AbstractGUI {
                         index2 += 30;
                     }
                     meta2.setLore(lore2);
-                    meta2.setDisplayName(Lang.MONEY.getConfigValue());
+                    meta2.setDisplayName(plugin.getLocale().getMessage("general.type.money"));
                     parseStack2.setItemMeta(meta2);
 
                     player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Money &5$" + msg + "&8 has been added to your kit."));
@@ -458,7 +457,7 @@ public class GUIKitEditor extends AbstractGUI {
                         index += 30;
                     }
                     meta.setLore(lore);
-                    meta.setDisplayName(Lang.COMMAND.getConfigValue());
+                    meta.setDisplayName(plugin.getLocale().getMessage("general.type.command"));
                     parseStack.setItemMeta(meta);
 
                     player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Command &5" + msg + "&8 has been added to your kit."));

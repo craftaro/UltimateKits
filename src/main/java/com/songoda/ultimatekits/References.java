@@ -11,7 +11,7 @@ public class References {
 
     References() {
         try {
-            prefix = Lang.PREFIX.getConfigValue() + " ";
+            prefix = UltimateKits.getInstance().getLocale().getMessage("general.nametag.prefix") + " ";
 
             playSound = UltimateKits.getInstance().getConfig().getBoolean("Main.Sounds Enabled");
 

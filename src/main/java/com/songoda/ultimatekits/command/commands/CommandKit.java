@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.gui.GUIKitSelector;
@@ -33,7 +32,7 @@ public class CommandKit extends AbstractCommand {
             Player player = (Player) sender;
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
-                player.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitName));
+                player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
                 return ReturnType.FAILURE;
             }
             Kit kit = instance.getKitManager().getKit(kitName);
@@ -47,19 +46,19 @@ public class CommandKit extends AbstractCommand {
         if (args.length == 2) {
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
-                sender.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitName));
+                sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
                 return ReturnType.FAILURE;
             }
 
             if (Bukkit.getPlayerExact(args[1]) == null) {
-                sender.sendMessage(instance.getReferences().getPrefix() + Lang.PLAYER_NOT_FOUND.getConfigValue(kitName));
+                sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.playernotfound"));
                 return ReturnType.FAILURE;
             }
             Player player2 = Bukkit.getPlayer(args[1]);
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!Methods.canGiveKit(player)) {
-                    player.sendMessage(instance.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
+                    player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.general.noperms"));
                     return ReturnType.FAILURE;
                 }
             }
@@ -68,8 +67,7 @@ public class CommandKit extends AbstractCommand {
             sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&7You gave &9" + player2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7."));
             return ReturnType.SUCCESS;
         }
-        sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText(Lang.SYNTAX.getConfigValue()));
-        return ReturnType.SUCCESS;
+        return ReturnType.SYNTAX_ERROR;
     }
 
     @Override

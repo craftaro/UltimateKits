@@ -2,7 +2,7 @@ package com.songoda.ultimatekits;
 
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
-import com.songoda.ultimatekits.events.*;
+import com.songoda.ultimatekits.listeners.*;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.hologram.Hologram;
@@ -18,7 +18,14 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +36,8 @@ public class UltimateKits extends JavaPlugin {
     private static CommandSender console = Bukkit.getConsoleSender();
     private References references;
 
-    private ConfigWrapper langFile = new ConfigWrapper(this, "", "lang.yml");
+    private Locale locale;
+
     private ConfigWrapper kitFile = new ConfigWrapper(this, "", "kit.yml");
     private ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
     private ConfigWrapper keyFile = new ConfigWrapper(this, "", "keys.yml");
@@ -83,8 +91,6 @@ public class UltimateKits extends JavaPlugin {
         console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
         console.sendMessage(Methods.formatText("&7Action: &aEnabling&7..."));
 
-        this.loadLanguageFile();
-
         try {
             this.itemSerializer = new ItemSerializer();
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
@@ -103,6 +109,15 @@ public class UltimateKits extends JavaPlugin {
         settingsManager.updateSettings();
         setupConfig();
 
+        String langMode = getConfig().getString("System.Language Mode");
+        Locale.init(this);
+        Locale.saveDefaultLocale("en_US");
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
+
+        if (getConfig().getBoolean("System.Download Needed Data Files")) {
+            this.update();
+        }
+
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
         this.commandManager = new CommandManager(this);
@@ -118,7 +133,6 @@ public class UltimateKits extends JavaPlugin {
         pluginManager.registerEvents(new ChatListeners(this), this);
         pluginManager.registerEvents(new EntityListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
-        pluginManager.registerEvents(new InventoryListeners(this), this);
         
         this.loadFromFile();
 
@@ -138,6 +152,39 @@ public class UltimateKits extends JavaPlugin {
         console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
         console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
         console.sendMessage(Methods.formatText("&a============================="));
+    }
+
+    private void update() {
+        try {
+            URL url = new URL("http://update.songoda.com/index.php?plugin=" + getDescription().getName() + "&version=" + getDescription().getVersion());
+            URLConnection urlConnection = url.openConnection();
+            InputStream is = urlConnection.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+
+            int numCharsRead;
+            char[] charArray = new char[1024];
+            StringBuffer sb = new StringBuffer();
+            while ((numCharsRead = isr.read(charArray)) > 0) {
+                sb.append(charArray, 0, numCharsRead);
+            }
+            String jsonString = sb.toString();
+            JSONObject json = (JSONObject) new JSONParser().parse(jsonString);
+
+            JSONArray files = (JSONArray) json.get("neededFiles");
+            for (Object o : files) {
+                JSONObject file = (JSONObject) o;
+
+                switch ((String) file.get("type")) {
+                    case "locale":
+                        InputStream in = new URL((String) file.get("link")).openStream();
+                        Locale.saveDefaultLocale(in, (String) file.get("name"));
+                        break;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to update.");
+            //e.printStackTrace();
+        }
     }
 
     /*
@@ -284,18 +331,6 @@ public class UltimateKits extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
     }
-
-    private void loadLanguageFile() {
-        Lang.setFile(langFile.getConfig());
-
-        for (final Lang value : Lang.values()) {
-            langFile.getConfig().addDefault(value.getPath(), value.getDefault());
-        }
-
-        langFile.getConfig().options().copyDefaults(true);
-        langFile.saveConfig();
-    }
-
     /**
      * Reload plugin yaml files.
      */
@@ -303,8 +338,9 @@ public class UltimateKits extends JavaPlugin {
         try {
             reloadConfig();
             kitFile.reloadConfig();
-            langFile.reloadConfig();
-            loadLanguageFile();
+            String langMode = getConfig().getString("System.Language Mode");
+            this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
+            this.locale.reloadMessages();
             this.references = new References();
             this.setupConfig();
             loadFromFile();
@@ -369,6 +405,10 @@ public class UltimateKits extends JavaPlugin {
      */
     public ItemSerializer getItemSerializer() {
     	return this.itemSerializer;
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 
     public References getReferences() {

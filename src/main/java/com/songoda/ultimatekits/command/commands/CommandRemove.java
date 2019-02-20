@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.kit.Kit;
@@ -18,7 +17,7 @@ public class CommandRemove extends AbstractCommand {
     @Override
     protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
         if (args.length != 1) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Lang.PREVIEW_NO_KIT_SUPPLIED.getConfigValue());
+            sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.nokitsupplied"));
             return ReturnType.FAILURE;
         }
         Player player = (Player) sender;

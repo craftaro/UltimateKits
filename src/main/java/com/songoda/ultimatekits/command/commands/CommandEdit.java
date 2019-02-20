@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command.commands;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.gui.GUIBlockEditor;
@@ -32,7 +31,7 @@ public class CommandEdit extends AbstractCommand {
         } else {
             String kitStr = args[1].toLowerCase().trim();
             if (instance.getKitManager().getKit(kitStr) == null) {
-                player.sendMessage(instance.getReferences().getPrefix() + Lang.KIT_DOESNT_EXIST.getConfigValue(kitStr));
+                player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
                 return ReturnType.FAILURE;
             }
 

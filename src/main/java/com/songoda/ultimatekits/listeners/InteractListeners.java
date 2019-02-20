@@ -1,6 +1,5 @@
-package com.songoda.ultimatekits.events;
+package com.songoda.ultimatekits.listeners;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.gui.GUIBlockEditor;
 import com.songoda.ultimatekits.kit.Kit;
@@ -58,10 +57,11 @@ public class InteractListeners implements Listener {
 
                 if (kitBlockData.getType() != KitType.PREVIEW) {
                     if (kitBlockData.getType() == KitType.CRATE) {
-                        player.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + Lang.NOT_KEY.getConfigValue()));
+                        long time = kit.getNextUse(player);
+                        player.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.crate.notyet", Methods.makeReadable(time))));
                     } else if (kitBlockData.getType() == KitType.CLAIM) {
                         if (!player.hasPermission("essentials.kit." + kit.getName().toLowerCase()) || !player.hasPermission("ultimatekits.kit." + kit.getName().toLowerCase())) {
-                            player.sendMessage(instance.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
+                            player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.general.noperms"));
                             return;
                         }
                         if (kit.getNextUse(player) <= 0) {
@@ -69,7 +69,7 @@ public class InteractListeners implements Listener {
                             kit.updateDelay(player);
                         } else {
                             long time = kit.getNextUse(player);
-                            player.sendMessage(instance.getReferences().getPrefix() + Lang.NOT_YET.getConfigValue(Methods.makeReadable(time)));
+                            player.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.crate.notyet", Methods.makeReadable(time))));
                         }
                     }
                 } else if (kit.getLink() != null || kit.getPrice() != 0) {

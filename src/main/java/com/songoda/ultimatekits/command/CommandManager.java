@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.command;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.commands.*;
 import com.songoda.ultimatekits.utils.Methods;
@@ -77,7 +76,7 @@ public class CommandManager implements CommandExecutor {
             }
             return;
         }
-        sender.sendMessage(plugin.getReferences().getPrefix() + Lang.NO_PERM.getConfigValue());
+        sender.sendMessage(plugin.getReferences().getPrefix() +  plugin.getLocale().getMessage("command.general.noperms"));
     }
 
     public List<AbstractCommand> getCommands() {

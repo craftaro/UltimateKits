@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.kit;
 
-import com.songoda.ultimatekits.Lang;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.type.KitContent;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
@@ -197,7 +196,7 @@ public class KitItem {
             }
 
             if (lore.size() != 0) lore.addFirst("");
-            lore.addFirst(Methods.formatText("&7" + Lang.CHANCE.getConfigValue() + ": &6" + (chance == 0 ? 100 : chance) + "%"));
+            lore.addFirst(Methods.formatText("&7" + UltimateKits.getInstance().getLocale().getMessage("general.type.chance") + ": &6" + (chance == 0 ? 100 : chance) + "%"));
             meta.setLore(new ArrayList<>(lore));
         }
 

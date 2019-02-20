@@ -41,7 +41,7 @@ public class KitBlockData {
     public Location getLocation() {
         return location.clone();
     }
-    
+
     public int getX() {
         return location.getBlockX();
     }
@@ -97,6 +97,6 @@ public class KitBlockData {
     public void setType(KitType type) {
         this.type = type;
     }
-    
+
 
 }

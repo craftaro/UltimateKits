@@ -1,7 +1,6 @@
 package com.songoda.ultimatekits.kit.type;
 
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.inventory.ItemStack;
 
 public class KitContentItem implements KitContent {

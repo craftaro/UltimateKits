@@ -100,8 +100,6 @@ public class UltimateKits extends JavaPlugin {
 
         new Convert(this);
 
-        this.references = new References();
-
         new ParticleHandler(this);
         this.displayItemHandler = new DisplayItemHandler(this);
 
@@ -117,6 +115,8 @@ public class UltimateKits extends JavaPlugin {
         if (getConfig().getBoolean("System.Download Needed Data Files")) {
             this.update();
         }
+
+        this.references = new References();
 
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();

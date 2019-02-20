@@ -7,10 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class HologramArconix extends Hologram {
-    
+
     private com.songoda.arconix.api.packets.Hologram hologramManager;
 
     public HologramArconix(UltimateKits instance) {

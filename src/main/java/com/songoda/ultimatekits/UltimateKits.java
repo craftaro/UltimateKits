@@ -138,6 +138,9 @@ public class UltimateKits extends JavaPlugin {
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
 
+        // Starting Metrics
+        new Metrics(this);
+        
         console.sendMessage(Methods.formatText("&a============================="));
 
     }

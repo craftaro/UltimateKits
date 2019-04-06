@@ -301,8 +301,7 @@ public class GUIKitEditor extends AbstractGUI {
                 this.slot = slot;
                 constructGUI();
                 break;
-            case DISPLAY_ITEM:
-                if (true) {
+            case DISPLAY_ITEM: {
                     muteSave = true;
                     saveKit(player, this.inventory);
                     AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
@@ -333,8 +332,7 @@ public class GUIKitEditor extends AbstractGUI {
                     gui.open();
                 }
                 break;
-            case DISPLAY_NAME:
-                if (true) {
+            case DISPLAY_NAME: {
                     muteSave = true;
                     saveKit(player, this.inventory);
                     AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
@@ -358,8 +356,7 @@ public class GUIKitEditor extends AbstractGUI {
                     gui.open();
                 }
                 break;
-            case DISPLAY_LORE:
-                if (true) {
+            case DISPLAY_LORE: {
                     muteSave = true;
                     saveKit(player, this.inventory);
                     AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {

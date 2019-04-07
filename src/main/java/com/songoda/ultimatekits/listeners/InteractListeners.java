@@ -60,7 +60,7 @@ public class InteractListeners implements Listener {
                         long time = kit.getNextUse(player);
                         player.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.crate.notyet", Methods.makeReadable(time))));
                     } else if (kitBlockData.getType() == KitType.CLAIM) {
-                        if (!player.hasPermission("essentials.kit." + kit.getName().toLowerCase()) || !player.hasPermission("ultimatekits.kit." + kit.getName().toLowerCase())) {
+                        if (!kit.hasPermission(player)) {
                             player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.general.noperms"));
                             return;
                         }

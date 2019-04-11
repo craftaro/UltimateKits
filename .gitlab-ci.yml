@@ -1,10 +1,10 @@
 stages:
-- build
+  - build
 
 variables:
-    name: "UltimateKits"
-    path: "/builds/$CI_PROJECT_PATH"
-    version: "2.2.8"
+  name: "UltimateKits"
+  path: "/builds/$CI_PROJECT_PATH"
+  version: "2.2.8"
 
 build:
   stage: build
@@ -14,9 +14,9 @@ build:
     - find $path/ -type f -name "*.yml" -print0 | xargs -0 sed -i -e s/maven-version-number/$version/g
     - mvn clean package
     - find $path/ -depth -path '*original*' -delete
-    - mv -v $path/target/*.jar $path
+    - mv $path/target/*.jar $path/
   artifacts:
     name: $name-$version
     paths:
-    - "$path/*.jar"
-    - "$path/Read_this_before_your_first_use.txt"
+      - "$path/*.jar"
+      - "$path/Read_this_before_your_first_use.txt"

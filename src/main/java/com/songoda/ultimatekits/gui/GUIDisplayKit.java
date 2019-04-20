@@ -74,7 +74,7 @@ public class GUIDisplayKit extends AbstractGUI {
         max = 54 - min;
         if (amt <= 7) {
             max = 27 - min;
-        } else if (amt <= 16) {
+        } else if (amt <= 15) {
             max = 36 - min;
         } else if (amt <= 23) {
             max = 45 - min;
@@ -152,11 +152,10 @@ public class GUIDisplayKit extends AbstractGUI {
 
         for (ItemStack is : list) {
             if (!plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-                if (num == 17)
-                    num++;
-                if (num == (max - 18))
-                    num++;
+                if (num == 17 || num == (max - 18)) num++;
+                if (num == 18 && max == 36) num++;
             }
+            System.out.println("hit "  + num);
 
             ItemMeta meta = is.hasItemMeta() ? is.getItemMeta() : Bukkit.getItemFactory().getItemMeta(is.getType());
             ArrayDeque<String> lore;

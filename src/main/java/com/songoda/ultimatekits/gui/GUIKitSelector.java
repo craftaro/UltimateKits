@@ -50,9 +50,9 @@ public class GUIKitSelector extends AbstractGUI {
         if (glassless) {
             if (kitList.size() > n + 34)
                 max = max + 34;
-            else if (kitList.size() > n + 25)
+            else if (kitList.size() > n + 23)
                 max = max + 25;
-            else if (kitList.size() > n + 16)
+            else if (kitList.size() > n + 14)
                 max = max + 16;
             else if (kitList.size() > n + 7)
                 max = max + 7;
@@ -129,7 +129,10 @@ public class GUIKitSelector extends AbstractGUI {
         if (!glassless)
             tmax = tmax - 10;
         for (int index = num; index != tmax; index++) {
-            if (!glassless && index == 17) index = 19;
+            if (!glassless) {
+                if (num == 17 || num == (max - 18)) num++;
+                if (num == 18 && max == 36) num++;
+            }
             if (id > kitList.size() - 1) {
                 inventory.setItem(index, new ItemStack(Material.AIR));
                 continue;

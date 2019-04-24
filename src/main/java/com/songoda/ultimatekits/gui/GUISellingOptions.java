@@ -126,7 +126,8 @@ public class GUISellingOptions extends AbstractGUI {
                     }
                     Double eco = Double.parseDouble(msg);
                     kit.setPrice(eco);
-                    plugin.getHologram().update(kit);
+                    if (plugin.getHologram() != null)
+                        plugin.getHologram().update(kit);
                 }
             });
 
@@ -150,7 +151,8 @@ public class GUISellingOptions extends AbstractGUI {
                     player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8ECO has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
                 }
                 kit.setLink(msg);
-                plugin.getHologram().update(kit);
+                if (plugin.getHologram() != null)
+                    plugin.getHologram().update(kit);
             });
 
             gui.setOnClose((player2, inventory3) -> init(setTitle, inventory.getSize()));

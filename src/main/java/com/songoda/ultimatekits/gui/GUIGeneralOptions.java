@@ -88,7 +88,8 @@ public class GUIGeneralOptions extends AbstractGUI {
 
                 if (msg.trim().equalsIgnoreCase(kit.getName())) {
                     plugin.getKitManager().removeKit(kit);
-                    plugin.getHologram().update(kit);
+                    if (plugin.getHologram() != null)
+                        plugin.getHologram().update(kit);
                     player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cKit destroyed successfully."));
                 } else {
                     player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cKit was not Destroyed."));

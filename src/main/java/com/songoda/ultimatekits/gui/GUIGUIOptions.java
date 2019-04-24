@@ -121,7 +121,8 @@ public class GUIGUIOptions extends AbstractGUI {
                     kit.setTitle(msg);
                     plugin.saveConfig();
                     player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Title &5" + msg + "&8 added to Kit &a" + kit.getShowableName() + "&8."));
-                    plugin.getHologram().update(kit);
+                    if (plugin.getHologram() != null)
+                        plugin.getHologram().update(kit);
                 });
 
                 gui.setOnClose((player2, inventory3) -> init(setTitle, inventory.getSize()));
@@ -135,7 +136,8 @@ public class GUIGUIOptions extends AbstractGUI {
                 gui.open();
             } else {
                 kit.setTitle("");
-                plugin.getHologram().update(kit);
+                if (plugin.getHologram() != null)
+                    plugin.getHologram().update(kit);
                 constructGUI();
             }
         }));

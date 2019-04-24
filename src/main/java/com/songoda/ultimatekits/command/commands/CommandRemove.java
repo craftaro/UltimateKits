@@ -24,7 +24,9 @@ public class CommandRemove extends AbstractCommand {
         Block block = player.getTargetBlock(null, 200);
         Kit kit = instance.getKitManager().removeKitFromLocation(block.getLocation());
         if (kit == null) return ReturnType.FAILURE;
-        instance.getHologram().remove(kit);
+
+        if (instance.getHologram() != null)
+            instance.getHologram().remove(kit);
         player.sendMessage(Methods.formatText(UltimateKits.getInstance().getReferences().getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType().toString() + "&8."));
         return ReturnType.SUCCESS;
     }

@@ -213,7 +213,7 @@ public class GUIDisplayKit extends AbstractGUI {
     protected void registerClickables() {
         registerClickable(0, (player, inventory, cursor, slot, type) -> {
             if (back == null) return;
-            back.init(back.getInventory().getTitle(), back.getInventory().getSize());
+            back.init(back.getSetTitle(), back.getInventory().getSize());
         });
 
         registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());

@@ -77,7 +77,7 @@ public class GUIGeneralOptions extends AbstractGUI {
 
     @Override
     protected void registerClickables() {
-        registerClickable(0, (player, inventory, cursor, slot, type) -> back.init(back.getInventory().getTitle(), back.getInventory().getSize()));
+        registerClickable(0, (player, inventory, cursor, slot, type) -> back.init(back.getSetTitle(), back.getInventory().getSize()));
 
         registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());
 
@@ -97,7 +97,7 @@ public class GUIGeneralOptions extends AbstractGUI {
 
             gui.setOnClose((player2, inventory3) -> {
                 if (plugin.getKitManager().getKit(name) != null) {
-                    init(inventory.getTitle(), inventory.getSize());
+                    init(setTitle, inventory.getSize());
                 }
             });
 
@@ -123,7 +123,7 @@ public class GUIGeneralOptions extends AbstractGUI {
                 }
             });
 
-            gui.setOnClose((player2, inventory3) -> init(inventory.getTitle(), inventory.getSize()));
+            gui.setOnClose((player2, inventory3) -> init(setTitle, inventory.getSize()));
 
             ItemStack item = new ItemStack(Material.PAPER);
             ItemMeta meta = item.getItemMeta();

@@ -106,7 +106,7 @@ public class GUISellingOptions extends AbstractGUI {
 
     @Override
     protected void registerClickables() {
-        registerClickable(0, (player, inventory, cursor, slot, type) -> back.init(back.getInventory().getTitle(), back.getInventory().getSize()));
+        registerClickable(0, (player, inventory, cursor, slot, type) -> back.init(back.getSetTitle(), back.getInventory().getSize()));
 
         registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());
 
@@ -130,7 +130,7 @@ public class GUISellingOptions extends AbstractGUI {
                 }
             });
 
-            gui.setOnClose((player2, inventory3) -> init(inventory.getTitle(), inventory.getSize()));
+            gui.setOnClose((player2, inventory3) -> init(setTitle, inventory.getSize()));
 
             ItemStack item = new ItemStack(Material.SUNFLOWER);
             ItemMeta meta = item.getItemMeta();
@@ -153,7 +153,7 @@ public class GUISellingOptions extends AbstractGUI {
                 plugin.getHologram().update(kit);
             });
 
-            gui.setOnClose((player2, inventory3) -> init(inventory.getTitle(), inventory.getSize()));
+            gui.setOnClose((player2, inventory3) -> init(setTitle, inventory.getSize()));
 
             ItemStack item = new ItemStack(Material.PAPER);
             ItemMeta meta = item.getItemMeta();

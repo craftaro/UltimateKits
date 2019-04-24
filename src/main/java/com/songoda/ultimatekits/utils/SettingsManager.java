@@ -46,7 +46,7 @@ public class SettingsManager implements Listener {
                 || e.getWhoClicked().getOpenInventory().getTopInventory() != e.getInventory()) {
             return;
         }
-        if (e.getInventory().getTitle().equals(pluginName + " Settings Manager")) {
+        if (e.getView().getTitle().equals(pluginName + " Settings Manager")) {
 
             if (e.getCurrentItem().getType().name().contains("STAINED_GLASS")) {
                 e.setCancelled(true);
@@ -57,7 +57,7 @@ public class SettingsManager implements Listener {
             cat.put((Player) e.getWhoClicked(), type);
             openEditor((Player) e.getWhoClicked());
             e.setCancelled(true);
-        } else if (e.getInventory().getTitle().equals(pluginName + " Settings KitEditor")) {
+        } else if (e.getView().getTitle().equals(pluginName + " Settings KitEditor")) {
 
             if (e.getCurrentItem().getType().name().contains("STAINED_GLASS")) {
                 e.setCancelled(true);

@@ -61,7 +61,7 @@ public class GUIDecorOptions extends AbstractGUI {
             lore.add(Methods.formatText("&7Currently &cDisabled&7."));
         }
 
-        createButton(10, Material.SIGN, "&9&lToggle Holograms", lore);
+        createButton(10, Material.NAME_TAG, "&9&lToggle Holograms", lore);
 
         lore = new ArrayList<>();
         if (kitBlockData.hasParticles()) {

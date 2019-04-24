@@ -99,7 +99,10 @@ public class SettingsManager implements Listener {
                 instance.getConfig().set(current.get(p), e.getMessage());
                 break;
         }
-        finishEditing(p);
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(UltimateKits.getInstance(), () ->
+                this.finishEditing(p), 0L);
+
         e.setCancelled(true);
 
     }

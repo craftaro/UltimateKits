@@ -110,7 +110,7 @@ public class GUIGUIOptions extends AbstractGUI {
 
     @Override
     protected void registerClickables() {
-        registerClickable(0, (player, inventory, cursor, slot, type) -> back.init(back.getInventory().getTitle(), back.getInventory().getSize()));
+        registerClickable(0, (player, inventory, cursor, slot, type) -> back.init(back.getSetTitle(), back.getInventory().getSize()));
 
         registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());
 
@@ -121,10 +121,11 @@ public class GUIGUIOptions extends AbstractGUI {
                     kit.setTitle(msg);
                     plugin.saveConfig();
                     player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Title &5" + msg + "&8 added to Kit &a" + kit.getShowableName() + "&8."));
-                    plugin.getHologram().update(kit);
+                    if (plugin.getHologram() != null)
+                        plugin.getHologram().update(kit);
                 });
 
-                gui.setOnClose((player2, inventory3) -> init(inventory.getTitle(), inventory.getSize()));
+                gui.setOnClose((player2, inventory3) -> init(setTitle, inventory.getSize()));
 
                 ItemStack item = new ItemStack(Material.NAME_TAG);
                 ItemMeta meta = item.getItemMeta();
@@ -135,7 +136,8 @@ public class GUIGUIOptions extends AbstractGUI {
                 gui.open();
             } else {
                 kit.setTitle("");
-                plugin.getHologram().update(kit);
+                if (plugin.getHologram() != null)
+                    plugin.getHologram().update(kit);
                 constructGUI();
             }
         }));

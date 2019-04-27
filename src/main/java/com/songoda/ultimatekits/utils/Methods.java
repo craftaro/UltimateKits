@@ -1,34 +1,22 @@
 package com.songoda.ultimatekits.utils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import org.apache.commons.codec.binary.Base64;
+import com.songoda.ultimatekits.UltimateKits;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
-import com.songoda.ultimatekits.UltimateKits;
-
-import net.milkbowl.vault.economy.Economy;
+import java.lang.reflect.Field;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -268,7 +256,7 @@ public class Methods {
         SkullMeta meta = (SkullMeta) item.getItemMeta();
 
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-        byte[] encodedData = Base64.encodeBase64(String.format("{textures:{SKIN:{url:\"%s\"}}}", new Object[]{headURL}).getBytes());
+        byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", new Object[]{headURL}).getBytes());
         profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
 
         Field profileField;

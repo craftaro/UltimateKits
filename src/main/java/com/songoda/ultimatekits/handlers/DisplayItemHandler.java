@@ -55,10 +55,9 @@ public class DisplayItemHandler {
                 continue;
             }
             Item i = (Item) e;
-            if (i.getItemStack().getItemMeta().getDisplayName() == null) {
-                i.remove();
-                return;
-            }
+
+            if (!kitBlockData.isDisplayingItems()) e.remove();
+
             int inum = Integer.parseInt(i.getItemStack().getItemMeta().getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "")) + 1;
             if (inum > list.size()) inum = 1;
 

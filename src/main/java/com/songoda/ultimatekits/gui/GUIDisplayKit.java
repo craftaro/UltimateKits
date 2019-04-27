@@ -155,7 +155,6 @@ public class GUIDisplayKit extends AbstractGUI {
                 if (num == 17 || num == (max - 18)) num++;
                 if (num == 18 && max == 36) num++;
             }
-            System.out.println("hit "  + num);
 
             ItemMeta meta = is.hasItemMeta() ? is.getItemMeta() : Bukkit.getItemFactory().getItemMeta(is.getType());
             ArrayDeque<String> lore;
@@ -213,7 +212,7 @@ public class GUIDisplayKit extends AbstractGUI {
     protected void registerClickables() {
         registerClickable(0, (player, inventory, cursor, slot, type) -> {
             if (back == null) return;
-            back.init(back.getInventory().getTitle(), back.getInventory().getSize());
+            back.init(back.getSetTitle(), back.getInventory().getSize());
         });
 
         registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());

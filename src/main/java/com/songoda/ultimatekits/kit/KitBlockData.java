@@ -31,7 +31,9 @@ public class KitBlockData {
         setDisplayingItems(false);
         setHasParticles(false);
         UltimateKits.getInstance().getDisplayItemHandler().displayItem(this);
-        UltimateKits.getInstance().getHologram().remove(this);
+
+        if (UltimateKits.getInstance().getHologram() != null)
+            UltimateKits.getInstance().getHologram().remove(this);
     }
 
     public Kit getKit() {

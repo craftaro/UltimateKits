@@ -46,7 +46,7 @@ public class SettingsManager implements Listener {
                 || e.getWhoClicked().getOpenInventory().getTopInventory() != e.getInventory()) {
             return;
         }
-        if (e.getInventory().getTitle().equals(pluginName + " Settings Manager")) {
+        if (e.getView().getTitle().equals(pluginName + " Settings Manager")) {
 
             if (e.getCurrentItem().getType().name().contains("STAINED_GLASS")) {
                 e.setCancelled(true);
@@ -57,7 +57,7 @@ public class SettingsManager implements Listener {
             cat.put((Player) e.getWhoClicked(), type);
             openEditor((Player) e.getWhoClicked());
             e.setCancelled(true);
-        } else if (e.getInventory().getTitle().equals(pluginName + " Settings KitEditor")) {
+        } else if (e.getView().getTitle().equals(pluginName + " Settings KitEditor")) {
 
             if (e.getCurrentItem().getType().name().contains("STAINED_GLASS")) {
                 e.setCancelled(true);
@@ -99,7 +99,10 @@ public class SettingsManager implements Listener {
                 instance.getConfig().set(current.get(p), e.getMessage());
                 break;
         }
-        finishEditing(p);
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(UltimateKits.getInstance(), () ->
+                this.finishEditing(p), 0L);
+
         e.setCancelled(true);
 
     }
@@ -231,7 +234,6 @@ public class SettingsManager implements Listener {
         o14("Rainbow-Glass", "Interfaces.Replace Glass Type 1 With Rainbow Glass", false),
         o15("glassless", "Interfaces.Do Not Use Glass Borders", false),
 
-        DOWNLOAD_FILES("-", "System.Download Needed Data Files", true),
         LANGUGE_MODE("-", "System.Language Mode", "en_US"),
         o16("Debug-Mode", "System.Debugger Enabled", false);
 

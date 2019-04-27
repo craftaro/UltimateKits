@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.kit;
 
+import com.songoda.ultimatekits.UltimateKits;
 import org.bukkit.Location;
 
 import java.util.*;
@@ -33,7 +34,9 @@ public final class KitManager {
     }
 
     public void addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
-        kitsAtLocations.put(roundLocation(location), new KitBlockData(kit, location, type, hologram, particles, items, itemOverride));
+        KitBlockData kitBlockData = kitsAtLocations.put(roundLocation(location), new KitBlockData(kit, location, type, hologram, particles, items, itemOverride));
+        if (UltimateKits.getInstance().getHologram() != null)
+            UltimateKits.getInstance().getHologram().update(kitBlockData);
     }
 
     public Kit removeKitFromLocation(Location location) {

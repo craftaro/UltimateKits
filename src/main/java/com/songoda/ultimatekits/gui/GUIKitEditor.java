@@ -498,7 +498,7 @@ public class GUIKitEditor extends AbstractGUI {
 
         registerClickable(0, ((player, inventory, cursor, slot, type) -> {
             if (back == null) return;
-            back.init(back.getInventory().getTitle(), back.getInventory().getSize());
+            back.init(back.getSetTitle(), back.getInventory().getSize());
         }));
 
         registerClickable(48, ((player1, inventory, cursor, slot1, type) -> {

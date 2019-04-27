@@ -127,7 +127,7 @@ public abstract class Hologram {
 
         if (b.getType() == Material.TRAPPED_CHEST
                 || b.getType() == Material.CHEST
-                || b.getType() == Material.SIGN
+                || b.getType().name().contains("SIGN")
                 || b.getType() == Material.ENDER_CHEST) multi -= .15;
 
         location.add(0, multi, 0);

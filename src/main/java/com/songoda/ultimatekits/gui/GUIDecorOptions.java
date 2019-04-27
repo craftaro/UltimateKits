@@ -14,10 +14,13 @@ import java.util.ArrayList;
 
 public class GUIDecorOptions extends AbstractGUI {
 
+    private UltimateKits plugin;
+
     private KitBlockData kitBlockData;
 
     public GUIDecorOptions(UltimateKits plugin, Player player, Location location) {
         super(player);
+        this.plugin = plugin;
         kitBlockData = plugin.getKitManager().getKit(location);
         init("&8Editing decor for &a" + kitBlockData.getKit().getShowableName() + "&8.", 27);
     }
@@ -61,7 +64,7 @@ public class GUIDecorOptions extends AbstractGUI {
             lore.add(Methods.formatText("&7Currently &cDisabled&7."));
         }
 
-        createButton(10, Material.SIGN, "&9&lToggle Holograms", lore);
+        createButton(10, Material.NAME_TAG, "&9&lToggle Holograms", lore);
 
         lore = new ArrayList<>();
         if (kitBlockData.hasParticles()) {
@@ -108,6 +111,8 @@ public class GUIDecorOptions extends AbstractGUI {
         registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());
 
         registerClickable(10, (player, inventory, cursor, slot, type) -> {
+            if (plugin.getHologram() == null) return;
+
             if (kitBlockData.showHologram()) {
                 kitBlockData.setShowHologram(false);
             } else {
@@ -127,7 +132,7 @@ public class GUIDecorOptions extends AbstractGUI {
         });
 
         registerClickable(14, (player, inventory, cursor, slot, type) -> {
-            boolean isHolo = kitBlockData.showHologram();
+            boolean isHolo = plugin.getHologram() != null && kitBlockData.showHologram();
 
             if (isHolo) {
                 UltimateKits.getInstance().getHologram().remove(kitBlockData);

@@ -2,15 +2,18 @@ package com.songoda.ultimatekits;
 
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
+import com.songoda.ultimatekits.hologram.HologramHolographicDisplays;
 import com.songoda.ultimatekits.listeners.*;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.hologram.Hologram;
-import com.songoda.ultimatekits.hologram.HologramArconix;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
 import com.songoda.ultimatekits.kit.*;
 import com.songoda.ultimatekits.utils.*;
+import com.songoda.ultimatekits.utils.updateModules.LocaleModule;
+import com.songoda.update.Plugin;
+import com.songoda.update.SongodaUpdate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -112,9 +115,10 @@ public class UltimateKits extends JavaPlugin {
         Locale.saveDefaultLocale("en_US");
         this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
 
-        if (getConfig().getBoolean("System.Download Needed Data Files")) {
-            this.update();
-        }
+        //Running Songoda Updater
+        Plugin plugin = new Plugin(this, 14);
+        plugin.addModule(new LocaleModule());
+        SongodaUpdate.load(plugin);
 
         this.references = new References();
 
@@ -125,8 +129,8 @@ public class UltimateKits extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         
         // Register Hologram Plugin
-        if (pluginManager.isPluginEnabled("Arconix"))
-            hologram = new HologramArconix(this);
+        if (pluginManager.isPluginEnabled("HolographicDisplays"))
+            hologram = new HologramHolographicDisplays(this);
 
         // Event registration
         pluginManager.registerEvents(new BlockListeners(this), this);
@@ -155,39 +159,6 @@ public class UltimateKits extends JavaPlugin {
         console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
         console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
         console.sendMessage(Methods.formatText("&a============================="));
-    }
-
-    private void update() {
-        try {
-            URL url = new URL("http://update.songoda.com/index.php?plugin=" + getDescription().getName() + "&version=" + getDescription().getVersion());
-            URLConnection urlConnection = url.openConnection();
-            InputStream is = urlConnection.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-
-            int numCharsRead;
-            char[] charArray = new char[1024];
-            StringBuffer sb = new StringBuffer();
-            while ((numCharsRead = isr.read(charArray)) > 0) {
-                sb.append(charArray, 0, numCharsRead);
-            }
-            String jsonString = sb.toString();
-            JSONObject json = (JSONObject) new JSONParser().parse(jsonString);
-
-            JSONArray files = (JSONArray) json.get("neededFiles");
-            for (Object o : files) {
-                JSONObject file = (JSONObject) o;
-
-                switch ((String) file.get("type")) {
-                    case "locale":
-                        InputStream in = new URL((String) file.get("link")).openStream();
-                        Locale.saveDefaultLocale(in, (String) file.get("name"));
-                        break;
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Failed to update.");
-            //e.printStackTrace();
-        }
     }
 
     /*

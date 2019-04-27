@@ -82,11 +82,15 @@ public class GUIBlockEditor extends AbstractGUI {
         registerClickable(11, (player, inventory, cursor, slot, type) -> {
             UltimateKits instance = UltimateKits.getInstance();
 
+            if (instance.getHologram() != null)
+                instance.getHologram().remove(kitBlockData);
+
             if (kitBlockData.getType() == KitType.PREVIEW) kitBlockData.setType(KitType.CRATE);
             else if (kitBlockData.getType() == KitType.CRATE) kitBlockData.setType(KitType.CLAIM);
             else if (kitBlockData.getType() == KitType.CLAIM) kitBlockData.setType(KitType.PREVIEW);
 
             instance.saveConfig();
+            if (instance.getHologram() != null)
             instance.getHologram().update(kitBlockData);
             constructGUI();
         });

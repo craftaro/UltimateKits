@@ -30,10 +30,12 @@ public class BlockListeners implements Listener {
             KitBlockData kitBlockData = instance.getKitManager().getKit(block.getLocation());
             if (kitBlockData == null) return;
             Kit kit = kitBlockData.getKit();
-            instance.getKitManager().removeKitFromLocation(block.getLocation());
 
             if (instance.getHologram() != null)
                 instance.getHologram().remove(kitBlockData);
+
+            instance.getKitManager().removeKitFromLocation(block.getLocation());
+
             event.getPlayer().sendMessage(Methods.formatText(instance.getReferences().getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType() + "&8."));
 
         } catch (Exception e) {

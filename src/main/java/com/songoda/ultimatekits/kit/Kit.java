@@ -10,6 +10,7 @@ import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.tasks.CrateAnimateTask;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.milkbowl.vault.economy.Economy;
@@ -125,7 +126,7 @@ public class Kit {
                 return;
             }
             if (plugin.getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE) {
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
+                player.playSound(player.getLocation(), UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP"), 0.6F, 15.0F);
             }
             if (useKey) {
                 if (player.getItemInHand().getType() != Material.TRIPWIRE_HOOK || !player.getItemInHand().hasItemMeta()) {

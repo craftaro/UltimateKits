@@ -4,6 +4,7 @@ import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitItem;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.ServerVersion;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -87,7 +88,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         }
 
         for (int i = 9; i < 18; i++) {
-            inventory.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+            inventory.setItem(i, new ItemStack(plugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Material.GRAY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE")));
         }
 
 
@@ -95,7 +96,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         inventory.setItem(22, new ItemStack(Material.TRIPWIRE_HOOK));
 
         if (!done) {
-            player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 5f, 5f);
+            player.playSound(player.getLocation(), plugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.UI_BUTTON_CLICK : Sound.valueOf("CLICK"), 5f, 5f);
             this.items.addFirst(this.items.getLast());
             this.items.removeLast();
         }
@@ -112,7 +113,7 @@ public class CrateAnimateTask extends BukkitRunnable {
                     for (ItemStack item2 : overfilled.values()) {
                         player.getWorld().dropItemNaturally(player.getLocation(), item2);
                     }
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10f, 10f);
+                    player.playSound(player.getLocation(), UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP"), 10f, 10f);
                     player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.create.won", WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " "))));
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::finish, 50);
                 }

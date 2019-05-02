@@ -5,6 +5,7 @@ import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitAnimation;
 import com.songoda.ultimatekits.kit.KitItem;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractAnvilGUI;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import com.songoda.ultimatekits.utils.gui.Range;
@@ -66,9 +67,9 @@ public class GUIKitEditor extends AbstractGUI {
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
                 UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
 
-        ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
+        ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
         ItemStack back;
-        back = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        back = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
         skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
@@ -83,7 +84,7 @@ public class GUIKitEditor extends AbstractGUI {
         itmeta.setLore(lore);
         it.setItemMeta(itmeta);
 
-        ItemStack glass = new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1);
+        ItemStack glass = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.GRAY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1);
         ItemMeta glassmeta = glass.getItemMeta();
         glassmeta.setDisplayName(Methods.formatText("&" + kit.getName().replaceAll(".(?!$)", "$0&")));
         glass.setItemMeta(glassmeta);
@@ -237,7 +238,7 @@ public class GUIKitEditor extends AbstractGUI {
     private void getInvItems() {
         isInInventory = false;
 
-        createButton(9, player.getInventory(), Material.REDSTONE_TORCH, "&6General Options",
+        createButton(9, player.getInventory(), plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.REDSTONE_TORCH : Material.valueOf("REDSTONE_TORCH_ON"), "&6General Options",
                 "&7Click to edit adjust",
                 "&7general options.");
 
@@ -253,7 +254,7 @@ public class GUIKitEditor extends AbstractGUI {
                 "&7Click to add a command",
                 "&7to this kit.");
 
-        createButton(14, player.getInventory(), Material.SUNFLOWER, "&6Add Economy",
+        createButton(14, player.getInventory(), plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.SUNFLOWER : Material.valueOf("DOUBLE_PLANT"), "&6Add Economy",
                 "&7Click to add money",
                 "&7to this kit.");
 
@@ -530,7 +531,7 @@ public class GUIKitEditor extends AbstractGUI {
                 player.updateInventory();
             }
 
-            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1F, 1F);
+            player.playSound(player.getLocation(), plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_VILLAGER_YES : Sound.valueOf("VILLAGER_YES"), 1F, 1F);
         });
     }
 

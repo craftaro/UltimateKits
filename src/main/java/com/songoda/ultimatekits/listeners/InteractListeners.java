@@ -7,6 +7,7 @@ import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
 import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.ServerVersion;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -29,7 +30,8 @@ public class InteractListeners implements Listener {
     public void onBlockInteract(PlayerInteractEvent event) {
         try {
             boolean chand = true; // This needs to be out of my code.
-            if (event.getHand() != EquipmentSlot.HAND) {
+            if (instance.isServerVersionAtLeast(ServerVersion.V1_9)
+                    && event.getHand() != EquipmentSlot.HAND) {
                 chand = false;
             }
 

@@ -3,6 +3,7 @@ package com.songoda.ultimatekits.gui;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -198,8 +199,8 @@ public class GUIDisplayKit extends AbstractGUI {
 
         if (back != null && !plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
 
-            ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
-            ItemStack skull2 = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+            ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
+            ItemStack skull2 = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
             skull2.setDurability((short) 3);
             skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));

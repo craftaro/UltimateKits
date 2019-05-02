@@ -31,7 +31,7 @@ public class KitItem {
         } else if (line.startsWith("/")) {
             this.content = new KitContentCommand(line.substring(1));
         } else {
-            this.content = new KitContentItem(UltimateKits.getInstance().getItemSerializer().deserializeLegacyItemStack(line));
+            this.content = new KitContentItem(UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(line));
         }
     }
 
@@ -46,7 +46,7 @@ public class KitItem {
         } else if (line.startsWith("/")) {
             this.content = new KitContentCommand(line.substring(1));
         } else {
-            this.content = new KitContentItem(UltimateKits.getInstance().getItemSerializer().deserializeLegacyItemStack(line));
+            this.content = new KitContentItem(UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(line));
         }
     }
 

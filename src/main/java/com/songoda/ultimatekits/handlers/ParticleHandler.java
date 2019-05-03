@@ -34,8 +34,9 @@ public class ParticleHandler {
                 Location location = kitBlockData.getLocation();
                 location.add(.5, 0, .5);
 
-                if (plugin.isServerVersionAtLeast(ServerVersion.V1_8))
+                if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
                     location.getWorld().spawnParticle(org.bukkit.Particle.valueOf(type), location, amt, 0.25, 0.25, 0.25);
+
             }
 
         } catch (Exception ex) {

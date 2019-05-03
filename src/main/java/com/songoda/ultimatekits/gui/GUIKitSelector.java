@@ -89,6 +89,8 @@ public class GUIKitSelector extends AbstractGUI {
 
     @Override
     protected void constructGUI() {
+        resetClickables();
+
         ItemStack exit = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
         ItemMeta exitmeta = exit.getItemMeta();
         exitmeta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));

@@ -100,6 +100,7 @@ public abstract class AbstractGUI implements Listener {
                 for (OnClose onClose : gui.onCloses) {
                     onClose.OnClose((Player) event.getPlayer(), inventory);
                 }
+                gui.destory();
             }
 
             private AbstractGUI getGUIFromInventory(Inventory inventory) {
@@ -127,6 +128,12 @@ public abstract class AbstractGUI implements Listener {
         constructGUI();
         initializeListeners(UltimateKits.getInstance());
         player.openInventory(inventory);
+    }
+
+    private void destory() {
+        onCloses.clear();
+        clickables.clear();
+        draggableRanges.clear();
     }
 
     protected abstract void constructGUI();

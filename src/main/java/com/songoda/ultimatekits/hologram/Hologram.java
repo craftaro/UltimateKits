@@ -70,6 +70,7 @@ public abstract class Hologram {
     }
 
     private void format(KitBlockData data, Action action) {
+        if (data == null) return;
         KitType kitType = data.getType();
 
         ArrayList<String> lines = new ArrayList<>();

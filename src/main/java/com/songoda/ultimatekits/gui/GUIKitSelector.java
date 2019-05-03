@@ -89,6 +89,8 @@ public class GUIKitSelector extends AbstractGUI {
 
     @Override
     protected void constructGUI() {
+        resetClickables();
+
         ItemStack exit = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
         ItemMeta exitmeta = exit.getItemMeta();
         exitmeta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
@@ -131,8 +133,8 @@ public class GUIKitSelector extends AbstractGUI {
             tmax = tmax - 10;
         for (int index = num; index != tmax; index++) {
             if (!glassless) {
-                if (num == 17 || num == (max - 18)) num++;
-                if (num == 18 && max == 36) num++;
+                if (index == 17 || index == (max - 18)) index++;
+                if (index == 18 && max == 36) index++;
             }
             if (id > kitList.size() - 1) {
                 inventory.setItem(index, new ItemStack(Material.AIR));

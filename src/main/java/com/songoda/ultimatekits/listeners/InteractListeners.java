@@ -51,28 +51,24 @@ public class InteractListeners implements Listener {
                 if (player.isSneaking()) return;
                 event.setCancelled(true);
 
-                if (player.getItemInHand() != null && player.getItemInHand().getType() != null && player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
+                if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
                     event.setCancelled(true);
                     kit.give(player, true, false, false);
                     return;
                 }
 
                 if (kitBlockData.getType() != KitType.PREVIEW) {
-                    if (kitBlockData.getType() == KitType.CRATE) {
+                    if (!kit.hasPermission(player)) {
+                        player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.general.noperms"));
+                        return;
+                    }
+                    if (kit.getNextUse(player) <= 0) {
+                        kit.give(player, false, false, false);
+                        kit.updateDelay(player);
+                    } else {
                         long time = kit.getNextUse(player);
-                        player.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.crate.notyet", Methods.makeReadable(time))));
-                    } else if (kitBlockData.getType() == KitType.CLAIM) {
-                        if (!kit.hasPermission(player)) {
-                            player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.general.noperms"));
-                            return;
-                        }
-                        if (kit.getNextUse(player) <= 0) {
-                            kit.give(player, false, false, false);
-                            kit.updateDelay(player);
-                        } else {
-                            long time = kit.getNextUse(player);
-                            player.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.crate.notyet", Methods.makeReadable(time))));
-                        }
+                        player.sendMessage(Methods.formatText(instance.getReferences().getPrefix()
+                                + instance.getLocale().getMessage("event.crate.notyet", Methods.makeReadable(time))));
                     }
                 } else if (kit.getLink() != null || kit.getPrice() != 0) {
                     kit.buy(player);
@@ -87,7 +83,7 @@ public class InteractListeners implements Listener {
                     new GUIBlockEditor(instance, player, block.getLocation());
                     return;
                 }
-                if (player.getItemInHand() != null && player.getItemInHand().getType() != null && player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
+                if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
                     event.setCancelled(true);
                     kit.give(player, true, false, false);
                     return;

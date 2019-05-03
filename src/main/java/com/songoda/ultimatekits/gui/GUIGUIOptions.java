@@ -71,7 +71,7 @@ public class GUIGUIOptions extends AbstractGUI {
         lore.add(Methods.formatText(""));
         lore.add(Methods.formatText("&7Left-Click: &9to set"));
         lore.add(Methods.formatText("&9the kit title for holograms"));
-        lore.add(Methods.formatText("&9and the kit / kit GUIs."));
+        lore.add(Methods.formatText("&9and the kit / kit selector GUIs."));
         lore.add(Methods.formatText(""));
         lore.add(Methods.formatText("&7Right-Click: &9to reset."));
 

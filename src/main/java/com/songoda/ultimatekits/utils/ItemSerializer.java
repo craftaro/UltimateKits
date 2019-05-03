@@ -1,26 +1,11 @@
 package com.songoda.ultimatekits.utils;
 
+import com.songoda.ultimatekits.UltimateKits;
+import org.bukkit.Bukkit;
+import org.bukkit.inventory.ItemStack;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
-import com.songoda.ultimatekits.UltimateKits;
 
 public class ItemSerializer {
 
@@ -38,6 +23,7 @@ public class ItemSerializer {
 
 	private Method methodParseString;
 	private Method methodCreateStack;
+	private Method methodToItemStack;
 	private Method methodTobItemStack;
 	private Method methodTocItemStack;
 	private Method methodSaveTagToStack;
@@ -52,7 +38,9 @@ public class ItemSerializer {
 	 */
 	public ItemSerializer() throws NoSuchMethodException, SecurityException, ClassNotFoundException {
 		methodParseString = classMojangsonParser.getMethod("parse", String.class);
-		if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_11))
+		if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13))
+			methodToItemStack = classItemStack.getMethod("a", classNBTTagCompound);
+		else if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_11))
 			constructorItemStack = classItemStack.getConstructor(classNBTTagCompound);
 		else
 			methodCreateStack = classItemStack.getMethod("createStack", classNBTTagCompound);
@@ -84,7 +72,14 @@ public class ItemSerializer {
 	public ItemStack deserializeItemStackFromJson(String jsonString) {
 		try {
 			Object nbtTagCompound = methodParseString.invoke(null, jsonString);
-			Object citemStack = UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_11) ? constructorItemStack.newInstance(nbtTagCompound) : methodCreateStack.invoke(null, nbtTagCompound);
+			Object citemStack;
+
+			if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13))
+				citemStack = methodToItemStack.invoke(null, nbtTagCompound);
+			else if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_11))
+				citemStack = constructorItemStack.newInstance(nbtTagCompound);
+			else
+				citemStack = methodCreateStack.invoke(null, nbtTagCompound);
 
 			return (ItemStack) methodTobItemStack.invoke(null, citemStack);
 		} catch (Exception ex) {

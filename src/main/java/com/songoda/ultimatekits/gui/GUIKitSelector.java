@@ -201,7 +201,39 @@ public class GUIKitSelector extends AbstractGUI {
             }
             meta.setLore(lore);
             item.setItemMeta(meta);
+
+
             inventory.setItem(index, item);
+            registerClickable(index, ((player1, inventory1, cursor, slot, type) -> {
+                if (type == ClickType.MIDDLE && player.hasPermission("ultimatekits.admin")) {
+                    kitsmode = !kitsmode;
+                    constructGUI();
+                    return;
+                }
+
+                if (kitsmode) {
+                    if (type == ClickType.RIGHT) {
+                        plugin.getKitManager().moveKit(kit, true);
+                    } else if (type == ClickType.LEFT) {
+                        plugin.getKitManager().moveKit(kit, false);
+                    }
+                    setUpPage();
+                    constructGUI();
+                    return;
+                }
+
+
+                if (type == ClickType.LEFT) {
+                    kit.display(player, this);
+                    return;
+                }
+
+                if (type == ClickType.RIGHT) {
+                    kit.buy(player);
+                    constructGUI();
+                }
+            }));
+
             id++;
         }
 
@@ -247,40 +279,6 @@ public class GUIKitSelector extends AbstractGUI {
     protected void registerClickables() {
 
         registerClickable(max - 5, (player, inventory, cursor, slot, type) -> player.closeInventory());
-
-        registerClickable(glassless ? 0 : 10, glassless ? max : max - 11, (player1, inventory1, cursor, slot, type) -> {
-            String kitName = inventory1.getItem(slot).getItemMeta().getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "").split(":")[0];
-
-            if (type == ClickType.MIDDLE && player.hasPermission("ultimatekits.admin")) {
-                kitsmode = !kitsmode;
-                constructGUI();
-                return;
-            }
-
-            Kit kit = plugin.getKitManager().getKit(kitName);
-
-            if (kitsmode) {
-                if (type == ClickType.RIGHT) {
-                    plugin.getKitManager().moveKit(kit, true);
-                } else if (type == ClickType.LEFT) {
-                    plugin.getKitManager().moveKit(kit, false);
-                }
-                setUpPage();
-                constructGUI();
-                return;
-            }
-
-
-            if (type == ClickType.LEFT) {
-                kit.display(player, this);
-                return;
-            }
-
-            if (type == ClickType.RIGHT) {
-                kit.buy(player);
-                constructGUI();
-            }
-        });
 
         registerClickable(max - 6, ((player1, inventory1, cursor, slot, type) -> {
             if (page == 1) return;

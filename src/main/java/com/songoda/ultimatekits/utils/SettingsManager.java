@@ -23,229 +23,201 @@ import java.util.regex.Pattern;
  */
 public class SettingsManager implements Listener {
 
-    private static ConfigWrapper defs;
+    private static final Pattern SETTINGS_PATTERN = Pattern.compile("(.{1,28}(?:\\s|$))|(.{0,28})", Pattern.DOTALL);
     private final UltimateKits instance;
-    private Map<Player, String> current = new HashMap<>();
     private String pluginName = "UltimateKits";
     private Map<Player, String> cat = new HashMap<>();
+    private Map<Player, String> current = new HashMap<>();
 
-    public SettingsManager(UltimateKits instance) {
-        this.instance = instance;
-        instance.saveResource("SettingDefinitions.yml", true);
-        defs = new ConfigWrapper(instance, "", "SettingDefinitions.yml");
-        defs.createNewFile("Loading data file", "UltimateKits SettingDefinitions file");
-        instance.getServer().getPluginManager().registerEvents(this, instance);
+    public SettingsManager(UltimateKits plugin) {
+        this.instance = plugin;
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getInventory() == null
-                || e.getCurrentItem() == null
-                || !e.getCurrentItem().hasItemMeta()
-                || !e.getCurrentItem().getItemMeta().hasDisplayName()
-                || e.getWhoClicked().getOpenInventory().getTopInventory() != e.getInventory()) {
+    public void onInventoryClick(InventoryClickEvent event) {
+        ItemStack clickedItem = event.getCurrentItem();
+
+        if (event.getInventory() != event.getWhoClicked().getOpenInventory().getTopInventory()
+                || clickedItem == null || !clickedItem.hasItemMeta()
+                || !clickedItem.getItemMeta().hasDisplayName()) {
             return;
         }
-        if (e.getView().getTitle().equals(pluginName + " Settings Manager")) {
 
-            if (e.getCurrentItem().getType().name().contains("STAINED_GLASS")) {
-                e.setCancelled(true);
-                return;
-            }
+        if (event.getView().getTitle().equals(pluginName + " Settings Manager")) {
+            event.setCancelled(true);
+            if (clickedItem.getType().name().contains("STAINED_GLASS")) return;
 
-            String type = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-            cat.put((Player) e.getWhoClicked(), type);
-            openEditor((Player) e.getWhoClicked());
-            e.setCancelled(true);
-        } else if (e.getView().getTitle().equals(pluginName + " Settings KitEditor")) {
+            String type = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+            this.cat.put((Player) event.getWhoClicked(), type);
+            this.openEditor((Player) event.getWhoClicked());
+        } else if (event.getView().getTitle().equals(pluginName + " Settings Editor")) {
+            event.setCancelled(true);
+            if (clickedItem.getType().name().contains("STAINED_GLASS")) return;
 
-            if (e.getCurrentItem().getType().name().contains("STAINED_GLASS")) {
-                e.setCancelled(true);
-                return;
-            }
+            Player player = (Player) event.getWhoClicked();
 
-            Player p = (Player) e.getWhoClicked();
-            e.setCancelled(true);
-
-            String key = cat.get(p) + "." + ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
+            String key = cat.get(player) + "." + ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
 
             if (instance.getConfig().get(key).getClass().getName().equals("java.lang.Boolean")) {
-                boolean bool = (Boolean) instance.getConfig().get(key);
-                if (!bool)
-                    instance.getConfig().set(key, true);
-                else
-                    instance.getConfig().set(key, false);
-                finishEditing(p);
+                this.instance.getConfig().set(key, !instance.getConfig().getBoolean(key));
+                this.finishEditing(player);
             } else {
-                editObject(p, key);
+                this.editObject(player, key);
             }
         }
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent e) {
-        final Player p = e.getPlayer();
-        if (!current.containsKey(p)) {
-            return;
-        }
-        switch (instance.getConfig().get(current.get(p)).getClass().getName()) {
-            case "java.lang.Integer":
-                instance.getConfig().set(current.get(p), Integer.parseInt(e.getMessage()));
-                break;
-            case "java.lang.Double":
-                instance.getConfig().set(current.get(p), Double.parseDouble(e.getMessage()));
-                break;
-            case "java.lang.String":
-                instance.getConfig().set(current.get(p), e.getMessage());
-                break;
+    public void onChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        if (!current.containsKey(player)) return;
+
+        String value = current.get(player);
+        FileConfiguration config = instance.getConfig();
+        if (config.isInt(value)) {
+            config.set(value, Integer.parseInt(event.getMessage()));
+        } else if (config.isDouble(value)) {
+            config.set(value, Double.parseDouble(event.getMessage()));
+        } else if (config.isString(value)) {
+            config.set(value, event.getMessage());
         }
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(UltimateKits.getInstance(), () ->
-                this.finishEditing(p), 0L);
+                this.finishEditing(player), 0L);
 
-        e.setCancelled(true);
-
+        event.setCancelled(true);
     }
 
-    private void finishEditing(Player p) {
-        current.remove(p);
-        instance.saveConfig();
-        openEditor(p);
+    private void finishEditing(Player player) {
+        this.current.remove(player);
+        this.instance.saveConfig();
+        this.openEditor(player);
     }
 
+    private void editObject(Player player, String current) {
+        this.current.put(player, ChatColor.stripColor(current));
 
-    private void editObject(Player p, String current) {
-        this.current.put(p, ChatColor.stripColor(current));
-        p.closeInventory();
-        p.sendMessage("");
-        p.sendMessage(Methods.formatText("&7Please enter a value for &6" + current + "&7."));
-        if (instance.getConfig().get(current).getClass().getName().equals("java.lang.Integer")) {
-            p.sendMessage(Methods.formatText("&cUse only numbers."));
+        player.closeInventory();
+        player.sendMessage("");
+        player.sendMessage(Methods.formatText("&7Please enter a value for &6" + current + "&7."));
+        if (instance.getConfig().isInt(current) || instance.getConfig().isDouble(current)) {
+            player.sendMessage(Methods.formatText("&cUse only numbers."));
         }
-        p.sendMessage("");
+        player.sendMessage("");
     }
 
-    public void openSettingsManager(Player p) {
-        Inventory i = Bukkit.createInventory(null, 27, pluginName + " Settings Manager");
-        int nu = 0;
-        while (nu != 27) {
-            i.setItem(nu, Methods.getGlass());
-            nu++;
+    public void openSettingsManager(Player player) {
+        Inventory inventory = Bukkit.createInventory(null, 27, pluginName + " Settings Manager");
+        ItemStack glass = Methods.getGlass();
+        for (int i = 0; i < inventory.getSize(); i++) {
+            inventory.setItem(i, glass);
         }
 
-        int spot = 10;
-        for (String key : instance.getConfig().getConfigurationSection("").getKeys(false)) {
-            ItemStack item = new ItemStack(Material.WHITE_WOOL, 1, (byte) (spot - 9)); //ToDo: Make this function as it was meant to.
+        int slot = 10;
+        for (String key : instance.getConfig().getDefaultSection().getKeys(false)) {
+            ItemStack item = new ItemStack(instance.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.WHITE_WOOL : Material.valueOf("WOOL"), 1, (byte) (slot - 9)); //ToDo: Make this function as it was meant to.
             ItemMeta meta = item.getItemMeta();
             meta.setLore(Collections.singletonList(Methods.formatText("&6Click To Edit This Category.")));
             meta.setDisplayName(Methods.formatText("&f&l" + key));
             item.setItemMeta(meta);
-            i.setItem(spot, item);
-            spot++;
+            inventory.setItem(slot, item);
+            slot++;
         }
-        p.openInventory(i);
+
+        player.openInventory(inventory);
     }
 
-    private void openEditor(Player p) {
-        Inventory i = Bukkit.createInventory(null, 54, pluginName + " Settings KitEditor");
+    private void openEditor(Player player) {
+        Inventory inventory = Bukkit.createInventory(null, 54, pluginName + " Settings Editor");
+        FileConfiguration config = instance.getConfig();
 
-        int num = 0;
-        for (String key : instance.getConfig().getConfigurationSection(cat.get(p)).getKeys(true)) {
-            String fKey = cat.get(p) + "." + key;
+        int slot = 0;
+        for (String key : config.getConfigurationSection(cat.get(player)).getKeys(true)) {
+            String fKey = cat.get(player) + "." + key;
             ItemStack item = new ItemStack(Material.DIAMOND_HELMET);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(Methods.formatText("&6" + key));
-            ArrayList<String> lore = new ArrayList<>();
-            switch (instance.getConfig().get(fKey).getClass().getName()) {
-                case "java.lang.Boolean":
 
-                    item.setType(Material.LEVER);
-                    boolean bool = (Boolean) instance.getConfig().get(fKey);
-
-                    if (!bool)
-                        lore.add(Methods.formatText("&c" + false));
-                    else
-                        lore.add(Methods.formatText("&a" + true));
-
-                    break;
-                case "java.lang.String":
-                    item.setType(Material.PAPER);
-                    String str = (String) instance.getConfig().get(fKey);
-                    lore.add(Methods.formatText("&9" + str));
-                    break;
-                case "java.lang.Integer":
-                    item.setType(Material.CLOCK);
-
-                    int in = (Integer) instance.getConfig().get(fKey);
-                    lore.add(Methods.formatText("&5" + in));
-                    break;
-                default:
-                    continue;
+            List<String> lore = new ArrayList<>();
+            if (config.isBoolean(fKey)) {
+                item.setType(Material.LEVER);
+                lore.add(Methods.formatText(config.getBoolean(fKey) ? "&atrue" : "&cfalse"));
+            } else if (config.isString(fKey)) {
+                item.setType(Material.PAPER);
+                lore.add(Methods.formatText("&9" + config.getString(fKey)));
+            } else if (config.isInt(fKey)) {
+                item.setType(instance.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.CLOCK : Material.valueOf("WATCH"));
+                lore.add(Methods.formatText("&5" + config.getInt(fKey)));
             }
-            if (defs.getConfig().contains(fKey)) {
-                String text = defs.getConfig().getString(key);
 
-                Pattern regex = Pattern.compile("(.{1,28}(?:\\s|$))|(.{0,28})", Pattern.DOTALL);
-                Matcher m = regex.matcher(text);
-                while (m.find()) {
-                    if (m.end() != text.length() || m.group().length() != 0)
-                        lore.add(Methods.formatText("&7" + m.group()));
-                }
-            }
             meta.setLore(lore);
             item.setItemMeta(meta);
 
-            i.setItem(num, item);
-            num++;
+            inventory.setItem(slot, item);
+            slot++;
         }
-        p.openInventory(i);
+
+        player.openInventory(inventory);
     }
 
     public void updateSettings() {
-        for (settings s : settings.values()) {
-            FileConfiguration config = instance.getConfig();
-            if (config.contains(s.oldSetting)) {
-                config.addDefault(s.setting, config.get(s.oldSetting));
-                config.set(s.setting, config.get(s.oldSetting));
-                config.set(s.oldSetting, null);
-            } else if (s.setting.equals("Main.Upgrade Particle Type")) {
-                config.addDefault(s.setting, s.option);
-            } else
-                config.addDefault(s.setting, s.option);
+        FileConfiguration config = instance.getConfig();
+
+        for (Setting setting : Setting.values()) {
+            config.addDefault(setting.setting, setting.option);
         }
     }
 
-    public enum settings {
-        o3("Only-Show-Kits-With-Perms", "Main.Only Show Players Kits They Have Permission To Use", false),
-        o4("Kits-Free-With-Perms", "Main.Allow Players To Receive Kits For Free If They Have Permission", true),
-        o5("Dont-Preview-Commands", "Main.Dont Preview Commands In Kits", false),
-        o6("Hologram-Layout", "Main.Hologram Layout", Arrays.asList("{TITLE}", "{LEFT-CLICK}", "{RIGHT-CLICK}")),
-        o7("EnableSound", "Main.Sounds Enabled", true),
-        o8("Sound", "Main.Sound Played While Clicking In Inventories", "ENTITY_ENDERMAN_TELEPORT"),
-        o85("-", "Main.Prevent The Redeeming of a Kit When Inventory Is Full", true),
-        o342("-", "Main.Display Chance In Preview", true),
-        CURRENCY_SYMBOL("-", "Main.Currency Symbol", "$"),
 
-        o9("Exit-Icon", "Interfaces.Exit Icon", "OAK_DOOR"),
-        o10("Buy-Icon", "Interfaces.Buy Icon", "EMERALD"),
-        o11("Glass-Type-1", "Interfaces.Glass Type 1", 7),
-        o12("Glass-Type-2", "Interfaces.Glass Type 2", 11),
-        o13("Glass-Type-3", "Interfaces.Glass Type 3", 3),
-        o14("Rainbow-Glass", "Interfaces.Replace Glass Type 1 With Rainbow Glass", false),
-        o15("glassless", "Interfaces.Do Not Use Glass Borders", false),
+    public enum Setting {
+        o3("Main.Only Show Players Kits They Have Permission To Use", false),
+        o4("Main.Allow Players To Receive Kits For Free If They Have Permission", true),
+        o5("Main.Dont Preview Commands In Kits", false),
+        o6("Main.Hologram Layout", Arrays.asList("{TITLE}", "{LEFT-CLICK}", "{RIGHT-CLICK}")),
+        o7("Main.Sounds Enabled", true),
+        o8("Main.Sound Played While Clicking In Inventories", UltimateKits.getInstance().isServerVersion(ServerVersion.V1_13) ? "ENTITY_ENDERMAN_TELEPORT" : "ENTITY_ENDERMEN_TELEPORT"),
+        o85("Main.Prevent The Redeeming of a Kit When Inventory Is Full", true),
+        o342("Main.Display Chance In Preview", true),
+        CURRENCY_SYMBOL("Main.Currency Symbol", "$"),
 
-        LANGUGE_MODE("-", "System.Language Mode", "en_US"),
-        o16("Debug-Mode", "System.Debugger Enabled", false);
+        EXIT_ICON("Interfaces.Exit Icon", UltimateKits.getInstance().isServerVersion(ServerVersion.V1_13) ? "OAK_DOOR" : "WOOD_DOOR"),
+        BUY_ICON("Interfaces.Buy Icon", "EMERALD"),
+        GLASS_TYPE_1("Interfaces.Glass Type 1", 7),
+        GLASS_TYPE_2("Interfaces.Glass Type 2", 11),
+        GLASS_TYPE_3("Interfaces.Glass Type 3", 3),
+        o14( "Interfaces.Replace Glass Type 1 With Rainbow Glass", false),
+        o15("Interfaces.Do Not Use Glass Borders", false),
+
+        LANGUGE_MODE("System.Language Mode", "en_US"),
+        o16("System.Debugger Enabled", false);
 
         private String setting;
-        private String oldSetting;
         private Object option;
 
-        settings(String oldSetting, String setting, Object option) {
-            this.oldSetting = oldSetting;
+        Setting(String setting, Object option) {
             this.setting = setting;
             this.option = option;
         }
+
+        public List<String> getStringList() {
+            return UltimateKits.getInstance().getConfig().getStringList(setting);
+        }
+
+        public boolean getBoolean() {
+            return UltimateKits.getInstance().getConfig().getBoolean(setting);
+        }
+
+        public int getInt() {
+            return UltimateKits.getInstance().getConfig().getInt(setting);
+        }
+
+        public String getString() {
+            return UltimateKits.getInstance().getConfig().getString(setting);
+        }
+
+        public char getChar() { return UltimateKits.getInstance().getConfig().getString(setting).charAt(0); }
+
 
     }
 }

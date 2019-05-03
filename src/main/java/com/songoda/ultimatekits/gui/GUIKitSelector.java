@@ -3,6 +3,7 @@ package com.songoda.ultimatekits.gui;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -219,15 +220,14 @@ public class GUIKitSelector extends AbstractGUI {
         infometa.setLore(lore);
         info.setItemMeta(infometa);
 
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
+        ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
         ItemStack skull = Methods.addTexture(head, "http://textures.minecraft.net/texture/1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b");
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         skull.setDurability((short) 3);
         skullMeta.setDisplayName(plugin.getLocale().getMessage("interface.button.next"));
         skull.setItemMeta(skullMeta);
 
-        ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
-        ItemStack skull2 = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        ItemStack skull2 = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
         skull2.setDurability((short) 3);
         skull2Meta.setDisplayName(plugin.getLocale().getMessage("interface.button.next"));

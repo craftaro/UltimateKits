@@ -26,7 +26,7 @@ import java.util.Map;
 public abstract class AbstractGUI implements Listener {
 
     private static boolean listenersInitialized = false;
-    protected Player player;
+    protected final Player player;
     protected Inventory inventory = null;
     protected String setTitle = null;
     protected boolean cancelBottom = false;
@@ -76,7 +76,7 @@ public abstract class AbstractGUI implements Listener {
                         }
                     }
                 }
-                
+
                 Map<Range, Clickable> entries = new HashMap<>(gui.clickables);
 
                 for (Map.Entry<Range, Clickable> entry : entries.entrySet()) {
@@ -116,9 +116,9 @@ public abstract class AbstractGUI implements Listener {
     public void init(String title, int slots) {
         if (inventory == null
                 || inventory.getSize() != slots
-                || !ChatColor.translateAlternateColorCodes('&', title).equals(player.getOpenInventory().getTitle())) {
+                || Methods.formatTitle(title) != player.getOpenInventory().getTitle()) {
             this.inventory = Bukkit.getServer().createInventory(new GUIHolder(), slots, Methods.formatTitle(title));
-            this.setTitle = Methods.formatText(title);
+            this.setTitle = Methods.formatTitle(title);
             if (this.clickables.size() == 0)
                 registerClickables();
             if (this.onCloses.size() == 0)
@@ -156,8 +156,20 @@ public abstract class AbstractGUI implements Listener {
         return item;
     }
 
+    protected ItemStack createButton(int slot, ItemStack item, String name, ArrayList<String> lore) {
+        return createButton(slot, inventory, item, name, lore.toArray(new String[0]));
+    }
+
+
     protected ItemStack createButton(int slot, ItemStack item, String name, String... lore) {
         return createButton(slot, inventory, item, name, lore);
+    }
+
+    protected ItemStack createButton(int slot, Object item, String name, String... lore) {
+        if (item instanceof ItemStack)
+            return createButton(slot, inventory, (ItemStack)item, name, lore);
+        else
+            return createButton(slot, inventory, (Material)item, name, lore);
     }
 
     protected ItemStack createButton(int slot, Inventory inventory, Material material, String name, String... lore) {

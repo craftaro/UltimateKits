@@ -3,6 +3,7 @@ package com.songoda.ultimatekits.gui;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractAnvilGUI;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import org.bukkit.Material;
@@ -53,9 +54,8 @@ public class GUISellingOptions extends AbstractGUI {
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
                 UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
 
-        ItemStack head2 = new ItemStack(Material.PLAYER_HEAD, 1, (byte) 3);
-        ItemStack back = head2;
-        back = Methods.addTexture(head2, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
+        ItemStack back = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
         skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
@@ -101,7 +101,7 @@ public class GUISellingOptions extends AbstractGUI {
         lore.add(Methods.formatText("&7purchase this kit for"));
         lore.add(Methods.formatText("&7requires &aVault&7."));
 
-        createButton(15, Material.SUNFLOWER, "&a&lSet kit price", lore);
+        createButton(15, plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.SUNFLOWER : Material.valueOf("DOUBLE_PLANT"), "&a&lSet kit price", lore);
     }
 
     @Override
@@ -133,7 +133,7 @@ public class GUISellingOptions extends AbstractGUI {
 
             gui.setOnClose((player2, inventory3) -> init(setTitle, inventory.getSize()));
 
-            ItemStack item = new ItemStack(Material.SUNFLOWER);
+            ItemStack item = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.SUNFLOWER : Material.valueOf("DOUBLE_PLANT"));
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName("Enter Price (No $)");
             item.setItemMeta(meta);

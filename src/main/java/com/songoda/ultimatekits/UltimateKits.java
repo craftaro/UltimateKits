@@ -14,6 +14,7 @@ import com.songoda.ultimatekits.utils.*;
 import com.songoda.ultimatekits.utils.updateModules.LocaleModule;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -41,6 +42,8 @@ public class UltimateKits extends JavaPlugin {
 
     private Locale locale;
 
+    private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
+
     private ConfigWrapper kitFile = new ConfigWrapper(this, "", "kit.yml");
     private ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
     private ConfigWrapper keyFile = new ConfigWrapper(this, "", "keys.yml");
@@ -67,27 +70,8 @@ public class UltimateKits extends JavaPlugin {
      * On plugin enable.
      */
 
-    private boolean checkVersion() {
-        int workingVersion = 13;
-        int currentVersion = Integer.parseInt(Bukkit.getServer().getClass()
-                .getPackage().getName().split("\\.")[3].split("_")[1]);
-
-        if (currentVersion < workingVersion) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> {
-                Bukkit.getConsoleSender().sendMessage("");
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "You installed the 1." + workingVersion + "+ only version of " + this.getDescription().getName() + " on a 1." + currentVersion + " server. Since you are on the wrong version we disabled the plugin for you. Please install correct version to continue using " + this.getDescription().getName() + ".");
-                Bukkit.getConsoleSender().sendMessage("");
-            }, 20L);
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public void onEnable() {
-        // Check to make sure the Bukkit version is compatible.
-        if (!checkVersion()) return;
-
         INSTANCE = this;
 
         console.sendMessage(Methods.formatText("&a============================="));
@@ -233,6 +217,21 @@ public class UltimateKits extends JavaPlugin {
                 keyManager.addKey(key);
             }
         }
+    }
+
+    public ServerVersion getServerVersion() {
+        return serverVersion;
+    }
+
+    public boolean isServerVersion(ServerVersion version) {
+        return serverVersion == version;
+    }
+    public boolean isServerVersion(ServerVersion... versions) {
+        return ArrayUtils.contains(versions, serverVersion);
+    }
+
+    public boolean isServerVersionAtLeast(ServerVersion version) {
+        return serverVersion.ordinal() >= version.ordinal();
     }
 
     /*

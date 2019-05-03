@@ -4,6 +4,7 @@ import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -64,9 +65,9 @@ public class GUIBlockEditor extends AbstractGUI {
             lore.add(Methods.formatText("&6Claim"));
         }
 
-        createButton(11, Material.COMPARATOR, "&5&lSwitch kit type", lore);
+        createButton(11, UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Material.COMPARATOR : Material.valueOf("REDSTONE_COMPARATOR"), "&5&lSwitch kit type", lore);
 
-        createButton(13, Material.POPPY, "&9&lDecor Options",
+        createButton(13, UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Material.POPPY : Material.valueOf("RED_ROSE"), "&9&lDecor Options",
                 "&7Click to edit the decoration",
                 "&7options for this kit.");
 
@@ -94,12 +95,10 @@ public class GUIBlockEditor extends AbstractGUI {
             instance.getHologram().update(kitBlockData);
             constructGUI();
         });
-        registerClickable(13, (player, inventory, cursor, slot, type) -> {
-            new GUIDecorOptions(UltimateKits.getInstance(), player, kitBlockData.getLocation());
-        });
-        registerClickable(15, (player, inventory, cursor, slot, type) -> {
-            new GUIKitEditor(UltimateKits.getInstance(), player, kitBlockData.getKit(), this, null, 0);
-        });
+        registerClickable(13, (player, inventory, cursor, slot, type) ->
+                new GUIDecorOptions(UltimateKits.getInstance(), player, kitBlockData.getLocation()));
+        registerClickable(15, (player, inventory, cursor, slot, type) ->
+                new GUIKitEditor(UltimateKits.getInstance(), player, kitBlockData.getKit(), this, null, 0));
     }
 
     @Override

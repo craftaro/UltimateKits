@@ -531,8 +531,7 @@ public class GUIKitEditor extends AbstractGUI {
                 player.updateInventory();
             }
 
-            if (plugin.isServerVersionAtLeast(ServerVersion.V1_9))
-                player.playSound(player.getLocation(), plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_VILLAGER_YES : Sound.valueOf("VILLAGER_YES"), 1F, 1F);
+                player.playSound(player.getLocation(), plugin.isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_VILLAGER_YES : Sound.valueOf("VILLAGER_YES"), 1F, 1F);
         });
     }
 

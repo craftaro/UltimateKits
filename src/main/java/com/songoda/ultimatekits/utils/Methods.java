@@ -101,8 +101,8 @@ public class Methods {
      * @return The serialized data.
      */
     public static String serializeLocation(Location location) {
-        if (location == null)
-            return "";
+        if (location == null || location.getWorld() == null)
+            return null;
         String w = location.getWorld().getName();
         double x = location.getX();
         double y = location.getY();

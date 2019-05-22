@@ -23,7 +23,7 @@ public class KitItem {
     private int chance = 0;
 
     public KitItem(String line) {
-        if (line.contains(";")) {
+        if (line.contains(";") && !line.startsWith("{")) {
             line = translateLine(line);
         }
         if (line.startsWith(UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol"))) {

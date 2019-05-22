@@ -271,6 +271,7 @@ public class UltimateKits extends JavaPlugin {
          */
         for (KitBlockData kitBlockData : kitManager.getKitLocations().values()) {
             String locationStr = Methods.serializeLocation(kitBlockData.getLocation());
+            if (locationStr == null) continue;
             dataFile.getConfig().set("BlockData." + locationStr + ".type", kitBlockData.getType().name());
             dataFile.getConfig().set("BlockData." + locationStr + ".kit", kitBlockData.getKit().getName());
             dataFile.getConfig().set("BlockData." + locationStr + ".holograms", kitBlockData.showHologram());

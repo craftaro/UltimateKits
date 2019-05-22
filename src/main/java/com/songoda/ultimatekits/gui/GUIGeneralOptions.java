@@ -110,7 +110,7 @@ public class GUIGeneralOptions extends AbstractGUI {
             gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item);
             gui.open();
 
-            gui.setCloseSound(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"));
+            gui.setCloseSound(plugin.isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"));
         }));
 
         registerClickable(11, ((player1, inventory1, cursor, slot, type) -> {

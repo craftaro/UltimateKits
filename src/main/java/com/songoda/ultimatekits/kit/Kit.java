@@ -14,17 +14,14 @@ import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.milkbowl.vault.economy.Economy;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.*;
@@ -126,7 +123,8 @@ public class Kit {
                 return;
             }
             if (plugin.getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE) {
-                player.playSound(player.getLocation(), UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP"), 0.6F, 15.0F);
+                if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_12))
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
             }
             if (useKey) {
                 if (player.getItemInHand().getType() != Material.TRIPWIRE_HOOK || !player.getItemInHand().hasItemMeta()) {

@@ -49,14 +49,14 @@ public class GUIKitSelector extends AbstractGUI {
             max = 36;
         }
         if (glassless) {
-            if (kitList.size() > n + 34)
-                max = max + 34;
-            else if (kitList.size() > n + 23)
-                max = max + 25;
-            else if (kitList.size() > n + 14)
-                max = max + 16;
-            else if (kitList.size() > n + 7)
-                max = max + 7;
+            if (kitList.size() > n + 36)
+                max = max + 36;
+            else if (kitList.size() > n + 27)
+                max = max + 27;
+            else if (kitList.size() > n + 18)
+                max = max + 18;
+            else if (kitList.size() > n + 9)
+                max = max + 9;
         }
         if (glassless) max -= 18;
 
@@ -90,6 +90,7 @@ public class GUIKitSelector extends AbstractGUI {
     @Override
     protected void constructGUI() {
         resetClickables();
+        registerClickables();
 
         ItemStack exit = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
         ItemMeta exitmeta = exit.getItemMeta();

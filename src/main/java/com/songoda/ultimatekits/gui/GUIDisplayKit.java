@@ -149,6 +149,13 @@ public class GUIDisplayKit extends AbstractGUI {
             linkmeta.setLore(lore);
             link.setItemMeta(linkmeta);
             inventory.setItem(max - 5, link);
+
+            registerClickable(max - 5, ((player1, inventory1, cursor, slot, type) -> {
+                player.closeInventory();
+                String kitName = kit.getName();
+                Kit kit = plugin.getKitManager().getKit(kitName);
+                kit.buy(player);
+            }));
         }
 
         for (ItemStack is : list) {
@@ -217,13 +224,6 @@ public class GUIDisplayKit extends AbstractGUI {
         });
 
         registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());
-
-        registerClickable(max - 5, ((player1, inventory1, cursor, slot, type) -> {
-            player.closeInventory();
-            String kitName = kit.getName();
-            Kit kit = plugin.getKitManager().getKit(kitName);
-            kit.buy(player);
-        }));
 
     }
 

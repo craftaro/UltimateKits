@@ -138,8 +138,10 @@ public class Kit {
                     player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.crate.wrongkey")));
                     return;
                 }
-                for (int i = 0; i < key.getKitAmount(); i++)
-                    givePartKit(player, key);
+                for (int i = 0; i < key.getKitAmount(); i++) {
+                    if (givePartKit(player, key))
+                        return;
+                }
                 player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.key.success", showableName));
                 if (player.getInventory().getItemInHand().getAmount() != 1) {
                     ItemStack is = player.getItemInHand();
@@ -270,7 +272,7 @@ public class Kit {
         }
     }
 
-    private void givePartKit(Player player, Key key) {
+    private boolean givePartKit(Player player, Key key) {
         try {
             List<KitItem> innerContents = new ArrayList<>(getContents());
             int amt = innerContents.size();
@@ -279,8 +281,7 @@ public class Kit {
             if (amt != amtToGive || kitAnimation != KitAnimation.NONE)
                 Collections.shuffle(innerContents);
 
-            for (int i = 0; i < innerContents.size(); i ++) {
-            KitItem item = innerContents.get(i);
+            for (KitItem item : innerContents) {
                 if (amtToGive == 0) continue;
                 int ch = item.getChance() == 0 ? 100 : item.getChance();
                 double rand = Math.random() * 100;
@@ -309,7 +310,7 @@ public class Kit {
 
                     if (kitAnimation != KitAnimation.NONE) {
                         new CrateAnimateTask(plugin, player, this, item.getItem());
-                        return;
+                        return true;
                     } else {
                         Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
                         for (ItemStack item2 : overfilled.values()) {
@@ -320,9 +321,11 @@ public class Kit {
             }
 
             player.updateInventory();
+            return true;
         } catch (Exception e) {
             Debugger.runReport(e);
         }
+        return false;
     }
 
     public void updateDelay(Player player) {

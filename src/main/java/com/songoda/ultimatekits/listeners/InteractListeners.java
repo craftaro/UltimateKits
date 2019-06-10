@@ -20,28 +20,24 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class InteractListeners implements Listener {
 
-    private final UltimateKits instance;
+    private final UltimateKits plugin;
 
-    public InteractListeners(UltimateKits instance) {
-        this.instance = instance;
+    public InteractListeners(UltimateKits plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onBlockInteract(PlayerInteractEvent event) {
         try {
-            boolean chand = true; // This needs to be out of my code.
-            if (instance.isServerVersionAtLeast(ServerVersion.V1_9)
-                    && event.getHand() != EquipmentSlot.HAND) {
-                chand = false;
+            if (plugin.isServerVersionAtLeast(ServerVersion.V1_9)) {
+                if (event.getHand() == EquipmentSlot.OFF_HAND) return;
             }
 
             Block block = event.getClickedBlock();
 
-            if (!chand) return;
-
             if (event.getClickedBlock() == null) return;
 
-            KitBlockData kitBlockData = instance.getKitManager().getKit(block.getLocation());
+            KitBlockData kitBlockData = plugin.getKitManager().getKit(block.getLocation());
             if (kitBlockData == null) return;
             Kit kit = kitBlockData.getKit();
 
@@ -59,7 +55,7 @@ public class InteractListeners implements Listener {
 
                 if (kitBlockData.getType() != KitType.PREVIEW) {
                     if (!kit.hasPermission(player)) {
-                        player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.general.noperms"));
+                        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.general.noperms"));
                         return;
                     }
                     if (kit.getNextUse(player) <= 0) {
@@ -67,8 +63,8 @@ public class InteractListeners implements Listener {
                         kit.updateDelay(player);
                     } else {
                         long time = kit.getNextUse(player);
-                        player.sendMessage(Methods.formatText(instance.getReferences().getPrefix()
-                                + instance.getLocale().getMessage("event.crate.notyet", Methods.makeReadable(time))));
+                        player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix()
+                                + plugin.getLocale().getMessage("event.crate.notyet", Methods.makeReadable(time))));
                     }
                 } else if (kit.getLink() != null || kit.getPrice() != 0) {
                     kit.buy(player);
@@ -80,7 +76,7 @@ public class InteractListeners implements Listener {
                     event.setCancelled(true);
                 }
                 if (player.isSneaking() && player.hasPermission("ultimatekits.admin")) {
-                    new GUIBlockEditor(instance, player, block.getLocation());
+                    new GUIBlockEditor(plugin, player, block.getLocation());
                     return;
                 }
                 if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {

@@ -2,34 +2,29 @@ package com.songoda.ultimatekits;
 
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
-import com.songoda.ultimatekits.hologram.HologramHolographicDisplays;
-import com.songoda.ultimatekits.listeners.*;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.hologram.Hologram;
+import com.songoda.ultimatekits.hologram.HologramHolographicDisplays;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
 import com.songoda.ultimatekits.kit.*;
+import com.songoda.ultimatekits.listeners.BlockListeners;
+import com.songoda.ultimatekits.listeners.ChatListeners;
+import com.songoda.ultimatekits.listeners.EntityListeners;
+import com.songoda.ultimatekits.listeners.InteractListeners;
 import com.songoda.ultimatekits.utils.*;
 import com.songoda.ultimatekits.utils.updateModules.LocaleModule;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +49,7 @@ public class UltimateKits extends JavaPlugin {
     private KeyManager keyManager;
     private DisplayItemHandler displayItemHandler;
     private Hologram hologram;
-    
+
     private ItemSerializer itemSerializer;
 
     /**
@@ -111,7 +106,7 @@ public class UltimateKits extends JavaPlugin {
         this.commandManager = new CommandManager(this);
 
         PluginManager pluginManager = getServer().getPluginManager();
-        
+
         // Register Hologram Plugin
         if (pluginManager.isPluginEnabled("HolographicDisplays"))
             hologram = new HologramHolographicDisplays(this);
@@ -121,14 +116,14 @@ public class UltimateKits extends JavaPlugin {
         pluginManager.registerEvents(new ChatListeners(this), this);
         pluginManager.registerEvents(new EntityListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
-        
+
         this.loadFromFile();
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
 
         // Starting Metrics
         new Metrics(this);
-        
+
         console.sendMessage(Methods.formatText("&a============================="));
 
     }
@@ -217,6 +212,10 @@ public class UltimateKits extends JavaPlugin {
                 keyManager.addKey(key);
             }
         }
+
+        if (hologram != null)
+            hologram.loadHolograms();
+
     }
 
     public ServerVersion getServerVersion() {
@@ -226,6 +225,7 @@ public class UltimateKits extends JavaPlugin {
     public boolean isServerVersion(ServerVersion version) {
         return serverVersion == version;
     }
+
     public boolean isServerVersion(ServerVersion... versions) {
         return ArrayUtils.contains(versions, serverVersion);
     }
@@ -305,6 +305,7 @@ public class UltimateKits extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
     }
+
     /**
      * Reload plugin yaml files.
      */
@@ -358,7 +359,7 @@ public class UltimateKits extends JavaPlugin {
     public ConfigWrapper getDataFile() {
         return dataFile;
     }
-    
+
 
     public SettingsManager getSettingsManager() {
         return settingsManager;
@@ -374,11 +375,11 @@ public class UltimateKits extends JavaPlugin {
 
     /**
      * Grab instance of the item serializer
-     * 
+     *
      * @return instance of ItemSerializer
      */
     public ItemSerializer getItemSerializer() {
-    	return this.itemSerializer;
+        return this.itemSerializer;
     }
 
     public Locale getLocale() {

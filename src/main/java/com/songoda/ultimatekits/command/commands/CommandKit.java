@@ -37,7 +37,7 @@ public class CommandKit extends AbstractCommand {
             }
             Kit kit = instance.getKitManager().getKit(kitName);
             if (sender.hasPermission("ultimatekits.admin")) {
-                kit.give(player, false, false, true);
+                kit.processGenericUse(player, true);
             } else {
                 kit.buy(player);
             }
@@ -63,7 +63,7 @@ public class CommandKit extends AbstractCommand {
                 }
             }
             Kit kit = instance.getKitManager().getKit(kitName);
-            kit.give(player2, false, false, true);
+            kit.processGenericUse(player2, true);
             sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&7You gave &9" + player2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7."));
             return ReturnType.SUCCESS;
         }

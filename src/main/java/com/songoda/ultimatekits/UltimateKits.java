@@ -2,6 +2,8 @@ package com.songoda.ultimatekits;
 
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
+import com.songoda.ultimatekits.economy.Economy;
+import com.songoda.ultimatekits.economy.VaultEconomy;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.hologram.Hologram;
@@ -49,6 +51,7 @@ public class UltimateKits extends JavaPlugin {
     private KeyManager keyManager;
     private DisplayItemHandler displayItemHandler;
     private Hologram hologram;
+    private Economy economy;
 
     private ItemSerializer itemSerializer;
 
@@ -104,6 +107,9 @@ public class UltimateKits extends JavaPlugin {
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
         this.commandManager = new CommandManager(this);
+
+        if (getServer().getPluginManager().getPlugin("Vault") != null)
+            this.economy = new VaultEconomy(this);
 
         PluginManager pluginManager = getServer().getPluginManager();
 
@@ -371,6 +377,11 @@ public class UltimateKits extends JavaPlugin {
 
     public Hologram getHologram() {
         return hologram;
+    }
+
+
+    public Economy getEconomy() {
+        return economy;
     }
 
     /**

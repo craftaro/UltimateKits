@@ -38,7 +38,9 @@ public class InteractListeners implements Listener {
             if (event.getClickedBlock() == null) return;
 
             KitBlockData kitBlockData = plugin.getKitManager().getKit(block.getLocation());
+
             if (kitBlockData == null) return;
+
             Kit kit = kitBlockData.getKit();
 
             Player player = event.getPlayer();
@@ -49,7 +51,7 @@ public class InteractListeners implements Listener {
 
                 if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
                     event.setCancelled(true);
-                    kit.give(player, true, false, false);
+                    kit.processKeyUse(player);
                     return;
                 }
 
@@ -59,7 +61,7 @@ public class InteractListeners implements Listener {
                         return;
                     }
                     if (kit.getNextUse(player) <= 0) {
-                        kit.give(player, false, false, false);
+                        kit.processGenericUse(player, false);
                         kit.updateDelay(player);
                     } else {
                         long time = kit.getNextUse(player);
@@ -81,7 +83,7 @@ public class InteractListeners implements Listener {
                 }
                 if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
                     event.setCancelled(true);
-                    kit.give(player, true, false, false);
+                    kit.processKeyUse(player);
                     return;
                 }
                 kit.display(player, null);

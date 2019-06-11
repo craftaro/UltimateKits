@@ -13,7 +13,6 @@ import com.songoda.ultimatekits.utils.Methods;
 import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,7 +21,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.*;
 
@@ -62,7 +60,7 @@ public class Kit {
     public void buy(Player player) {
         try {
             if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
-                give(player, false, false, false);
+                processGenericUse(player, false);
                 return;
             }
 
@@ -95,10 +93,10 @@ public class Kit {
         return items;
     }
 
-    private boolean hasRoom(Player p, boolean useKey) {
+    private boolean hasRoom(Player player) {
         int space = 0;
 
-        for (ItemStack content : p.getInventory().getContents()) {
+        for (ItemStack content : player.getInventory().getContents()) {
             if (content == null) {
                 space++;
             }
@@ -106,73 +104,75 @@ public class Kit {
 
         int spaceNeeded = getItemContents().size();
 
-
-        if (useKey) {
-            Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(p.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
-            if (key.getAmt() != -1)
-                spaceNeeded = key.getAmt();
-        }
-
         return space >= spaceNeeded;
     }
 
-    public void give(Player player, boolean useKey, boolean economy, boolean console) {
-        try {
-            if (plugin.getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player, useKey)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.full"));
-                return;
-            }
-            if (plugin.getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE) {
-                if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_12))
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
-            }
-            if (useKey) {
-                if (player.getItemInHand().getType() != Material.TRIPWIRE_HOOK || !player.getItemInHand().hasItemMeta()) {
-                    return;
-                }
-
-                Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(player.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
-
-                if (!player.getItemInHand().getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title", showableName))
-                        && !player.getItemInHand().getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title", "Any"))) {
-                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.crate.wrongkey")));
-                    return;
-                }
-                for (int i = 0; i < key.getKitAmount(); i++) {
-                    if (givePartKit(player, key))
-                        return;
-                }
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.key.success", showableName));
-                if (player.getInventory().getItemInHand().getAmount() != 1) {
-                    ItemStack is = player.getItemInHand();
-                    is.setAmount(is.getAmount() - 1);
-                    player.setItemInHand(is);
-                } else {
-                    player.setItemInHand(null);
-                }
-                return;
-            }
-
-            if (getNextUse(player) == -1 && !economy && !console) {
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.nottwice"));
-            } else if (getNextUse(player) <= 0 || economy || console) {
-                giveKit(player);
-                if (economy) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.purchasesuccess", showableName));
-                } else {
-                    updateDelay(player);
-                    if (kitAnimation == KitAnimation.NONE) {
-                        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.givesuccess", showableName));
-                    }
-                }
-            } else {
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.delay", Methods.makeReadable(getNextUse(player))));
-            }
-
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
+    public void processKeyUse(Player player) {
+        ItemStack item = player.getItemInHand();
+        if (item.getType() != Material.TRIPWIRE_HOOK || !item.hasItemMeta()) {
+            return;
         }
+        Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(item.getItemMeta().getLore().get(0)).replace(" Key", ""));
 
+        if (!item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title", showableName))
+                && !item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title", "Any"))) {
+            player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.crate.wrongkey")));
+            return;
+        }
+        for (int i = 0; i < key.getKitAmount(); i++) {
+            if (!giveKit(player, key))
+                return;
+        }
+        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.key.success", showableName));
+        if (player.getInventory().getItemInHand().getAmount() != 1) {
+            ItemStack is = item;
+            is.setAmount(is.getAmount() - 1);
+            player.setItemInHand(is);
+        } else {
+            player.setItemInHand(null);
+        }
+    }
+
+    public void processPurchaseUse(Player player) {
+        if (plugin.getEconomy() == null) return;
+
+        if (!hasPermission(player)) {
+            player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(plugin.getLocale()
+                    .getMessage(plugin.getLocale().getMessage("command.general.noperms"))));
+            return;
+        } else if (!plugin.getEconomy().hasBalance(player, price)) {
+            player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(plugin.getLocale().getMessage("event.claim.cannotafford", showableName)));
+            return;
+        }
+        if (this.delay > 0) {
+            if (getNextUse(player) == -1) {
+                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(plugin.getLocale().getMessage("event.claim.nottwice")));
+            } else if (getNextUse(player) != 0) {
+                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.delay", Methods.makeReadable(getNextUse(player))));
+                return;
+            }
+        }
+        if (delay != 0) {
+            updateDelay(player); //updates delay on buy
+        }
+        plugin.getEconomy().withdrawBalance(player, price);
+
+        giveKit(player);
+        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.purchasesuccess", showableName));
+    }
+
+    public void processGenericUse(Player player, boolean forced) {
+        if (getNextUse(player) == -1 && !forced) {
+            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.nottwice"));
+        } else if (getNextUse(player) <= 0 || forced) {
+            giveKit(player);
+            updateDelay(player);
+            if (kitAnimation == KitAnimation.NONE) {
+                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.givesuccess", showableName));
+            }
+        } else {
+            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.delay", Methods.makeReadable(getNextUse(player))));
+        }
     }
 
     @SuppressWarnings("Duplicates")
@@ -202,7 +202,7 @@ public class Kit {
         try {
             List<KitItem> list = new ArrayList<>();
             for (ItemStack is : items) {
-                if (is != null && is.getType() != null && is.getType() != Material.AIR) {
+                if (is != null && is.getType() != Material.AIR) {
 
                     if (is.getItemMeta().hasLore()) {
                         ItemMeta meta = is.getItemMeta();
@@ -264,16 +264,21 @@ public class Kit {
         return stacks;
     }
 
-    public void giveKit(Player player) {
-        try {
-            givePartKit(player, null);
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
+    private boolean giveKit(Player player) {
+        return giveKit(player, null);
     }
 
-    private boolean givePartKit(Player player, Key key) {
+    private boolean giveKit(Player player, Key key) {
         try {
+            if (plugin.getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player)) {
+                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.full"));
+                return false;
+            }
+            if (plugin.getConfig().getBoolean("Main.Sounds Enabled")
+                    && kitAnimation == KitAnimation.NONE
+                    && UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_12))
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
+
             List<KitItem> innerContents = new ArrayList<>(getContents());
             int amt = innerContents.size();
             int amtToGive = key == null ? amt : key.getAmt();
@@ -345,40 +350,6 @@ public class Kit {
         long delay = (long) this.delay * 1000;
 
         return (last + delay) >= System.currentTimeMillis() ? (last + delay) - System.currentTimeMillis() : 0L;
-    }
-
-    public void buyWithEconomy(Player player) {
-        try {
-            if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) return;
-            RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-            net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
-
-            if (!hasPermission(player)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(UltimateKits.getInstance().getLocale().getMessage(UltimateKits.getInstance().getLocale().getMessage("command.general.noperms"))));
-                return;
-            } else if (!econ.has(player, price)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(plugin.getLocale().getMessage("event.claim.cannotafford", showableName)));
-                return;
-            }
-            if (this.delay > 0) {
-
-                if (getNextUse(player) == -1) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(plugin.getLocale().getMessage("event.claim.nottwice")));
-                } else if (getNextUse(player) != 0) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.delay", Methods.makeReadable(getNextUse(player))));
-                    return;
-                }
-            }
-            if (delay != 0) {
-                updateDelay(player); //updates delay on buy
-            }
-            econ.withdrawPlayer(player, price);
-            give(player, false, true, false);
-
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
-        }
-
     }
 
     public boolean hasPermission(Player player) {

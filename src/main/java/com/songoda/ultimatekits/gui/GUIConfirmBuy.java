@@ -82,7 +82,7 @@ public class GUIConfirmBuy extends AbstractGUI {
     @Override
     protected void registerClickables() {
         registerClickable(11, ((player1, inventory1, cursor, slot, type) -> {
-            kit.buyWithEconomy(player);
+            kit.processPurchaseUse(player);
             player.closeInventory();
         }));
 

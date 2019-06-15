@@ -150,78 +150,81 @@ public class UltimateKits extends JavaPlugin {
      * Load configuration files into memory.
      */
     private void loadFromFile() {
+        Bukkit.getScheduler().runTaskLater(this, () -> {
 
-        //Empty kits from manager.
-        kitManager.clearKits();
+            //Empty kits from manager.
+            kitManager.clearKits();
 
-        /*
-         * Register kit into KitManager from Configuration.
-         */
-        for (String kitName : kitFile.getConfig().getConfigurationSection("Kits").getKeys(false)) {
-            try {
-                int delay = kitFile.getConfig().getInt("Kits." + kitName + ".delay");
-                String title = kitFile.getConfig().getString("Kits." + kitName + ".title");
-                String link = kitFile.getConfig().getString("Kits." + kitName + ".link");
-                Material material = kitFile.getConfig().contains("Kits." + kitName + ".displayItem") ? Material.valueOf(kitFile.getConfig().getString("Kits." + kitName + ".displayItem")) : null;
-                boolean hidden = kitFile.getConfig().getBoolean("Kits." + kitName + ".hidden");
-                double price = kitFile.getConfig().getDouble("Kits." + kitName + ".price");
-                List<String> strContents = kitFile.getConfig().getStringList("Kits." + kitName + ".items");
-                String kitAnimation = kitFile.getConfig().getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
+            /*
+             * Register kit into KitManager from Configuration.
+             */
+            for (String kitName : kitFile.getConfig().getConfigurationSection("Kits").getKeys(false)) {
+                try {
+                    int delay = kitFile.getConfig().getInt("Kits." + kitName + ".delay");
+                    String title = kitFile.getConfig().getString("Kits." + kitName + ".title");
+                    String link = kitFile.getConfig().getString("Kits." + kitName + ".link");
+                    Material material = kitFile.getConfig().contains("Kits." + kitName + ".displayItem") ? Material.valueOf(kitFile.getConfig().getString("Kits." + kitName + ".displayItem")) : null;
+                    boolean hidden = kitFile.getConfig().getBoolean("Kits." + kitName + ".hidden");
+                    double price = kitFile.getConfig().getDouble("Kits." + kitName + ".price");
+                    List<String> strContents = kitFile.getConfig().getStringList("Kits." + kitName + ".items");
+                    String kitAnimation = kitFile.getConfig().getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
 
-                List<KitItem> contents = new ArrayList<>();
+                    List<KitItem> contents = new ArrayList<>();
 
-                for (String string : strContents) {
-                    contents.add(new KitItem(string));
+                    for (String string : strContents) {
+                        contents.add(new KitItem(string));
+                    }
+
+                    Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents, KitAnimation.valueOf(kitAnimation));
+                    kitManager.addKit(kit);
+                } catch (Exception ex) {
+                    console.sendMessage(Methods.formatText("&cYour kit &4" + kitName + " &cis setup incorrectly."));
+                    Debugger.runReport(ex);
                 }
-
-                Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents, KitAnimation.valueOf(kitAnimation));
-                kitManager.addKit(kit);
-            } catch (Exception ex) {
-                console.sendMessage(Methods.formatText("&cYour kit &4" + kitName + " &cis setup incorrectly."));
-                Debugger.runReport(ex);
             }
-        }
 
-        /*
-         * Register kit locations into KitManager from Configuration.
-         */
-        if (dataFile.getConfig().contains("BlockData")) {
-            for (String key : dataFile.getConfig().getConfigurationSection("BlockData").getKeys(false)) {
-                Location location = Methods.unserializeLocation(key);
-                Kit kit = kitManager.getKit(dataFile.getConfig().getString("BlockData." + key + ".kit"));
-                KitType type = KitType.valueOf(dataFile.getConfig().getString("BlockData." + key + ".type", "PREVIEW"));
-                boolean holograms = dataFile.getConfig().getBoolean("BlockData." + key + ".holograms");
-                boolean displayItems = dataFile.getConfig().getBoolean("BlockData." + key + ".displayItems");
-                boolean particles = dataFile.getConfig().getBoolean("BlockData." + key + ".particles");
-                boolean itemOverride = dataFile.getConfig().getBoolean("BlockData." + key + ".itemOverride");
+            /*
+             * Register kit locations into KitManager from Configuration.
+             */
+            if (dataFile.getConfig().contains("BlockData")) {
+                for (String key : dataFile.getConfig().getConfigurationSection("BlockData").getKeys(false)) {
+                    Location location = Methods.unserializeLocation(key);
+                    Kit kit = kitManager.getKit(dataFile.getConfig().getString("BlockData." + key + ".kit"));
+                    KitType type = KitType.valueOf(dataFile.getConfig().getString("BlockData." + key + ".type", "PREVIEW"));
+                    boolean holograms = dataFile.getConfig().getBoolean("BlockData." + key + ".holograms");
+                    boolean displayItems = dataFile.getConfig().getBoolean("BlockData." + key + ".displayItems");
+                    boolean particles = dataFile.getConfig().getBoolean("BlockData." + key + ".particles");
+                    boolean itemOverride = dataFile.getConfig().getBoolean("BlockData." + key + ".itemOverride");
 
-                if (kit == null) dataFile.getConfig().set("BlockData." + key, null);
-                else kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride);
+                    if (kit == null) dataFile.getConfig().set("BlockData." + key, null);
+                    else
+                        kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride);
+                }
             }
-        }
 
-        //Apply default keys.
-        checkKeyDefaults();
+            //Apply default keys.
+            checkKeyDefaults();
 
-        //Empty keys from manager.
-        keyManager.clear();
+            //Empty keys from manager.
+            keyManager.clear();
 
-        /*
-         * Register keys into KitManager from Configuration.
-         */
-        if (keyFile.getConfig().contains("Keys")) {
-            for (String keyName : keyFile.getConfig().getConfigurationSection("Keys").getKeys(false)) {
-                int amt = keyFile.getConfig().getInt("Keys." + keyName + ".Item Amount");
-                int kitAmount = keyFile.getConfig().getInt("Keys." + keyName + ".Amount of kit received");
+            /*
+             * Register keys into KitManager from Configuration.
+             */
+            if (keyFile.getConfig().contains("Keys")) {
+                for (String keyName : keyFile.getConfig().getConfigurationSection("Keys").getKeys(false)) {
+                    int amt = keyFile.getConfig().getInt("Keys." + keyName + ".Item Amount");
+                    int kitAmount = keyFile.getConfig().getInt("Keys." + keyName + ".Amount of kit received");
 
-                Key key = new Key(keyName, amt, kitAmount);
-                keyManager.addKey(key);
+                    Key key = new Key(keyName, amt, kitAmount);
+                    keyManager.addKey(key);
+                }
             }
-        }
 
-        if (hologram != null)
-            hologram.loadHolograms();
+            if (hologram != null)
+                hologram.loadHolograms();
 
+        }, 10);
     }
 
     public ServerVersion getServerVersion() {

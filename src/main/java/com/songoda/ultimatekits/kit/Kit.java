@@ -309,6 +309,18 @@ public class Kit {
                     }
 
                     ItemStack parseStack = ((KitContentItem) item.getContent()).getItemStack();
+
+                    if (parseStack.hasItemMeta() && parseStack.getItemMeta().hasLore()) {
+                        ItemMeta meta = parseStack.getItemMeta();
+                        List<String> newLore = new ArrayList<>();
+                        for (String str : parseStack.getItemMeta().getLore()) {
+                            str = str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName());
+                            newLore.add(str);
+                        }
+                        meta.setLore(newLore);
+                        parseStack.setItemMeta(meta);
+                    }
+
                     if (parseStack.getType() == Material.AIR) continue;
 
                     amtToGive--;

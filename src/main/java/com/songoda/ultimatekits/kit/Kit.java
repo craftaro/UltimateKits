@@ -119,17 +119,20 @@ public class Kit {
             player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.crate.wrongkey")));
             return;
         }
+        boolean worked = false;
         for (int i = 0; i < key.getKitAmount(); i++) {
-            if (!giveKit(player, key))
-                return;
+            if (giveKit(player, key))
+                worked = true;
         }
-        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.key.success", showableName));
-        if (player.getInventory().getItemInHand().getAmount() != 1) {
-            ItemStack is = item;
-            is.setAmount(is.getAmount() - 1);
-            player.setItemInHand(is);
-        } else {
-            player.setItemInHand(null);
+        if (worked) {
+            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.key.success", showableName));
+            if (player.getInventory().getItemInHand().getAmount() != 1) {
+                ItemStack is = item;
+                is.setAmount(is.getAmount() - 1);
+                player.setItemInHand(is);
+            } else {
+                player.setItemInHand(null);
+            }
         }
     }
 
@@ -152,12 +155,12 @@ public class Kit {
                 return;
             }
         }
-        if (delay != 0) {
-            updateDelay(player); //updates delay on buy
+        if (giveKit(player)) {
+            plugin.getEconomy().withdrawBalance(player, price);
+            if (delay != 0)
+                updateDelay(player); //updates delay on buy
         }
-        plugin.getEconomy().withdrawBalance(player, price);
 
-        giveKit(player);
         player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.purchasesuccess", showableName));
     }
 
@@ -165,10 +168,10 @@ public class Kit {
         if (getNextUse(player) == -1 && !forced) {
             player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.nottwice"));
         } else if (getNextUse(player) <= 0 || forced) {
-            giveKit(player);
-            updateDelay(player);
-            if (kitAnimation == KitAnimation.NONE) {
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.givesuccess", showableName));
+            if (giveKit(player)) {
+                updateDelay(player);
+                if (kitAnimation == KitAnimation.NONE)
+                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.givesuccess", showableName));
             }
         } else {
             player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.delay", Methods.makeReadable(getNextUse(player))));

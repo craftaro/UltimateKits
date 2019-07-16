@@ -37,7 +37,14 @@ public class Methods {
             return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 3"));
     }
 
-    private static ItemStack getGlass(Boolean rainbow, int type) {
+    /**
+     * Creates a glass itemstack
+     *
+     * @param rainbow Whether or not to assign a random color to the glass.
+     * @param type    If rainbow is false, the glass color.
+     * @return A glass itemstack conforming to the params.
+     */
+    public static ItemStack getGlass(boolean rainbow, int type) {
         int randomNum = 1 + (int) (Math.random() * 6);
         ItemStack glass;
         if (rainbow) {
@@ -52,7 +59,6 @@ public class Methods {
         glass.setItemMeta(glassmeta);
         return glass;
     }
-
 
     public static boolean canGiveKit(Player player) {
         try {
@@ -302,26 +308,6 @@ public class Methods {
         }
         item.setItemMeta(meta);
         return item;
-    }
-    /**
-     * Creates a glass itemstack
-     *
-     * @param rainbow Whether or not to assign a random color to the glass.
-     * @param type    If rainbow is false, the glass color.
-     * @return A glass itemstack conforming to the params.
-     */
-    public static ItemStack toGlass(Boolean rainbow, int type) {
-        int randomNum = 1 + (int) (Math.random() * 6);
-        ItemStack glass;
-        if (rainbow) {
-            glass = new ItemStack(Material.LEGACY_STAINED_GLASS_PANE, 1, (short) randomNum);
-        } else {
-            glass = new ItemStack(Material.LEGACY_STAINED_GLASS_PANE, 1, (short) type);
-        }
-        ItemMeta glassMeta = glass.getItemMeta();
-        glassMeta.setDisplayName("§l");
-        glass.setItemMeta(glassMeta);
-        return glass;
     }
 
 }

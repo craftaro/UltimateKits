@@ -83,7 +83,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         num = slow ? 1 : 0;
 
         for (int i = 0; i < 27; i++) {
-            inventory.setItem(i, Methods.toGlass(true, 0));
+            inventory.setItem(i, Methods.getGlass(true, 0));
         }
 
         for (int i = 9; i < 18; i++) {

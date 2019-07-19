@@ -144,7 +144,7 @@ public class Kit {
     public void processPurchaseUse(Player player) {
         if (plugin.getEconomy() == null) return;
 
-        if (!hasPermission(player)) {
+        if (!player.hasPermission("ultimatekits.buy." + name)) {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
             return;

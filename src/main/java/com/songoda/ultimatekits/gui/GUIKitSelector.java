@@ -177,7 +177,7 @@ public class GUIKitSelector extends AbstractGUI {
                     } else if (kit.getNextUse(player) > 0) {
                         if (!plugin.getLocale().getMessage("event.claim.wait").getMessage().trim().equals("")) {
                             lore.add(plugin.getLocale().getMessage("event.claim.wait")
-                                    .processPlaceholder("wait", Methods.makeReadable(kit.getNextUse(player)))
+                                    .processPlaceholder("time", Methods.makeReadable(kit.getNextUse(player)))
                                     .getMessage());
                         }
                     } else if (!plugin.getLocale().getMessage("event.claim.ready").getMessage().trim().equals("")) {

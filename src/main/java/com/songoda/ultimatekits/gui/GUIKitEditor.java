@@ -34,7 +34,6 @@ public class GUIKitEditor extends AbstractGUI {
 
     private boolean isInFuction = false;
     private boolean isInInventory = false;
-    private boolean muteSave = false;
 
 
     private ItemStack toReplace;
@@ -195,6 +194,7 @@ public class GUIKitEditor extends AbstractGUI {
         inventory.setItem(54 - 3, Methods.getBackgroundGlass(false));
 
         updateInvButton();
+
     }
 
 
@@ -263,7 +263,7 @@ public class GUIKitEditor extends AbstractGUI {
     }
 
 
-    public void saveKit(Player player, Inventory i) {
+    public void saveKit(Player player, Inventory i, boolean muteSave) {
         ItemStack[] items = i.getContents();
         int num = 0;
         for (ItemStack item : items) {
@@ -276,10 +276,8 @@ public class GUIKitEditor extends AbstractGUI {
         items = Arrays.copyOf(items, items.length - 10);
 
         kit.saveKit(Arrays.asList(items));
-        if (!muteSave)
-            plugin.getLocale().newMessage("&8Changes to &a" + kit.getShowableName() + " &8saved successfully.")
-                    .sendPrefixedMessage(player);
-        muteSave = false;
+        plugin.getLocale().newMessage("&8Changes to &a" + kit.getShowableName() + " &8saved successfully.")
+                .sendPrefixedMessage(player);
     }
 
     public void replaceItem(Action action, Player player, ItemStack itemStack, int slot) {
@@ -301,11 +299,11 @@ public class GUIKitEditor extends AbstractGUI {
                 item.setChance(item.getChance() == 100 ? 5 : (item.getChance() + 5));
                 toReplace = item.getMoveableItem();
                 this.slot = slot;
+                saveKit(player, inventory, true);
                 constructGUI();
                 break;
             case DISPLAY_ITEM: {
-                muteSave = true;
-                saveKit(player, this.inventory);
+                saveKit(player, this.inventory, true);
                 AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
                     String msg = event.getName();
                     ItemStack toReplace = null;
@@ -335,8 +333,7 @@ public class GUIKitEditor extends AbstractGUI {
             }
             break;
             case DISPLAY_NAME: {
-                muteSave = true;
-                saveKit(player, this.inventory);
+                saveKit(player, this.inventory, true);
                 AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
                     String msg = event.getName();
                     KitItem item2 = new KitItem(itemStack);
@@ -359,8 +356,7 @@ public class GUIKitEditor extends AbstractGUI {
             }
             break;
             case DISPLAY_LORE: {
-                muteSave = true;
-                saveKit(player, this.inventory);
+                saveKit(player, this.inventory, true);
                 AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
                     String msg = event.getName();
                     KitItem item2 = new KitItem(itemStack);
@@ -405,8 +401,7 @@ public class GUIKitEditor extends AbstractGUI {
                 getInvItems();
             });
             registerClickable(14, true, ((player, inventory, cursor, slot, type) -> {
-                muteSave = true;
-                saveKit(player, this.inventory);
+                saveKit(player, this.inventory, true);
                 AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
                     String msg = event.getName();
                     ItemStack parseStack2 = new ItemStack(Material.PAPER, 1);
@@ -442,8 +437,7 @@ public class GUIKitEditor extends AbstractGUI {
             }));
 
             registerClickable(13, true, ((player, inventory, cursor, slot, type) -> {
-                muteSave = true;
-                saveKit(player, this.inventory);
+                saveKit(player, this.inventory, true);
                 AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
                     String msg = event.getName();
                     ItemStack parseStack = new ItemStack(Material.PAPER, 1);
@@ -507,8 +501,7 @@ public class GUIKitEditor extends AbstractGUI {
 
         registerClickable(48, ((player1, inventory, cursor, slot1, type) -> {
             isInFuction = !isInFuction;
-            muteSave = true;
-            saveKit(player1, inventory);
+            saveKit(player1, inventory,true);
             constructGUI();
         }));
 
@@ -528,7 +521,7 @@ public class GUIKitEditor extends AbstractGUI {
     @Override
     protected void registerOnCloses() {
         registerOnClose((player1, inventory1) -> {
-            this.saveKit(player1, inventory1);
+            this.saveKit(player1, inventory1, false);
             if (!isInInventory && this.inventoryItems.length != 0) {
                 player.getInventory().setContents(this.inventoryItems);
                 player.updateInventory();

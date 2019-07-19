@@ -25,14 +25,14 @@ public class CommandEdit extends AbstractCommand {
 
         if (args.length == 1) {
             if (kitBlockData == null) {
-                player.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + "&8This block does not contain a kit."));
+                instance.getLocale().newMessage("&8This block does not contain a kit.").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
             new GUIBlockEditor(instance, player, block.getLocation());
         } else {
             String kitStr = args[1].toLowerCase().trim();
             if (instance.getKitManager().getKit(kitStr) == null) {
-                player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
+                instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
 

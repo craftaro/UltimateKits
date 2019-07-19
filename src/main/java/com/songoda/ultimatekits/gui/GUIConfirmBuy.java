@@ -23,7 +23,8 @@ public class GUIConfirmBuy extends AbstractGUI {
         this.kit = kit;
         this.player = player;
         this.plugin = plugin;
-        init(plugin.getLocale().getMessage("interface.yesno.title", kit.getPrice()), 27);
+        init(plugin.getLocale().getMessage("interface.yesno.title")
+                .processPlaceholder("price", kit.getPrice()).getMessage(), 27);
     }
 
     @Override
@@ -66,12 +67,12 @@ public class GUIConfirmBuy extends AbstractGUI {
 
         ItemStack item2 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Buy Icon")), 1);
         ItemMeta itemmeta2 = item2.getItemMeta();
-        itemmeta2.setDisplayName(plugin.getLocale().getMessage("interface.yesno.yes"));
+        itemmeta2.setDisplayName(plugin.getLocale().getMessage("interface.yesno.yes").getMessage());
         item2.setItemMeta(itemmeta2);
 
         ItemStack item3 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
         ItemMeta itemmeta3 = item3.getItemMeta();
-        itemmeta3.setDisplayName(plugin.getLocale().getMessage("interface.yesno.no"));
+        itemmeta3.setDisplayName(plugin.getLocale().getMessage("interface.yesno.no").getMessage());
         item3.setItemMeta(itemmeta3);
 
         inventory.setItem(4, item);
@@ -87,7 +88,7 @@ public class GUIConfirmBuy extends AbstractGUI {
         }));
 
         registerClickable(15, ((player1, inventory1, cursor, slot, type) -> {
-            player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.purchase.cancelled")));
+            plugin.getLocale().getMessage("event.purchase.cancelled").sendPrefixedMessage(player);
             player.closeInventory();
         }));
     }

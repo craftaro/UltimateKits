@@ -52,13 +52,13 @@ public class GUIGUIOptions extends AbstractGUI {
         inventory.setItem(26, Methods.getBackgroundGlass(true));
 
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
+                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage());
 
         ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
         ItemStack back = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
-        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
+        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back").getMessage());
         back.setItemMeta(skull2Meta);
 
         inventory.setItem(0, back);
@@ -120,7 +120,8 @@ public class GUIGUIOptions extends AbstractGUI {
                     String msg = event.getName();
                     kit.setTitle(msg);
                     plugin.saveConfig();
-                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Title &5" + msg + "&8 added to Kit &a" + kit.getShowableName() + "&8."));
+                    plugin.getLocale().newMessage("&8Title &5" + msg + "&8 added to Kit &a" + kit.getShowableName() + "&8.")
+                            .sendPrefixedMessage(player);
                     if (plugin.getHologram() != null)
                         plugin.getHologram().update(kit);
                 });
@@ -145,15 +146,15 @@ public class GUIGUIOptions extends AbstractGUI {
         registerClickable(13, ((player1, inventory1, cursor, slot, type) -> {
             if (type.isLeftClick()) {
                 ItemStack is = player.getItemInHand();
-                if (is == null || is.getType() == Material.AIR) {
-                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8You must be holding an item to use this function."));
+                if (is.getType() == Material.AIR) {
+                    plugin.getLocale().newMessage("&8You must be holding an item to use this function.").sendPrefixedMessage(player);
                     return;
                 }
                 kit.setDisplayItem(is.getType());
-                player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Custom Item Display set for kit &a" + kit.getShowableName() + "&8."));
+                plugin.getLocale().newMessage("&8Custom Item Display set for kit &a" + kit.getShowableName() + "&8.").sendPrefixedMessage(player);
             } else {
                 kit.setDisplayItem(null);
-                player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Custom Item Display removed from kit &a" + kit.getShowableName() + "&8."));
+                plugin.getLocale().newMessage("&8Custom Item Display removed from kit &a" + kit.getShowableName() + "&8.").sendPrefixedMessage(player);
             }
             constructGUI();
         }));

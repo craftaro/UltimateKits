@@ -20,11 +20,11 @@ public class CommandCreatekit extends AbstractCommand {
         if (args.length != 2) return ReturnType.SYNTAX_ERROR;
         String kitStr = args[1].toLowerCase();
         if (instance.getKitManager().getKit(kitStr) != null) {
-            player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitalreadyexists"));
+            instance.getLocale().getMessage("command.kit.kitalreadyexists").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
 
-        player.sendMessage(UltimateKits.getInstance().getReferences().getPrefix() + Methods.formatText("&aThat kit doesn't exist. Creating it now."));
+        instance.getLocale().newMessage("&aThat kit doesn't exist. Creating it now.").sendPrefixedMessage(player);
         Kit kit = new Kit(kitStr.trim());
         UltimateKits.getInstance().getKitManager().addKit(kit);
         new GUIKitEditor(instance, player, kit, null, null, 0);

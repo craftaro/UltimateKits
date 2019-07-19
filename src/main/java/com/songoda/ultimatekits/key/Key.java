@@ -43,13 +43,15 @@ public class Key {
                 kitName = "Any";
 
             ItemMeta meta = is.getItemMeta();
-            meta.setDisplayName(plugin.getLocale().getMessage("interface.key.title", kitName));
+            meta.setDisplayName(plugin.getLocale().getMessage("interface.key.title")
+                    .processPlaceholder("kit", kitName).getMessage());
 
             meta.addEnchant(Enchantment.DURABILITY, 1, true);
             List<String> lore = new ArrayList<>();
             lore.add(Methods.formatText("&e" + name + " &fKey"));
 
-            String desc1 = plugin.getLocale().getMessage("interface.key.description1", kitName);
+            String desc1 = plugin.getLocale().getMessage("interface.key.description1")
+                    .processPlaceholder("kit", kitName).getMessage();
 
             if (kitName.equals("Any"))
                 desc1 = desc1.replaceAll("\\[.*?\\]", "");
@@ -58,11 +60,12 @@ public class Key {
 
             lore.add(Methods.formatText(desc1));
             if (this.amt == -1)
-                lore.add(plugin.getLocale().getMessage("interface.key.description2"));
+                lore.add(plugin.getLocale().getMessage("interface.key.description2").getMessage());
             else
-                lore.add(plugin.getLocale().getMessage("interface.key.description3"));
+                lore.add(plugin.getLocale().getMessage("interface.key.description3").getMessage());
             if (kitAmount > 1)
-                lore.add(plugin.getLocale().getMessage("interface.key.description4", this.kitAmount));
+                lore.add(plugin.getLocale().getMessage("interface.key.description4")
+                        .processPlaceholder("amt", this.kitAmount).getMessage());
             meta.setLore(lore);
 
             is.setItemMeta(meta);

@@ -32,7 +32,7 @@ public class CommandKit extends AbstractCommand {
             Player player = (Player) sender;
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
-                player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
+                instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
             Kit kit = instance.getKitManager().getKit(kitName);
@@ -46,25 +46,27 @@ public class CommandKit extends AbstractCommand {
         if (args.length == 2) {
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
-                sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
+                instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
 
             if (Bukkit.getPlayerExact(args[1]) == null) {
-                sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.playernotfound"));
+                instance.getLocale().getMessage("command.kit.playernotfound").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
             Player player2 = Bukkit.getPlayer(args[1]);
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!Methods.canGiveKit(player)) {
-                    player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.general.noperms"));
+                    UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
+                            .sendPrefixedMessage(player);
                     return ReturnType.FAILURE;
                 }
             }
             Kit kit = instance.getKitManager().getKit(kitName);
             kit.processGenericUse(player2, true);
-            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&7You gave &9" + player2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7."));
+            instance.getLocale().newMessage("&7You gave &9" + player2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7.")
+                    .sendPrefixedMessage(sender);
             return ReturnType.SUCCESS;
         }
         return ReturnType.SYNTAX_ERROR;

@@ -22,11 +22,11 @@ public class CommandKey extends AbstractCommand {
         }
         Kit kit = instance.getKitManager().getKit(args[1]);
         if (kit == null && !args[1].toLowerCase().equals("all")) {
-            sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
+            instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         if (Bukkit.getPlayer(args[3]) == null && !args[3].trim().equalsIgnoreCase("all")) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&cThat username does not exist, or the user is offline!"));
+            instance.getLocale().newMessage("&cThat username does not exist, or the user is offline!").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         int amt = 1;
@@ -38,13 +38,13 @@ public class CommandKey extends AbstractCommand {
             }
         }
         if (amt == 0) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&a" + args[3] + " &cis not a number."));
+            instance.getLocale().newMessage("&a" + args[3] + " &cis not a number.").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
         Key key = instance.getKeyManager().getKey(args[2]);
         if (key == null) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&a" + args[3] + " &cis not a key."));
+            instance.getLocale().newMessage("&a" + args[3] + " &cis not a key.").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
@@ -52,12 +52,16 @@ public class CommandKey extends AbstractCommand {
         if (!args[3].trim().equals("all")) {
             Player p = Bukkit.getPlayer(args[3]);
             p.getInventory().addItem(key.getKeyItem(kit, amt));
-            p.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.key.given", kit == null ? "Any" : kit.getShowableName()));
+            instance.getLocale().getMessage("event.key.given")
+                    .processPlaceholder("kit", kit == null ? "Any" : kit.getShowableName())
+                    .sendPrefixedMessage(p);
             return ReturnType.SUCCESS;
         }
         for (Player pl : instance.getServer().getOnlinePlayers()) {
             pl.getInventory().addItem(key.getKeyItem(kit, amt));
-            pl.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.key.given", kit == null ? "Any" : kit.getShowableName()));
+            instance.getLocale().getMessage("event.key.given")
+                    .processPlaceholder("kit", kit == null ? "Any" : kit.getShowableName())
+                    .sendPrefixedMessage(pl);
         }
         return ReturnType.SUCCESS;
     }

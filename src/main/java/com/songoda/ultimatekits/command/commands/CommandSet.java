@@ -16,18 +16,19 @@ public class CommandSet extends AbstractCommand {
     @Override
     protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
         if (args.length != 2) {
-            sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.nokitsupplied"));
+            instance.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         Player player = (Player) sender;
         String kit = args[1].toLowerCase();
         if (instance.getKitManager().getKit(kit) == null) {
-            player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
+            instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         Block b = player.getTargetBlock(null, 200);
         instance.getKitManager().addKitToLocation(instance.getKitManager().getKit(kit), b.getLocation());
-        sender.sendMessage(Methods.formatText(instance.getReferences().getPrefix() + "&8Kit &a" + kit + " &8set to: &a" + b.getType().toString() + "&8."));
+        instance.getLocale().newMessage("&8Kit &a" + kit + " &8set to: &a" + b.getType().toString() + "&8.")
+                .sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
     }
 

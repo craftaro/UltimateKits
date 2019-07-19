@@ -16,6 +16,7 @@ import com.songoda.ultimatekits.listeners.ChatListeners;
 import com.songoda.ultimatekits.listeners.EntityListeners;
 import com.songoda.ultimatekits.listeners.InteractListeners;
 import com.songoda.ultimatekits.utils.*;
+import com.songoda.ultimatekits.utils.locale.Locale;
 import com.songoda.ultimatekits.utils.updateModules.LocaleModule;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
@@ -35,7 +36,6 @@ public class UltimateKits extends JavaPlugin {
     private static UltimateKits INSTANCE;
 
     private static CommandSender console = Bukkit.getConsoleSender();
-    private References references;
 
     private Locale locale;
 
@@ -92,17 +92,13 @@ public class UltimateKits extends JavaPlugin {
         settingsManager.updateSettings();
         setupConfig();
 
-        String langMode = getConfig().getString("System.Language Mode");
-        Locale.init(this);
-        Locale.saveDefaultLocale("en_US");
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
+        new Locale(this, "en_US");
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
 
         //Running Songoda Updater
         Plugin plugin = new Plugin(this, 14);
         plugin.addModule(new LocaleModule());
         SongodaUpdate.load(plugin);
-
-        this.references = new References();
 
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
@@ -322,10 +318,9 @@ public class UltimateKits extends JavaPlugin {
         try {
             reloadConfig();
             kitFile.reloadConfig();
-            String langMode = getConfig().getString("System.Language Mode");
-            this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
+
+            this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
             this.locale.reloadMessages();
-            this.references = new References();
             this.setupConfig();
             loadFromFile();
         } catch (Exception ex) {
@@ -398,10 +393,6 @@ public class UltimateKits extends JavaPlugin {
 
     public Locale getLocale() {
         return locale;
-    }
-
-    public References getReferences() {
-        return references;
     }
 
     public DisplayItemHandler getDisplayItemHandler() {

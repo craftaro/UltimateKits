@@ -57,7 +57,7 @@ public class InteractListeners implements Listener {
 
                 if (kitBlockData.getType() != KitType.PREVIEW) {
                     if (!kit.hasPermission(player)) {
-                        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.general.noperms"));
+                        plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(player);
                         return;
                     }
                     if (kit.getNextUse(player) <= 0) {
@@ -65,8 +65,8 @@ public class InteractListeners implements Listener {
                         kit.updateDelay(player);
                     } else {
                         long time = kit.getNextUse(player);
-                        player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix()
-                                + plugin.getLocale().getMessage("event.crate.notyet", Methods.makeReadable(time))));
+                        plugin.getLocale().getMessage("event.crate.notyet").processPlaceholder("time",
+                                Methods.makeReadable(time)).sendPrefixedMessage(player);
                     }
                 } else if (kit.getLink() != null || kit.getPrice() != 0) {
                     kit.buy(player);

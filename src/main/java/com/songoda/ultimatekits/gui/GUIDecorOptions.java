@@ -50,13 +50,13 @@ public class GUIDecorOptions extends AbstractGUI {
         inventory.setItem(26, Methods.getBackgroundGlass(true));
 
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
+                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage());
 
         ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
         ItemStack back = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         inventory.setItem(0, back);
 
-        createButton(0, back, UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
+        createButton(0, back, UltimateKits.getInstance().getLocale().getMessage("interface.button.back").getMessage());
 
         ArrayList<String> lore = new ArrayList<>();
         if (kitBlockData.showHologram()) {

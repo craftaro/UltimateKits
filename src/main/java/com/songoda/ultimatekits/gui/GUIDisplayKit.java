@@ -34,9 +34,11 @@ public class GUIDisplayKit extends AbstractGUI {
         this.plugin = plugin;
         this.back = back;
 
-        String guititle = Methods.formatTitle(plugin.getLocale().getMessage("interface.preview.title", kit.getShowableName()));
+        String guititle = Methods.formatTitle(plugin.getLocale().getMessage("interface.preview.title")
+                .processPlaceholder("kit", kit.getShowableName()).getMessage());
         if (kit.getTitle() != null) {
-            guititle = plugin.getLocale().getMessage("interface.preview.title", Methods.formatText(kit.getTitle(), true));
+            guititle = plugin.getLocale().getMessage("interface.preview.title")
+                    .processPlaceholder("kit", Methods.formatText(kit.getTitle(), true)).getMessage();
         }
 
         list = kit.getReadableContents(player, true, true, false);
@@ -89,7 +91,7 @@ public class GUIDisplayKit extends AbstractGUI {
         if (!plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
             ItemStack exit = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
             ItemMeta exitmeta = exit.getItemMeta();
-            exitmeta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
+            exitmeta.setDisplayName(plugin.getLocale().getMessage("interface.button.exit").getMessage());
             exit.setItemMeta(exitmeta);
             while (num != 10) {
                 inventory.setItem(num, Methods.getGlass());
@@ -126,10 +128,11 @@ public class GUIDisplayKit extends AbstractGUI {
         if (buyable) {
             ItemStack link = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Buy Icon")), 1);
             ItemMeta linkmeta = link.getItemMeta();
-            linkmeta.setDisplayName(plugin.getLocale().getMessage("interface.button.buynow"));
+            linkmeta.setDisplayName(plugin.getLocale().getMessage("interface.button.buynow").getMessage());
             ArrayList<String> lore = new ArrayList<>();
             if (kit.hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
-                lore.add(plugin.getLocale().getMessage("interface.button.clickeco", "0"));
+                lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
+                        .processPlaceholder("price", "0").getMessage());
                 if (player.isOp()) {
                     lore.add("");
                     lore.add(Methods.formatText("&7This is free because"));
@@ -138,7 +141,8 @@ public class GUIDisplayKit extends AbstractGUI {
                     lore.add(Methods.formatText("&7this for &a$" + Methods.formatEconomy(kit.getPrice()) + "&7."));
                 }
             } else {
-                lore.add(plugin.getLocale().getMessage("interface.button.clickeco", Methods.formatEconomy(kit.getPrice())));
+                lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
+                        .processPlaceholder("price", Methods.formatEconomy(kit.getPrice())).getMessage());
             }
             if (kit.getDelay() != 0 && player.isOp()) {
                 lore.add("");
@@ -210,7 +214,7 @@ public class GUIDisplayKit extends AbstractGUI {
             ItemStack skull2 = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
             SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
             skull2.setDurability((short) 3);
-            skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
+            skull2Meta.setDisplayName(plugin.getLocale().getMessage("interface.button.back").getMessage());
             skull2.setItemMeta(skull2Meta);
             inventory.setItem(0, skull2);
         }

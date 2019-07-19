@@ -45,7 +45,7 @@ public class GUIBlockEditor extends AbstractGUI {
         inventory.setItem(26, Methods.getBackgroundGlass(true));
 
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
+                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage());
 
         ArrayList<String> lore = new ArrayList<>();
         lore.add(Methods.formatText("&7Click to swap this kit blocks function."));

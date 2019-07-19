@@ -65,14 +65,14 @@ public class GUIKitEditor extends AbstractGUI {
         player.updateInventory();
 
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
+                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage());
 
         ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
         ItemStack back;
         back = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
-        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
+        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back").getMessage());
         back.setItemMeta(skull2Meta);
 
         ItemStack it = new ItemStack(Material.CHEST, 1);
@@ -277,7 +277,8 @@ public class GUIKitEditor extends AbstractGUI {
 
         kit.saveKit(Arrays.asList(items));
         if (!muteSave)
-            player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Changes to &a" + kit.getShowableName() + " &8saved successfully."));
+            plugin.getLocale().newMessage("&8Changes to &a" + kit.getShowableName() + " &8saved successfully.")
+                    .sendPrefixedMessage(player);
         muteSave = false;
     }
 
@@ -303,84 +304,84 @@ public class GUIKitEditor extends AbstractGUI {
                 constructGUI();
                 break;
             case DISPLAY_ITEM: {
-                    muteSave = true;
-                    saveKit(player, this.inventory);
-                    AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
-                        String msg = event.getName();
-                        ItemStack toReplace = null;
-                        try {
-                            Material material = Material.valueOf(msg.trim().toUpperCase());
+                muteSave = true;
+                saveKit(player, this.inventory);
+                AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
+                    String msg = event.getName();
+                    ItemStack toReplace = null;
+                    try {
+                        Material material = Material.valueOf(msg.trim().toUpperCase());
 
-                            KitItem item2 = new KitItem(itemStack);
-                            item2.setDisplayItem(material);
+                        KitItem item2 = new KitItem(itemStack);
+                        item2.setDisplayItem(material);
 
-                            toReplace = item2.getMoveableItem();
-                        } catch (Exception e) {
-                            player.sendMessage(Methods.formatText("&a" + msg + " &8is not a valid material."));
-                        }
-                        this.slot = slot;
-                        this.toReplace = toReplace;
-                    });
+                        toReplace = item2.getMoveableItem();
+                    } catch (Exception e) {
+                        player.sendMessage(Methods.formatText("&a" + msg + " &8is not a valid material."));
+                    }
+                    this.slot = slot;
+                    this.toReplace = toReplace;
+                });
 
-                    gui.setOnClose((player1, inventory1) -> init(title, 54));
+                gui.setOnClose((player1, inventory1) -> init(title, 54));
 
-                    ItemStack item2 = new ItemStack(Material.NAME_TAG);
-                    ItemMeta meta2 = item2.getItemMeta();
-                    meta2.setDisplayName("Enter a Material");
-                    item2.setItemMeta(meta2);
+                ItemStack item2 = new ItemStack(Material.NAME_TAG);
+                ItemMeta meta2 = item2.getItemMeta();
+                meta2.setDisplayName("Enter a Material");
+                item2.setItemMeta(meta2);
 
-                    gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item2);
-                    gui.open();
-                }
-                break;
+                gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item2);
+                gui.open();
+            }
+            break;
             case DISPLAY_NAME: {
-                    muteSave = true;
-                    saveKit(player, this.inventory);
-                    AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
-                        String msg = event.getName();
-                        KitItem item2 = new KitItem(itemStack);
-                        item2.setDisplayName(msg);
+                muteSave = true;
+                saveKit(player, this.inventory);
+                AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
+                    String msg = event.getName();
+                    KitItem item2 = new KitItem(itemStack);
+                    item2.setDisplayName(msg);
 
-                        this.toReplace = item2.getMoveableItem();
+                    this.toReplace = item2.getMoveableItem();
 
-                        this.slot = slot;
-                    });
+                    this.slot = slot;
+                });
 
-                    gui.setOnClose((player1, inventory1) -> init(title, 54));
+                gui.setOnClose((player1, inventory1) -> init(title, 54));
 
-                    ItemStack item2 = new ItemStack(Material.NAME_TAG);
-                    ItemMeta meta2 = item2.getItemMeta();
-                    meta2.setDisplayName("Enter a name");
-                    item2.setItemMeta(meta2);
+                ItemStack item2 = new ItemStack(Material.NAME_TAG);
+                ItemMeta meta2 = item2.getItemMeta();
+                meta2.setDisplayName("Enter a name");
+                item2.setItemMeta(meta2);
 
-                    gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item2);
-                    gui.open();
-                }
-                break;
+                gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item2);
+                gui.open();
+            }
+            break;
             case DISPLAY_LORE: {
-                    muteSave = true;
-                    saveKit(player, this.inventory);
-                    AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
-                        String msg = event.getName();
-                        KitItem item2 = new KitItem(itemStack);
-                        item2.setDisplayLore(msg);
+                muteSave = true;
+                saveKit(player, this.inventory);
+                AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
+                    String msg = event.getName();
+                    KitItem item2 = new KitItem(itemStack);
+                    item2.setDisplayLore(msg);
 
-                        this.toReplace = item2.getMoveableItem();
+                    this.toReplace = item2.getMoveableItem();
 
-                        this.slot = slot;
-                    });
+                    this.slot = slot;
+                });
 
-                    gui.setOnClose((player1, inventory1) -> init(title, 54));
+                gui.setOnClose((player1, inventory1) -> init(title, 54));
 
-                    ItemStack item2 = new ItemStack(Material.NAME_TAG);
-                    ItemMeta meta2 = item2.getItemMeta();
-                    meta2.setDisplayName("Enter lore");
-                    item2.setItemMeta(meta2);
+                ItemStack item2 = new ItemStack(Material.NAME_TAG);
+                ItemMeta meta2 = item2.getItemMeta();
+                meta2.setDisplayName("Enter lore");
+                item2.setItemMeta(meta2);
 
-                    gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item2);
-                    gui.open();
-                }
-                break;
+                gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item2);
+                gui.open();
+            }
+            break;
         }
     }
 
@@ -419,10 +420,11 @@ public class GUIKitEditor extends AbstractGUI {
                         index2 += 30;
                     }
                     meta2.setLore(lore2);
-                    meta2.setDisplayName(plugin.getLocale().getMessage("general.type.money"));
+                    meta2.setDisplayName(plugin.getLocale().getMessage("general.type.money").getMessage());
                     parseStack2.setItemMeta(meta2);
 
-                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Money &5$" + msg + "&8 has been added to your kit."));
+                    plugin.getLocale().newMessage("&8Money &5$" + msg + "&8 has been added to your kit.")
+                            .sendPrefixedMessage(player);
 
                     this.slot = 0;
                     this.toReplace = parseStack2;
@@ -455,10 +457,11 @@ public class GUIKitEditor extends AbstractGUI {
                         index += 30;
                     }
                     meta.setLore(lore);
-                    meta.setDisplayName(plugin.getLocale().getMessage("general.type.command"));
+                    meta.setDisplayName(plugin.getLocale().getMessage("general.type.command").getMessage());
                     parseStack.setItemMeta(meta);
 
-                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8Command &5" + msg + "&8 has been added to your kit."));
+                    plugin.getLocale().newMessage("&8Command &5" + msg + "&8 has been added to your kit.")
+                            .sendPrefixedMessage(player);
 
                     this.slot = 0;
                     this.toReplace = parseStack;
@@ -531,7 +534,7 @@ public class GUIKitEditor extends AbstractGUI {
                 player.updateInventory();
             }
 
-                player.playSound(player.getLocation(), plugin.isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_VILLAGER_YES : Sound.valueOf("VILLAGER_YES"), 1F, 1F);
+            player.playSound(player.getLocation(), plugin.isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_VILLAGER_YES : Sound.valueOf("VILLAGER_YES"), 1F, 1F);
         });
     }
 

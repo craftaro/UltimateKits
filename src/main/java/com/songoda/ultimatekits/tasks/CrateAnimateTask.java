@@ -16,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -114,7 +113,9 @@ public class CrateAnimateTask extends BukkitRunnable {
                         player.getWorld().dropItemNaturally(player.getLocation(), item2);
                     }
                     player.playSound(player.getLocation(), UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP"), 10f, 10f);
-                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.create.won", WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " "))));
+                    plugin.getLocale().getMessage("event.create.won")
+                            .processPlaceholder("item", WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))
+                            .sendPrefixedMessage(player);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::finish, 50);
                 }
                 done = true;
@@ -128,7 +129,7 @@ public class CrateAnimateTask extends BukkitRunnable {
     private void finish() {
         instance.cancel();
         HandlerList.unregisterAll(listener);
-            listener = null;
-            player.closeInventory();
+        listener = null;
+        player.closeInventory();
     }
 }

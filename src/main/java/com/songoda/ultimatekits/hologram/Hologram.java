@@ -91,26 +91,35 @@ public abstract class Hologram {
                     break;
                 case "{RIGHT-CLICK}":
                     if (kitType == KitType.CRATE) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.crate")));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.crate")
+                                .getMessage()));
                         break;
                     }
                     if (kit.getLink() != null) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.buylink")));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.buylink")
+                                .getMessage()));
                         break;
                     }
                     if (kit.getPrice() != 0) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.buyeco", kit.getPrice() != 0 ? Methods.formatEconomy(kit.getPrice()) : instance.getLocale().getMessage("general.type.free"))));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.buyeco")
+                                .processPlaceholder("price", kit.getPrice() != 0
+                                        ? Methods.formatEconomy(kit.getPrice())
+                                        : instance.getLocale().getMessage("general.type.free").getMessage())
+                                .getMessage()));
                     }
                     break;
                 case "{LEFT-CLICK}":
                     if (kitType == KitType.CLAIM) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.daily")));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.daily")
+                                .getMessage()));
                         break;
                     }
                     if (kit.getLink() == null && kit.getPrice() == 0) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.previewonly")));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.previewonly")
+                                .getMessage()));
                     } else {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.preview")));
+                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.preview")
+                                .getMessage()));
                     }
                     break;
                 default:

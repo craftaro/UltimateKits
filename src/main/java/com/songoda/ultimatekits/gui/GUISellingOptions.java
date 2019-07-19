@@ -52,13 +52,14 @@ public class GUISellingOptions extends AbstractGUI {
         inventory.setItem(26, Methods.getBackgroundGlass(true));
 
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
+                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage());
 
         ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
         ItemStack back = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
-        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
+        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back")
+                .getMessage());
         back.setItemMeta(skull2Meta);
 
         inventory.setItem(0, back);
@@ -115,14 +116,17 @@ public class GUISellingOptions extends AbstractGUI {
                 String msg = event.getName();
 
                 if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&8You must have &aVault &8installed to utilize economy.."));
+                    plugin.getLocale().newMessage("&8You must have &aVault &8installed to utilize economy..")
+                            .sendPrefixedMessage(player);
                 } else if (!Methods.isNumeric(msg)) {
                     player.sendMessage(Methods.formatText("&a" + msg + " &8is not a number. Please do not include a &a$&8."));
                 } else {
 
                     if (kit.getLink() != null) {
                         kit.setLink(null);
-                        player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8LINK has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
+
+                        plugin.getLocale().newMessage("&8LINK has been removed from this kit. Note you cannot have ECO & LINK set at the same time..")
+                                .sendPrefixedMessage(player);
                     }
                     Double eco = Double.parseDouble(msg);
                     kit.setPrice(eco);
@@ -148,7 +152,8 @@ public class GUISellingOptions extends AbstractGUI {
 
                 if (kit.getPrice() != 0) {
                     kit.setPrice(0);
-                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&8ECO has been removed from this kit. Note you cannot have ECO & LINK set at the same time.."));
+                    plugin.getLocale().newMessage("&8ECO has been removed from this kit. Note you cannot have ECO & LINK set at the same time..")
+                            .sendPrefixedMessage(player);
                 }
                 kit.setLink(msg);
                 if (plugin.getHologram() != null)

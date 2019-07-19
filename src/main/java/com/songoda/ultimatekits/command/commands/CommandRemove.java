@@ -3,7 +3,6 @@ package com.songoda.ultimatekits.command.commands;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.kit.Kit;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,7 +16,7 @@ public class CommandRemove extends AbstractCommand {
     @Override
     protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
         if (args.length != 1) {
-            sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.nokitsupplied"));
+            instance.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         Player player = (Player) sender;
@@ -27,7 +26,7 @@ public class CommandRemove extends AbstractCommand {
 
         if (instance.getHologram() != null)
             instance.getHologram().remove(kit);
-        player.sendMessage(Methods.formatText(UltimateKits.getInstance().getReferences().getPrefix() + "&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType().toString() + "&8."));
+        instance.getLocale().newMessage("&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType().toString() + "&8.").sendPrefixedMessage(player);
         return ReturnType.SUCCESS;
     }
 

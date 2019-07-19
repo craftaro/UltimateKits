@@ -59,7 +59,7 @@ public class CommandManager implements CommandExecutor {
                 }
             }
         }
-        commandSender.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&7The command you entered does not exist or is spelt incorrectly."));
+        plugin.getLocale().newMessage("&7The command you entered does not exist or is spelt incorrectly.").sendPrefixedMessage(commandSender);
         return true;
     }
 
@@ -71,12 +71,12 @@ public class CommandManager implements CommandExecutor {
         if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
             AbstractCommand.ReturnType returnType = command.runCommand(plugin, sender, strings);
             if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
-                sender.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cInvalid Syntax!"));
-                sender.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
+                plugin.getLocale().newMessage("&cInvalid Syntax!").sendPrefixedMessage(sender);
+                plugin.getLocale().newMessage("&7The valid syntax is: &6" + command.getSyntax() + "&7.").sendPrefixedMessage(sender);
             }
             return;
         }
-        sender.sendMessage(plugin.getReferences().getPrefix() +  plugin.getLocale().getMessage("command.general.noperms"));
+        plugin.getLocale().newMessage("event.general.nopermission").sendPrefixedMessage(sender);
     }
 
     public List<AbstractCommand> getCommands() {

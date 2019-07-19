@@ -16,12 +16,12 @@ public class CommandPreviewKit extends AbstractCommand {
     protected ReturnType runCommand(UltimateKits plugin, CommandSender sender, String... args) {
         Player player = (Player) sender;
         if (args.length != 1) {
-            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.kit.nokitsupplied"));
+            plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
         Kit kit = plugin.getKitManager().getKit(args[0].toLowerCase().trim());
         if (kit == null) {
-            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.kit.kitdoesntexist"));
+            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
         kit.display(player, null);

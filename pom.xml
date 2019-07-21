@@ -78,6 +78,10 @@
             <id>private</id>
             <url>http://repo.songoda.com/artifactory/private/</url>
         </repository>
+        <repository>
+            <id>reserve-repo</id>
+            <url>https://dl.bintray.com/theneweconomy/java/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>

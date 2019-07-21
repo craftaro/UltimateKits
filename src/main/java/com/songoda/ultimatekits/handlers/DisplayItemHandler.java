@@ -3,7 +3,6 @@ package com.songoda.ultimatekits.handlers;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
-import com.songoda.ultimatekits.utils.Debugger;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,13 +30,8 @@ public class DisplayItemHandler {
     }
 
     private void displayItems() {
-        try {
-            for (KitBlockData kitBlockData : instance.getKitManager().getKitLocations().values()) {
-                displayItem(kitBlockData);
-            }
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
-        }
+        for (KitBlockData kitBlockData : instance.getKitManager().getKitLocations().values())
+            displayItem(kitBlockData);
     }
 
     public void displayItem(KitBlockData kitBlockData) {

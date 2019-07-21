@@ -5,7 +5,6 @@ import com.earth2me.essentials.Kit;
 import com.earth2me.essentials.MetaItemStack;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.conversion.Hook;
-import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,7 +38,7 @@ public class EssentialsHook implements Hook {
                 stacks.add(metaStack.getItemStack());
             }
         } catch (Exception e) {
-            Debugger.runReport(e);
+            e.printStackTrace();
         }
         return stacks;
     }

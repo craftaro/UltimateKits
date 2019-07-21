@@ -49,10 +49,10 @@ public class Methods {
         ItemStack glass;
         if (rainbow) {
             glass = new ItemStack(UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE :  Material.valueOf("STAINED_GLASS_PANE"), 1, (short) randomNum);
+                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) randomNum);
         } else {
             glass = new ItemStack(UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE :  Material.valueOf("STAINED_GLASS_PANE"), 1, (short) type);
+                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) type);
         }
         ItemMeta glassmeta = glass.getItemMeta();
         glassmeta.setDisplayName("§l");
@@ -61,13 +61,9 @@ public class Methods {
     }
 
     public static boolean canGiveKit(Player player) {
-        try {
-            if (player.hasPermission("ultimatekits.cangive")) return true;
+        if (player.hasPermission("ultimatekits.cangive")) return true;
 
-            if (player.hasPermission("essentials.kit.others")) return true;
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
+        if (player.hasPermission("essentials.kit.others")) return true;
         return false;
     }
 
@@ -87,17 +83,16 @@ public class Methods {
     }
 
 
-
     /**
      * Serializes the location of the block specified.
      *
-     * @param b The block whose location is to be saved.
+     * @param block The block whose location is to be saved.
      * @return The serialized data.
      */
-    public static String serializeLocation(Block b) {
-        if (b == null)
+    public static String serializeLocation(Block block) {
+        if (block == null)
             return "";
-        return serializeLocation(b.getLocation());
+        return serializeLocation(block.getLocation());
     }
 
     /**
@@ -265,11 +260,10 @@ public class Methods {
     }
 
 
-
     /**
      * Fills the provided inventory with glass panes of the specified color type.
      *
-     * @param i    The inventory to fill.
+     * @param i The inventory to fill.
      */
     public static void fillGlass(Inventory i) {
         ItemStack glass = getGlass();

@@ -17,6 +17,7 @@ import com.songoda.ultimatekits.listeners.EntityListeners;
 import com.songoda.ultimatekits.listeners.InteractListeners;
 import com.songoda.ultimatekits.utils.*;
 import com.songoda.ultimatekits.utils.locale.Locale;
+import com.songoda.ultimatekits.utils.settings.SettingsManager;
 import com.songoda.ultimatekits.utils.updateModules.LocaleModule;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
@@ -88,8 +89,7 @@ public class UltimateKits extends JavaPlugin {
         new ParticleHandler(this);
         this.displayItemHandler = new DisplayItemHandler(this);
 
-        settingsManager = new SettingsManager(this);
-        settingsManager.updateSettings();
+        this.commandManager = new CommandManager(this);
         setupConfig();
 
         new Locale(this, "en_US");
@@ -155,28 +155,23 @@ public class UltimateKits extends JavaPlugin {
              * Register kit into KitManager from Configuration.
              */
             for (String kitName : kitFile.getConfig().getConfigurationSection("Kits").getKeys(false)) {
-                try {
-                    int delay = kitFile.getConfig().getInt("Kits." + kitName + ".delay");
-                    String title = kitFile.getConfig().getString("Kits." + kitName + ".title");
-                    String link = kitFile.getConfig().getString("Kits." + kitName + ".link");
-                    Material material = kitFile.getConfig().contains("Kits." + kitName + ".displayItem") ? Material.valueOf(kitFile.getConfig().getString("Kits." + kitName + ".displayItem")) : null;
-                    boolean hidden = kitFile.getConfig().getBoolean("Kits." + kitName + ".hidden");
-                    double price = kitFile.getConfig().getDouble("Kits." + kitName + ".price");
-                    List<String> strContents = kitFile.getConfig().getStringList("Kits." + kitName + ".items");
-                    String kitAnimation = kitFile.getConfig().getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
+                int delay = kitFile.getConfig().getInt("Kits." + kitName + ".delay");
+                String title = kitFile.getConfig().getString("Kits." + kitName + ".title");
+                String link = kitFile.getConfig().getString("Kits." + kitName + ".link");
+                Material material = kitFile.getConfig().contains("Kits." + kitName + ".displayItem") ? Material.valueOf(kitFile.getConfig().getString("Kits." + kitName + ".displayItem")) : null;
+                boolean hidden = kitFile.getConfig().getBoolean("Kits." + kitName + ".hidden");
+                double price = kitFile.getConfig().getDouble("Kits." + kitName + ".price");
+                List<String> strContents = kitFile.getConfig().getStringList("Kits." + kitName + ".items");
+                String kitAnimation = kitFile.getConfig().getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
 
-                    List<KitItem> contents = new ArrayList<>();
+                List<KitItem> contents = new ArrayList<>();
 
-                    for (String string : strContents) {
-                        contents.add(new KitItem(string));
-                    }
-
-                    Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents, KitAnimation.valueOf(kitAnimation));
-                    kitManager.addKit(kit);
-                } catch (Exception ex) {
-                    console.sendMessage(Methods.formatText("&cYour kit &4" + kitName + " &cis setup incorrectly."));
-                    Debugger.runReport(ex);
+                for (String string : strContents) {
+                    contents.add(new KitItem(string));
                 }
+
+                Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents, KitAnimation.valueOf(kitAnimation));
+                kitManager.addKit(kit);
             }
 
             /*
@@ -306,7 +301,7 @@ public class UltimateKits extends JavaPlugin {
     }
 
     private void setupConfig() {
-        settingsManager.updateSettings();
+        settingsManager.reloadConfig();
         getConfig().options().copyDefaults(true);
         saveConfig();
     }
@@ -315,17 +310,13 @@ public class UltimateKits extends JavaPlugin {
      * Reload plugin yaml files.
      */
     public void reload() {
-        try {
-            reloadConfig();
-            kitFile.reloadConfig();
+        reloadConfig();
+        kitFile.reloadConfig();
 
-            this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
-            this.locale.reloadMessages();
-            this.setupConfig();
-            loadFromFile();
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
-        }
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
+        this.locale.reloadMessages();
+        this.setupConfig();
+        loadFromFile();
     }
 
     /**

@@ -3,6 +3,8 @@ package com.songoda.ultimatekits;
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.economy.Economy;
+import com.songoda.ultimatekits.economy.PlayerPointsEconomy;
+import com.songoda.ultimatekits.economy.ReserveEconomy;
 import com.songoda.ultimatekits.economy.VaultEconomy;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
@@ -17,6 +19,7 @@ import com.songoda.ultimatekits.listeners.EntityListeners;
 import com.songoda.ultimatekits.listeners.InteractListeners;
 import com.songoda.ultimatekits.utils.*;
 import com.songoda.ultimatekits.utils.locale.Locale;
+import com.songoda.ultimatekits.utils.settings.Setting;
 import com.songoda.ultimatekits.utils.settings.SettingsManager;
 import com.songoda.ultimatekits.utils.updateModules.LocaleModule;
 import com.songoda.update.Plugin;
@@ -104,10 +107,15 @@ public class UltimateKits extends JavaPlugin {
         this.keyManager = new KeyManager();
         this.commandManager = new CommandManager(this);
 
-        if (getServer().getPluginManager().getPlugin("Vault") != null)
-            this.economy = new VaultEconomy(this);
-
         PluginManager pluginManager = getServer().getPluginManager();
+
+        // Setup Economy
+        if (Setting.VAULT_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Vault"))
+            this.economy = new VaultEconomy();
+        else if (Setting.RESERVE_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Reserve"))
+            this.economy = new ReserveEconomy();
+        else if (Setting.PLAYER_POINTS_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("PlayerPoints"))
+            this.economy = new PlayerPointsEconomy();
 
         // Register Hologram Plugin
         if (pluginManager.isPluginEnabled("HolographicDisplays"))

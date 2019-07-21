@@ -18,6 +18,15 @@ public enum Setting {
     CHANCE_IN_PREVIEW("Main.Display Chance In Preview", true),
     CURRENCY_SYMBOL("Main.Currency Symbol", "$"),
 
+    VAULT_ECONOMY("Economy.Use Vault Economy", true,
+            "Should Vault be used?"),
+
+    RESERVE_ECONOMY("Economy.Use Reserve Economy", true,
+            "Should Reserve be used?"),
+
+    PLAYER_POINTS_ECONOMY("Economy.Use Player Points Economy", false,
+            "Should PlayerPoints be used?"),
+
     EXIT_ICON("Interfaces.Exit Icon", UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "OAK_DOOR" : "WOOD_DOOR"),
     BUY_ICON("Interfaces.Buy Icon", "EMERALD"),
     GLASS_TYPE_1("Interfaces.Glass Type 1", 7),

@@ -87,13 +87,15 @@ public class UltimateKits extends JavaPlugin {
             e.printStackTrace();
         }
 
+        this.settingsManager = new SettingsManager(this);
+        this.settingsManager.setupConfig();
+
         new Convert(this);
 
         new ParticleHandler(this);
         this.displayItemHandler = new DisplayItemHandler(this);
 
         this.commandManager = new CommandManager(this);
-        setupConfig();
 
         new Locale(this, "en_US");
         this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
@@ -308,22 +310,14 @@ public class UltimateKits extends JavaPlugin {
         keyFile.saveConfig();
     }
 
-    private void setupConfig() {
-        settingsManager.reloadConfig();
-        getConfig().options().copyDefaults(true);
-        saveConfig();
-    }
-
     /**
      * Reload plugin yaml files.
      */
     public void reload() {
-        reloadConfig();
         kitFile.reloadConfig();
-
         this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
         this.locale.reloadMessages();
-        this.setupConfig();
+        settingsManager.reloadConfig();
         loadFromFile();
     }
 

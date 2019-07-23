@@ -8,9 +8,11 @@ import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.tasks.CrateAnimateTask;
+import com.songoda.ultimatekits.utils.ArmorType;
 import com.songoda.ultimatekits.utils.Methods;
 import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
+import com.songoda.ultimatekits.utils.settings.Setting;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -329,6 +331,9 @@ public class Kit {
                     new CrateAnimateTask(plugin, player, this, item.getItem());
                     return true;
                 } else {
+                    if (Setting.AUTO_EQUIP_ARMOR.getBoolean()
+                            && ArmorType.equip(player, item.getItem())) continue;
+
                     Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
                     for (ItemStack item2 : overfilled.values()) {
                         player.getWorld().dropItemNaturally(player.getLocation(), item2);

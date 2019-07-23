@@ -3,8 +3,10 @@ package com.songoda.ultimatekits.tasks;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitItem;
+import com.songoda.ultimatekits.utils.ArmorType;
 import com.songoda.ultimatekits.utils.Methods;
 import com.songoda.ultimatekits.utils.ServerVersion;
+import com.songoda.ultimatekits.utils.settings.Setting;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -108,10 +110,14 @@ public class CrateAnimateTask extends BukkitRunnable {
         if (finish) {
             if (inventory.getItem(13).isSimilar(give)) {
                 if (!done) {
-                    Map<Integer, ItemStack> overfilled = player.getInventory().addItem(give);
-                    for (ItemStack item2 : overfilled.values()) {
-                        player.getWorld().dropItemNaturally(player.getLocation(), item2);
+                    if (!Setting.AUTO_EQUIP_ARMOR_ROULETTE.getBoolean()
+                            || !ArmorType.equip(player, give)) {
+                        Map<Integer, ItemStack> overfilled = player.getInventory().addItem(give);
+                        for (ItemStack item2 : overfilled.values()) {
+                            player.getWorld().dropItemNaturally(player.getLocation(), item2);
+                        }
                     }
+
                     player.playSound(player.getLocation(), UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP"), 10f, 10f);
                     plugin.getLocale().getMessage("event.create.won")
                             .processPlaceholder("item", WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))

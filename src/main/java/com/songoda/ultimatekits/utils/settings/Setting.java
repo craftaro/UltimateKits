@@ -15,6 +15,8 @@ public enum Setting {
     HOLOGRAM_LAYOUT("Main.Hologram Layout", Arrays.asList("{TITLE}", "{LEFT-CLICK}", "{RIGHT-CLICK}")),
     SOUNDS_ENABLED("Main.Sounds Enabled", true),
     NO_REDEEM_WHEN_FULL("Main.Prevent The Redeeming of a Kit When Inventory Is Full", true),
+    AUTO_EQUIP_ARMOR("Main.Automatically Equip Armor Given From a Kit", true),
+    AUTO_EQUIP_ARMOR_ROULETTE("Main.Automatically Equip Armor Given From a Kit with the Roulette Animation", false),
     CHANCE_IN_PREVIEW("Main.Display Chance In Preview", true),
     CURRENCY_SYMBOL("Main.Currency Symbol", "$"),
 

@@ -1,6 +1,10 @@
 package com.songoda.ultimatekits.utils;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public enum ArmorType {
@@ -37,12 +41,14 @@ public enum ArmorType {
     SKELETON_SKULL("Helmet"),
     WITHER_SKELETON_SKULL("Helmet"),
     SKULL_ITEM("Helmet"),
-    ELYTRA("Chestplate");
+    ELYTRA("Chestplate"),
+    SHIELD("OffHand");
 
     String slot;
 
     ArmorType(String slot) {
         this.slot = slot;
+
     }
 
     public boolean isHelmet() {
@@ -61,6 +67,10 @@ public enum ArmorType {
         return slot.equalsIgnoreCase("Boots");
     }
 
+    public boolean isOffHand() {
+        return slot.equalsIgnoreCase("OffHand");
+    }
+
     public static boolean equip(Player player, ItemStack item) {
         try {
             ArmorType type = ArmorType.valueOf(item.getType().toString());
@@ -70,7 +80,8 @@ public enum ArmorType {
         if ((type.isHelmet() && player.getInventory().getHelmet() == null)
                 || (type.isChestplate() && player.getInventory().getChestplate() == null)
                 || (type.isLeggings() && player.getInventory().getLeggings() == null)
-                || (type.isBoots() && player.getInventory().getBoots() == null)) equipped = true;
+                || (type.isBoots() && player.getInventory().getBoots() == null)
+                || (type.isOffHand() && player.getInventory().getItemInOffHand().getType() == Material.AIR)) equipped = true;
 
         if (type.isHelmet() && player.getInventory().getHelmet() == null)
             player.getInventory().setHelmet(item);
@@ -80,6 +91,8 @@ public enum ArmorType {
             player.getInventory().setLeggings(item);
         if (type.isBoots() && player.getInventory().getBoots() == null)
             player.getInventory().setBoots(item);
+        if (type.isOffHand() && player.getInventory().getItemInOffHand().getType() == Material.AIR)
+            player.getInventory().setItemInOffHand(item);
 
         return equipped;
 

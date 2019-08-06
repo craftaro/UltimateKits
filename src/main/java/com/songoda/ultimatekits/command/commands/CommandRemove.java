@@ -7,10 +7,13 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandRemove extends AbstractCommand {
 
     public CommandRemove(AbstractCommand parent) {
-        super("remove", parent, true, false);
+        super(parent, true, "remove");
     }
 
     @Override
@@ -28,6 +31,11 @@ public class CommandRemove extends AbstractCommand {
             instance.getHologram().remove(kit);
         instance.getLocale().newMessage("&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType().toString() + "&8.").sendPrefixedMessage(player);
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        return new ArrayList<>();
     }
 
     @Override

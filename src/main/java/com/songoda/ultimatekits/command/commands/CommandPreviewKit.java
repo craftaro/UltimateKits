@@ -6,10 +6,13 @@ import com.songoda.ultimatekits.kit.Kit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandPreviewKit extends AbstractCommand {
 
     public CommandPreviewKit() {
-        super("PreviewKit", null, true, false);
+        super(null, true, "PreviewKit");
     }
 
     @Override
@@ -26,6 +29,19 @@ public class CommandPreviewKit extends AbstractCommand {
         }
         kit.display(player, null);
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        if (!(sender instanceof Player)) return null;
+
+        if (args.length == 2) {
+            List<String> tab = new ArrayList<>();
+            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
+                tab.add(kit.getName());
+            return tab;
+        }
+        return new ArrayList<>();
     }
 
     @Override

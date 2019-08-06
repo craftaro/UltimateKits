@@ -2,15 +2,19 @@ package com.songoda.ultimatekits.command.commands;
 
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
+import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandSet extends AbstractCommand {
 
     public CommandSet(AbstractCommand parent) {
-        super("set", parent, true, false);
+        super(parent, true, "set");
     }
 
     @Override
@@ -30,6 +34,19 @@ public class CommandSet extends AbstractCommand {
         instance.getLocale().newMessage("&8Kit &a" + kit + " &8set to: &a" + b.getType().toString() + "&8.")
                 .sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        if (!(sender instanceof Player)) return null;
+
+        if (args.length == 2) {
+            List<String> tab = new ArrayList<>();
+            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
+                tab.add(kit.getName());
+            return tab;
+        }
+        return new ArrayList<>();
     }
 
     @Override

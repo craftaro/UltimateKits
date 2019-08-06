@@ -8,10 +8,14 @@ import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class CommandCreatekit extends AbstractCommand {
 
     public CommandCreatekit(AbstractCommand parent) {
-        super("createkit", parent, true, false);
+        super(parent, true, "createkit");
     }
 
     @Override
@@ -29,6 +33,11 @@ public class CommandCreatekit extends AbstractCommand {
         UltimateKits.getInstance().getKitManager().addKit(kit);
         new GUIKitEditor(instance, player, kit, null, null, 0);
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        return Arrays.asList("name");
     }
 
     @Override

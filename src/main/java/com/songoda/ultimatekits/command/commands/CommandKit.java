@@ -9,10 +9,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandKit extends AbstractCommand {
 
     public CommandKit() {
-        super("Kit", null, false, false);
+        super(null, false, "kit");
     }
 
     @Override
@@ -70,6 +73,11 @@ public class CommandKit extends AbstractCommand {
             return ReturnType.SUCCESS;
         }
         return ReturnType.SYNTAX_ERROR;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        return new ArrayList<>();
     }
 
     @Override

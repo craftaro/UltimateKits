@@ -9,10 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class CommandKey extends AbstractCommand {
 
     public CommandKey(AbstractCommand parent) {
-        super("key", parent, false, false);
+        super(parent, false, "key");
     }
 
     @Override
@@ -64,6 +68,36 @@ public class CommandKey extends AbstractCommand {
                     .sendPrefixedMessage(pl);
         }
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        if (!(sender instanceof Player)) return null;
+
+        List<String> tab = new ArrayList<>();
+
+        if (args.length == 2) {
+            tab.add("all");
+            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
+                tab.add(kit.getName());
+            return tab;
+        }
+
+        if (args.length == 3) {
+            for (Key key : UltimateKits.getInstance().getKeyManager().getKeys())
+                tab.add(key.getName());
+            return tab;
+        }
+
+        if (args.length == 4) {
+            tab.add("all");
+            for (Player player : Bukkit.getOnlinePlayers())
+                tab.add(player.getName());
+            return tab;
+        }
+
+        if (args.length == 5) return Arrays.asList("amount");
+        return tab;
     }
 
     @Override

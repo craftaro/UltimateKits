@@ -1,6 +1,7 @@
 package com.songoda.ultimatekits.conversion;
 
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.conversion.hooks.CMIHook;
 import com.songoda.ultimatekits.conversion.hooks.DefaultHook;
 import com.songoda.ultimatekits.conversion.hooks.EssentialsHook;
 import com.songoda.ultimatekits.conversion.hooks.UltimateCoreHook;
@@ -27,6 +28,9 @@ public class Convert {
             }
         } else if (instance.getServer().getPluginManager().getPlugin("UltimateCore") != null) {
             hook = new UltimateCoreHook();
+
+        } else if (instance.getServer().getPluginManager().getPlugin("CMI") != null) {
+            hook = new CMIHook();
         } else {
             hook = new DefaultHook();
         }

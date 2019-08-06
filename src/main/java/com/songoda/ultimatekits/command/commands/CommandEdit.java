@@ -1,19 +1,25 @@
 package com.songoda.ultimatekits.command.commands;
 
+import bammerbom.ultimatecore.bukkit.UltimateMetrics;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.gui.GUIBlockEditor;
 import com.songoda.ultimatekits.gui.GUIKitEditor;
+import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
+import com.songoda.ultimatekits.kit.KitManager;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandEdit extends AbstractCommand {
 
     public CommandEdit(AbstractCommand parent) {
-        super("edit", parent, true, false);
+        super(parent, true, "edit");
     }
 
     @Override
@@ -39,6 +45,19 @@ public class CommandEdit extends AbstractCommand {
             new GUIKitEditor(instance, player, instance.getKitManager().getKit(kitStr), null, null, 0);
         }
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        if (!(sender instanceof Player)) return null;
+
+        List<String> tab = new ArrayList<>();
+        if (args.length == 2) {
+            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
+                tab.add(kit.getName());
+            return tab;
+        }
+        return tab;
     }
 
     @Override

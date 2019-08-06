@@ -5,10 +5,13 @@ import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandUltimateKits extends AbstractCommand {
 
     public CommandUltimateKits() {
-        super("KitAdmin", null, false, true);
+        super(null, false, "KitAdmin");
     }
 
     @Override
@@ -25,6 +28,11 @@ public class CommandUltimateKits extends AbstractCommand {
         sender.sendMessage("");
 
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        return new ArrayList<>();
     }
 
     @Override

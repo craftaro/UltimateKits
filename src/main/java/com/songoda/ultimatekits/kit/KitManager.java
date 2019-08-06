@@ -7,7 +7,7 @@ import java.util.*;
 
 public final class KitManager {
 
-    private final Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
+    private Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
     private List<Kit> registeredKits = new LinkedList<>();
 
     public boolean addKit(Kit kit) {
@@ -30,13 +30,16 @@ public final class KitManager {
     }
 
     public void addKitToLocation(Kit kit, Location location) {
-        kitsAtLocations.put(roundLocation(location), new KitBlockData(kit, location));
+        KitBlockData data = new KitBlockData(kit, location);
+        kitsAtLocations.put(roundLocation(location), data);
+        UltimateKits.getInstance().getDataManager().createBlockData(data);
     }
 
     public void addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
         KitBlockData kitBlockData = kitsAtLocations.put(roundLocation(location), new KitBlockData(kit, location, type, hologram, particles, items, itemOverride));
         if (UltimateKits.getInstance().getHologram() != null)
             UltimateKits.getInstance().getHologram().update(kitBlockData);
+        UltimateKits.getInstance().getDataManager().createBlockData(kitBlockData);
     }
 
     public Kit removeKitFromLocation(Location location) {
@@ -47,6 +50,7 @@ public final class KitManager {
         kit.reset();
 
         KitBlockData removed = kitsAtLocations.remove(roundLocation(location));
+        UltimateKits.getInstance().getDataManager().deleteBlockData(removed);
         return (removed != null ? removed.getKit() : null);
     }
 
@@ -66,6 +70,10 @@ public final class KitManager {
 
     public Map<Location, KitBlockData> getKitLocations() {
         return Collections.unmodifiableMap(kitsAtLocations);
+    }
+
+    public void setKitLocations(Map<Location, KitBlockData> kits) {
+        kitsAtLocations = kits;
     }
 
     public void clearKits() {

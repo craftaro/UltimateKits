@@ -2,6 +2,11 @@ package com.songoda.ultimatekits;
 
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
+import com.songoda.ultimatekits.database.DataManager;
+import com.songoda.ultimatekits.database.DataMigrationManager;
+import com.songoda.ultimatekits.database.DatabaseConnector;
+import com.songoda.ultimatekits.database.MySQLConnector;
+import com.songoda.ultimatekits.database.SQLiteConnector;
 import com.songoda.ultimatekits.economy.Economy;
 import com.songoda.ultimatekits.economy.PlayerPointsEconomy;
 import com.songoda.ultimatekits.economy.ReserveEconomy;
@@ -58,6 +63,10 @@ public class UltimateKits extends JavaPlugin {
     private Economy economy;
 
     private ItemSerializer itemSerializer;
+
+    private DatabaseConnector databaseConnector;
+    private DataMigrationManager dataMigrationManager;
+    private DataManager dataManager;
 
     /**
      * Grab instance of UltimateKits
@@ -136,8 +145,38 @@ public class UltimateKits extends JavaPlugin {
         // Starting Metrics
         new Metrics(this);
 
-        console.sendMessage(Methods.formatText("&a============================="));
+        try {
+            if (Setting.MYSQL_ENABLED.getBoolean()) {
+                String hostname = Setting.MYSQL_HOSTNAME.getString();
+                int port = Setting.MYSQL_PORT.getInt();
+                String database = Setting.MYSQL_DATABASE.getString();
+                String username = Setting.MYSQL_USERNAME.getString();
+                String password = Setting.MYSQL_PASSWORD.getString();
+                boolean useSSL = Setting.MYSQL_USE_SSL.getBoolean();
 
+                this.databaseConnector = new MySQLConnector(this, hostname, port, database, username, password, useSSL);
+                this.getLogger().info("Data handler connected using MySQL.");
+            } else {
+                this.databaseConnector = new SQLiteConnector(this);
+                this.getLogger().info("Data handler connected using SQLite.");
+            }
+        } catch (Exception ex) {
+            this.getLogger().severe("Fatal error trying to connect to database. " +
+                    "Please make sure all your connection settings are correct and try again. Plugin has been disabled.");
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
+
+        this.dataManager = new DataManager(this.databaseConnector, this);
+        this.dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager);
+        this.dataMigrationManager.runMigrations();
+
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            this.dataManager.getBlockData((blockData) -> {
+                this.kitManager.setKitLocations(blockData);
+            });
+        }, 20L);
+
+        console.sendMessage(Methods.formatText("&a============================="));
     }
 
     /*
@@ -146,6 +185,7 @@ public class UltimateKits extends JavaPlugin {
     public void onDisable() {
         saveToFile();
         kitManager.clearKits();
+        this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
         console.sendMessage(Methods.formatText("&a============================="));
         console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
         console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
@@ -273,26 +313,8 @@ public class UltimateKits extends JavaPlugin {
             kitFile.getConfig().set("Kits." + kit.getName() + ".items", strContents);
         }
 
-        // Wipe old block information.
-        dataFile.getConfig().set("BlockData", null);
-
-        /*
-         * Save kit locations from KitManager to Configuration.
-         */
-        for (KitBlockData kitBlockData : kitManager.getKitLocations().values()) {
-            String locationStr = Methods.serializeLocation(kitBlockData.getLocation());
-            if (locationStr == null) continue;
-            dataFile.getConfig().set("BlockData." + locationStr + ".type", kitBlockData.getType().name());
-            dataFile.getConfig().set("BlockData." + locationStr + ".kit", kitBlockData.getKit().getName());
-            dataFile.getConfig().set("BlockData." + locationStr + ".holograms", kitBlockData.showHologram());
-            dataFile.getConfig().set("BlockData." + locationStr + ".displayItems", kitBlockData.isDisplayingItems());
-            dataFile.getConfig().set("BlockData." + locationStr + ".particles", kitBlockData.hasParticles());
-            dataFile.getConfig().set("BlockData." + locationStr + ".itemOverride", kitBlockData.isItemOverride());
-        }
-
         // Save to file
         kitFile.saveConfig();
-        dataFile.saveConfig();
     }
 
     /*
@@ -390,5 +412,13 @@ public class UltimateKits extends JavaPlugin {
 
     public DisplayItemHandler getDisplayItemHandler() {
         return displayItemHandler;
+    }
+
+    public DatabaseConnector getDatabaseConnector() {
+        return databaseConnector;
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
     }
 }

@@ -99,15 +99,15 @@ public class UltimateKits extends JavaPlugin {
         this.settingsManager = new SettingsManager(this);
         this.settingsManager.setupConfig();
 
+        new Locale(this, "en_US");
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
+
         new Convert(this);
 
         new ParticleHandler(this);
         this.displayItemHandler = new DisplayItemHandler(this);
 
         this.commandManager = new CommandManager(this);
-
-        new Locale(this, "en_US");
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
 
         //Running Songoda Updater
         Plugin plugin = new Plugin(this, 14);

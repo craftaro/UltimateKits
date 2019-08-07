@@ -4,10 +4,13 @@ import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Kits.Kit;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.conversion.Hook;
-import org.bukkit.Bukkit;
+import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,6 +29,10 @@ public class CMIHook implements Hook {
 
             for (ItemStack item : kit.getItems()) {
                 if (item != null) stacks.add(item);
+            }
+
+            for (String command : kit.getCommands()) {
+                stacks.add(new KitContentCommand(command).getItemForDisplay());
             }
         } catch (Exception e) {
             e.printStackTrace();

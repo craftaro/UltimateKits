@@ -97,7 +97,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         inventory.setItem(22, new ItemStack(Material.TRIPWIRE_HOOK));
 
         if (!done) {
-            player.playSound(player.getLocation(), plugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.UI_BUTTON_CLICK : Sound.valueOf("CLICK"), 5f, 5f);
+            player.playSound(player.getLocation(), plugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.UI_BUTTON_CLICK : Sound.valueOf("CLICK"), 5f, 5f);
             this.items.addFirst(this.items.getLast());
             this.items.removeLast();
         }
@@ -118,7 +118,7 @@ public class CrateAnimateTask extends BukkitRunnable {
                         }
                     }
 
-                    player.playSound(player.getLocation(), UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP"), 10f, 10f);
+                    player.playSound(player.getLocation(), UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP"), 10f, 10f);
                     plugin.getLocale().getMessage("event.create.won")
                             .processPlaceholder("item", WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))
                             .sendPrefixedMessage(player);

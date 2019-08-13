@@ -31,6 +31,7 @@ import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -173,6 +174,9 @@ public class UltimateKits extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.dataManager.getBlockData((blockData) -> {
                 this.kitManager.setKitLocations(blockData);
+                kitManager.getKitLocations().forEach((location, data) -> {
+                    UltimateKits.getInstance().getHologram().add(data);
+                });
             });
         }, 20L);
 
@@ -184,8 +188,9 @@ public class UltimateKits extends JavaPlugin {
      */
     public void onDisable() {
         saveToFile();
-        kitManager.clearKits();
+        dataFile.saveConfig();
         this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        kitManager.clearKits();
         console.sendMessage(Methods.formatText("&a============================="));
         console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
         console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
@@ -336,11 +341,20 @@ public class UltimateKits extends JavaPlugin {
      * Reload plugin yaml files.
      */
     public void reload() {
+        this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
         kitFile.reloadConfig();
         this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
         this.locale.reloadMessages();
         settingsManager.reloadConfig();
         loadFromFile();
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            this.dataManager.getBlockData((blockData) -> {
+                this.kitManager.setKitLocations(blockData);
+                kitManager.getKitLocations().forEach((location, data) -> {
+                    UltimateKits.getInstance().getHologram().add(data);
+                });
+            });
+        }, 20L);
     }
 
     /**

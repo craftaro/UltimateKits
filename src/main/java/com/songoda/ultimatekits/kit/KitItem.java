@@ -6,6 +6,7 @@ import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.utils.Methods;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -73,7 +74,6 @@ public class KitItem {
     private String translateLine(String line) {
         String[] lineSplit = line.trim().split(";", 2);
         String[] kitOptions = lineSplit[0].replace(String.valueOf(ChatColor.COLOR_CHAR), "").split(" ");
-
         for (String s : kitOptions) {
             if (s.equals("")) continue;
             String[] sSplit = s.split(":", 2);
@@ -167,7 +167,8 @@ public class KitItem {
         ItemStack item = content.getItemForDisplay();
         ItemMeta meta = item.getItemMeta();
         if (chance != 0 || displayItem != null || displayName != null || displayLore != null) {
-            meta.setDisplayName(meta.hasDisplayName() ? Methods.convertToInvisibleString(compileOptions() + ";") + meta.getDisplayName() : Methods.convertToInvisibleString(compileOptions() + ";faqe") + item.getType().name().replace("_", " "));
+            meta.setDisplayName(meta.hasDisplayName() ? Methods.convertToInvisibleString(compileOptions() + ";")
+                    + meta.getDisplayName() : Methods.convertToInvisibleString(compileOptions() + ";faqe") + item.getType().name().replace("_", " "));
         }
         item.setItemMeta(meta);
         return item;

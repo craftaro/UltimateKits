@@ -331,8 +331,7 @@ public class Kit {
                     new CrateAnimateTask(plugin, player, this, item.getItem());
                     return true;
                 } else {
-                    if (Setting.AUTO_EQUIP_ARMOR.getBoolean()
-                            && ArmorType.equip(player, item.getItem())) continue;
+                    if (Setting.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, item.getItem())) continue;
 
                     Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
                     for (ItemStack item2 : overfilled.values()) {

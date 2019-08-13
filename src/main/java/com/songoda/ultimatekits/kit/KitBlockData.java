@@ -20,10 +20,12 @@ public class KitBlockData {
         this.items = items;
         this.itemOverride = itemOverride;
         this.type = type;
+        UltimateKits.getInstance().getDataManager().createBlockData(this);
     }
 
     public KitBlockData(Kit kit, Location location) {
         this(kit, location, KitType.PREVIEW, false, false, false, false);
+        UltimateKits.getInstance().getDataManager().createBlockData(this);
     }
 
     public void reset() {
@@ -34,6 +36,7 @@ public class KitBlockData {
 
         if (UltimateKits.getInstance().getHologram() != null)
             UltimateKits.getInstance().getHologram().remove(this);
+        UltimateKits.getInstance().getDataManager().updateBlockData(this);
     }
 
     public Kit getKit() {

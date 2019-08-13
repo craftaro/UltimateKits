@@ -6,9 +6,11 @@ import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.utils.Methods;
 import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
+import com.songoda.ultimatekits.utils.gui.OnClose;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;

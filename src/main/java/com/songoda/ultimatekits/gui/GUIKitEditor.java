@@ -36,6 +36,7 @@ public class GUIKitEditor extends AbstractGUI {
     private boolean isInInventory = false;
 
 
+
     private ItemStack toReplace;
     private int slot;
 
@@ -312,7 +313,6 @@ public class GUIKitEditor extends AbstractGUI {
 
                         KitItem item2 = new KitItem(itemStack);
                         item2.setDisplayItem(material);
-
                         toReplace = item2.getMoveableItem();
                     } catch (Exception e) {
                         player.sendMessage(Methods.formatText("&a" + msg + " &8is not a valid material."));
@@ -338,13 +338,15 @@ public class GUIKitEditor extends AbstractGUI {
                     String msg = event.getName();
                     KitItem item2 = new KitItem(itemStack);
                     item2.setDisplayName(msg);
-
                     this.toReplace = item2.getMoveableItem();
-
                     this.slot = slot;
                 });
 
-                gui.setOnClose((player1, inventory1) -> init(title, 54));
+                gui.setOnClose((player1, inventory1) -> {
+                    kit.getContents().forEach((item1) -> {
+                    });
+                    init(title, 54);
+                });
 
                 ItemStack item2 = new ItemStack(Material.NAME_TAG);
                 ItemMeta meta2 = item2.getItemMeta();

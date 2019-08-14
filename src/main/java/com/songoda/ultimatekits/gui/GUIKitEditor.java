@@ -119,7 +119,7 @@ public class GUIKitEditor extends AbstractGUI {
             itemLore.add(Methods.convertToInvisibleString("----"));
             itemLore.add(Methods.formatText("&7" + plugin.getLocale().getMessage("general.type.chance") + ": &6" + item.getChance() + "%"));
             if (isInFuction) {
-                itemLore.add(Methods.formatText("&7Display Item: &6" + (item.getDisplayItem() == null ? "null" : item.getDisplayItem().name())));
+                itemLore.add(Methods.formatText("&7Display Item: &6" + (item.getDisplayItem() == null ? "" : item.getDisplayItem().name())));
                 itemLore.add(Methods.formatText("&7Display Name: &6" + Methods.formatText(item.getDisplayName())));
                 itemLore.add(Methods.formatText("&7Display Lore: &6" + Methods.formatText(item.getDisplayLore())));
             }

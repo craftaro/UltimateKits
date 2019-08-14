@@ -15,7 +15,7 @@ import java.util.List;
 public class CommandKit extends AbstractCommand {
 
     public CommandKit() {
-        super(null, false, "kit");
+        super(false, true,"kit");
     }
 
     @Override

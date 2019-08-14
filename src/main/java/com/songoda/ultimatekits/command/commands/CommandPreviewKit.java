@@ -12,7 +12,7 @@ import java.util.List;
 public class CommandPreviewKit extends AbstractCommand {
 
     public CommandPreviewKit() {
-        super(null, true, "PreviewKit");
+        super(true, true,"PreviewKit");
     }
 
     @Override

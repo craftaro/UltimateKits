@@ -6,6 +6,7 @@ import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.utils.Methods;
+import com.songoda.ultimatekits.utils.settings.Setting;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 
 public class KitItem {
 
-    private final KitContent content;
+    private KitContent content;
     private String displayName, displayLore = null;
     private Material displayItem = null;
     private int chance = 0;
@@ -27,13 +28,7 @@ public class KitItem {
         if (line.contains(";") && !line.startsWith("{")) {
             line = translateLine(line);
         }
-        if (line.startsWith(UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol"))) {
-            this.content = new KitContentEconomy(Double.parseDouble(line.substring(1).trim()));
-        } else if (line.startsWith("/")) {
-            this.content = new KitContentCommand(line.substring(1));
-        } else {
-            this.content = new KitContentItem(UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(line));
-        }
+        processContent(line, null);
     }
 
     public KitItem(ItemStack item, String line) {
@@ -42,13 +37,7 @@ public class KitItem {
         if (itemStack.hasItemMeta() && meta.hasDisplayName() && meta.getDisplayName().contains(";")) {
             translateLine(meta.getDisplayName());
         }
-        if (line.startsWith(UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol"))) {
-            this.content = new KitContentEconomy(Double.parseDouble(line.substring(1).trim()));
-        } else if (line.startsWith("/")) {
-            this.content = new KitContentCommand(line.substring(1));
-        } else {
-            this.content = new KitContentItem(UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(line));
-        }
+        processContent(line, null);
     }
 
     public KitItem(ItemStack item) {
@@ -60,20 +49,25 @@ public class KitItem {
             meta.setDisplayName(split[1].contains("faqe") ? null : meta.getDisplayName().split(";", 2)[1]);
             itemStack.setItemMeta(meta);
         }
-        String name = itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() ? meta.getDisplayName() : "";
+        String line = itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() ? meta.getDisplayName() : "";
 
-        if (name.startsWith(UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol"))) {
-            this.content = new KitContentEconomy(Double.parseDouble(name.substring(1).trim()));
-        } else if (name.startsWith("/")) {
-            this.content = new KitContentCommand(name.substring(1));
+        processContent(line, item);
+    }
+
+    private void processContent(String line, ItemStack item) {
+        if (line.startsWith(Setting.CURRENCY_SYMBOL.getString())) {
+            this.content = new KitContentEconomy(Double.parseDouble(line.substring(1).trim()));
+        } else if (line.startsWith("/")) {
+            this.content = new KitContentCommand(line.substring(1));
         } else {
+            ItemStack itemStack = item == null ? UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(line) : item;
             this.content = new KitContentItem(itemStack);
         }
     }
 
     private String translateLine(String line) {
         String[] lineSplit = line.trim().split(";", 2);
-        String[] kitOptions = lineSplit[0].replace(String.valueOf(ChatColor.COLOR_CHAR), "").split(" ");
+        String[] kitOptions = lineSplit[0].replace(String.valueOf(ChatColor.COLOR_CHAR), "").split("~");
         for (String s : kitOptions) {
             if (s.equals("")) continue;
             String[] sSplit = s.split(":", 2);
@@ -89,10 +83,10 @@ public class KitItem {
                     displayItem = Material.valueOf(value);
                     break;
                 case "display-lore":
-                    displayLore = value.replace("_", " ");
+                    displayLore = value;
                     break;
                 case "display-name":
-                    displayName = value.replace("_", " ");
+                    displayName = value;
                     break;
             }
         }
@@ -101,20 +95,15 @@ public class KitItem {
 
     private String compileOptions() {
         String line = "";
-        if (chance != 0) {
+        if (chance != 0)
             line += "chance:" + chance;
-        }
-        if (displayItem != null) {
-            line += " display-item:" + displayItem;
-        }
-        if (displayName != null) {
-            line += " display-name:" + displayName;
-        }
-        if (displayLore != null) {
-            line += " display-lore:" + displayLore;
-        }
-        line.trim();
-        return line;
+        if (displayItem != null)
+            line += "~display-item:" + displayItem;
+        if (displayName != null)
+            line += "~display-name:" + displayName;
+        if (displayLore != null)
+            line += "~display-lore:" + displayLore;
+        return line.trim();
     }
 
     public KitContent getContent() {

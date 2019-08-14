@@ -35,7 +35,6 @@ public class TabManager implements TabCompleter {
                 String[] args = abstractCommand.hasArgs() ? (String[]) ArrayUtils.add(strings, 0, command.getName()) : strings;
                 String cmd = abstractCommand.hasArgs() ? command.getName() : args[0];
                 String cmd2 = args.length >= 2 ? String.join(" ", args[0], args[1]) : null;
-                System.out.println(String.join(" ", args));
                 if (!abstractCommand.hasArgs()) {
                     for (String cmds : abstractCommand.getSubCommand()) {
                         if (cmd.equalsIgnoreCase(cmds) || (cmd2 != null && cmd2.equalsIgnoreCase(cmds))) {

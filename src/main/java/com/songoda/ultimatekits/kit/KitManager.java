@@ -54,9 +54,8 @@ public final class KitManager {
     }
 
     public Kit getKit(String name) {
-        for (Kit kit : registeredKits)
-            if (kit.getName().equalsIgnoreCase(name)) return kit;
-        return null;
+        return registeredKits.stream().filter(kit -> kit.getName().equalsIgnoreCase(name.trim()))
+                .findFirst().orElse(null);
     }
 
     public KitBlockData getKit(Location location) {

@@ -81,22 +81,16 @@ public class CommandKey extends AbstractCommand {
             for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
                 tab.add(kit.getName());
             return tab;
-        }
-
-        if (args.length == 3) {
+        } else if (args.length == 3) {
             for (Key key : UltimateKits.getInstance().getKeyManager().getKeys())
                 tab.add(key.getName());
             return tab;
-        }
-
-        if (args.length == 4) {
+        } else if (args.length == 4) {
             tab.add("all");
             for (Player player : Bukkit.getOnlinePlayers())
                 tab.add(player.getName());
             return tab;
-        }
-
-        if (args.length == 5) return Arrays.asList("amount");
+        } else if (args.length == 5) return Arrays.asList("amount");
         return tab;
     }
 

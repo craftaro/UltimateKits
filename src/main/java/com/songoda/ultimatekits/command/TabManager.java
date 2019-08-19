@@ -20,6 +20,7 @@ public class TabManager implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] strings) {
         for (AbstractCommand abstractCommand : commandManager.getCommands()) {
+            if (command.getPermission() != null && !sender.hasPermission(command.getPermission())) continue;
             if (abstractCommand.getCommand() != null && abstractCommand.getCommand().equalsIgnoreCase(command.getName()) && !abstractCommand.hasArgs()) {
                 if (strings.length == 1) {
                     List<String> subs = new ArrayList<>();

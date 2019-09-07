@@ -7,6 +7,7 @@ import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.utils.Methods;
 import com.songoda.ultimatekits.utils.settings.Setting;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -156,8 +157,11 @@ public class KitItem {
         ItemStack item = content.getItemForDisplay();
         ItemMeta meta = item.getItemMeta();
         if (chance != 0 || displayItem != null || displayName != null || displayLore != null) {
-            meta.setDisplayName(meta.hasDisplayName() ? Methods.convertToInvisibleString(compileOptions() + ";")
-                    + meta.getDisplayName() : Methods.convertToInvisibleString(compileOptions() + ";faqe") + item.getType().name().replace("_", " "));
+            String capitalizedName = meta.hasDisplayName() ? meta.getDisplayName() :
+                    WordUtils.capitalize(item.getType().toString().toLowerCase().replace("_", " "));
+            if (capitalizedName.contains(Methods.convertToInvisibleString(";faqe")))
+                capitalizedName = meta.getDisplayName().split(Methods.convertToInvisibleString(";faqe"))[1];
+            meta.setDisplayName(Methods.convertToInvisibleString(compileOptions() + ";faqe") + ChatColor.RESET + capitalizedName);
         }
         item.setItemMeta(meta);
         return item;

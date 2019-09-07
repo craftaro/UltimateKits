@@ -175,7 +175,7 @@ public class UltimateKits extends JavaPlugin {
             this.dataManager.getBlockData((blockData) -> {
                 this.kitManager.setKitLocations(blockData);
                 kitManager.getKitLocations().forEach((location, data) -> {
-                    UltimateKits.getInstance().getHologram().add(data);
+                    if (hologram != null) UltimateKits.getInstance().getHologram().add(data);
                 });
             });
         }, 20L);

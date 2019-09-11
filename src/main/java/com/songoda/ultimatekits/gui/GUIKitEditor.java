@@ -1,18 +1,18 @@
 package com.songoda.ultimatekits.gui;
 
+import com.songoda.core.compatibility.CompatibleSound;
+import com.songoda.core.utils.ItemUtils;
+import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitAnimation;
 import com.songoda.ultimatekits.kit.KitItem;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractAnvilGUI;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
-import com.songoda.ultimatekits.utils.gui.Range;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
@@ -67,9 +67,7 @@ public class GUIKitEditor extends AbstractGUI {
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
                 UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage());
 
-        ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
-        ItemStack back;
-        back = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        ItemStack back = ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
         skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back").getMessage());
@@ -116,7 +114,7 @@ public class GUIKitEditor extends AbstractGUI {
 
             if (meta.hasLore()) itemLore = meta.getLore();
             else itemLore = new ArrayList<>();
-            itemLore.add(Methods.convertToInvisibleString("----"));
+            itemLore.add(TextUtils.convertToInvisibleLoreString("----"));
             itemLore.add(Methods.formatText("&7" + plugin.getLocale().getMessage("general.type.chance") + ": &6" + item.getChance() + "%"));
             if (isInFuction) {
                 itemLore.add(Methods.formatText("&7Display Item: &6" + (item.getDisplayItem() == null ? "" : item.getDisplayItem().name())));
@@ -286,7 +284,7 @@ public class GUIKitEditor extends AbstractGUI {
             ItemMeta meta = itemStack.getItemMeta();
             List<String> newLore = new ArrayList<>();
             for (String line : meta.getLore()) {
-                if (line.equals(Methods.convertToInvisibleString("----"))) break;
+                if (TextUtils.convertFromInvisibleString(line).equals("----")) break;
                 newLore.add(line);
             }
             meta.setLore(newLore);
@@ -529,7 +527,7 @@ public class GUIKitEditor extends AbstractGUI {
                 player.updateInventory();
             }
 
-            player.playSound(player.getLocation(), plugin.isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_VILLAGER_YES : Sound.valueOf("VILLAGER_YES"), 1F, 1F);
+            CompatibleSound.ENTITY_VILLAGER_YES.play(player);
         });
     }
 

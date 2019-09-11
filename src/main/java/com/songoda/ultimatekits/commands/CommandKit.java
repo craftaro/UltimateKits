@@ -1,7 +1,8 @@
-package com.songoda.ultimatekits.command.commands;
+package com.songoda.ultimatekits.commands;
 
+import com.songoda.core.commands.AbstractCommand;
+import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.gui.GUIKitSelector;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
@@ -14,12 +15,16 @@ import java.util.List;
 
 public class CommandKit extends AbstractCommand {
 
-    public CommandKit() {
-        super(false, true,"kit");
+    final UltimateKits instance = UltimateKits.getInstance();
+    final GuiManager guiManager;
+
+    public CommandKit(GuiManager guiManager) {
+        super(true, "kit");
+        this.guiManager = guiManager;
     }
 
     @Override
-    protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(CommandSender sender, String... args) {
         if (!(sender instanceof Player) && args.length != 2) {
             sender.sendMessage("Kits:");
             for (Kit kit : instance.getKitManager().getKits()) {
@@ -29,9 +34,7 @@ public class CommandKit extends AbstractCommand {
         }
         if (args.length == 0) {
             new GUIKitSelector(instance, (Player) sender);
-            return ReturnType.SUCCESS;
-        }
-        if (args.length == 1) {
+        } else if (args.length == 1) {
             Player player = (Player) sender;
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
@@ -44,20 +47,18 @@ public class CommandKit extends AbstractCommand {
             } else {
                 kit.buy(player);
             }
-            return ReturnType.SUCCESS;
-        }
-        if (args.length == 2) {
+        } else if (args.length == 2) {
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
                 instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
 
-            if (Bukkit.getPlayerExact(args[1]) == null) {
+            Player player2 = Bukkit.getPlayer(args[1]);
+            if (player2 == null || !player2.isOnline()) {
                 instance.getLocale().getMessage("command.kit.playernotfound").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
-            Player player2 = Bukkit.getPlayer(args[1]);
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!Methods.canGiveKit(player)) {
@@ -70,13 +71,14 @@ public class CommandKit extends AbstractCommand {
             kit.processGenericUse(player2, true);
             instance.getLocale().newMessage("&7You gave &9" + player2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7.")
                     .sendPrefixedMessage(sender);
-            return ReturnType.SUCCESS;
+        } else {
+            return ReturnType.SYNTAX_ERROR;
         }
-        return ReturnType.SYNTAX_ERROR;
+        return ReturnType.SUCCESS;
     }
 
     @Override
-    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         return new ArrayList<>();
     }
 

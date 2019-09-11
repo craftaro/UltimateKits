@@ -1,35 +1,26 @@
 package com.songoda.ultimatekits.database;
 
+import com.songoda.core.database.DataManagerAbstract;
+import com.songoda.core.database.DatabaseConnector;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class DataManager {
-
-    private final DatabaseConnector databaseConnector;
-    private final Plugin plugin;
+public class DataManager extends DataManagerAbstract {
 
     public DataManager(DatabaseConnector databaseConnector, Plugin plugin) {
-        this.databaseConnector = databaseConnector;
-        this.plugin = plugin;
-    }
-
-    public String getTablePrefix() {
-        return this.plugin.getDescription().getName().toLowerCase() + '_';
+        super(databaseConnector, plugin);
     }
 
     public void bulkUpdateBlockData(Map<Location, KitBlockData> blockData) {
@@ -144,31 +135,5 @@ public class DataManager {
 
             this.sync(() -> callback.accept(blockData));
         }));
-    }
-
-    private int lastInsertedId(Connection connection) {
-        String query;
-        if (this.databaseConnector instanceof SQLiteConnector) {
-            query = "SELECT last_insert_rowid()";
-        } else {
-            query = "SELECT LAST_INSERT_ID()";
-        }
-
-        try (Statement statement = connection.createStatement()) {
-            ResultSet result = statement.executeQuery(query);
-            result.next();
-            return result.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    public void async(Runnable runnable) {
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, runnable);
-    }
-
-    public void sync(Runnable runnable) {
-        Bukkit.getScheduler().runTask(this.plugin, runnable);
     }
 }

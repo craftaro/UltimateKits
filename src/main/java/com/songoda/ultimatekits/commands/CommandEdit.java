@@ -1,14 +1,12 @@
-package com.songoda.ultimatekits.command.commands;
+package com.songoda.ultimatekits.commands;
 
-import bammerbom.ultimatecore.bukkit.UltimateMetrics;
+import com.songoda.core.commands.AbstractCommand;
+import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.gui.GUIBlockEditor;
 import com.songoda.ultimatekits.gui.GUIKitEditor;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
-import com.songoda.ultimatekits.kit.KitManager;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,25 +16,29 @@ import java.util.List;
 
 public class CommandEdit extends AbstractCommand {
 
-    public CommandEdit(AbstractCommand parent) {
-        super(parent, true, "edit");
+    final UltimateKits instance = UltimateKits.getInstance();
+    final GuiManager guiManager;
+
+    public CommandEdit(GuiManager guiManager) {
+        super(true, "edit");
+        this.guiManager = guiManager;
     }
 
     @Override
-    protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(CommandSender sender, String... args) {
         Player player = (Player) sender;
         Block block = player.getTargetBlock(null, 200);
         KitBlockData kitBlockData = instance.getKitManager().getKit(block.getLocation());
-        if (args.length > 2) return ReturnType.SYNTAX_ERROR;
+        if (args.length > 1) return ReturnType.SYNTAX_ERROR;
 
-        if (args.length == 1) {
+        if (args.length == 0) {
             if (kitBlockData == null) {
                 instance.getLocale().newMessage("&8This block does not contain a kit.").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
             new GUIBlockEditor(instance, player, block.getLocation());
         } else {
-            String kitStr = args[1].toLowerCase().trim();
+            String kitStr = args[0].toLowerCase().trim();
             if (instance.getKitManager().getKit(kitStr) == null) {
                 instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
@@ -48,7 +50,7 @@ public class CommandEdit extends AbstractCommand {
     }
 
     @Override
-    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         if (!(sender instanceof Player)) return null;
 
         List<String> tab = new ArrayList<>();

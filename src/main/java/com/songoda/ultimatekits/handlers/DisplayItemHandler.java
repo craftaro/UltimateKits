@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.handlers;
 
+import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
@@ -26,6 +27,9 @@ public class DisplayItemHandler {
 
     public DisplayItemHandler(UltimateKits instance) {
         this.instance = instance;
+    }
+
+    public void start() {
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(UltimateKits.getInstance(), this::displayItems, 30L, 30L);
     }
 
@@ -39,10 +43,11 @@ public class DisplayItemHandler {
         location.add(0.5, 0, 0.5);
 
         Kit kit = kitBlockData.getKit();
-
-        if (kit.getReadableContents(null, false, false, false) == null) return;
+        if (kit == null) return;
 
         List<ItemStack> list = kit.getReadableContents(null, false, false, false);
+        if (list == null) return;
+
         if (list.isEmpty()) return;
         for (Entity e : location.getChunk().getEntities()) {
             if (e.getType() != EntityType.DROPPED_ITEM
@@ -64,7 +69,7 @@ public class DisplayItemHandler {
             }
             ItemMeta meta = is.getItemMeta();
             is.setAmount(1);
-            meta.setDisplayName(Methods.convertToInvisibleString(Integer.toString(inum)));
+            meta.setDisplayName(TextUtils.convertToInvisibleString(Integer.toString(inum)));
             is.setItemMeta(meta);
             i.setItemStack(is);
             i.setPickupDelay(9999);
@@ -75,7 +80,7 @@ public class DisplayItemHandler {
         ItemStack is = list.get(0);
         is.setAmount(1);
         ItemMeta meta = is.getItemMeta();
-        meta.setDisplayName(Methods.convertToInvisibleString("0"));
+        meta.setDisplayName(TextUtils.convertFromInvisibleString("0"));
         is.setItemMeta(meta);
         Item item = location.getWorld().dropItem(location.add(0, 1, 0), list.get(0));
         Vector vec = new Vector(0, 0, 0);

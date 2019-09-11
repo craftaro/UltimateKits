@@ -1,5 +1,7 @@
 package com.songoda.ultimatekits.gui;
 
+import com.songoda.core.utils.ItemUtils;
+import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
@@ -156,7 +158,7 @@ public class GUIKitSelector extends AbstractGUI {
             if (kit.getDisplayItem() != null)
                 item.setType(kit.getDisplayItem());
             ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(Methods.convertToInvisibleString(kitItem + ":") + Methods.formatText(title));
+            meta.setDisplayName(TextUtils.convertToInvisibleString(kitItem + ":") + Methods.formatText(title));
             ArrayList<String> lore = new ArrayList<>();
             if (kit.getPrice() != 0)
                 lore.add(Methods.formatText("&7This kit costs &a$" + kit.getPrice() + "&7."));
@@ -261,14 +263,13 @@ public class GUIKitSelector extends AbstractGUI {
         infometa.setLore(lore);
         info.setItemMeta(infometa);
 
-        ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
-        ItemStack skull = Methods.addTexture(head, "http://textures.minecraft.net/texture/1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b");
+        ItemStack skull = ItemUtils.getCustomHead("1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b");
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         skull.setDurability((short) 3);
         skullMeta.setDisplayName(plugin.getLocale().getMessage("interface.button.next").getMessage());
         skull.setItemMeta(skullMeta);
 
-        ItemStack skull2 = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+        ItemStack skull2 = ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
         skull2.setDurability((short) 3);
         skull2Meta.setDisplayName(plugin.getLocale().getMessage("interface.button.next").getMessage());

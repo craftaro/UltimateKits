@@ -1,7 +1,8 @@
-package com.songoda.ultimatekits.command.commands;
+package com.songoda.ultimatekits.commands;
 
+import com.songoda.core.commands.AbstractCommand;
+import com.songoda.core.utils.PlayerUtils;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
@@ -14,31 +15,34 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CommandKey extends AbstractCommand {
+    
+    final UltimateKits instance = UltimateKits.getInstance();
 
-    public CommandKey(AbstractCommand parent) {
-        super(parent, false, "key");
+    public CommandKey() {
+        super(false, "key");
     }
 
     @Override
-    protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
-        if (args.length != 4 && args.length != 5) {
+    protected ReturnType runCommand(CommandSender sender, String... args) {
+        if (args.length != 3 && args.length != 4) {
             return ReturnType.SYNTAX_ERROR;
         }
-        Kit kit = instance.getKitManager().getKit(args[1]);
-        if (kit == null && !args[1].toLowerCase().equals("all")) {
+        Kit kit = instance.getKitManager().getKit(args[0]);
+        if (kit == null && !args[0].toLowerCase().equals("all")) {
             instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
-        if (Bukkit.getPlayer(args[3]) == null && !args[3].trim().equalsIgnoreCase("all")) {
+        Player playerTo = null;
+        if (!args[2].trim().equalsIgnoreCase("all") && (playerTo = Bukkit.getPlayer(args[2])) == null) {
             instance.getLocale().newMessage("&cThat username does not exist, or the user is offline!").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         int amt = 1;
-        if (args.length == 5) {
-            if (!Methods.isNumeric(args[4])) {
+        if (args.length == 4) {
+            if (!Methods.isNumeric(args[3])) {
                 amt = 0;
             } else {
-                amt = Integer.parseInt(args[4]);
+                amt = Integer.parseInt(args[3]);
             }
         }
         if (amt == 0) {
@@ -46,23 +50,22 @@ public class CommandKey extends AbstractCommand {
             return ReturnType.FAILURE;
         }
 
-        Key key = instance.getKeyManager().getKey(args[2]);
+        Key key = instance.getKeyManager().getKey(args[1]);
         if (key == null) {
-            instance.getLocale().newMessage("&a" + args[3] + " &cis not a key.").sendPrefixedMessage(sender);
+            instance.getLocale().newMessage("&a" + args[1] + " &cis not a key.").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
 
-        if (!args[3].trim().equals("all")) {
-            Player p = Bukkit.getPlayer(args[3]);
-            p.getInventory().addItem(key.getKeyItem(kit, amt));
+        if (playerTo != null) {
+            PlayerUtils.giveItem(playerTo, key.getKeyItem(kit, amt));
             instance.getLocale().getMessage("event.key.given")
                     .processPlaceholder("kit", kit == null ? "Any" : kit.getShowableName())
-                    .sendPrefixedMessage(p);
+                    .sendPrefixedMessage(playerTo);
             return ReturnType.SUCCESS;
         }
         for (Player pl : instance.getServer().getOnlinePlayers()) {
-            pl.getInventory().addItem(key.getKeyItem(kit, amt));
+            PlayerUtils.giveItem(playerTo, key.getKeyItem(kit, amt));
             instance.getLocale().getMessage("event.key.given")
                     .processPlaceholder("kit", kit == null ? "Any" : kit.getShowableName())
                     .sendPrefixedMessage(pl);
@@ -71,7 +74,7 @@ public class CommandKey extends AbstractCommand {
     }
 
     @Override
-    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         if (!(sender instanceof Player)) return null;
 
         List<String> tab = new ArrayList<>();

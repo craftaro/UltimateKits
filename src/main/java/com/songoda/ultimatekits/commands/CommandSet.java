@@ -1,9 +1,8 @@
-package com.songoda.ultimatekits.command.commands;
+package com.songoda.ultimatekits.commands;
 
+import com.songoda.core.commands.AbstractCommand;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.kit.Kit;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,18 +12,20 @@ import java.util.List;
 
 public class CommandSet extends AbstractCommand {
 
-    public CommandSet(AbstractCommand parent) {
-        super(parent, true, "set");
+    final UltimateKits instance = UltimateKits.getInstance();
+
+    public CommandSet() {
+        super(true, "set");
     }
 
     @Override
-    protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
-        if (args.length != 2) {
+    protected ReturnType runCommand(CommandSender sender, String... args) {
+        if (args.length != 1) {
             instance.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         Player player = (Player) sender;
-        String kit = args[1].toLowerCase();
+        String kit = args[0].toLowerCase();
         if (instance.getKitManager().getKit(kit) == null) {
             instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
@@ -37,13 +38,16 @@ public class CommandSet extends AbstractCommand {
     }
 
     @Override
-    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
-        if (!(sender instanceof Player)) return null;
+    protected List<String> onTab(CommandSender sender, String... args) {
+        if (!(sender instanceof Player)) {
+            return null;
+        }
 
         if (args.length == 2) {
             List<String> tab = new ArrayList<>();
-            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
+            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits()) {
                 tab.add(kit.getName());
+            }
             return tab;
         }
         return new ArrayList<>();

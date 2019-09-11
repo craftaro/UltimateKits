@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.database;
 
+import com.songoda.core.database.DatabaseConnector;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -24,10 +25,12 @@ public class SQLiteConnector implements DatabaseConnector {
         }
     }
 
+    @Override
     public boolean isInitialized() {
         return true; // Always available
     }
 
+    @Override
     public void closeConnection() {
         try {
             if (this.connection != null) {
@@ -38,6 +41,7 @@ public class SQLiteConnector implements DatabaseConnector {
         }
     }
 
+    @Override
     public void connect(ConnectionCallback callback) {
         if (this.connection == null) {
             try {

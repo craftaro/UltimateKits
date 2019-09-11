@@ -1,8 +1,7 @@
-package com.songoda.ultimatekits.command.commands;
+package com.songoda.ultimatekits.commands;
 
+import com.songoda.core.commands.AbstractCommand;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.command.AbstractCommand;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -10,19 +9,20 @@ import java.util.List;
 
 public class CommandReload extends AbstractCommand {
 
-    public CommandReload(AbstractCommand parent) {
-        super(parent, false, "reload");
+    final UltimateKits instance = UltimateKits.getInstance();
+    public CommandReload() {
+        super(false, "reload");
     }
 
     @Override
-    protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
-        instance.reload();
+    protected ReturnType runCommand(CommandSender sender, String... args) {
+        instance.reloadConfig();
         instance.getLocale().getMessage("&7Configuration and Language files reloaded.").sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
     }
 
     @Override
-    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         return new ArrayList<>();
     }
 

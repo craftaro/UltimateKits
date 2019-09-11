@@ -28,8 +28,7 @@ public class BlockListeners implements Listener {
         if (kitBlockData == null) return;
         Kit kit = kitBlockData.getKit();
 
-        if (instance.getHologram() != null)
-            instance.getHologram().remove(kitBlockData);
+        instance.removeHologram(kitBlockData);
 
         instance.getKitManager().removeKitFromLocation(block.getLocation());
 

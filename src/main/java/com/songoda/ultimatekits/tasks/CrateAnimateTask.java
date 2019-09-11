@@ -5,8 +5,7 @@ import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitItem;
 import com.songoda.ultimatekits.utils.ArmorType;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.ServerVersion;
-import com.songoda.ultimatekits.utils.settings.Setting;
+import com.songoda.ultimatekits.settings.Settings;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -110,7 +109,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         if (finish) {
             if (inventory.getItem(13).isSimilar(give)) {
                 if (!done) {
-                    if (!Setting.AUTO_EQUIP_ARMOR_ROULETTE.getBoolean()
+                    if (!Settings.AUTO_EQUIP_ARMOR_ROULETTE.getBoolean()
                             || !ArmorType.equip(player, give)) {
                         Map<Integer, ItemStack> overfilled = player.getInventory().addItem(give);
                         for (ItemStack item2 : overfilled.values()) {

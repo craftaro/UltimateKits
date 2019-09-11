@@ -1,47 +1,44 @@
 package com.songoda.ultimatekits.gui;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.gui.Gui;
+import com.songoda.core.gui.GuiUtils;
+import com.songoda.core.utils.ItemUtils;
+import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.ServerVersion;
-import com.songoda.ultimatekits.utils.gui.AbstractGUI;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-
-import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import org.bukkit.ChatColor;
 
-public class GUIDisplayKit extends AbstractGUI {
+public class GUIDisplayKit extends Gui {
 
-    private Kit kit;
-    private Player player;
-    private UltimateKits plugin;
-    private AbstractGUI back;
+    private final Kit kit;
+    private final Player player;
+    private final UltimateKits plugin;
+    private final boolean buyable;
+    private final List<ItemStack> list;
+    private final boolean useGlassBorder = !Settings.DO_NOT_USE_GLASS_BORDERS.getBoolean();
+    static final Random rand = new Random();
 
-    private int max;
-    private boolean buyable;
-    private List<ItemStack> list;
-
-    public GUIDisplayKit(UltimateKits plugin, AbstractGUI back, Player player, Kit kit) {
-        super(player);
+    public GUIDisplayKit(UltimateKits plugin, Gui back, Player player, Kit kit) {
+        super(back);
         this.kit = kit;
         this.player = player;
         this.plugin = plugin;
-        this.back = back;
+        this.list = kit.getReadableContents(player, true, true, false);
+        this.buyable = (kit.getLink() != null || kit.getPrice() != 0);
 
-        String guititle = Methods.formatTitle(plugin.getLocale().getMessage("interface.preview.title")
-                .processPlaceholder("kit", kit.getShowableName()).getMessage());
-        if (kit.getTitle() != null) {
-            guititle = plugin.getLocale().getMessage("interface.preview.title")
-                    .processPlaceholder("kit", Methods.formatText(kit.getTitle(), true)).getMessage();
-        }
-
-        list = kit.getReadableContents(player, true, true, false);
+        setTitle(plugin.getLocale().getMessage("interface.preview.title")
+                .processPlaceholder("kit", kit.getTitle() != null ? TextUtils.formatText(kit.getTitle(), true) : kit.getShowableName()).getMessage());
 
         int amt = 0;
         for (ItemStack is : list) {
@@ -61,179 +58,160 @@ public class GUIDisplayKit extends AbstractGUI {
             }
         }
 
-        buyable = false;
-        if (kit.getLink() != null || kit.getPrice() != 0) {
-            buyable = true;
-        }
-
         int min = 0;
-        if (plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-            min = 9;
+        if (!useGlassBorder) {
+            min = 1;
             if (!buyable) {
-                min = min + 9;
+                ++min;
             }
         }
 
-        max = 54 - min;
         if (amt <= 7) {
-            max = 27 - min;
+            setRows(3 - min);
         } else if (amt <= 15) {
-            max = 36 - min;
+            setRows(4 - min);
         } else if (amt <= 23) {
-            max = 45 - min;
-        }
-        init(guititle, max);
-    }
-
-    @Override
-    protected void constructGUI() {
-        int num = 0;
-        if (!plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-            ItemStack exit = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
-            ItemMeta exitmeta = exit.getItemMeta();
-            exitmeta.setDisplayName(plugin.getLocale().getMessage("interface.button.exit").getMessage());
-            exit.setItemMeta(exitmeta);
-            while (num != 10) {
-                inventory.setItem(num, Methods.getGlass());
-                num++;
-            }
-            int num2 = max - 10;
-            while (num2 != max) {
-                inventory.setItem(num2, Methods.getGlass());
-                num2++;
-            }
-            inventory.setItem(8, exit);
-
-            inventory.setItem(0, Methods.getBackgroundGlass(true));
-            inventory.setItem(1, Methods.getBackgroundGlass(true));
-            inventory.setItem(9, Methods.getBackgroundGlass(true));
-
-            inventory.setItem(7, Methods.getBackgroundGlass(true));
-            inventory.setItem(17, Methods.getBackgroundGlass(true));
-
-            inventory.setItem(max - 18, Methods.getBackgroundGlass(true));
-            inventory.setItem(max - 9, Methods.getBackgroundGlass(true));
-            inventory.setItem(max - 8, Methods.getBackgroundGlass(true));
-
-            inventory.setItem(max - 10, Methods.getBackgroundGlass(true));
-            inventory.setItem(max - 2, Methods.getBackgroundGlass(true));
-            inventory.setItem(max - 1, Methods.getBackgroundGlass(true));
-
-            inventory.setItem(2, Methods.getBackgroundGlass(false));
-            inventory.setItem(6, Methods.getBackgroundGlass(false));
-            inventory.setItem(max - 7, Methods.getBackgroundGlass(false));
-            inventory.setItem(max - 3, Methods.getBackgroundGlass(false));
+            setRows(5 - min);
+        } else {
+            setRows(6 - min);
         }
 
+        if (!useGlassBorder) {
+            setDefaultItem(AIR);
+        } else {
+
+            ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.BLUE_STAINED_GLASS_PANE));
+            ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial(CompatibleMaterial.LIGHT_BLUE_STAINED_GLASS_PANE));
+
+            // edges will be type 3
+            setDefaultItem(glass3);
+
+            // decorate corners
+            GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
+            GuiUtils.mirrorFill(this, 1, 0, true, true, glass2);
+            GuiUtils.mirrorFill(this, 0, 1, true, true, glass2);
+
+            if (Settings.RAINBOW.getBoolean()) {
+                for (int col = 2; col < 7; ++col) {
+                    setItem(0, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
+                    setItem(rows - 1, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
+                }
+            } else {
+                ItemStack topBottom = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.GRAY_STAINED_GLASS_PANE));
+                for (int col = 2; col < 7; ++col) {
+                    setItem(0, col, topBottom);
+                    setItem(rows - 1, col, topBottom);
+                }
+            }
+
+            // exit button is only visible with a glass border
+            setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(CompatibleMaterial.OAK_DOOR),
+                    plugin.getLocale().getMessage("interface.button.exit").getMessage()),
+                    event -> exit());
+
+            if (back != null) {
+                setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
+                        plugin.getLocale().getMessage("interface.button.back").getMessage()),
+                        event -> event.player.closeInventory());
+            }
+        }
+        // purchase button
         if (buyable) {
-            ItemStack link = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Buy Icon")), 1);
-            ItemMeta linkmeta = link.getItemMeta();
-            linkmeta.setDisplayName(plugin.getLocale().getMessage("interface.button.buynow").getMessage());
-            ArrayList<String> lore = new ArrayList<>();
-            if (kit.hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
-                lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
-                        .processPlaceholder("price", "0").getMessage());
-                if (player.isOp()) {
-                    lore.add("");
-                    lore.add(Methods.formatText("&7This is free because"));
-                    lore.add(Methods.formatText("&7you have perms for it."));
-                    lore.add(Methods.formatText("&7Everyone else buys"));
-                    lore.add(Methods.formatText("&7this for &a$" + Methods.formatEconomy(kit.getPrice()) + "&7."));
+            setButton(rows - 1, 4, GuiUtils.createButtonItem(Settings.BUY_ICON.getMaterial(CompatibleMaterial.EMERALD),
+                    plugin.getLocale().getMessage("interface.button.buynow").getMessage(),
+                    getBuyLore()),
+                    event -> {
+                        exit();
+                        kit.buy(player);
+                    });
+        }
+
+        // display the kit items here
+        Iterator<ItemStack> items = list.iterator();
+        int startRow = useGlassBorder ? 1 : 0;
+        int endRow = useGlassBorder ? rows - 2 : rows - 1;
+        int startCol = useGlassBorder ? 1 : 0;
+        int endCol = useGlassBorder ? 8 : 7;
+        for (int row = startRow; row <= endRow; ++row) {
+            for (int col = startCol; col <= endCol; ++col) {
+                ItemStack item;
+                if (!items.hasNext()) {
+                    setItem(row, col, AIR);
+                } else if ((item = items.next()) == null
+                        || (Settings.DONT_PREVIEW_COMMANDS.getBoolean()
+                        && item.getType() == Material.PAPER
+                        && item.getItemMeta().hasDisplayName()
+                        && item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("general.type.command")))) {
+                    setItem(row, col, AIR);
+                } else if (item.getAmount() <= 64) {
+                    // display item
+                    setItem(row, col, getKitItem(item));
+                } else {
+                    // correct item amounts (up to three slots)
+                    int itAmt = item.getAmount(), slots = 0;
+                    for (; itAmt > 0 && slots < 3 && row <= endRow; ++row) {
+                        for (; itAmt > 0 && slots < 3 && col <= endCol; ++col) {
+                            setItem(row, col, getKitItem(item, Math.min(64, itAmt)));
+                            itAmt -= 64;
+                            ++slots;
+                        }
+                    }
                 }
-            } else {
-                lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
-                        .processPlaceholder("price", Methods.formatEconomy(kit.getPrice())).getMessage());
             }
-            if (kit.getDelay() != 0 && player.isOp()) {
+        }
+    }
+
+    ItemStack getKitItem(ItemStack is) {
+        ItemMeta meta = is.getItemMeta();
+        List<String> newLore = new ArrayList<>();
+        if (meta != null && meta.hasLore()) {
+            for (String str : meta.getLore()) {
+                newLore.add(str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName()));
+            }
+        }
+        meta.setLore(newLore);
+        is.setItemMeta(meta);
+        return is;
+    }
+
+    ItemStack getKitItem(ItemStack is, int amount) {
+        ItemStack is2 = is.clone();
+        ItemMeta meta = is2.getItemMeta();
+        List<String> newLore = new ArrayList<>();
+        if (meta != null && meta.hasLore()) {
+            for (String str : meta.getLore()) {
+                newLore.add(str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName()));
+            }
+        }
+        meta.setLore(newLore);
+        is2.setItemMeta(meta);
+        is2.setAmount(amount);
+        return is;
+    }
+
+    List<String> getBuyLore() {
+        ArrayList<String> lore = new ArrayList<>();
+        if (kit.hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+            lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
+                    .processPlaceholder("price", "0").getMessage());
+            if (player.isOp()) {
                 lore.add("");
-                lore.add(Methods.formatText("&7You do not have a delay"));
-                lore.add(Methods.formatText("&7because you have perms"));
-                lore.add(Methods.formatText("&7to bypass the delay."));
+                lore.add(ChatColor.GRAY + "This is free because");
+                lore.add(ChatColor.GRAY + "you have perms for it.");
+                lore.add(ChatColor.GRAY + "Everyone else buys");
+                lore.add(ChatColor.GRAY + "this for &a$" + Methods.formatEconomy(kit.getPrice()) + ChatColor.GRAY + ".");
             }
-            linkmeta.setLore(lore);
-            link.setItemMeta(linkmeta);
-            inventory.setItem(max - 5, link);
-
-            registerClickable(max - 5, ((player1, inventory1, cursor, slot, type) -> {
-                player.closeInventory();
-                String kitName = kit.getName();
-                Kit kit = plugin.getKitManager().getKit(kitName);
-                kit.buy(player);
-            }));
+        } else {
+            lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
+                    .processPlaceholder("price", Methods.formatEconomy(kit.getPrice())).getMessage());
         }
-
-        for (ItemStack is : list) {
-            if (!plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-                if (num == 17 || num == (max - 18)) num++;
-                if (num == 18 && max == 36) num++;
-            }
-
-            ItemMeta meta = is.hasItemMeta() ? is.getItemMeta() : Bukkit.getItemFactory().getItemMeta(is.getType());
-            ArrayDeque<String> lore;
-            if (meta.hasLore()) {
-                lore = new ArrayDeque<>(meta.getLore());
-            } else {
-                lore = new ArrayDeque<>();
-            }
-
-            List<String> newLore = new ArrayList<>();
-            for (String str : lore) {
-                str = str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName());
-                newLore.add(str);
-            }
-
-            meta.setLore(newLore);
-            is.setItemMeta(meta);
-
-            if (is.getAmount() > 64) {
-                int overflow = is.getAmount() % 64;
-                int stackamt = is.getAmount() / 64;
-                int num3 = 0;
-                while (num3 != stackamt) {
-                    is.setAmount(64);
-                    inventory.setItem(num, is);
-                    num++;
-                    num3++;
-                }
-                if (overflow != 0) {
-                    is.setAmount(overflow);
-                    inventory.setItem(num, is);
-                    num++;
-                }
-                continue;
-            }
-            if (!plugin.getConfig().getBoolean("Main.Dont Preview Commands In Kits") || is.getType() != Material.PAPER || !is.getItemMeta().hasDisplayName() || !is.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("general.type.command"))) {
-                inventory.setItem(num, is);
-                num++;
-            }
+        if (kit.getDelay() != 0 && player.isOp()) {
+            lore.add("");
+            lore.add(ChatColor.GRAY + "You do not have a delay");
+            lore.add(ChatColor.GRAY + "because you have perms");
+            lore.add(ChatColor.GRAY + "to bypass the delay.");
         }
-
-        if (back != null && !plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders")) {
-
-            ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
-            ItemStack skull2 = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
-            SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
-            skull2.setDurability((short) 3);
-            skull2Meta.setDisplayName(plugin.getLocale().getMessage("interface.button.back").getMessage());
-            skull2.setItemMeta(skull2Meta);
-            inventory.setItem(0, skull2);
-        }
-    }
-
-    @Override
-    protected void registerClickables() {
-        registerClickable(0, (player, inventory, cursor, slot, type) -> {
-            if (back == null) return;
-            back.init(back.getSetTitle(), back.getInventory().getSize());
-        });
-
-        registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());
-
-    }
-
-    @Override
-    protected void registerOnCloses() {
-
+        return lore;
     }
 
 }

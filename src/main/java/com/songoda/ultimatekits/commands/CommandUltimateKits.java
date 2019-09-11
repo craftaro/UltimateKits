@@ -1,7 +1,7 @@
-package com.songoda.ultimatekits.command.commands;
+package com.songoda.ultimatekits.commands;
 
+import com.songoda.core.commands.AbstractCommand;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.command.AbstractCommand;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.command.CommandSender;
 
@@ -10,17 +10,19 @@ import java.util.List;
 
 public class CommandUltimateKits extends AbstractCommand {
 
+    final UltimateKits instance = UltimateKits.getInstance();
+
     public CommandUltimateKits() {
-        super(null, false, "KitAdmin");
+        super(false, "KitAdmin");
     }
 
     @Override
-    protected AbstractCommand.ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
+    protected AbstractCommand.ReturnType runCommand(CommandSender sender, String... args) {
         sender.sendMessage("");
         instance.getLocale().newMessage("&7Version " + instance.getDescription().getVersion()
                 + " Created with <3 by &5&l&oSongoda").sendPrefixedMessage(sender);
 
-        for (AbstractCommand command : instance.getCommandManager().getCommands()) {
+        for (AbstractCommand command : instance.getCommandManager().getAllCommands()) {
             if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
                 sender.sendMessage(Methods.formatText("&8 - &a" + command.getSyntax() + "&7 - " + command.getDescription()));
             }
@@ -31,7 +33,7 @@ public class CommandUltimateKits extends AbstractCommand {
     }
 
     @Override
-    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         return new ArrayList<>();
     }
 

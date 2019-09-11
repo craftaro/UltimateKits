@@ -1,7 +1,9 @@
-package com.songoda.ultimatekits.command.commands;
+package com.songoda.ultimatekits.commands;
 
+import com.songoda.core.commands.AbstractCommand;
+import com.songoda.core.configuration.editor.PluginConfigGui;
+import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.command.AbstractCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -10,18 +12,22 @@ import java.util.List;
 
 public class CommandSettings extends AbstractCommand {
 
-    public CommandSettings(AbstractCommand parent) {
-        super(parent, true, "settings");
+    final UltimateKits instance = UltimateKits.getInstance();
+    final GuiManager guiManager;
+
+    public CommandSettings(GuiManager guiManager) {
+        super(true, "settings");
+        this.guiManager = guiManager;
     }
 
     @Override
-    protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
-        instance.getSettingsManager().openSettingsManager((Player) sender);
+    protected ReturnType runCommand(CommandSender sender, String... args) {
+        guiManager.showGUI((Player) sender, new PluginConfigGui(instance));
         return ReturnType.SUCCESS;
     }
 
     @Override
-    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         return new ArrayList<>();
     }
 

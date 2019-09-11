@@ -10,68 +10,53 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.bukkit.Bukkit;
 
 public class Convert {
 
-    private final UltimateKits instance;
-
-    private Hook hook;
-
-    public Convert(UltimateKits instance) {
-        this.instance = instance;
-        if (instance.getServer().getPluginManager().getPlugin("Essentials") != null) {
-            try {
-                Class.forName("com.earth2me.essentials.metrics.MetricsListener");
-                hook = new DefaultHook();
-            } catch (ClassNotFoundException ex) {
-                hook = new EssentialsHook();
+    public static void runKitConversions() {
+        if (!UltimateKits.getInstance().getKitFile().contains("Kits")) {
+            if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
+                try {
+                    Class.forName("com.earth2me.essentials.metrics.MetricsListener");
+                } catch (ClassNotFoundException ex) {
+                    convertKits(new EssentialsHook());
+                }
             }
-        } else if (instance.getServer().getPluginManager().getPlugin("UltimateCore") != null) {
-            hook = new UltimateCoreHook();
-
-        } else if (instance.getServer().getPluginManager().getPlugin("CMI") != null) {
-            hook = new CMIHook();
-        } else {
-            hook = new DefaultHook();
+            if (Bukkit.getPluginManager().isPluginEnabled("UltimateCore")) {
+                convertKits(new UltimateCoreHook());
+            }
+            if (Bukkit.getPluginManager().isPluginEnabled("CMI")) {
+                convertKits(new CMIHook());
+            }
         }
-
-        if (hook.getKits().size() == 0)
-            hook = new DefaultHook();
-
-        convertKits();
+        if (!isInJsonFormat()) {
+            convertKits(new DefaultHook());
+        }
     }
 
-    private void convertKits() {
+    private static void convertKits(Hook hook) {
         Set<String> kits = hook.getKits();
-
-        if (!instance.getKitFile().getConfig().contains("Kits")) {
-            this.convertKits(kits);
-        } else if (!isInJsonFormat()) {
-            hook = new DefaultHook();
-            this.convertKits(hook.getKits());
-        }
-    }
-
-    private void convertKits(Set<String> kits) {
         for (String kit : kits) {
             List<String> serializedItems = new ArrayList<>();
             for (ItemStack item : hook.getItems(kit)) {
-                serializedItems.add(instance.getItemSerializer().serializeItemStackToJson(item));
+                serializedItems.add(UltimateKits.getInstance().getItemSerializer().serializeItemStackToJson(item));
             }
-            instance.getKitFile().getConfig().set("Kits." + kit + ".items", serializedItems);
-            instance.getKitFile().getConfig().set("Kits." + kit + ".delay", hook.getDelay(kit));
-            instance.getKitFile().getConfig().set("Kits." + kit + ".price", 0D);
+            UltimateKits.getInstance().getKitFile().set("Kits." + kit + ".items", serializedItems);
+            UltimateKits.getInstance().getKitFile().set("Kits." + kit + ".delay", hook.getDelay(kit));
+            UltimateKits.getInstance().getKitFile().set("Kits." + kit + ".price", 0D);
         }
-        instance.getKitFile().saveConfig();
+        UltimateKits.getInstance().getKitFile().save();
     }
 
-    private boolean isInJsonFormat() {
-        for (String kit : instance.getKitFile().getConfig().getConfigurationSection("Kits").getKeys(false)) {
-            if (instance.getKitFile().getConfig().contains("Kits." + kit + ".items")) {
-                List<String> itemList = instance.getKitFile().getConfig().getStringList("Kits." + kit + ".items");
+    private static boolean isInJsonFormat() {
+        for (String kit : UltimateKits.getInstance().getKitFile().getConfigurationSection("Kits").getKeys(false)) {
+            if (UltimateKits.getInstance().getKitFile().contains("Kits." + kit + ".items")) {
+                List<String> itemList = UltimateKits.getInstance().getKitFile().getStringList("Kits." + kit + ".items");
                 if (itemList.size() > 0) {
-                    if (itemList.get(0).startsWith("{"))
+                    if (itemList.get(0).startsWith("{")) {
                         return true;
+                    }
                 }
             }
         }

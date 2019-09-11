@@ -1,14 +1,14 @@
 package com.songoda.ultimatekits.kit;
 
+import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.type.KitContent;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.settings.Setting;
+import com.songoda.ultimatekits.settings.Settings;
 import org.apache.commons.lang.WordUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -56,7 +56,7 @@ public class KitItem {
     }
 
     private void processContent(String line, ItemStack item) {
-        if (line.startsWith(Setting.CURRENCY_SYMBOL.getString())) {
+        if (line.startsWith(Settings.CURRENCY_SYMBOL.getString())) {
             this.content = new KitContentEconomy(Double.parseDouble(line.substring(1).trim()));
         } else if (line.startsWith("/")) {
             this.content = new KitContentCommand(line.substring(1));
@@ -159,9 +159,9 @@ public class KitItem {
         if (chance != 0 || displayItem != null || displayName != null || displayLore != null) {
             String capitalizedName = meta.hasDisplayName() ? meta.getDisplayName() :
                     WordUtils.capitalize(item.getType().toString().toLowerCase().replace("_", " "));
-            if (capitalizedName.contains(Methods.convertToInvisibleString(";faqe")))
-                capitalizedName = meta.getDisplayName().split(Methods.convertToInvisibleString(";faqe"))[1];
-            meta.setDisplayName(Methods.convertToInvisibleString(compileOptions() + ";faqe") + ChatColor.RESET + capitalizedName);
+            if (capitalizedName.contains(TextUtils.convertToInvisibleString(";faqe")))
+                capitalizedName = meta.getDisplayName().split(TextUtils.convertToInvisibleString(";faqe"))[1];
+            meta.setDisplayName(TextUtils.convertToInvisibleString(compileOptions() + ";faqe") + ChatColor.RESET + capitalizedName);
         }
         item.setItemMeta(meta);
         return item;
@@ -175,10 +175,10 @@ public class KitItem {
             item.setType(displayItem);
         }
         if (displayName != null) {
-            meta.setDisplayName(Methods.formatText(displayName));
+            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
         }
         if (displayLore != null) {
-            meta.setLore(Arrays.asList(Methods.formatText(displayLore)));
+            meta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', displayLore)));
         }
 
         if (UltimateKits.getInstance().getConfig().getBoolean("Main.Display Chance In Preview")) {
@@ -190,7 +190,7 @@ public class KitItem {
             }
 
             if (lore.size() != 0) lore.addFirst("");
-            lore.addFirst(Methods.formatText("&7" + UltimateKits.getInstance().getLocale().getMessage("general.type.chance") + ": &6" + (chance == 0 ? 100 : chance) + "%"));
+            lore.addFirst(ChatColor.GRAY.toString() + UltimateKits.getInstance().getLocale().getMessage("general.type.chance") + ": " + ChatColor.GOLD + (chance == 0 ? 100 : chance) + "%");
             meta.setLore(new ArrayList<>(lore));
         }
 

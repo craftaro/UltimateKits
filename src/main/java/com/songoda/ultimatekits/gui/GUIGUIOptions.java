@@ -1,12 +1,10 @@
 package com.songoda.ultimatekits.gui;
 
+import com.songoda.core.gui.Gui;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.ServerVersion;
-import com.songoda.ultimatekits.utils.gui.AbstractAnvilGUI;
-import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,19 +13,17 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 
-public class GUIGUIOptions extends AbstractGUI {
+public class GUIGUIOptions extends Gui {
 
     private Kit kit;
     private Player player;
     private UltimateKits plugin;
-    private AbstractGUI back;
 
-    public GUIGUIOptions(UltimateKits plugin, Player player, AbstractGUI back, Kit kit) {
-        super(player);
+    public GUIGUIOptions(UltimateKits plugin, Player player, Gui back, Kit kit) {
+        super(back);
         this.kit = kit;
         this.player = player;
         this.plugin = plugin;
-        this.back = back;
         init("&8GUI Options for &a" + kit.getShowableName() + "&8.", 27);
     }
 

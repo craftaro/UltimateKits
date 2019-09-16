@@ -9,6 +9,7 @@ import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,9 +18,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import org.bukkit.ChatColor;
 
-public class GUIDisplayKit extends Gui {
+public class PreviewKitGui extends Gui {
 
     private final Kit kit;
     private final Player player;
@@ -29,7 +29,7 @@ public class GUIDisplayKit extends Gui {
     private final boolean useGlassBorder = !Settings.DO_NOT_USE_GLASS_BORDERS.getBoolean();
     static final Random rand = new Random();
 
-    public GUIDisplayKit(UltimateKits plugin, Gui back, Player player, Kit kit) {
+    public PreviewKitGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
         super(back);
         this.kit = kit;
         this.player = player;
@@ -122,7 +122,7 @@ public class GUIDisplayKit extends Gui {
                     getBuyLore()),
                     event -> {
                         exit();
-                        kit.buy(player);
+                        kit.buy(event.player, event.manager);
                     });
         }
 

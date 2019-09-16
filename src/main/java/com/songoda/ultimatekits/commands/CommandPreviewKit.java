@@ -32,7 +32,7 @@ public class CommandPreviewKit extends AbstractCommand {
             instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
-        kit.display(player, null);
+        kit.display(player, guiManager, null);
         return ReturnType.SUCCESS;
     }
 

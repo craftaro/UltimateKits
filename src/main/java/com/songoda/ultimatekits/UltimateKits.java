@@ -10,6 +10,7 @@ import com.songoda.core.database.DatabaseConnector;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
+import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.commands.*;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.database.DataManager;
@@ -36,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.bukkit.ChatColor;
 
 public class UltimateKits extends SongodaPlugin {
     private static UltimateKits INSTANCE;
@@ -73,7 +75,7 @@ public class UltimateKits extends SongodaPlugin {
         try {
             this.itemSerializer = new ItemSerializer();
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            console.sendMessage(Methods.formatText("&cCould not load the serialization class! Please report this error."));
+            console.sendMessage(ChatColor.RED + "Could not load the serialization class! Please report this error.");
             e.printStackTrace();
         }
     }
@@ -325,50 +327,45 @@ public class UltimateKits extends SongodaPlugin {
                 case "{TITLE}":
                     String title = kit.getTitle();
                     if (title == null) {
-                        lines.add(Methods.formatText("&5" + Methods.formatText(kit.getName(), true)));
+                        lines.add(ChatColor.DARK_PURPLE + TextUtils.formatText(kit.getName(), true));
                     } else {
-                        lines.add(Methods.formatText("&5" + Methods.formatText(title)));
+                        lines.add(ChatColor.DARK_PURPLE + TextUtils.formatText(title));
                     }
                     break;
                 case "{RIGHT-CLICK}":
                     if (kitType == KitType.CRATE) {
-                        lines.add(Methods.formatText(getLocale().getMessage("interface.hologram.crate")
-                                .getMessage()));
+                        lines.add(getLocale().getMessage("interface.hologram.crate").getMessage());
                         break;
                     }
                     if (kit.getLink() != null) {
-                        lines.add(Methods.formatText(getLocale().getMessage("interface.hologram.buylink")
-                                .getMessage()));
+                        lines.add(getLocale().getMessage("interface.hologram.buylink").getMessage());
                         break;
                     }
                     if (kit.getPrice() != 0) {
-                        lines.add(Methods.formatText(getLocale().getMessage("interface.hologram.buyeco")
+                        lines.add(getLocale().getMessage("interface.hologram.buyeco")
                                 .processPlaceholder("price", kit.getPrice() != 0
                                         ? Methods.formatEconomy(kit.getPrice())
                                         : getLocale().getMessage("general.type.free").getMessage())
-                                .getMessage()));
+                                .getMessage());
                     }
                     break;
                 case "{LEFT-CLICK}":
                     if (kitType == KitType.CLAIM) {
-                        lines.add(Methods.formatText(getLocale().getMessage("interface.hologram.daily")
-                                .getMessage()));
+                        lines.add(getLocale().getMessage("interface.hologram.daily").getMessage());
                         break;
                     }
                     if (kit.getLink() == null && kit.getPrice() == 0) {
-                        lines.add(Methods.formatText(getLocale().getMessage("interface.hologram.previewonly")
-                                .getMessage()));
+                        lines.add(getLocale().getMessage("interface.hologram.previewonly").getMessage());
                     } else {
-                        lines.add(Methods.formatText(getLocale().getMessage("interface.hologram.preview")
-                                .getMessage()));
+                        lines.add(getLocale().getMessage("interface.hologram.preview").getMessage());
                     }
                     break;
                 default:
-                    lines.add(Methods.formatText(o));
+                    lines.add(ChatColor.translateAlternateColorCodes('&', o));
                     break;
             }
         }
-        
+
         return lines;
     }
 

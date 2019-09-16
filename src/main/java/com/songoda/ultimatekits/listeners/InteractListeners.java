@@ -3,7 +3,7 @@ package com.songoda.ultimatekits.listeners;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.gui.GUIBlockEditor;
+import com.songoda.ultimatekits.gui.BlockEditorGui;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
@@ -69,7 +69,7 @@ public class InteractListeners implements Listener {
                             Methods.makeReadable(time)).sendPrefixedMessage(player);
                 }
             } else if (kit.getLink() != null || kit.getPrice() != 0) {
-                kit.buy(player);
+                kit.buy(player, guiManager);
             } else {
                 kit.display(player, guiManager, null);
             }
@@ -78,7 +78,7 @@ public class InteractListeners implements Listener {
                 event.setCancelled(true);
             }
             if (player.isSneaking() && player.hasPermission("ultimatekits.admin")) {
-                new GUIBlockEditor(plugin, player, block.getLocation());
+                guiManager.showGUI(player, new BlockEditorGui(plugin, kitBlockData));
                 return;
             }
             if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {

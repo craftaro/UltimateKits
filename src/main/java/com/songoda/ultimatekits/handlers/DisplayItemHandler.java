@@ -4,7 +4,6 @@ import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -65,7 +64,7 @@ public class DisplayItemHandler {
             ItemStack is = list.get(inum - 1);
             if (kitBlockData.isItemOverride()) {
                 if (kit.getDisplayItem() != null)
-                    is = new ItemStack(kit.getDisplayItem());
+                    is = kit.getDisplayItem().getItem();
             }
             ItemMeta meta = is.getItemMeta();
             is.setAmount(1);

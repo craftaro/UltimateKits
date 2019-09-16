@@ -3,7 +3,7 @@ package com.songoda.ultimatekits.commands;
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.gui.GUIBlockEditor;
+import com.songoda.ultimatekits.gui.BlockEditorGui;
 import com.songoda.ultimatekits.gui.GUIKitEditor;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
@@ -26,17 +26,17 @@ public class CommandEdit extends AbstractCommand {
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        Player player = (Player) sender;
-        Block block = player.getTargetBlock(null, 200);
-        KitBlockData kitBlockData = instance.getKitManager().getKit(block.getLocation());
         if (args.length > 1) return ReturnType.SYNTAX_ERROR;
+        final Player player = (Player) sender;
 
         if (args.length == 0) {
+            Block block = player.getTargetBlock(null, 200);
+            KitBlockData kitBlockData = instance.getKitManager().getKit(block.getLocation());
             if (kitBlockData == null) {
-                instance.getLocale().newMessage("&8This block does not contain a kit.").sendPrefixedMessage(player);
+                instance.getLocale().newMessage("command.kit.nokitatblock").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
-            new GUIBlockEditor(instance, player, block.getLocation());
+            guiManager.showGUI(player, new BlockEditorGui(instance, kitBlockData));
         } else {
             String kitStr = args[0].toLowerCase().trim();
             if (instance.getKitManager().getKit(kitStr) == null) {
@@ -54,7 +54,7 @@ public class CommandEdit extends AbstractCommand {
         if (!(sender instanceof Player)) return null;
 
         List<String> tab = new ArrayList<>();
-        if (args.length == 2) {
+        if (args.length == 1) {
             for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
                 tab.add(kit.getName());
             return tab;

@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.kit;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
@@ -7,26 +8,27 @@ import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.gui.GUIConfirmBuy;
-import com.songoda.ultimatekits.gui.GUIDisplayKit;
+import com.songoda.ultimatekits.gui.PreviewKitGui;
+import com.songoda.ultimatekits.gui.ConfirmBuyGui;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
+import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.tasks.CrateAnimateTask;
 import com.songoda.ultimatekits.utils.ArmorType;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.gui.AbstractGUI;
-import com.songoda.ultimatekits.settings.Settings;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -39,13 +41,13 @@ public class Kit {
     private String link, title;
     private int delay;
     private boolean hidden;
-    private Material displayItem;
+    private CompatibleMaterial displayItem;
     private List<KitItem> contents;
     private KitAnimation kitAnimation;
 
-    public Kit(String name, String title, String link, double price, Material displayItem, int delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
+    public Kit(String name, String title, String link, double price, CompatibleMaterial displayItem, int delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
         this.name = name;
-        this.showableName = Methods.formatText(name, true);
+        this.showableName = TextUtils.formatText(name, true);
         this.price = price;
         this.link = link;
         this.kitAnimation = kitAnimation;
@@ -61,7 +63,7 @@ public class Kit {
         this(name, null, null, 0, null, 0, false, new ArrayList<>(), KitAnimation.NONE);
     }
 
-    public void buy(Player player) {
+    public void buy(Player player, GuiManager manager) {
         if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
             processGenericUse(player, false);
             return;
@@ -79,7 +81,7 @@ public class Kit {
             player.sendMessage("");
             player.closeInventory();
         } else if (price != 0) {
-            new GUIConfirmBuy(plugin, player, this);
+            manager.showGUI(player, new ConfirmBuyGui(plugin, player, this, null));
         } else {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
@@ -207,7 +209,7 @@ public class Kit {
 
         plugin.getLocale().getMessage("event.preview.kit")
                 .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
-        new GUIDisplayKit(plugin, back, player, this);
+        manager.showGUI(player, new PreviewKitGui(plugin, player, this, back));
     }
 
     public void saveKit(List<ItemStack> items) {
@@ -250,13 +252,14 @@ public class Kit {
             if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(Settings.CURRENCY_SYMBOL.getString())) || commands) { //ToDO: I doubt this is correct.
                 ItemStack stack = moveable ? item.getMoveableItem() : item.getItem();
                 if (preview) stack = item.getItemForDisplay();
+                if (stack == null) continue;
 
                 ItemStack fin = stack;
                 if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && stack.getItemMeta().getLore() != null) {
                     ArrayList<String> lore2 = new ArrayList<>();
                     ItemMeta meta2 = stack.getItemMeta();
                     for (String lor : stack.getItemMeta().getLore()) {
-                        lor = PlaceholderAPI.setPlaceholders(player, lor.replace(" ", "_")).replace("_", " ");
+                        lor = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, lor.replace(" ", "_")).replace("_", " ");
                         lore2.add(lor);
                     }
                     meta2.setLore(lore2);
@@ -419,11 +422,11 @@ public class Kit {
         return showableName;
     }
 
-    public Material getDisplayItem() {
+    public CompatibleMaterial getDisplayItem() {
         return displayItem;
     }
 
-    public void setDisplayItem(Material displayItem) {
+    public void setDisplayItem(CompatibleMaterial displayItem) {
         this.displayItem = displayItem;
     }
 

@@ -45,7 +45,7 @@ public class CommandKit extends AbstractCommand {
             if (sender.hasPermission("ultimatekits.admin")) {
                 kit.processGenericUse(player, true);
             } else {
-                kit.buy(player);
+                kit.buy(player, guiManager);
             }
         } else if (args.length == 2) {
             String kitName = args[0].toLowerCase();

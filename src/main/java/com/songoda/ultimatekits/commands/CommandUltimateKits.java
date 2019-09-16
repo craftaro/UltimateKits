@@ -2,8 +2,8 @@ package com.songoda.ultimatekits.commands;
 
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.command.CommandSender;
+import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class CommandUltimateKits extends AbstractCommand {
 
         for (AbstractCommand command : instance.getCommandManager().getAllCommands()) {
             if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
-                sender.sendMessage(Methods.formatText("&8 - &a" + command.getSyntax() + "&7 - " + command.getDescription()));
+                sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.GREEN + command.getSyntax() + ChatColor.GRAY + " - " + command.getDescription());
             }
         }
         sender.sendMessage("");

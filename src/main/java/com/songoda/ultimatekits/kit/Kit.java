@@ -290,11 +290,18 @@ public class Kit {
         if (amt != amtToGive || kitAnimation != KitAnimation.NONE)
             Collections.shuffle(innerContents);
 
+        return generateRandomItem(innerContents, amtToGive, player);
+    }
+
+    private boolean generateRandomItem(List<KitItem> innerContents, int amtToGive, Player player) {
+        boolean chosenItem = false;
         for (KitItem item : innerContents) {
             if (amtToGive == 0) continue;
             int ch = item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
             if (rand - ch < 0 || ch == 100) {
+                chosenItem = true;
+
                 if (item.getContent() instanceof KitContentEconomy) {
                     try {
                         EconomyManager.deposit(player, ((KitContentEconomy) item.getContent()).getAmount());
@@ -344,6 +351,8 @@ public class Kit {
                 }
             }
         }
+
+        if (!chosenItem) generateRandomItem(innerContents, amtToGive, player);
 
         player.updateInventory();
         return true;

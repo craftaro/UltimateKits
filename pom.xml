@@ -54,7 +54,7 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <artifactSet>
                                 <includes>
-                                    <include>com.songoda:songodaupdater</include>
+                                    <include>com.songoda:SongodaCore</include>
                                     <include>com.zaxxer:HikariCP</include>
                                 </includes>
                             </artifactSet>
@@ -68,6 +68,12 @@
                                     </excludes>
                                 </filter>
                             </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.songoda.core</pattern>
+                                    <shadedPattern>${project.groupId}.ultimatekits.core</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -80,30 +86,27 @@
             <url>http://repo.songoda.com/artifactory/private/</url>
         </repository>
         <repository>
-            <id>reserve-repo</id>
-            <url>https://dl.bintray.com/theneweconomy/java/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.14.1</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.14.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.songoda</groupId>
-            <artifactId>songodaupdater</artifactId>
-            <version>1</version>
+            <artifactId>SongodaCore</artifactId>
+            <version>LATEST</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org</groupId>
             <artifactId>kingdoms</artifactId>
             <version>13.0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>net.milkbowl</groupId>
-            <artifactId>vault</artifactId>
-            <version>1.7.1</version>
         </dependency>
         <dependency>
             <groupId>me.ryanhamshire</groupId>
@@ -151,12 +154,6 @@
             <version>7.3.0</version>
         </dependency>
         <dependency>
-            <groupId>com.gmail.filoghost.holographicdisplays</groupId>
-            <artifactId>holographicdisplays-api</artifactId>
-            <version>2.3.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.gmail.nossr50</groupId>
             <artifactId>mcmmo</artifactId>
             <version>1.5.09</version>
@@ -192,16 +189,6 @@
             <version>1.5.0</version>
         </dependency>
         <dependency>
-            <groupId>org.black_ixx</groupId>
-            <artifactId>playerpoints</artifactId>
-            <version>2.1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>xyz.wildseries</groupId>
-            <artifactId>wildstacker</artifactId>
-            <version>b6</version>
-        </dependency>
-        <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.5.1</version>
@@ -215,12 +202,6 @@
             <groupId>bammerbom</groupId>
             <artifactId>ultimatecore</artifactId>
             <version>2.1.25</version>
-        </dependency>
-        <dependency>
-            <groupId>net.tnemc</groupId>
-            <artifactId>Reserve</artifactId>
-            <version>0.1.3.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.zrips</groupId>

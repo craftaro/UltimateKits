@@ -290,14 +290,15 @@ public class Kit {
         if (amt != amtToGive || kitAnimation != KitAnimation.NONE)
             Collections.shuffle(innerContents);
 
-        return generateRandomItem(innerContents, amtToGive, player);
+        return generateRandomItem(innerContents, amtToGive, player, -1);
     }
 
-    private boolean generateRandomItem(List<KitItem> innerContents, int amtToGive, Player player) {
+    private boolean generateRandomItem(List<KitItem> innerContents, int amtToGive, Player player, int forceSelect) {
         boolean chosenItem = false;
+        int canChoose = 0;
         for (KitItem item : innerContents) {
             if (amtToGive == 0) continue;
-            int ch = item.getChance() == 0 ? 100 : item.getChance();
+            int ch = canChoose++ == forceSelect || item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
             if (rand - ch < 0 || ch == 100) {
                 chosenItem = true;
@@ -352,7 +353,7 @@ public class Kit {
             }
         }
 
-        if (!chosenItem) generateRandomItem(innerContents, amtToGive, player);
+        if (!chosenItem) generateRandomItem(innerContents, amtToGive, player, (int) (Math.random() * canChoose));
 
         player.updateInventory();
         return true;

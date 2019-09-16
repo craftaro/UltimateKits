@@ -276,11 +276,11 @@ public class Kit {
     }
 
     private boolean giveKit(Player player, Key key) {
-        if (plugin.getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player)) {
+        if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player)) {
             plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
             return false;
         }
-        if (plugin.getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE)
+        if (Settings.SOUNDS_ENABLED.getBoolean() && kitAnimation == KitAnimation.NONE)
             CompatibleSound.ENTITY_PLAYER_LEVELUP.play(player, 0.6F, 15.0F);
 
         List<KitItem> innerContents = new ArrayList<>(getContents());
@@ -353,7 +353,11 @@ public class Kit {
             }
         }
 
-        if (!chosenItem) generateRandomItem(innerContents, amtToGive, player, (int) (Math.random() * canChoose));
+        if (!chosenItem && canChoose != 0 && forceSelect == -1) {
+            return generateRandomItem(innerContents, amtToGive, player, (int) (Math.random() * canChoose));
+        } else if (!chosenItem) {
+            return false;
+        }
 
         player.updateInventory();
         return true;

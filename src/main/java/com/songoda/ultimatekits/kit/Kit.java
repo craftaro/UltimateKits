@@ -440,8 +440,8 @@ public class Kit {
         return displayItem;
     }
 
-    public void setDisplayItem(CompatibleMaterial displayItem) {
-        this.displayItem = displayItem;
+    public void setDisplayItem(ItemStack item) {
+        this.displayItem = item != null ? CompatibleMaterial.getMaterial(item) : null;
     }
 
     public boolean isHidden() {

@@ -10,12 +10,8 @@ import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import java.util.Random;
 
 public class ConfirmBuyGui extends Gui {
-
-    static final Random rand = new Random();
 
     public ConfirmBuyGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
         super(back);
@@ -30,33 +26,8 @@ public class ConfirmBuyGui extends Gui {
                 .processPlaceholder("price", cost)
                 .getMessage());
 
-        // fill center with glass
-        if (Settings.RAINBOW.getBoolean()) {
-            for (int col = 3; col < 6; ++col) {
-                for (int row = 0; row < rows; ++row) {
-                    setItem(row, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
-                }
-            }
-        } else {
-            ItemStack topBottom = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.GRAY_STAINED_GLASS_PANE));
-            for (int col = 3; col < 6; ++col) {
-                for (int row = 0; row < rows; ++row) {
-                    setItem(row, col, topBottom);
-                }
-            }
-        }
-
-        // decorate the edges
-        ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.BLUE_STAINED_GLASS_PANE));
-        ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial(CompatibleMaterial.LIGHT_BLUE_STAINED_GLASS_PANE));
-
-        // edges will be type 3
-        setDefaultItem(glass3);
-
-        // decorate corners with type 2
-        GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
-        GuiUtils.mirrorFill(this, 1, 0, true, true, glass2);
-        GuiUtils.mirrorFill(this, 0, 1, true, true, glass2);
+        // fill glass borders
+        Methods.fillGlass(this);
 
         // Kit information
         setItem(0, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.DIAMOND_HELMET,

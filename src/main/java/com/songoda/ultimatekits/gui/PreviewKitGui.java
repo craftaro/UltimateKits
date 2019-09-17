@@ -80,29 +80,8 @@ public class PreviewKitGui extends Gui {
             setDefaultItem(AIR);
         } else {
 
-            ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.BLUE_STAINED_GLASS_PANE));
-            ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial(CompatibleMaterial.LIGHT_BLUE_STAINED_GLASS_PANE));
-
-            // edges will be type 3
-            setDefaultItem(glass3);
-
-            // decorate corners
-            GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
-            GuiUtils.mirrorFill(this, 1, 0, true, true, glass2);
-            GuiUtils.mirrorFill(this, 0, 1, true, true, glass2);
-
-            if (Settings.RAINBOW.getBoolean()) {
-                for (int col = 2; col < 7; ++col) {
-                    setItem(0, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
-                    setItem(rows - 1, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
-                }
-            } else {
-                ItemStack topBottom = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.GRAY_STAINED_GLASS_PANE));
-                for (int col = 2; col < 7; ++col) {
-                    setItem(0, col, topBottom);
-                    setItem(rows - 1, col, topBottom);
-                }
-            }
+            // fill glass borders
+            Methods.fillGlass(this);
 
             // exit button is only visible with a glass border
             setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(CompatibleMaterial.OAK_DOOR),

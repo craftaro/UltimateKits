@@ -40,7 +40,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         this.plugin = plugin;
         this.player = player;
         this.give = give;
-        this.inventory = Bukkit.createInventory(null, 27, Methods.formatText(kit.getShowableName()));
+        this.inventory = Bukkit.createInventory(null, 27, kit.getShowableName());
 
         List<KitItem> items = kit.getContents();
         Collections.shuffle(items);

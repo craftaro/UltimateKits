@@ -1,20 +1,30 @@
 package com.songoda.ultimatekits.utils;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.gui.Gui;
+import com.songoda.core.gui.GuiUtils;
 import com.songoda.ultimatekits.UltimateKits;
-import org.bukkit.*;
+import com.songoda.ultimatekits.settings.Settings;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by songoda on 2/24/2017.
  */
 public class Methods {
+
+    static final Random rand = new Random();
 
     public static boolean canGiveKit(Player player) {
         if (player.hasPermission("ultimatekits.cangive")) return true;
@@ -165,5 +175,32 @@ public class Methods {
         if (s == null || s.equals(""))
             return false;
         return s.matches("[-+]?\\d*\\.?\\d+");
+    }
+
+    public static void fillGlass(Gui gui) {
+
+        // fill center with glass
+        if (Settings.RAINBOW.getBoolean()) {
+            for (int row = 0; row < gui.getRows(); ++row) {
+                for (int col = row == 1 ? 2 : 3; col < (row == 1 ? 7 : 6); ++col) {
+                    gui.setItem(row, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
+                }
+            }
+        } else {
+            gui.setDefaultItem(GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial(CompatibleMaterial.GRAY_STAINED_GLASS_PANE)));
+        }
+
+        // decorate the edges
+        ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.BLUE_STAINED_GLASS_PANE));
+        ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial(CompatibleMaterial.LIGHT_BLUE_STAINED_GLASS_PANE));
+
+        // edges will be type 3
+        GuiUtils.mirrorFill(gui, 0, 2, true, true, glass3);
+        GuiUtils.mirrorFill(gui, 1, 1, false, true, glass3);
+
+        // decorate corners with type 2
+        GuiUtils.mirrorFill(gui, 0, 0, true, true, glass2);
+        GuiUtils.mirrorFill(gui, 1, 0, true, true, glass2);
+        GuiUtils.mirrorFill(gui, 0, 1, true, true, glass2);
     }
 }

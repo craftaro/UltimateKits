@@ -207,7 +207,9 @@ public class UltimateKits extends SongodaPlugin {
                 int delay = kitFile.getInt("Kits." + kitName + ".delay");
                 String title = kitFile.getString("Kits." + kitName + ".title");
                 String link = kitFile.getString("Kits." + kitName + ".link");
-                Material material = kitFile.contains("Kits." + kitName + ".displayItem") ? Material.valueOf(kitFile.getString("Kits." + kitName + ".displayItem")) : null;
+                CompatibleMaterial material = kitFile.contains("Kits." + kitName + ".displayItem")
+                        ? CompatibleMaterial.getMaterial(kitFile.getString("Kits." + kitName + ".displayItem"), CompatibleMaterial.DIAMOND_HELMET)
+                        : null;
                 boolean hidden = kitFile.getBoolean("Kits." + kitName + ".hidden");
                 double price = kitFile.getDouble("Kits." + kitName + ".price");
                 List<String> strContents = kitFile.getStringList("Kits." + kitName + ".items");
@@ -268,6 +270,13 @@ public class UltimateKits extends SongodaPlugin {
         if(HologramManager.isEnabled()) {
             Location location = getKitLocation(data, Settings.HOLOGRAM_LAYOUT.getStringList().size());
             HologramManager.removeHologram(location);
+        }
+    }
+
+    public void updateHologram(Kit kit) {
+        for (KitBlockData data : getKitManager().getKitLocations().values()) {
+            if (data.getKit() != kit) continue;
+            updateHologram(data);
         }
     }
 

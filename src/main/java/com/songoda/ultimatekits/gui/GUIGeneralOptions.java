@@ -1,141 +1,86 @@
 package com.songoda.ultimatekits.gui;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.gui.AnvilGui;
+import com.songoda.core.gui.Gui;
+import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.ServerVersion;
-import com.songoda.ultimatekits.utils.gui.AbstractAnvilGUI;
-import com.songoda.ultimatekits.utils.gui.AbstractGUI;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.event.inventory.ClickType;
 
-public class GUIGeneralOptions extends AbstractGUI {
+public class GUIGeneralOptions extends Gui {
 
-    private Kit kit;
-    private Player player;
-    private UltimateKits plugin;
-    private AbstractGUI back;
-
-    public GUIGeneralOptions(UltimateKits plugin, Player player, AbstractGUI back, Kit kit) {
-        super(player);
-        this.kit = kit;
-        this.player = player;
-        this.plugin = plugin;
-        this.back = back;
-        init("&8General Options for &a" + kit.getShowableName() + "&8.", 27);
-    }
-
-    @Override
-    protected void constructGUI() {
-        Methods.fillGlass(inventory);
-
-        inventory.setItem(0, Methods.getBackgroundGlass(true));
-        inventory.setItem(1, Methods.getBackgroundGlass(true));
-        inventory.setItem(2, Methods.getBackgroundGlass(false));
-        inventory.setItem(6, Methods.getBackgroundGlass(false));
-        inventory.setItem(7, Methods.getBackgroundGlass(true));
-        inventory.setItem(8, Methods.getBackgroundGlass(true));
-        inventory.setItem(9, Methods.getBackgroundGlass(true));
-        inventory.setItem(10, Methods.getBackgroundGlass(false));
-        inventory.setItem(16, Methods.getBackgroundGlass(false));
-        inventory.setItem(17, Methods.getBackgroundGlass(true));
-        inventory.setItem(18, Methods.getBackgroundGlass(true));
-        inventory.setItem(19, Methods.getBackgroundGlass(true));
-        inventory.setItem(20, Methods.getBackgroundGlass(false));
-        inventory.setItem(24, Methods.getBackgroundGlass(false));
-        inventory.setItem(25, Methods.getBackgroundGlass(true));
-        inventory.setItem(26, Methods.getBackgroundGlass(true));
-
-        createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage());
-
-        ItemStack back = ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
-        SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
-        back.setDurability((short) 3);
-        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back")
+    public GUIGeneralOptions(UltimateKits plugin, Player player, Kit kit, Gui back) {
+        super(back);
+        setRows(3);
+        setTitle(plugin.getLocale().getMessage("interface.kitoptions.title")
+                .processPlaceholder("kit", kit.getShowableName())
                 .getMessage());
-        back.setItemMeta(skull2Meta);
 
-        inventory.setItem(0, back);
+        // fill glass borders
+        Methods.fillGlass(this);
 
-        createButton(11, plugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Material.CLOCK : Material.valueOf("WATCH"), "&9&lChange Delay",
-                "&7Currently set to: &a" + kit.getDelay() + "&7.",
-                "",
-                "&7Use this to alter this kit delay.",
-                "",
-                "&7Use &6-1 &7to make this kit single",
-                "&7use only.");
+        // exit button
+        setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(CompatibleMaterial.OAK_DOOR),
+                plugin.getLocale().getMessage("interface.button.exit").getMessage()),
+                ClickType.LEFT,
+                event -> exit());
 
-        createButton(15, Material.TNT, "&c&lDestroy Kit",
-                "",
-                "&7Click this to destroy this kit.");
-    }
+        // back button
+        setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
+                plugin.getLocale().getMessage("interface.button.back").getMessage()),
+                ClickType.LEFT,
+                event -> event.player.closeInventory());
 
-    @Override
-    protected void registerClickables() {
-        registerClickable(0, (player, inventory, cursor, slot, type) -> back.init(back.getSetTitle(), back.getInventory().getSize()));
+        // edit delay
+        setButton(1, 2, GuiUtils.createButtonItem(CompatibleMaterial.CLOCK,
+                plugin.getLocale().getMessage("interface.kitoptions.delay").getMessage(),
+                plugin.getLocale().getMessage("interface.kitoptions.delaylore")
+                .processPlaceholder("delay", kit.getDelay()).getMessage().split("|")),
+                event -> {
+                    AnvilGui gui = new AnvilGui(event.player, this);
+                    gui.setTitle(plugin.getLocale().getMessage("interface.kitoptions.delayprompt").getMessage());
+                    gui.setAction(aevent -> {
+                        final String msg = gui.getInputText();
+                        final String num = msg != null ? msg.replaceAll("[^0-9]", "") : "";
+                        if (!num.isEmpty()) {
+                            try {
+                                kit.setDelay(Integer.parseInt(num));
+                                updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.delaylore")
+                                        .processPlaceholder("delay", kit.getDelay()).getMessage().split("|"));
+                                aevent.player.closeInventory();
+                            } catch (NumberFormatException e) {
+                            }
+                        }
+                        plugin.getLocale().getMessage("interface.kitoptions.delaynonumber").processPlaceholder("input", msg).sendPrefixedMessage(player);
+                    });
+                    guiManager.showGUI(event.player, gui);
+                });
 
-        registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());
-
-        registerClickable(15, ((player1, inventory1, cursor, slot, type) -> {
-            String name = kit.getName();
-            AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
-                String msg = event.getName();
-
-                if (msg.trim().equalsIgnoreCase(kit.getName())) {
-                    plugin.getKitManager().removeKit(kit);
-                    if (plugin.getHologram() != null)
-                        plugin.getHologram().update(kit);
-                    plugin.getLocale().newMessage("&cKit destroyed successfully.").sendPrefixedMessage(player);
-                } else {
-                    plugin.getLocale().newMessage("&cKit was not Destroyed.").sendPrefixedMessage(player);
-                }
-            });
-
-            gui.setOnClose((player2, inventory3) -> {
-                if (plugin.getKitManager().getKit(name) != null) {
-                    init(setTitle, inventory.getSize());
-                }
-            });
-
-            ItemStack item = new ItemStack(Material.BARRIER);
-            ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName("Enter \"" + kit.getName() + "\"");
-            item.setItemMeta(meta);
-
-            gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item);
-            gui.open();
-        }));
-
-        registerClickable(11, ((player1, inventory1, cursor, slot, type) -> {
-            AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
-                String msg = event.getName();
-
-                if (!Methods.isNumeric(msg)) {
-                    player.sendMessage(Methods.formatText("&a" + msg + " &8is not a number. Please do not include a &a$&8."));
-                } else {
-                    kit.setDelay(Integer.parseInt(msg));
-                }
-            });
-
-            gui.setOnClose((player2, inventory3) -> init(setTitle, inventory.getSize()));
-
-            ItemStack item = new ItemStack(Material.PAPER);
-            ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName("Delay In Seconds");
-            item.setItemMeta(meta);
-
-            gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item);
-            gui.open();
-        }));
-    }
-
-    @Override
-    protected void registerOnCloses() {
+        // delete
+        setButton(1, 6, GuiUtils.createButtonItem(CompatibleMaterial.TNT,
+                plugin.getLocale().getMessage("interface.kitoptions.destroy").getMessage(),
+                plugin.getLocale().getMessage("interface.kitoptions.destroylore").getMessage().split("|")),
+                event -> {
+                    AnvilGui gui = new AnvilGui(event.player, this);
+                    gui.setTitle(plugin.getLocale().getMessage("interface.kitoptions.destroyprompt").processPlaceholder("kit", kit.getName()).getMessage());
+                    gui.setAction(aevent -> {
+                        final String msg = gui.getInputText();
+                        if (msg != null && msg.trim().equalsIgnoreCase(kit.getName())) {
+                            plugin.getKitManager().removeKit(kit);
+                            plugin.updateHologram(kit);
+                            plugin.getLocale().newMessage("interface.kitoptions.destroyok").sendPrefixedMessage(player);
+                        } else {
+                            plugin.getLocale().newMessage("interface.kitoptions.destroycancel").sendPrefixedMessage(player);
+                        }
+                        aevent.player.closeInventory();
+                    });
+                    guiManager.showGUI(event.player, gui);
+                });
 
     }
 

@@ -389,9 +389,9 @@ public class GUIKitEditor extends AbstractGUI {
             registerClickable(9, true, ((player, inventory, cursor, slot, type) ->
                     new GUIGeneralOptions(plugin, player, this, kit)));
             registerClickable(12, true, ((player, inventory, cursor, slot, type) ->
-                    new GUIGUIOptions(plugin, player, this, kit)));
+                    new KitGuiOptionsGui(plugin, player, this, kit)));
             registerClickable(10, true, ((player, inventory, cursor, slot, type) ->
-                    new GUISellingOptions(plugin, player, this, kit)));
+                    guiManager.showGui(player, new KitSellingOptionsGui(plugin, player, kit, this));
             registerClickable(17, true, (player, inventory, cursor, slot, type) -> {
                 if (kit.getKitAnimation() == KitAnimation.NONE) {
                     kit.setKitAnimation(KitAnimation.ROULETTE);

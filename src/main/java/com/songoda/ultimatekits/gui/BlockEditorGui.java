@@ -7,17 +7,15 @@ import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
 import com.songoda.ultimatekits.settings.Settings;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
+import java.util.Arrays;
+import java.util.List;
 
 public class BlockEditorGui extends Gui {
 
     private final KitBlockData kitBlockData;
-    static final Random rand = new Random();
 
     public BlockEditorGui(UltimateKits plugin, KitBlockData kitBlockData) {
         this.kitBlockData = kitBlockData;
@@ -26,33 +24,8 @@ public class BlockEditorGui extends Gui {
                 .processPlaceholder("kit", kitBlockData.getKit().getShowableName())
                 .getMessage());
 
-        // fill center with glass
-        if (Settings.RAINBOW.getBoolean()) {
-            for (int col = 3; col < 6; ++col) {
-                for (int row = 0; row < rows; ++row) {
-                    setItem(row, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
-                }
-            }
-        } else {
-            ItemStack topBottom = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.GRAY_STAINED_GLASS_PANE));
-            for (int col = 3; col < 6; ++col) {
-                for (int row = 0; row < rows; ++row) {
-                    setItem(row, col, topBottom);
-                }
-            }
-        }
-
-        // decorate the edges
-        ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.BLUE_STAINED_GLASS_PANE));
-        ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial(CompatibleMaterial.LIGHT_BLUE_STAINED_GLASS_PANE));
-
-        // edges will be type 3
-        setDefaultItem(glass3);
-
-        // decorate corners with type 2
-        GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
-        GuiUtils.mirrorFill(this, 1, 0, true, true, glass2);
-        GuiUtils.mirrorFill(this, 0, 1, true, true, glass2);
+        // fill glass borders
+        Methods.fillGlass(this);
 
         // exit button
         setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(CompatibleMaterial.OAK_DOOR),
@@ -87,7 +60,7 @@ public class BlockEditorGui extends Gui {
                 plugin.getLocale().getMessage("interface.kitblock.decor").getMessage(),
                 plugin.getLocale().getMessage("interface.kitblock.decorlore").getMessage().split("|")),
                 ClickType.LEFT,
-                event -> event.manager.showGUI(event.player, new DecorOptionsGui(plugin, kitBlockData, this)));
+                event -> event.manager.showGUI(event.player, new KitDecorOptionsGui(plugin, kitBlockData, this)));
 
         // edit
         setButton(1, 6, GuiUtils.createButtonItem(CompatibleMaterial.DIAMOND_PICKAXE,

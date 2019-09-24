@@ -12,9 +12,9 @@ import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
-public class GUIGeneralOptions extends Gui {
+public class KitGeneralOptionsGui extends Gui {
 
-    public GUIGeneralOptions(UltimateKits plugin, Player player, Kit kit, Gui back) {
+    public KitGeneralOptionsGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
         super(back);
         setRows(3);
         setTitle(plugin.getLocale().getMessage("interface.kitoptions.title")

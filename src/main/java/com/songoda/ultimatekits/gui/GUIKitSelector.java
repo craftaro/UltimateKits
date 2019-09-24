@@ -1,25 +1,22 @@
 package com.songoda.ultimatekits.gui;
 
+import com.songoda.core.gui.Gui;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.ServerVersion;
-import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class GUIKitSelector extends AbstractGUI {
+public class GUIKitSelector extends Gui {
 
     private Player player;
     private UltimateKits plugin;
@@ -33,10 +30,11 @@ public class GUIKitSelector extends AbstractGUI {
     private boolean glassless;
 
     public GUIKitSelector(UltimateKits plugin, Player player) {
-        super(player);
         this.player = player;
         this.plugin = plugin;
 
+        setTitle(plugin.getLocale().getMessage("interface.selector.title").getMessage());
+        
         kitList = new ArrayList<>();
 
         setUpPage();
@@ -61,8 +59,6 @@ public class GUIKitSelector extends AbstractGUI {
                 max = max + 9;
         }
         if (glassless) max -= 18;
-
-        init(plugin.getLocale().getMessage("interface.selector.title").getMessage(), max);
 
         timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             if (inventory.getViewers().isEmpty()) return;
@@ -234,7 +230,7 @@ public class GUIKitSelector extends AbstractGUI {
 
 
                 if (type == ClickType.LEFT) {
-                    kit.display(player, this);
+                    kit.display(player, guiManager, this);
                     return;
                 }
 

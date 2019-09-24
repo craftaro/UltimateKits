@@ -29,8 +29,7 @@ public class DataManager extends DataManagerAbstract {
                     "displayItems = ?, particles = ?, itemOverride = ? " +
                     "WHERE world = ? AND x = ? AND y = ? AND z = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateData)) {
-                for (int i = 0; i < blockData.size(); i++) {
-                    KitBlockData data = blockData.get(i);
+                for (KitBlockData data : blockData.values()) {
                     if (data == null) continue;
                     statement.setString(1, data.getType().toString());
                     statement.setString(2, data.getKit().getName());
@@ -131,6 +130,7 @@ public class DataManager extends DataManagerAbstract {
                                     location, type, holograms, particles, displayItems, itemOverride);
                     blockData.put(location, kitBlockData);
                 }
+                result.close();
             }
 
             this.sync(() -> callback.accept(blockData));

@@ -7,8 +7,8 @@ import java.util.*;
 
 public final class KitManager {
 
-    private Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
-    private List<Kit> registeredKits = new LinkedList<>();
+    private final Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
+    private final List<Kit> registeredKits = new LinkedList<>();
 
     public boolean addKit(Kit kit) {
         if (kit == null) return false;
@@ -35,8 +35,10 @@ public final class KitManager {
     }
 
     public void addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
-        KitBlockData kitBlockData = kitsAtLocations.put(roundLocation(location), new KitBlockData(kit, location, type, hologram, particles, items, itemOverride));
-        UltimateKits.getInstance().updateHologram(kitBlockData);
+        KitBlockData data = new KitBlockData(kit, location, type, hologram, particles, items, itemOverride);
+        kitsAtLocations.put(roundLocation(location), data);
+        UltimateKits.getInstance().getDataManager().createBlockData(data);
+        UltimateKits.getInstance().updateHologram(data);
     }
 
     public Kit removeKitFromLocation(Location location) {
@@ -69,7 +71,8 @@ public final class KitManager {
     }
 
     public void setKitLocations(Map<Location, KitBlockData> kits) {
-        kitsAtLocations = kits;
+        kitsAtLocations.clear();
+        kitsAtLocations.putAll(kits);
     }
 
     public void clearKits() {

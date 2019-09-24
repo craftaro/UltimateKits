@@ -387,7 +387,7 @@ public class GUIKitEditor extends AbstractGUI {
 
         if (!isInInventory) {
             registerClickable(9, true, ((player, inventory, cursor, slot, type) ->
-                    new GUIGeneralOptions(plugin, player, this, kit)));
+                    new KitGeneralOptionsGui(plugin, player, this, kit)));
             registerClickable(12, true, ((player, inventory, cursor, slot, type) ->
                     new KitGuiOptionsGui(plugin, player, this, kit)));
             registerClickable(10, true, ((player, inventory, cursor, slot, type) ->

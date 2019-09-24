@@ -7,28 +7,45 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.database.DataMigrationManager;
 import com.songoda.core.database.DatabaseConnector;
+import com.songoda.core.database.MySQLConnector;
+import com.songoda.core.database.SQLiteConnector;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
 import com.songoda.core.utils.TextUtils;
-import com.songoda.ultimatekits.commands.*;
+import com.songoda.ultimatekits.commands.CommandCreatekit;
+import com.songoda.ultimatekits.commands.CommandEdit;
+import com.songoda.ultimatekits.commands.CommandKey;
+import com.songoda.ultimatekits.commands.CommandKit;
+import com.songoda.ultimatekits.commands.CommandPreviewKit;
+import com.songoda.ultimatekits.commands.CommandReload;
+import com.songoda.ultimatekits.commands.CommandRemove;
+import com.songoda.ultimatekits.commands.CommandSet;
+import com.songoda.ultimatekits.commands.CommandSettings;
+import com.songoda.ultimatekits.commands.CommandUltimateKits;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.database.DataManager;
-import com.songoda.ultimatekits.database.MySQLConnector;
-import com.songoda.ultimatekits.database.SQLiteConnector;
 import com.songoda.ultimatekits.database.migrations._1_InitialMigration;
+import com.songoda.ultimatekits.database.migrations._2_DuplicateMigration;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
-import com.songoda.ultimatekits.kit.*;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitAnimation;
+import com.songoda.ultimatekits.kit.KitBlockData;
+import com.songoda.ultimatekits.kit.KitItem;
+import com.songoda.ultimatekits.kit.KitManager;
+import com.songoda.ultimatekits.kit.KitType;
 import com.songoda.ultimatekits.listeners.BlockListeners;
 import com.songoda.ultimatekits.listeners.ChatListeners;
 import com.songoda.ultimatekits.listeners.EntityListeners;
 import com.songoda.ultimatekits.listeners.InteractListeners;
-import com.songoda.ultimatekits.utils.*;
 import com.songoda.ultimatekits.settings.Settings;
+import com.songoda.ultimatekits.utils.ItemSerializer;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
@@ -37,7 +54,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import org.bukkit.ChatColor;
 
 public class UltimateKits extends SongodaPlugin {
     private static UltimateKits INSTANCE;
@@ -147,7 +163,8 @@ public class UltimateKits extends SongodaPlugin {
 
             this.dataManager = new DataManager(this.databaseConnector, this);
             this.dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager,
-                    new _1_InitialMigration());
+                    new _1_InitialMigration(),
+                    new _2_DuplicateMigration(this.databaseConnector instanceof SQLiteConnector));
             this.dataMigrationManager.runMigrations();
 
         } catch (Exception ex) {

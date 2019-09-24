@@ -1,7 +1,7 @@
 name: UltimateKits
 main: com.songoda.ultimatekits.UltimateKits
 version: maven-version-number
-softdepend: [HolographicDisplays, Holograms, CMI, PlaceholderAPI, Vault, UltimateCore, Essentials, MiniKitPvP]
+softdepend: [HolographicDisplays, Holograms, CMI, Vault, PlayerPoints, Reserve, PlaceholderAPI, UltimateCore, Essentials, MiniKitPvP]
 description: View a kit before you purchase it!
 author: Songoda
 api-version: 1.13

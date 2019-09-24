@@ -40,7 +40,7 @@ public class DisplayItemHandler {
 
         Kit kit = kitBlockData.getKit();
 
-        if (kit.getReadableContents(null, false, false, false) == null) return;
+        if (kit == null) return;
 
         List<ItemStack> list = kit.getReadableContents(null, false, false, false);
         if (list.isEmpty()) return;

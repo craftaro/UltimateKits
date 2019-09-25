@@ -256,8 +256,9 @@ public class UltimateKits extends SongodaPlugin {
                     boolean itemOverride = dataFile.getBoolean("BlockData." + key + ".itemOverride");
 
                     if (kit == null) dataFile.set("BlockData." + key, null);
-                    else
-                        kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride);
+                    else {
+                        updateHologram(kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride));
+                    }
                 }
             }
 

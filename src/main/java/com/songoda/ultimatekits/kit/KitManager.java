@@ -29,16 +29,16 @@ public final class KitManager {
         }
     }
 
-    public void addKitToLocation(Kit kit, Location location) {
+    public KitBlockData addKitToLocation(Kit kit, Location location) {
         KitBlockData data = new KitBlockData(kit, location);
         kitsAtLocations.put(roundLocation(location), data);
+        return data;
     }
 
-    public void addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
+    public KitBlockData addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
         KitBlockData data = new KitBlockData(kit, location, type, hologram, particles, items, itemOverride);
         kitsAtLocations.put(roundLocation(location), data);
-        UltimateKits.getInstance().getDataManager().createBlockData(data);
-        UltimateKits.getInstance().updateHologram(data);
+        return data;
     }
 
     public Kit removeKitFromLocation(Location location) {

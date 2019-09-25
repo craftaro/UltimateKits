@@ -65,11 +65,16 @@ public class _2_DuplicateMigration extends DataMigration {
                     statement.setInt(8, blockData.x);
                     statement.setInt(9, blockData.y);
                     statement.setInt(10, blockData.z);
-                    statement.executeUpdate();
+                    statement.addBatch();
                 }
+                statement.executeBatch();
             }
             connection.commit();
             connection.setAutoCommit(true);
+            // free up disk space (sqlite command)
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate("VACUUM");
+            }
         }
     }
     

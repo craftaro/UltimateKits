@@ -3,6 +3,7 @@ package com.songoda.ultimatekits.commands;
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitBlockData;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,16 +26,18 @@ public class CommandSet extends AbstractCommand {
             return ReturnType.FAILURE;
         }
         Player player = (Player) sender;
-        String kit = args[0].toLowerCase();
-        if (instance.getKitManager().getKit(kit) == null) {
+        Kit kit = instance.getKitManager().getKit(args[0].toLowerCase());
+        if (kit == null) {
             instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         Block b = player.getTargetBlock(null, 200);
-        instance.getKitManager().addKitToLocation(instance.getKitManager().getKit(kit), b.getLocation());
-        instance.getLocale().newMessage("&8Kit &a" + kit + " &8set to: &a" + b.getType().toString() + "&8.")
+        KitBlockData data = instance.getKitManager().addKitToLocation(kit, b.getLocation());
+        UltimateKits.getInstance().getDataManager().createBlockData(data);
+        instance.getLocale().newMessage("&8Kit &a" + kit.getName() + " &8set to: &a" + b.getType().toString() + "&8.")
                 .sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
+
     }
 
     @Override

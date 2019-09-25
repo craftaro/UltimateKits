@@ -3,6 +3,7 @@ package com.songoda.ultimatekits.database;
 import com.songoda.core.database.DataManagerAbstract;
 import com.songoda.core.database.DatabaseConnector;
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
 import org.bukkit.Bukkit;
@@ -30,7 +31,7 @@ public class DataManager extends DataManagerAbstract {
                     "WHERE world = ? AND x = ? AND y = ? AND z = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateData)) {
                 for (KitBlockData data : blockData.values()) {
-                    if (data == null) continue;
+                    if (data == null || data.getWorld() == null) continue;
                     statement.setString(1, data.getType().toString());
                     statement.setString(2, data.getKit().getName());
                     statement.setBoolean(3, data.showHologram());
@@ -41,7 +42,6 @@ public class DataManager extends DataManagerAbstract {
                     statement.setInt(8, data.getX());
                     statement.setInt(9, data.getY());
                     statement.setInt(10, data.getZ());
-                    statement.executeUpdate();
                     statement.addBatch();
                 }
 
@@ -51,6 +51,7 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void updateBlockData(KitBlockData blockData) {
+        if (blockData.getWorld() == null) return;
         this.async(() -> this.databaseConnector.connect(connection -> {
             String updateData = "UPDATE " + this.getTablePrefix() + "blockdata SET type = ?, kit = ?, holograms = ?, " +
                     "displayItems = ?, particles = ?, itemOverride = ? " +
@@ -72,6 +73,7 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void createBlockData(KitBlockData blockData) {
+        if (blockData.getWorld() == null) return;
         this.async(() -> this.databaseConnector.connect(connection -> {
             String createData ="INSERT INTO " + this.getTablePrefix() + "blockdata (" +
                     "type, kit, holograms, displayItems, particles, itemOverride, world, x, y, z)" +
@@ -113,22 +115,24 @@ public class DataManager extends DataManagerAbstract {
             try (Statement statement = connection.createStatement()) {
                 ResultSet result = statement.executeQuery(selectData);
                 while (result.next()) {
-                    KitType type = KitType.valueOf(result.getString("type"));
-                    String kit = result.getString("kit");
+
+                    World world = Bukkit.getWorld(result.getString("world"));
+                    if (world == null) continue;
+
+                    Kit kit = UltimateKits.getInstance().getKitManager().getKit(result.getString("kit"));
+                    KitType type = KitType.getKitType(result.getString("type"));
+                    if (kit == null || type == null) continue;
+
                     boolean holograms = result.getBoolean("holograms");
                     boolean displayItems = result.getBoolean("displayItems");
                     boolean particles = result.getBoolean("particles");
                     boolean itemOverride = result.getBoolean("itemOverride");
-                    World world = Bukkit.getWorld(result.getString("world"));
                     int x = result.getInt("x");
                     int y = result.getInt("y");
                     int z = result.getInt("z");
                     Location location = new Location(world, x, y, z);
 
-                    KitBlockData kitBlockData =
-                            new KitBlockData(UltimateKits.getInstance().getKitManager().getKit(kit),
-                                    location, type, holograms, particles, displayItems, itemOverride);
-                    blockData.put(location, kitBlockData);
+                    blockData.put(location, new KitBlockData(kit, location, type, holograms, particles, displayItems, itemOverride));
                 }
                 result.close();
             }

@@ -1,8 +1,6 @@
 package com.songoda.ultimatekits.database.migrations;
 
-import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.database.DataMigration;
-import com.songoda.ultimatekits.database.MySQLConnector;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,8 +14,8 @@ public class _1_InitialMigration extends DataMigration {
 
     @Override
     public void migrate(Connection connection, String tablePrefix) throws SQLException {
-        String autoIncrement = UltimateKits.getInstance().getDatabaseConnector() instanceof
-                MySQLConnector ? " AUTO_INCREMENT" : "";
+        //String autoIncrement = UltimateKits.getInstance().getDatabaseConnector() instanceof
+        //        MySQLConnector ? " AUTO_INCREMENT" : "";
 
         // Create plugin settings table
         try (Statement statement = connection.createStatement()) {
@@ -28,10 +26,10 @@ public class _1_InitialMigration extends DataMigration {
                     "displayItems BOOLEAN NOT NULL," +
                     "particles BOOLEAN NOT NULL," +
                     "itemOverride BOOLEAN NOT NULL," +
-                    "world TEXT NOT NULL," +
-                    "x INTEGER NOT NULL," +
-                    "y INTEGER NOT NULL," +
-                    "z INTEGER NOT NULL " +
+                    "world TEXT NOT NULL," + // PK
+                    "x INTEGER NOT NULL," + // PK
+                    "y INTEGER NOT NULL," + // PK
+                    "z INTEGER NOT NULL " + // PK
                     ")");
         }
     }

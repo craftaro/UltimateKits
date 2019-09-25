@@ -1,6 +1,7 @@
 package com.songoda.ultimatekits.database;
 
 import com.songoda.ultimatekits.database.migrations._1_InitialMigration;
+import com.songoda.ultimatekits.database.migrations._2_DuplicateMigration;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,16 +12,17 @@ import java.util.stream.Collectors;
 
 public class DataMigrationManager {
 
-    private List<DataMigration> migrations;
-    private DatabaseConnector databaseConnector;
-    private DataManager dataManager;
+    private final List<DataMigration> migrations;
+    private final DatabaseConnector databaseConnector;
+    private final DataManager dataManager;
 
     public DataMigrationManager(DatabaseConnector databaseConnector, DataManager dataManager) {
         this.databaseConnector = databaseConnector;
         this.dataManager = dataManager;
 
         this.migrations = Arrays.asList(
-                new _1_InitialMigration()
+                new _1_InitialMigration(),
+                new _2_DuplicateMigration(databaseConnector instanceof SQLiteConnector)
         );
     }
 

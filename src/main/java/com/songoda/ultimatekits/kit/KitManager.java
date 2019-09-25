@@ -1,7 +1,6 @@
 package com.songoda.ultimatekits.kit;
 
 import com.songoda.ultimatekits.UltimateKits;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.*;
@@ -9,7 +8,7 @@ import java.util.*;
 public final class KitManager {
 
     private Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
-    private List<Kit> registeredKits = new LinkedList<>();
+    private final List<Kit> registeredKits = new LinkedList<>();
 
     public boolean addKit(Kit kit) {
         if (kit == null) return false;
@@ -30,15 +29,18 @@ public final class KitManager {
         }
     }
 
-    public void addKitToLocation(Kit kit, Location location) {
+    public KitBlockData addKitToLocation(Kit kit, Location location) {
         KitBlockData data = new KitBlockData(kit, location);
         kitsAtLocations.put(roundLocation(location), data);
+        return data;
     }
 
-    public void addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
-        KitBlockData kitBlockData = kitsAtLocations.put(roundLocation(location), new KitBlockData(kit, location, type, hologram, particles, items, itemOverride));
+    public KitBlockData addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
+        KitBlockData data = new KitBlockData(kit, location, type, hologram, particles, items, itemOverride);
+        kitsAtLocations.put(roundLocation(location), data);
         if (UltimateKits.getInstance().getHologram() != null)
-            UltimateKits.getInstance().getHologram().update(kitBlockData);
+            UltimateKits.getInstance().getHologram().update(data);
+        return data;
     }
 
     public Kit removeKitFromLocation(Location location) {

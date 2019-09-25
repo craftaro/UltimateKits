@@ -38,9 +38,8 @@ public class DataManager {
                     "displayItems = ?, particles = ?, itemOverride = ? " +
                     "WHERE world = ? AND x = ? AND y = ? AND z = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateData)) {
-                for (int i = 0; i < blockData.size(); i++) {
-                    KitBlockData data = blockData.get(i);
-                    if (data == null) continue;
+                for (KitBlockData data : blockData.values()) {
+                    if (data == null || data.getWorld() == null) continue;
                     statement.setString(1, data.getType().toString());
                     statement.setString(2, data.getKit().getName());
                     statement.setBoolean(3, data.showHologram());
@@ -51,7 +50,6 @@ public class DataManager {
                     statement.setInt(8, data.getX());
                     statement.setInt(9, data.getY());
                     statement.setInt(10, data.getZ());
-                    statement.executeUpdate();
                     statement.addBatch();
                 }
 
@@ -61,6 +59,7 @@ public class DataManager {
     }
 
     public void updateBlockData(KitBlockData blockData) {
+        if (blockData.getWorld() == null) return;
         this.async(() -> this.databaseConnector.connect(connection -> {
             String updateData = "UPDATE " + this.getTablePrefix() + "blockdata SET type = ?, kit = ?, holograms = ?, " +
                     "displayItems = ?, particles = ?, itemOverride = ? " +
@@ -82,6 +81,7 @@ public class DataManager {
     }
 
     public void createBlockData(KitBlockData blockData) {
+        if (blockData.getWorld() == null) return;
         this.async(() -> this.databaseConnector.connect(connection -> {
             String createData ="INSERT INTO " + this.getTablePrefix() + "blockdata (" +
                     "type, kit, holograms, displayItems, particles, itemOverride, world, x, y, z)" +
@@ -123,13 +123,14 @@ public class DataManager {
             try (Statement statement = connection.createStatement()) {
                 ResultSet result = statement.executeQuery(selectData);
                 while (result.next()) {
+                    World world = Bukkit.getWorld(result.getString("world"));
+                    if (world == null) continue;
                     KitType type = KitType.valueOf(result.getString("type"));
                     String kit = result.getString("kit");
                     boolean holograms = result.getBoolean("holograms");
                     boolean displayItems = result.getBoolean("displayItems");
                     boolean particles = result.getBoolean("particles");
                     boolean itemOverride = result.getBoolean("itemOverride");
-                    World world = Bukkit.getWorld(result.getString("world"));
                     int x = result.getInt("x");
                     int y = result.getInt("y");
                     int z = result.getInt("z");

@@ -186,6 +186,7 @@ public class UltimateKits extends JavaPlugin {
     /*
      * On plugin disable.
      */
+    @Override
     public void onDisable() {
         saveToFile();
         dataFile.saveConfig();

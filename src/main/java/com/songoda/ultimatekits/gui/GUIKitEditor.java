@@ -437,6 +437,7 @@ public class GUIKitEditor extends AbstractGUI {
             }));
 
             registerClickable(13, true, ((player, inventory, cursor, slot, type) -> {
+                // TODO: this should be a chat listener, not anvil
                 saveKit(player, this.inventory, true);
                 AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
                     String msg = event.getName();

@@ -1,15 +1,19 @@
 package com.songoda.ultimatekits.gui;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
+import com.songoda.core.gui.AnvilGui;
+import com.songoda.core.gui.Gui;
+import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitAnimation;
 import com.songoda.ultimatekits.kit.KitItem;
+import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
 import com.songoda.ultimatekits.utils.gui.AbstractAnvilGUI;
-import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,77 +22,87 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class GUIKitEditor extends AbstractGUI {
+public class GUIKitEditor extends Gui {
 
     private UltimateKits plugin;
     private Kit kit;
-    private AbstractGUI back;
+    private Gui back;
+    private Player player;
 
     private ItemStack[] inventoryItems;
 
     private boolean isInFuction = false;
     private boolean isInInventory = false;
 
-
-
-    private ItemStack toReplace;
-    private int slot;
-
-    private String title;
-
-    public GUIKitEditor(UltimateKits plugin, Player player, Kit kit, AbstractGUI back, ItemStack toReplace, int slot) {
-        super(player);
+    public GUIKitEditor(UltimateKits plugin, Player player, Kit kit, Gui back) {
         this.plugin = plugin;
         this.kit = kit;
         this.back = back;
+        this.player = player;
 
-        String name = kit.getShowableName();
-        title = "&8You are editing kit: &9" + name + "&8.";
+        setDefaultItem(null);
+        setRows(6);
+        setTitle(plugin.getLocale().getMessage("interface.kiteditor.title")
+                .processPlaceholder("name", kit.getShowableName())
+                .getMessage());
 
-        this.toReplace = toReplace;
-        this.slot = slot;
-
-        init(title, 54);
         saveItemsInstance();
         getInvItems();
+
+        setOnClose((event) -> {
+            this.saveKit(player, inventory, false);
+            if (!isInInventory && this.inventoryItems.length != 0) {
+                player.getInventory().setContents(this.inventoryItems);
+                player.updateInventory();
+            }
+
+            CompatibleSound.ENTITY_VILLAGER_YES.play(player);
+        });
     }
 
-    @Override
-    protected void constructGUI() {
-        inventory.clear();
-        player.updateInventory();
+    private void paint() {
+        ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
+        ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial());
+        ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
 
-        createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage());
+        GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
+        GuiUtils.mirrorFill(this, 0, 1, true, true, glass2);
+        GuiUtils.mirrorFill(this, 0, 2, true, true, glass3);
+        GuiUtils.mirrorFill(this, 0, 3, false, true, glass1);
+        GuiUtils.mirrorFill(this, 1, 0, true, true, glass2);
 
-        ItemStack back = ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
-        SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
-        back.setDurability((short) 3);
-        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back").getMessage());
-        back.setItemMeta(skull2Meta);
+        // exit button
+        setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(CompatibleMaterial.OAK_DOOR),
+                plugin.getLocale().getMessage("interface.button.exit").getMessage()),
+                ClickType.LEFT,
+                event -> exit());
+
+        // back button
+        if (this.back != null)
+            setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
+                    plugin.getLocale().getMessage("interface.button.back").getMessage()),
+                    ClickType.LEFT,
+                    event -> event.player.closeInventory());
 
         ItemStack it = new ItemStack(Material.CHEST, 1);
         ItemMeta itmeta = it.getItemMeta();
-        itmeta.setDisplayName(Methods.formatText("&5&l" + kit.getName()));
+        itmeta.setDisplayName(plugin.getLocale().newMessage("&5&l" + kit.getName()).getMessage());
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(Methods.formatText("&fPermissions:"));
-        lore.add(Methods.formatText("&7ultimatekits.kit." + kit.getName().toLowerCase()));
+        lore.add(plugin.getLocale().newMessage("&&fPermissions:").getMessage());
+        lore.add(plugin.getLocale().newMessage("&&7ultimatekits.kit." + kit.getName().toLowerCase()).getMessage());
         itmeta.setLore(lore);
         it.setItemMeta(itmeta);
 
-        ItemStack glass = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.GRAY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1);
+        ItemStack glass = CompatibleMaterial.GRAY_STAINED_GLASS_PANE.getItem();
         ItemMeta glassmeta = glass.getItemMeta();
-        glassmeta.setDisplayName(Methods.formatText("&" + kit.getName().replaceAll(".(?!$)", "$0&")));
+        glassmeta.setDisplayName(plugin.getLocale().newMessage("&&" + kit.getName().replaceAll(".(?!$)", "$0&")).getMessage());
         glass.setItemMeta(glassmeta);
 
-        if (this.back != null)
-            inventory.setItem(0, back);
         inventory.setItem(4, it);
 
         int num = 10;
@@ -117,23 +131,7 @@ public class GUIKitEditor extends AbstractGUI {
             itemLore.add(TextUtils.convertToInvisibleLoreString("----"));
             itemLore.add(Methods.formatText("&7" + plugin.getLocale().getMessage("general.type.chance") + ": &6" + item.getChance() + "%"));
             if (isInFuction) {
-                itemLore.add(Methods.formatText("&7Display Item: &6" + (item.getDisplayItem() == null ? "" : item.getDisplayItem().name())));
-                itemLore.add(Methods.formatText("&7Display Name: &6" + Methods.formatText(item.getDisplayName())));
-                itemLore.add(Methods.formatText("&7Display Lore: &6" + Methods.formatText(item.getDisplayLore())));
-            }
-            itemLore.add("");
-            if (isInFuction) {
-                itemLore.add(Methods.formatText("&7Left-Click: &6To set a display item."));
-                itemLore.add(Methods.formatText("&7Middle-Click: &6To set a display name."));
-                itemLore.add(Methods.formatText("&7Right-Click: &6To set display lore."));
-                itemLore.add(Methods.formatText("&7Shift-Click: &6To set chance."));
-                itemLore.add("");
-                itemLore.add(Methods.formatText("&7Display options only show up on display."));
-                itemLore.add(Methods.formatText("&7This can be useful if you want to explain"));
-                itemLore.add(Methods.formatText("&7What an item does without putting it in the"));
-                itemLore.add(Methods.formatText("&7permanent lore."));
-                itemLore.add("");
-                itemLore.add(Methods.formatText("&6Leave function mode to move items."));
+                itemLore.add(plugin.getLocale().getMessage("interface.kiteditor.itemfunctionlore").getMessage().split("|"));
             }
             meta.setLore(itemLore);
             is.setItemMeta(meta);
@@ -165,68 +163,52 @@ public class GUIKitEditor extends AbstractGUI {
             toReplace = null;
         }
 
-        inventory.setItem(3, Methods.getGlass());
-        inventory.setItem(5, Methods.getGlass());
-
-        inventory.setItem(48, Methods.getGlass());
-        inventory.setItem(50, Methods.getGlass());
-
-        if (this.back == null)
-            inventory.setItem(0, Methods.getBackgroundGlass(true));
-        inventory.setItem(1, Methods.getBackgroundGlass(true));
-        inventory.setItem(9, Methods.getBackgroundGlass(true));
-
-        inventory.setItem(7, Methods.getBackgroundGlass(true));
-        inventory.setItem(17, Methods.getBackgroundGlass(true));
-
-        inventory.setItem(54 - 18, Methods.getBackgroundGlass(true));
-        inventory.setItem(54 - 9, Methods.getBackgroundGlass(true));
-        inventory.setItem(54 - 8, Methods.getBackgroundGlass(true));
-
-        inventory.setItem(54 - 10, Methods.getBackgroundGlass(true));
-        inventory.setItem(54 - 2, Methods.getBackgroundGlass(true));
-        inventory.setItem(54 - 1, Methods.getBackgroundGlass(true));
-
-        inventory.setItem(2, Methods.getBackgroundGlass(false));
-        inventory.setItem(6, Methods.getBackgroundGlass(false));
-        inventory.setItem(54 - 7, Methods.getBackgroundGlass(false));
-        inventory.setItem(54 - 3, Methods.getBackgroundGlass(false));
-
         updateInvButton();
 
     }
 
 
     private void updateInvButton() {
+        ItemStack item = GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
+                plugin.getLocale().getMessage("interface.kiteditor.itemediting").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.itemeditinglore").getMessage());
+
         if (!isInFuction) {
-            createButton(48, Material.PAPER, "&6Switch To Item Editing",
-                    "&7Click to enable",
-                    "&7item editing.");
-            addDraggable(new Range(10, 43, null, true), true);
-            addDraggable(new Range(17, 17, null, true), false);
-            addDraggable(new Range(36, 36, null, true), false);
-            registerClickables();
+            setUnlockedRange(1, 1, 1, 7);
+            setUnlockedRange(2, 0, 3, 8);
+            setUnlockedRange(4, 1, 4, 7);
         } else {
-            createButton(48, Material.PAPER, "&6Switch To Item Moving",
-                    "&7Click to switch back",
-                    "&7to item moving.");
-            removeDraggable();
-            registerClickables();
+            unlockedCells.clear();
+            item = GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
+                    plugin.getLocale().getMessage("interface.kiteditor.itemmoving").getMessage(),
+                    plugin.getLocale().getMessage("interface.kiteditor.itemmovinglore").getMessage());
         }
 
-        if (!isInInventory) {
-            createButton(50, Material.ITEM_FRAME, "&6Switch To Your Inventory",
-                    "&7Click to switch to",
-                    "&7your inventory.");
-            cancelBottom = true;
-            registerClickables();
-        } else {
-            createButton(50, Material.ITEM_FRAME, "&6Switch To Kit Functions",
-                    "&7Click to switch back",
-                    "&7to the kit functions.");
-            cancelBottom = false;
-            registerClickables();
-        }
+        setButton(48, item,
+                (event) -> {
+                    isInFuction = !isInFuction;
+                    saveKit(player, inventory, true);
+                    paint();
+                });
+
+        ItemStack item2 = GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
+                plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctions").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctionslore").getMessage().split("|"));
+
+        setAcceptsItems(!isInInventory);
+
+        setButton(50, item2,
+                (event) -> {
+                    if (!isInInventory) {
+                        player.getInventory().setContents(inventoryItems);
+                        isInInventory = true;
+                        player.updateInventory();
+                    } else {
+                        saveItemsInstance();
+                        getInvItems();
+                    }
+                    updateInvButton();
+                });
     }
 
     private void saveItemsInstance() {
@@ -237,28 +219,96 @@ public class GUIKitEditor extends AbstractGUI {
     private void getInvItems() {
         isInInventory = false;
 
-        createButton(9, player.getInventory(), plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.REDSTONE_TORCH : Material.valueOf("REDSTONE_TORCH_ON"), "&6General Options",
-                "&7Click to edit adjust",
-                "&7general options.");
+        setButton(9, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE_TORCH,
+                plugin.getLocale().getMessage("interface.kiteditor.generaloptions").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").getMessage().split("|")),
+                (event) -> guiManager.showGUI(player, new KitGeneralOptionsGui(plugin, player, kit, this)));
 
-        createButton(10, player.getInventory(), Material.EMERALD, "&9Selling Options",
-                "&7Click to edit adjust",
-                "&7selling options.");
+        setButton(10, GuiUtils.createButtonItem(CompatibleMaterial.EMERALD,
+                plugin.getLocale().getMessage("interface.kiteditor.sellingoptions").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.sellingoptionslore").getMessage().split("|")),
+                (event) -> guiManager.showGUI(player, new KitSellingOptionsGui(plugin, player, kit, this)));
 
-        createButton(12, player.getInventory(), Material.ITEM_FRAME, "&5GUI Options",
-                "&7Click to edit GUI options",
-                "&7for this kit.");
+        setButton(12, GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
+                plugin.getLocale().getMessage("interface.kiteditor.guioptions").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.guioptionslore").getMessage().split("|")),
+                (event) -> guiManager.showGUI(player, new KitGuiOptionsGui(plugin, player, kit, back)));
 
-        createButton(13, player.getInventory(), Material.PAPER, "&fAdd Command",
-                "&7Click to add a command",
-                "&7to this kit.");
+        setButton(13, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
+                plugin.getLocale().getMessage("interface.kiteditor.addcommand").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.addcommandlore").getMessage().split("|")),
+                (event) -> {
+                // TODO: this should be a chat listener, not anvil
+                    AnvilGui gui = new AnvilGui(player, this);
+                    gui.setTitle(plugin.getLocale().getMessage("interface.kiteditor.addcommandpromp").getMessage());
+                    gui.setAction(aevent -> {
+                        String msg = gui.getInputText();
 
-        createButton(14, player.getInventory(), plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.SUNFLOWER : Material.valueOf("DOUBLE_PLANT"), "&6Add Economy",
-                "&7Click to add money",
-                "&7to this kit.");
+                        ItemStack parseStack = new ItemStack(Material.PAPER, 1);
+                        ItemMeta meta = parseStack.getItemMeta();
 
-        createButton(17, player.getInventory(), Material.CHEST, "&6Kit Animation",
-                "&7Currently: &6" + kit.getKitAnimation().name());
+                        ArrayList<String> lore = new ArrayList<>();
+
+                        int index = 0;
+                        while (index < msg.length()) {
+                            lore.add(ChatColor.GREEN + "/" + msg.substring(index, Math.min(index + 30, msg.length())));
+                            index += 30;
+                        }
+                        meta.setLore(lore);
+                        meta.setDisplayName(plugin.getLocale().getMessage("general.type.command").getMessage());
+                        parseStack.setItemMeta(meta);
+
+                        plugin.getLocale().newMessage(plugin.getLocale().getMessage("interface.kiteditor.addcommandok")
+                                .processPlaceholder("command", msg).getMessage())
+                                .sendPrefixedMessage(player);
+
+                        this.inventory.addItem(parseStack);
+
+                    });
+                });
+
+        setButton(14, GuiUtils.createButtonItem(CompatibleMaterial.SUNFLOWER,
+                plugin.getLocale().getMessage("interface.kiteditor.addeconomy").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.addeconomylore").getMessage().split("|")),
+                (event) -> {
+                    AnvilGui gui = new AnvilGui(player, this);
+                    gui.setTitle(plugin.getLocale().getMessage("interface.kiteditor.addeconomyprompt").getMessage());
+                    gui.setAction(aevent -> {
+                        String msg = gui.getInputText();
+
+                        ItemStack parseStack = new ItemStack(Material.PAPER, 1);
+                        ItemMeta meta = parseStack.getItemMeta();
+
+                        ArrayList<String> lore = new ArrayList<>();
+
+                        int index = 0;
+                        while (index < msg.length()) {
+                            lore.add(ChatColor.GREEN + "$" + msg.substring(index, Math.min(index + 30, msg.length())));
+                            index += 30;
+                        }
+                        meta.setLore(lore);
+                        meta.setDisplayName(plugin.getLocale().getMessage("general.type.money").getMessage());
+                        parseStack.setItemMeta(meta);
+
+                        plugin.getLocale().getMessage("interface.kiteditor.addeconomyok")
+                                .sendPrefixedMessage(player);
+
+                        this.inventory.addItem(parseStack);
+
+                    });
+                });
+
+        setButton(17, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
+                plugin.getLocale().getMessage("interface.kiteditor.animation").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.animationlore").getMessage().split("|")),
+                (event) -> {
+                    if (kit.getKitAnimation() == KitAnimation.NONE) {
+                        kit.setKitAnimation(KitAnimation.ROULETTE);
+                    } else {
+                        kit.setKitAnimation(KitAnimation.NONE);
+                    }
+                    getInvItems();
+                });
     }
 
 
@@ -385,95 +435,6 @@ public class GUIKitEditor extends AbstractGUI {
     protected void registerClickables() {
         resetClickables();
 
-        if (!isInInventory) {
-            registerClickable(9, true, ((player, inventory, cursor, slot, type) ->
-                    new KitGeneralOptionsGui(plugin, player, this, kit)));
-            registerClickable(12, true, ((player, inventory, cursor, slot, type) ->
-                    new KitGuiOptionsGui(plugin, player, this, kit)));
-            registerClickable(10, true, ((player, inventory, cursor, slot, type) ->
-                    guiManager.showGui(player, new KitSellingOptionsGui(plugin, player, kit, this));
-            registerClickable(17, true, (player, inventory, cursor, slot, type) -> {
-                if (kit.getKitAnimation() == KitAnimation.NONE) {
-                    kit.setKitAnimation(KitAnimation.ROULETTE);
-                } else {
-                    kit.setKitAnimation(KitAnimation.NONE);
-                }
-                getInvItems();
-            });
-            registerClickable(14, true, ((player, inventory, cursor, slot, type) -> {
-                saveKit(player, this.inventory, true);
-                AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
-                    String msg = event.getName();
-                    ItemStack parseStack2 = new ItemStack(Material.PAPER, 1);
-                    ItemMeta meta2 = parseStack2.getItemMeta();
-
-                    ArrayList<String> lore2 = new ArrayList<>();
-
-                    int index2 = 0;
-                    while (index2 < msg.length()) {
-                        lore2.add("§a$" + msg.substring(index2, Math.min(index2 + 30, msg.length())));
-                        index2 += 30;
-                    }
-                    meta2.setLore(lore2);
-                    meta2.setDisplayName(plugin.getLocale().getMessage("general.type.money").getMessage());
-                    parseStack2.setItemMeta(meta2);
-
-                    plugin.getLocale().newMessage("&8Money &5$" + msg + "&8 has been added to your kit.")
-                            .sendPrefixedMessage(player);
-
-                    this.slot = 0;
-                    this.toReplace = parseStack2;
-                });
-
-                gui.setOnClose((player1, inventory1) -> init(title, 54));
-
-                ItemStack item = new ItemStack(Material.DIAMOND);
-                ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName("Enter Price (No $)");
-                item.setItemMeta(meta);
-
-                gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item);
-                gui.open();
-            }));
-
-            registerClickable(13, true, ((player, inventory, cursor, slot, type) -> {
-                // TODO: this should be a chat listener, not anvil
-                saveKit(player, this.inventory, true);
-                AbstractAnvilGUI gui = new AbstractAnvilGUI(player, event -> {
-                    String msg = event.getName();
-                    ItemStack parseStack = new ItemStack(Material.PAPER, 1);
-                    ItemMeta meta = parseStack.getItemMeta();
-
-                    ArrayList<String> lore = new ArrayList<>();
-
-                    int index = 0;
-                    while (index < msg.length()) {
-                        lore.add(ChatColor.COLOR_CHAR + "a/" + msg.substring(index, Math.min(index + 30, msg.length())));
-                        index += 30;
-                    }
-                    meta.setLore(lore);
-                    meta.setDisplayName(plugin.getLocale().getMessage("general.type.command").getMessage());
-                    parseStack.setItemMeta(meta);
-
-                    plugin.getLocale().newMessage("&8Command &5" + msg + "&8 has been added to your kit.")
-                            .sendPrefixedMessage(player);
-
-                    this.slot = 0;
-                    this.toReplace = parseStack;
-                });
-
-                gui.setOnClose((player1, inventory1) -> init(title, 54));
-
-                ItemStack item = new ItemStack(Material.PAPER);
-                ItemMeta meta = item.getItemMeta();
-                meta.setDisplayName("Enter Command (No /)");
-                item.setItemMeta(meta);
-
-                gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item);
-                gui.open();
-            }));
-        }
-
         if (isInFuction) {
             registerClickable(10, 43, ClickType.SHIFT_LEFT, (player, inventory, cursor, slot, type) -> {
                 if (inventory.getItem(slot) == null) return;
@@ -492,44 +453,6 @@ public class GUIKitEditor extends AbstractGUI {
                 replaceItem(Action.DISPLAY_LORE, player, inventory.getItem(slot), slot);
             });
         }
-
-        registerClickable(8, (player, inventory, cursor, slot, type) -> player.closeInventory());
-
-        registerClickable(0, ((player, inventory, cursor, slot, type) -> {
-            if (back == null) return;
-            back.init(back.getSetTitle(), back.getInventory().getSize());
-        }));
-
-        registerClickable(48, ((player1, inventory, cursor, slot1, type) -> {
-            isInFuction = !isInFuction;
-            saveKit(player1, inventory,true);
-            constructGUI();
-        }));
-
-        registerClickable(50, (player, inventory, cursor, slot, type) -> {
-            if (!isInInventory) {
-                player.getInventory().setContents(inventoryItems);
-                isInInventory = true;
-                player.updateInventory();
-            } else {
-                saveItemsInstance();
-                getInvItems();
-            }
-            updateInvButton();
-        });
-    }
-
-    @Override
-    protected void registerOnCloses() {
-        registerOnClose((player1, inventory1) -> {
-            this.saveKit(player1, inventory1, false);
-            if (!isInInventory && this.inventoryItems.length != 0) {
-                player.getInventory().setContents(this.inventoryItems);
-                player.updateInventory();
-            }
-
-            CompatibleSound.ENTITY_VILLAGER_YES.play(player);
-        });
     }
 
     public enum Action {NONE, CHANCE, DISPLAY_ITEM, DISPLAY_NAME, DISPLAY_LORE}

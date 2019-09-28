@@ -33,10 +33,6 @@ public class Methods {
         return false;
     }
 
-    public static String getKitFromLocation(Location location) {
-        return UltimateKits.getInstance().getConfig().getString("data.block." + serializeLocation(location));
-    }
-
     /**
      * Serializes the location of the block specified.
      *

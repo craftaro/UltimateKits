@@ -5,6 +5,7 @@ import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -32,14 +33,18 @@ public class GUIKitSelector extends Gui {
     public GUIKitSelector(UltimateKits plugin, Player player) {
         this.player = player;
         this.plugin = plugin;
+        glassless = Settings.DO_NOT_USE_GLASS_BORDERS.getBoolean();
 
         setTitle(plugin.getLocale().getMessage("interface.selector.title").getMessage());
+        
+        
+        
+        
         
         kitList = new ArrayList<>();
 
         setUpPage();
         
-        glassless = plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders");
 
         int n = 7;
         if (glassless)

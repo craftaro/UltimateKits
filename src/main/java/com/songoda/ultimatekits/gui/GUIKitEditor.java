@@ -13,7 +13,6 @@ import com.songoda.ultimatekits.kit.KitAnimation;
 import com.songoda.ultimatekits.kit.KitItem;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.gui.AbstractAnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -63,18 +62,16 @@ public class GUIKitEditor extends Gui {
 
             CompatibleSound.ENTITY_VILLAGER_YES.play(player);
         });
-    }
-
-    private void paint() {
+        
         ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
         ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial());
         ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
 
         GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
         GuiUtils.mirrorFill(this, 0, 1, true, true, glass2);
+        GuiUtils.mirrorFill(this, 1, 0, true, true, glass2);
         GuiUtils.mirrorFill(this, 0, 2, true, true, glass3);
         GuiUtils.mirrorFill(this, 0, 3, false, true, glass1);
-        GuiUtils.mirrorFill(this, 1, 0, true, true, glass2);
 
         // exit button
         setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(CompatibleMaterial.OAK_DOOR),
@@ -89,21 +86,12 @@ public class GUIKitEditor extends Gui {
                     ClickType.LEFT,
                     event -> event.player.closeInventory());
 
-        ItemStack it = new ItemStack(Material.CHEST, 1);
-        ItemMeta itmeta = it.getItemMeta();
-        itmeta.setDisplayName(plugin.getLocale().newMessage("&5&l" + kit.getName()).getMessage());
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(plugin.getLocale().newMessage("&&fPermissions:").getMessage());
-        lore.add(plugin.getLocale().newMessage("&&7ultimatekits.kit." + kit.getName().toLowerCase()).getMessage());
-        itmeta.setLore(lore);
-        it.setItemMeta(itmeta);
-
-        ItemStack glass = CompatibleMaterial.GRAY_STAINED_GLASS_PANE.getItem();
-        ItemMeta glassmeta = glass.getItemMeta();
-        glassmeta.setDisplayName(plugin.getLocale().newMessage("&&" + kit.getName().replaceAll(".(?!$)", "$0&")).getMessage());
-        glass.setItemMeta(glassmeta);
-
-        inventory.setItem(4, it);
+        // info icon
+        setItem(0, 4, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
+                plugin.getLocale().newMessage("&5&l" + kit.getName()).getMessage(),
+                plugin.getLocale().newMessage("&&fPermissions:").getMessage(),
+                plugin.getLocale().newMessage("&&7ultimatekits.kit." + kit.getName().toLowerCase()).getMessage()
+                ));
 
         int num = 10;
         List<ItemStack> list = kit.getReadableContents(player, false, true, true);

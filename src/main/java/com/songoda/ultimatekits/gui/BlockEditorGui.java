@@ -68,7 +68,7 @@ public class BlockEditorGui extends Gui {
                 plugin.getLocale().getMessage("interface.kitblock.editlore").getMessage().split("|")),
                 ClickType.LEFT,
                 event -> {
-                    new GUIKitEditor(UltimateKits.getInstance(), event.player, kitBlockData.getKit(), this);
+                    new KitEditorGui(UltimateKits.getInstance(), event.player, kitBlockData.getKit(), this);
                 });
 
     }

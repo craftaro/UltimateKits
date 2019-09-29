@@ -3,7 +3,7 @@ package com.songoda.ultimatekits.commands;
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.gui.GUIKitEditor;
+import com.songoda.ultimatekits.gui.KitEditorGui;
 import com.songoda.ultimatekits.kit.Kit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -36,7 +36,7 @@ public class CommandCreatekit extends AbstractCommand {
         instance.getLocale().newMessage("&aThat kit doesn't exist. Creating it now.").sendPrefixedMessage(player);
         Kit kit = new Kit(kitStr.trim());
         UltimateKits.getInstance().getKitManager().addKit(kit);
-        new GUIKitEditor(instance, player, kit, null, null, 0);
+        new KitEditorGui(instance, player, kit, null, null, 0);
         return ReturnType.SUCCESS;
     }
 

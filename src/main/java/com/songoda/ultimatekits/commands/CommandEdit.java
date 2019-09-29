@@ -4,7 +4,7 @@ import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.gui.BlockEditorGui;
-import com.songoda.ultimatekits.gui.GUIKitEditor;
+import com.songoda.ultimatekits.gui.KitEditorGui;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import org.bukkit.block.Block;
@@ -44,7 +44,7 @@ public class CommandEdit extends AbstractCommand {
                 return ReturnType.FAILURE;
             }
 
-            new GUIKitEditor(instance, player, instance.getKitManager().getKit(kitStr), null, null, 0);
+            new KitEditorGui(instance, player, instance.getKitManager().getKit(kitStr), null, null, 0);
         }
         return ReturnType.SUCCESS;
     }

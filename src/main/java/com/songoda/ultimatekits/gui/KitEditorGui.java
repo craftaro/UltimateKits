@@ -25,11 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class GUIKitEditor extends Gui {
+public class KitEditorGui extends Gui {
 
     private UltimateKits plugin;
     private Kit kit;
-    private Gui back;
     private Player player;
 
     private ItemStack[] inventoryItems;
@@ -37,10 +36,10 @@ public class GUIKitEditor extends Gui {
     private boolean isInFuction = false;
     private boolean isInInventory = false;
 
-    public GUIKitEditor(UltimateKits plugin, Player player, Kit kit, Gui back) {
+    public KitEditorGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
+        super(back);
         this.plugin = plugin;
         this.kit = kit;
-        this.back = back;
         this.player = player;
 
         setDefaultItem(null);
@@ -79,7 +78,7 @@ public class GUIKitEditor extends Gui {
                 event -> exit());
 
         // back button
-        if (this.back != null)
+        if (parent != null)
             setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
                     plugin.getLocale().getMessage("interface.button.back").getMessage()),
                     ClickType.LEFT,
@@ -213,7 +212,7 @@ public class GUIKitEditor extends Gui {
         setButton(12, GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
                 plugin.getLocale().getMessage("interface.kiteditor.guioptions").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.guioptionslore").getMessage().split("|")),
-                (event) -> guiManager.showGUI(player, new KitGuiOptionsGui(plugin, player, kit, back)));
+                (event) -> guiManager.showGUI(player, new KitGuiOptionsGui(plugin, player, kit, parent)));
 
         setButton(13, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
                 plugin.getLocale().getMessage("interface.kiteditor.addcommand").getMessage(),
@@ -297,18 +296,17 @@ public class GUIKitEditor extends Gui {
 
     public void saveKit(Player player, Inventory i, boolean muteSave) {
         ItemStack[] items = i.getContents();
-        int num = 0;
-        for (ItemStack item : items) {
+        for (int num = 0; num < items.length; ++num) {
             if (num < 10 || num == 17 || num == 36) {
                 items[num] = null;
             }
-            num++;
         }
 
         items = Arrays.copyOf(items, items.length - 10);
 
         kit.saveKit(Arrays.asList(items));
-        plugin.getLocale().newMessage("&8Changes to &a" + kit.getShowableName() + " &8saved successfully.")
+        plugin.getLocale().getMessage("interface.kiteditor.saved")
+                .processPlaceholder("kit", kit.getShowableName())
                 .sendPrefixedMessage(player);
     }
 

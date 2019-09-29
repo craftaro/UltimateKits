@@ -101,29 +101,7 @@ public class KitEditorGui extends Gui {
                 num++;
 
             KitItem item = new KitItem(itemStack);
-
-            ItemStack is = item.getMoveableItem();
-
-            ItemMeta meta;
-
-            if (is.hasItemMeta()) meta = is.getItemMeta();
-            else meta = Bukkit.getItemFactory().getItemMeta(is.getType());
-
-            List<String> itemLore;
-
-            if (meta.hasLore()) itemLore = meta.getLore();
-            else itemLore = new ArrayList<>();
-            itemLore.add(TextUtils.convertToInvisibleLoreString("----"));
-            itemLore.add(ChatColor.GRAY.toString() + plugin.getLocale().getMessage("general.type.chance") + ": " + ChatColor.GOLD.toString() + item.getChance() + "%");
-            if (isInFuction) {
-                itemLore.addAll(Arrays.asList(plugin.getLocale().getMessage("interface.kiteditor.itemfunctionlore")
-                        .processPlaceholder("item", item.getDisplayItem() == null ? "" : item.getDisplayItem().name())
-                        .processPlaceholder("name", item.getDisplayName())
-                        .processPlaceholder("lore", item.getDisplayLore())
-                        .getMessage().split("|")));
-            }
-            meta.setLore(itemLore);
-            is.setItemMeta(meta);
+            ItemStack is = getCompiledMeta(item);
 
             if (is.getAmount() > 64) {
                 int overflow = is.getAmount() % 64;
@@ -327,7 +305,7 @@ public class KitEditorGui extends Gui {
         switch (action) {
             case CHANCE:
                 item.setChance(item.getChance() == 100 ? 5 : (item.getChance() + 5));
-                inventory.setItem(slot, item.getMoveableItem());
+                setItem(slot, getCompiledMeta(item));
                 saveKit(player, inventory, true);
                 break;
             case DISPLAY_ITEM: {
@@ -352,7 +330,7 @@ public class KitEditorGui extends Gui {
                 gui.setAction(event -> {
                     KitItem newItem = new KitItem(itemStack);
                     newItem.setDisplayName(gui.getInputText());
-                    setItem(slot, newItem.getMoveableItem());
+                    setItem(slot, getCompiledMeta(newItem));
                 });
                 guiManager.showGUI(player, gui);
             }
@@ -364,12 +342,37 @@ public class KitEditorGui extends Gui {
                     KitItem newItem = new KitItem(itemStack);
                     newItem.setDisplayLore(gui.getInputText());
 
-                    setItem(slot, newItem.getMoveableItem());
+                    setItem(slot, getCompiledMeta(newItem));
                 });
                 guiManager.showGUI(player, gui);
             }
             break;
         }
+    }
+
+    private ItemStack getCompiledMeta(KitItem item) {
+        ItemStack is = item.getMoveableItem();
+        ItemMeta meta;
+
+        if (is.hasItemMeta()) meta = is.getItemMeta();
+        else meta = Bukkit.getItemFactory().getItemMeta(is.getType());
+
+        List<String> itemLore;
+
+        if (meta.hasLore()) itemLore = meta.getLore();
+        else itemLore = new ArrayList<>();
+        itemLore.add(TextUtils.convertToInvisibleLoreString("----"));
+        itemLore.add(ChatColor.GRAY.toString() + plugin.getLocale().getMessage("general.type.chance") + ": " + ChatColor.GOLD.toString() + item.getChance() + "%");
+        if (isInFuction) {
+            itemLore.addAll(Arrays.asList(plugin.getLocale().getMessage("interface.kiteditor.itemfunctionlore")
+                    .processPlaceholder("item", item.getDisplayItem() == null ? "" : item.getDisplayItem().name())
+                    .processPlaceholder("name", item.getDisplayName())
+                    .processPlaceholder("lore", item.getDisplayLore())
+                    .getMessage().split("|")));
+        }
+        meta.setLore(itemLore);
+        is.setItemMeta(meta);
+        return is;
     }
 
     public enum Action {NONE, CHANCE, DISPLAY_ITEM, DISPLAY_NAME, DISPLAY_LORE}

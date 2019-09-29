@@ -36,7 +36,7 @@ public class CommandCreatekit extends AbstractCommand {
         instance.getLocale().newMessage("&aThat kit doesn't exist. Creating it now.").sendPrefixedMessage(player);
         Kit kit = new Kit(kitStr.trim());
         UltimateKits.getInstance().getKitManager().addKit(kit);
-        new KitEditorGui(instance, player, kit, null, null, 0);
+        guiManager.showGUI(player, new KitEditorGui(instance, player, kit, null));
         return ReturnType.SUCCESS;
     }
 

@@ -44,7 +44,7 @@ public class CommandEdit extends AbstractCommand {
                 return ReturnType.FAILURE;
             }
 
-            new KitEditorGui(instance, player, instance.getKitManager().getKit(kitStr), null, null, 0);
+            guiManager.showGUI(player, new KitEditorGui(instance, player, instance.getKitManager().getKit(kitStr), null));
         }
         return ReturnType.SUCCESS;
     }

@@ -161,7 +161,7 @@ public class KitItem {
                     WordUtils.capitalize(item.getType().toString().toLowerCase().replace("_", " "));
             if (capitalizedName.contains(Methods.convertToInvisibleString(";faqe")))
                 capitalizedName = meta.getDisplayName().split(Methods.convertToInvisibleString(";faqe"))[1];
-            meta.setDisplayName(Methods.convertToInvisibleString(compileOptions() + ";faqe") + ChatColor.RESET + capitalizedName);
+            meta.setDisplayName(Methods.convertToInvisibleString(compileOptions() + ";faqe") + capitalizedName);
         }
         item.setItemMeta(meta);
         return item;

@@ -159,7 +159,8 @@ public class GUIKitSelector extends AbstractGUI {
             meta.setDisplayName(Methods.convertToInvisibleString(kitItem + ":") + Methods.formatText(title));
             ArrayList<String> lore = new ArrayList<>();
             if (kit.getPrice() != 0)
-                lore.add(Methods.formatText("&7This kit costs &a$" + kit.getPrice() + "&7."));
+                lore.add(plugin.getLocale().getMessage("interface.selector.cost")
+                        .processPlaceholder("cost", kit.getPrice()).getMessage());
             else if (kit.getLink() != null)
                 lore.add(plugin.getLocale().getMessage("general.type.link").getMessage());
 
@@ -195,7 +196,7 @@ public class GUIKitSelector extends AbstractGUI {
 
                 if (player.hasPermission("ultimatekits.admin")) {
                     lore.add("");
-                    lore.add(Methods.formatText("&6Middle Click &7to edit positioning."));
+                    lore.add(plugin.getLocale().getMessage("interface.selector.middleclick").getMessage());
                 }
             } else {
                 lore.add(Methods.formatText("&6&lEdit Mode"));

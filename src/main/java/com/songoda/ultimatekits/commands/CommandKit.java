@@ -3,7 +3,7 @@ package com.songoda.ultimatekits.commands;
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.gui.GUIKitSelector;
+import com.songoda.ultimatekits.gui.KitSelectorGui;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
@@ -33,7 +33,7 @@ public class CommandKit extends AbstractCommand {
             return ReturnType.SUCCESS;
         }
         if (args.length == 0) {
-            new GUIKitSelector(instance, (Player) sender);
+            new KitSelectorGui(instance, (Player) sender);
         } else if (args.length == 1) {
             Player player = (Player) sender;
             String kitName = args[0].toLowerCase();

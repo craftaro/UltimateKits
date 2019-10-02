@@ -483,6 +483,10 @@ public class UltimateKits extends SongodaPlugin {
         return commandManager;
     }
 
+    public GuiManager getGuiManager() {
+        return guiManager;
+    }
+
     /**
      * Grab instance of the item serializer
      *

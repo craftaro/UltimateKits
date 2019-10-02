@@ -8,6 +8,7 @@ import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.gui.AnimatedKitGui;
 import com.songoda.ultimatekits.gui.PreviewKitGui;
 import com.songoda.ultimatekits.gui.ConfirmBuyGui;
 import com.songoda.ultimatekits.key.Key;
@@ -15,7 +16,6 @@ import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.settings.Settings;
-import com.songoda.ultimatekits.tasks.CrateAnimateTask;
 import com.songoda.ultimatekits.utils.ArmorType;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
@@ -294,14 +294,12 @@ public class Kit {
     }
 
     private boolean generateRandomItem(List<KitItem> innerContents, int amtToGive, Player player, int forceSelect) {
-        boolean chosenItem = false;
         int canChoose = 0;
         for (KitItem item : innerContents) {
-            if (amtToGive == 0) continue;
+            if (amtToGive == 0) break;
             int ch = canChoose++ == forceSelect || item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
             if (rand - ch < 0 || ch == 100) {
-                chosenItem = true;
 
                 if (item.getContent() instanceof KitContentEconomy) {
                     try {
@@ -340,7 +338,9 @@ public class Kit {
                 amtToGive--;
 
                 if (kitAnimation != KitAnimation.NONE) {
-                    new CrateAnimateTask(plugin, player, this, item.getItem());
+                    // TODO: this is a very bad way to solve this problem.
+                    // Giving the player kit rewards really should be done outside of the Kit class.
+                    plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, this, item.getItem()));
                     return true;
                 } else {
                     if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, item.getItem())) continue;
@@ -353,9 +353,9 @@ public class Kit {
             }
         }
 
-        if (!chosenItem && canChoose != 0 && forceSelect == -1) {
+        if (amtToGive != 0 && canChoose != 0 && forceSelect == -1) {
             return generateRandomItem(innerContents, amtToGive, player, (int) (Math.random() * canChoose));
-        } else if (!chosenItem) {
+        } else if (amtToGive != 0) {
             return false;
         }
 

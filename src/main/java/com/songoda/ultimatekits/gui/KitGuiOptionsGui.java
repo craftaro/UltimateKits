@@ -46,7 +46,7 @@ public class KitGuiOptionsGui extends Gui {
                 .processPlaceholder("onoff",
                         kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", kit.getTitle()).getMessage()
                                 : plugin.getLocale().getMessage("interface.kitguioptions.holooff").getMessage()
-                ).getMessage().split("|")),
+                ).getMessage().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -65,7 +65,7 @@ public class KitGuiOptionsGui extends Gui {
                                 .processPlaceholder("onoff",
                                         kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", kit.getTitle()).getMessage()
                                                 : plugin.getLocale().getMessage("interface.kitguioptions.holooff").getMessage()
-                                ).getMessage().split("|"));
+                                ).getMessage().split("\\|"));
 
                         aevent.player.closeInventory();
                     });
@@ -79,7 +79,7 @@ public class KitGuiOptionsGui extends Gui {
                     .processPlaceholder("onoff",
                             kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", kit.getTitle()).getMessage()
                                     : plugin.getLocale().getMessage("interface.kitguioptions.holooff").getMessage()
-                    ).getMessage().split("|"));
+                    ).getMessage().split("\\|"));
         });
 
         setButton(1, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
@@ -88,7 +88,7 @@ public class KitGuiOptionsGui extends Gui {
                 .processPlaceholder("onoff",
                         kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon").processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
                                 : plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
-                ).getMessage().split("|")),
+                ).getMessage().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     ItemStack is = player.getItemInHand();
@@ -103,7 +103,7 @@ public class KitGuiOptionsGui extends Gui {
                                 .processPlaceholder("onoff",
                                         kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon").processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
                                                 : plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
-                                ).getMessage().split("|"));
+                                ).getMessage().split("\\|"));
                     }
                 });
         setAction(1, 4, ClickType.RIGHT, event -> {
@@ -115,7 +115,7 @@ public class KitGuiOptionsGui extends Gui {
                     .processPlaceholder("onoff",
                             kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon").processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
                                     : plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
-                    ).getMessage().split("|"));
+                    ).getMessage().split("\\|"));
         });
 
         setButton(1, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
@@ -123,7 +123,7 @@ public class KitGuiOptionsGui extends Gui {
                 plugin.getLocale().getMessage("interface.kitguioptions.hidelore")
                 .processPlaceholder("onoff", plugin.getLocale().getMessage(
                                 kit.isHidden() ? "interface.kitguioptions.hideon" : "interface.kitguioptions.hideoff").getMessage()
-                ).getMessage().split("|")),
+                ).getMessage().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     kit.setHidden(!kit.isHidden());
@@ -131,7 +131,7 @@ public class KitGuiOptionsGui extends Gui {
                     updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitguioptions.hidelore")
                             .processPlaceholder("onoff", plugin.getLocale().getMessage(
                                             kit.isHidden() ? "interface.kitguioptions.hideon" : "interface.kitguioptions.hideoff").getMessage()
-                            ).getMessage().split("|"));
+                            ).getMessage().split("\\|"));
                 });
     }
 }

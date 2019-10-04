@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -43,21 +44,21 @@ public class KitSelectorGui extends Gui {
         int nrows = (int) Math.ceil(kitList.size() / (double) showPerRow);
         setRows(glassless ? nrows : nrows + 2);
         showPerPage = showPerRow * (glassless ? (nrows == 6 ? 6 : 5) : 4);
-        pages = kitList.size() / showPerPage;
-        page = 1;
+        setPages(kitList.size() / showPerPage);
 
         setItem(0, 4, GuiUtils.createButtonItem(CompatibleMaterial.BOOK,
                 plugin.getLocale().getMessage("interface.selector.details")
                 .processPlaceholder("player", player.getName()).getMessage().split("\\|")));
 
-        this.setNextPage(rows - 1, 5, GuiUtils.createButtonItem(ItemUtils.getCustomHead("1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b"),
-                plugin.getLocale().getMessage("interface.button.next").getMessage()));
+        if (pages > 1) {
+            this.setNextPage(rows - 1, 5, GuiUtils.createButtonItem(ItemUtils.getCustomHead("1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b"),
+                    plugin.getLocale().getMessage("interface.button.next").getMessage()));
 
-        this.setPrevPage(rows - 1, 3, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
-                plugin.getLocale().getMessage("interface.button.last").getMessage()));
+            this.setPrevPage(rows - 1, 3, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
+                    plugin.getLocale().getMessage("interface.button.last").getMessage()));
 
-        this.setOnPage(pager -> showPage());
-        showPage();
+            this.setOnPage(pager -> showPage());
+        }
 
         if (!glassless) {
             setButton(rows - 1, 4, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(CompatibleMaterial.OAK_DOOR),
@@ -87,6 +88,8 @@ public class KitSelectorGui extends Gui {
                 GuiUtils.mirrorFill(this, 0, 3, false, true, glass1);
             }
         }
+
+        showPage();
     }
 
     private void loadKits() {
@@ -99,11 +102,11 @@ public class KitSelectorGui extends Gui {
 
     static final Random rand = new Random();
     private void animateGlass() {
-        for(int col = 1; col < 7; ++col) {
+        for(int col = 1; col < 8; ++col) {
             ItemStack it;
-            if((it = getItem(0, col)) == null || it.getType().name().contains("PANE"))
+            if((it = getItem(0, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE"))
                 setItem(0, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
-            if((it = getItem(rows - 1, col)) == null || it.getType().name().contains("PANE"))
+            if((it = getItem(rows - 1, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE"))
                 setItem(rows - 1, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
         }
         for(int row = 1; row + 1 < rows; ++row) {
@@ -114,8 +117,13 @@ public class KitSelectorGui extends Gui {
 
     private void showPage() {
         int index = (page - 1) * showPerPage;
-        for (int row = glassless ? 0 : 1; row < (!glassless || pages != 1 ? rows - 2 : rows - 1) && index < kitList.size(); ++row) {
-            for (int col = glassless ? 0 : 1; col < (glassless ? 9 : 8) && index < kitList.size(); ++col) {
+        for (int row = glassless ? 0 : 1; row < (!glassless || pages != 1 ? rows - 1 : rows); ++row) {
+            for (int col = glassless ? 0 : 1; col < (glassless ? 9 : 8); ++col) {
+                if(index >= kitList.size()) {
+                    setItem(row, col, null);
+                    clearActions(row, col);
+                    continue;
+                }
                 final String kitItem = kitList.get(index++);
                 final Kit kit = plugin.getKitManager().getKit(kitItem);
 

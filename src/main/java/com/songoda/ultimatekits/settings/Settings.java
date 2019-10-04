@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class Settings {
 
-    static final Config config = UltimateKits.getInstance().getConfig().getCoreConfig();
+    static final Config config = UltimateKits.getInstance().getCoreConfig();
 
     public static final ConfigSetting ONLY_SHOW_KITS_WITH_PERMS = new ConfigSetting(config, "Main.Only Show Players Kits They Have Permission To Use", false);
     public static final ConfigSetting KITS_FREE_WITH_PERMS = new ConfigSetting(config, "Main.Allow Players To Receive Kits For Free If They Have Permission", true);
@@ -48,11 +48,21 @@ public class Settings {
     public static final ConfigSetting MYSQL_PASSWORD = new ConfigSetting(config, "MySQL.Password", "pass");
     public static final ConfigSetting MYSQL_USE_SSL = new ConfigSetting(config, "MySQL.Use SSL", false);
 
+    public static final ConfigSetting PARTICLE_AMOUNT = new ConfigSetting(config, "data.particlesettings.amount", 25);
+    public static final ConfigSetting PARTICLE_TYPE = new ConfigSetting(config, "data.particlesettings.type", "SPELL_WITCH");
+    
     /**
      * In order to set dynamic economy comment correctly, this needs to be
      * called after EconomyManager load
      */
     public static void setupConfig() {
+        config
+                .setDefaultComment("Main", "General settings and options.")
+                .setDefaultComment("Interfaces", 
+                        "These settings allow you to alter the way interfaces look.",
+                        "They are used in GUI's to make patterns, change them up then open up a",
+                        "# GUI to see how it works.")
+                .setDefaultComment("System", "System related settings.");
         config.load();
         config.setAutoremove(true).setAutosave(true);
 
@@ -75,6 +85,11 @@ public class Settings {
             config.set("Main.Economy", "Reserve");
         } else if (config.getBoolean("Economy.Use Player Points Economy") && EconomyManager.getManager().isEnabled("PlayerPoints")) {
             config.set("Main.Economy", "PlayerPoints");
+        }
+
+        // spelling correction
+        if (config.contains("data.particlesettings.ammount")) {
+            config.set("data.particlesettings.amount", config.getInt("data.particlesettings.ammount"));
         }
 
         config.saveChanges();

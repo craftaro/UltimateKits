@@ -79,21 +79,21 @@ public class CommandKey extends AbstractCommand {
 
         List<String> tab = new ArrayList<>();
 
-        if (args.length == 2) {
+        if (args.length == 1) {
             tab.add("all");
             for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
                 tab.add(kit.getName());
             return tab;
-        } else if (args.length == 3) {
+        } else if (args.length == 2) {
             for (Key key : UltimateKits.getInstance().getKeyManager().getKeys())
                 tab.add(key.getName());
             return tab;
-        } else if (args.length == 4) {
+        } else if (args.length == 3) {
             tab.add("all");
             for (Player player : Bukkit.getOnlinePlayers())
                 tab.add(player.getName());
             return tab;
-        } else if (args.length == 5) return Arrays.asList("amount");
+        } else if (args.length == 4) return Arrays.asList("amount");
         return tab;
     }
 

@@ -33,7 +33,7 @@ public class CommandKit extends AbstractCommand {
             return ReturnType.SUCCESS;
         }
         if (args.length == 0) {
-            new KitSelectorGui(instance, (Player) sender);
+            guiManager.showGUI((Player) sender, new KitSelectorGui(instance, (Player) sender));
         } else if (args.length == 1) {
             Player player = (Player) sender;
             String kitName = args[0].toLowerCase();

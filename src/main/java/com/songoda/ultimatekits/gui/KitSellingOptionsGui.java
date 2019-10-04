@@ -46,7 +46,7 @@ public class KitSellingOptionsGui extends Gui {
                 plugin.getLocale().getMessage("interface.kitsell.noselllore")
                 .processPlaceholder("onoff", plugin.getLocale().getMessage(
                                 kit.getPrice() != 0 || kit.getLink() != null ? "interface.kitsell.nosellon" : "interface.kitsell.noselloff").getMessage()
-                ).getMessage().split("|")),
+                ).getMessage().split("\\|")),
                 event -> {
                     kit.setPrice(0);
                     kit.setLink(null);
@@ -63,7 +63,7 @@ public class KitSellingOptionsGui extends Gui {
                 .processPlaceholder("onoff",
                         kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitsell.linkon").processPlaceholder("kit", kit.getLink()).getMessage()
                                 : plugin.getLocale().getMessage("interface.kitsell.linkoff").getMessage()
-                ).getMessage().split("|")),
+                ).getMessage().split("\\|")),
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitsell.linkprompt").getMessage());
@@ -80,7 +80,7 @@ public class KitSellingOptionsGui extends Gui {
                                 .processPlaceholder("onoff",
                                         kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitsell.linkon").processPlaceholder("kit", kit.getLink()).getMessage()
                                                 : plugin.getLocale().getMessage("interface.kitsell.linkoff").getMessage()
-                                ).getMessage().split("|"));
+                                ).getMessage().split("\\|"));
 
                         aevent.player.closeInventory();
                     });
@@ -94,7 +94,7 @@ public class KitSellingOptionsGui extends Gui {
                 .processPlaceholder("onoff",
                         kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitsell.priceon").processPlaceholder("kit", kit.getLink()).getMessage()
                                 : plugin.getLocale().getMessage("interface.kitsell.priceoff").getMessage()
-                ).getMessage().split("|")),
+                ).getMessage().split("\\|")),
                 event -> {
                     if (!EconomyManager.isEnabled()) {
                         plugin.getLocale().getMessage("interface.kitsell.pricenoeco").sendPrefixedMessage(event.player);

@@ -39,7 +39,7 @@ public class ConfirmBuyGui extends Gui {
                 plugin.getLocale().getMessage("interface.yesno.yes").getMessage()),
                 event -> {
                     kit.processPurchaseUse(event.player);
-                    event.player.closeInventory();
+                    exit();
                 });
 
         // cancel button

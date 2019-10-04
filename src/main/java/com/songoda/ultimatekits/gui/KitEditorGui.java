@@ -3,8 +3,10 @@ package com.songoda.ultimatekits.gui;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.gui.AnvilGui;
+import com.songoda.core.gui.DoubleGui;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
+import com.songoda.core.input.ChatPrompt;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
@@ -25,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class KitEditorGui extends Gui {
+public class KitEditorGui extends DoubleGui {
 
     private UltimateKits plugin;
     private Kit kit;
@@ -49,14 +51,10 @@ public class KitEditorGui extends Gui {
                 .getMessage());
 
         saveItemsInstance();
-        getInvItems();
+        setInvItems();
 
         setOnClose((event) -> {
             this.saveKit(player, inventory, false);
-            if (!isInInventory && this.inventoryItems.length != 0) {
-                player.getInventory().setContents(this.inventoryItems);
-                player.updateInventory();
-            }
 
             CompatibleSound.ENTITY_VILLAGER_YES.play(player);
         });
@@ -86,10 +84,11 @@ public class KitEditorGui extends Gui {
 
         // info icon
         setItem(0, 4, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
-                plugin.getLocale().newMessage("&5&l" + kit.getName()).getMessage(),
-                plugin.getLocale().newMessage("&&fPermissions:").getMessage(),
-                plugin.getLocale().newMessage("&&7ultimatekits.kit." + kit.getName().toLowerCase()).getMessage()
-        ));
+                plugin.getLocale().getMessage("interface.kiteditor.info")
+                .processPlaceholder("kit", kit.getName())
+                .processPlaceholder("perm", "ultimatekits.kit." + kit.getName().toLowerCase())
+                .getMessage().split("\\|"))
+        );
 
         paint();
     }
@@ -109,17 +108,17 @@ public class KitEditorGui extends Gui {
                 int num3 = 0;
                 while (num3 != stackamt) {
                     is.setAmount(64);
-                    inventory.setItem(num, is);
+                    setItem(num, is);
                     num++;
                     num3++;
                 }
                 if (overflow != 0) {
                     is.setAmount(overflow);
-                    inventory.setItem(num, is);
+                    setItem(num, is);
                     num++;
                 }
             } else {
-                inventory.setItem(num, is);
+                setItem(num, is);
                 num++;
             }
         }
@@ -127,19 +126,22 @@ public class KitEditorGui extends Gui {
     }
 
     private void updateInvButton() {
-        ItemStack item = GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
-                plugin.getLocale().getMessage("interface.kiteditor.itemediting").getMessage(),
-                plugin.getLocale().getMessage("interface.kiteditor.itemeditinglore").getMessage());
+        ItemStack item;
 
         if (!isInFuction) {
             setUnlockedRange(1, 1, 1, 7);
             setUnlockedRange(2, 0, 3, 8);
             setUnlockedRange(4, 1, 4, 7);
+
+            item = GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
+                    plugin.getLocale().getMessage("interface.kiteditor.itemediting").getMessage(),
+                    plugin.getLocale().getMessage("interface.kiteditor.itemeditinglore").getMessage().split("\\|"));
         } else {
             unlockedCells.clear();
+
             item = GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
                     plugin.getLocale().getMessage("interface.kiteditor.itemmoving").getMessage(),
-                    plugin.getLocale().getMessage("interface.kiteditor.itemmovinglore").getMessage());
+                    plugin.getLocale().getMessage("interface.kiteditor.itemmovinglore").getMessage().split("\\|"));
         }
 
         setButton(48, item,
@@ -149,58 +151,70 @@ public class KitEditorGui extends Gui {
                     paint();
                 });
 
-        ItemStack item2 = GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
-                plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctions").getMessage(),
-                plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctionslore").getMessage().split("|"));
-
         setAcceptsItems(!isInInventory);
 
+        ItemStack item2;
+
+        if (isInInventory) {
+            item2 = GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
+                    plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctions").getMessage(),
+                    plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctionslore").getMessage().split("\\|"));
+        } else {
+            item2 = GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
+                    plugin.getLocale().getMessage("interface.kiteditor.switchtoinventory").getMessage(),
+                    plugin.getLocale().getMessage("interface.kiteditor.switchtoinventorylore").getMessage().split("\\|"));
+        }
+
         setButton(50, item2,
-                (event) -> {
+                event -> {
                     if (!isInInventory) {
-                        player.getInventory().setContents(inventoryItems);
-                        isInInventory = true;
-                        player.updateInventory();
+                        restoreItemsInstance();
                     } else {
                         saveItemsInstance();
-                        getInvItems();
+                        setInvItems();
                     }
                     updateInvButton();
                 });
     }
 
     private void saveItemsInstance() {
+        setPlayerUnlockedRange(0, 0, 3, 8, false);
         inventoryItems = player.getInventory().getContents().clone();
         player.getInventory().clear();
+        isInInventory = false;
     }
 
-    private void getInvItems() {
-        isInInventory = false;
+    private void restoreItemsInstance() {
+        setPlayerUnlockedRange(0, 0, 3, 8);
+        player.getInventory().setContents(inventoryItems);
+        player.updateInventory();
+        isInInventory = true;
+    }
 
-        setButton(9, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE_TORCH,
+    private void setInvItems() {
+
+        setPlayerButton(9, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE_TORCH,
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptions").getMessage(),
-                plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").getMessage().split("|")),
+                plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").getMessage().split("\\|")),
                 (event) -> guiManager.showGUI(player, new KitGeneralOptionsGui(plugin, player, kit, this)));
 
-        setButton(10, GuiUtils.createButtonItem(CompatibleMaterial.EMERALD,
+        setPlayerButton(10, GuiUtils.createButtonItem(CompatibleMaterial.EMERALD,
                 plugin.getLocale().getMessage("interface.kiteditor.sellingoptions").getMessage(),
-                plugin.getLocale().getMessage("interface.kiteditor.sellingoptionslore").getMessage().split("|")),
+                plugin.getLocale().getMessage("interface.kiteditor.sellingoptionslore").getMessage().split("\\|")),
                 (event) -> guiManager.showGUI(player, new KitSellingOptionsGui(plugin, player, kit, this)));
 
-        setButton(12, GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
+        setPlayerButton(12, GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
                 plugin.getLocale().getMessage("interface.kiteditor.guioptions").getMessage(),
-                plugin.getLocale().getMessage("interface.kiteditor.guioptionslore").getMessage().split("|")),
+                plugin.getLocale().getMessage("interface.kiteditor.guioptionslore").getMessage().split("\\|")),
                 (event) -> guiManager.showGUI(player, new KitGuiOptionsGui(plugin, player, kit, parent)));
 
-        setButton(13, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
+        setPlayerButton(13, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
                 plugin.getLocale().getMessage("interface.kiteditor.addcommand").getMessage(),
-                plugin.getLocale().getMessage("interface.kiteditor.addcommandlore").getMessage().split("|")),
+                plugin.getLocale().getMessage("interface.kiteditor.addcommandlore").getMessage().split("\\|")),
                 (event) -> {
-                    // TODO: this should be a chat listener, not anvil
-                    AnvilGui gui = new AnvilGui(player, this);
-                    gui.setTitle(plugin.getLocale().getMessage("interface.kiteditor.addcommandpromp").getMessage());
-                    gui.setAction(aevent -> {
-                        String msg = gui.getInputText();
+                    event.gui.exit();
+                    ChatPrompt.showPrompt(event.manager.getPlugin(), event.player, "Enter a command for this kit:", response -> {
+                        String msg = response.getMessage().trim();
 
                         ItemStack parseStack = new ItemStack(Material.PAPER, 1);
                         ItemMeta meta = parseStack.getItemMeta();
@@ -221,14 +235,13 @@ public class KitEditorGui extends Gui {
                                 .sendPrefixedMessage(player);
 
                         this.inventory.addItem(parseStack);
-
-                    });
-                    guiManager.showGUI(event.player, gui);
+                    }).setOnClose(() -> {event.manager.showGUI(event.player, this); })
+                      .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
                 });
 
-        setButton(14, GuiUtils.createButtonItem(CompatibleMaterial.SUNFLOWER,
+        setPlayerButton(14, GuiUtils.createButtonItem(CompatibleMaterial.SUNFLOWER,
                 plugin.getLocale().getMessage("interface.kiteditor.addeconomy").getMessage(),
-                plugin.getLocale().getMessage("interface.kiteditor.addeconomylore").getMessage().split("|")),
+                plugin.getLocale().getMessage("interface.kiteditor.addeconomylore").getMessage().split("\\|")),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kiteditor.addeconomyprompt").getMessage());
@@ -258,16 +271,18 @@ public class KitEditorGui extends Gui {
                     guiManager.showGUI(event.player, gui);
                 });
 
-        setButton(17, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
+        setPlayerButton(17, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
                 plugin.getLocale().getMessage("interface.kiteditor.animation").getMessage(),
-                plugin.getLocale().getMessage("interface.kiteditor.animationlore").getMessage().split("|")),
+                plugin.getLocale().getMessage("interface.kiteditor.animationlore")
+                        .processPlaceholder("animation", kit.getKitAnimation().name())
+                        .getMessage().split("\\|")),
                 (event) -> {
                     if (kit.getKitAnimation() == KitAnimation.NONE) {
                         kit.setKitAnimation(KitAnimation.ROULETTE);
                     } else {
                         kit.setKitAnimation(KitAnimation.NONE);
                     }
-                    getInvItems();
+                    setInvItems();
                 });
     }
 
@@ -368,7 +383,7 @@ public class KitEditorGui extends Gui {
                     .processPlaceholder("item", item.getDisplayItem() == null ? "" : item.getDisplayItem().name())
                     .processPlaceholder("name", item.getDisplayName())
                     .processPlaceholder("lore", item.getDisplayLore())
-                    .getMessage().split("|")));
+                    .getMessage().split("\\|")));
         }
         meta.setLore(itemLore);
         is.setItemMeta(meta);

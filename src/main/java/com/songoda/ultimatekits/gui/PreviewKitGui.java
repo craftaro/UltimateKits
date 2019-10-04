@@ -110,7 +110,7 @@ public class PreviewKitGui extends Gui {
         int startRow = useGlassBorder ? 1 : 0;
         int endRow = useGlassBorder ? rows - 2 : rows - 1;
         int startCol = useGlassBorder ? 1 : 0;
-        int endCol = useGlassBorder ? 8 : 7;
+        int endCol = useGlassBorder ? 7 : 8;
         for (int row = startRow; row <= endRow; ++row) {
             for (int col = startCol; col <= endCol; ++col) {
                 ItemStack item;
@@ -170,7 +170,7 @@ public class PreviewKitGui extends Gui {
 
     List<String> getBuyLore() {
         ArrayList<String> lore = new ArrayList<>();
-        if (kit.hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+        if (kit.hasPermission(player) && Settings.KITS_FREE_WITH_PERMS.getBoolean()) {
             lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
                     .processPlaceholder("price", "0").getMessage());
             if (player.isOp()) {

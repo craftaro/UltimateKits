@@ -40,7 +40,7 @@ public class KitGeneralOptionsGui extends Gui {
         setButton(1, 2, GuiUtils.createButtonItem(CompatibleMaterial.CLOCK,
                 plugin.getLocale().getMessage("interface.kitoptions.delay").getMessage(),
                 plugin.getLocale().getMessage("interface.kitoptions.delaylore")
-                .processPlaceholder("delay", kit.getDelay()).getMessage().split("|")),
+                .processPlaceholder("delay", kit.getDelay()).getMessage().split("\\|")),
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitoptions.delayprompt").getMessage());
@@ -51,7 +51,7 @@ public class KitGeneralOptionsGui extends Gui {
                             try {
                                 kit.setDelay(Integer.parseInt(num));
                                 updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.delaylore")
-                                        .processPlaceholder("delay", kit.getDelay()).getMessage().split("|"));
+                                        .processPlaceholder("delay", kit.getDelay()).getMessage().split("\\|"));
                                 aevent.player.closeInventory();
                             } catch (NumberFormatException e) {
                             }
@@ -64,7 +64,7 @@ public class KitGeneralOptionsGui extends Gui {
         // delete
         setButton(1, 6, GuiUtils.createButtonItem(CompatibleMaterial.TNT,
                 plugin.getLocale().getMessage("interface.kitoptions.destroy").getMessage(),
-                plugin.getLocale().getMessage("interface.kitoptions.destroylore").getMessage().split("|")),
+                plugin.getLocale().getMessage("interface.kitoptions.destroylore").getMessage().split("\\|")),
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitoptions.destroyprompt").processPlaceholder("kit", kit.getName()).getMessage());

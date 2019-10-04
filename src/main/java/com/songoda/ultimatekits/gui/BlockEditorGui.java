@@ -58,14 +58,14 @@ public class BlockEditorGui extends Gui {
         // decor options
         setButton(1, 4, GuiUtils.createButtonItem(CompatibleMaterial.POPPY,
                 plugin.getLocale().getMessage("interface.kitblock.decor").getMessage(),
-                plugin.getLocale().getMessage("interface.kitblock.decorlore").getMessage().split("|")),
+                plugin.getLocale().getMessage("interface.kitblock.decorlore").getMessage().split("\\|")),
                 ClickType.LEFT,
                 event -> event.manager.showGUI(event.player, new KitDecorOptionsGui(plugin, kitBlockData, this)));
 
         // edit
         setButton(1, 6, GuiUtils.createButtonItem(CompatibleMaterial.DIAMOND_PICKAXE,
                 plugin.getLocale().getMessage("interface.kitblock.edit").getMessage(),
-                plugin.getLocale().getMessage("interface.kitblock.editlore").getMessage().split("|")),
+                plugin.getLocale().getMessage("interface.kitblock.editlore").getMessage().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     new KitEditorGui(UltimateKits.getInstance(), event.player, kitBlockData.getKit(), this);
@@ -74,7 +74,7 @@ public class BlockEditorGui extends Gui {
     }
 
     List<String> kitTypeLore(UltimateKits plugin) {
-        String[] type = plugin.getLocale().getMessage("interface.kitblock.switchtypelore").getMessage().split("|");
+        String[] type = plugin.getLocale().getMessage("interface.kitblock.switchtypelore").getMessage().split("\\|");
         return Arrays.asList(
                 type[0],
                 (kitBlockData.getType() == KitType.PREVIEW ? ChatColor.GOLD : ChatColor.GRAY) + (type.length > 1 ? type[1] : "Preview"),

@@ -169,10 +169,11 @@ public class Kit {
             EconomyManager.withdrawBalance(player, price);
             if (delay != 0)
                 updateDelay(player); //updates delay on buy
+
+            plugin.getLocale().getMessage("event.claim.purchasesuccess")
+                    .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
         }
 
-        plugin.getLocale().getMessage("event.claim.purchasesuccess")
-                .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
     }
 
     public void processGenericUse(Player player, boolean forced) {
@@ -299,7 +300,7 @@ public class Kit {
             if (amtToGive == 0) break;
             int ch = canChoose++ == forceSelect || item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
-            if (rand - ch < 0 || ch == 100) {
+            if (rand < ch || ch == 100) {
 
                 if (item.getContent() instanceof KitContentEconomy) {
                     try {

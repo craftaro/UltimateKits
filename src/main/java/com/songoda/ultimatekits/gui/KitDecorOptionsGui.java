@@ -76,7 +76,7 @@ public class KitDecorOptionsGui extends Gui {
                 plugin.getLocale().getMessage("interface.kitdecor.displayone").getMessage(),
                 plugin.getLocale().getMessage("interface.kitdecor.displayonelore")
                 .processPlaceholder("enabled", kitBlockData.isItemOverride() ? enableLore : disableLore)
-                .getMessage().split("|")),
+                .getMessage().split("\\|")),
                 event -> {
                     kitBlockData.setItemOverride(!kitBlockData.isItemOverride());
                     updateItemLore(event.slot, kitBlockData.isItemOverride() ? enableLore : disableLore);

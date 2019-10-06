@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class KitContentItem implements KitContent {
 
-    private ItemStack itemStack;
+    private final ItemStack itemStack;
 
     private String serialized = null;
 

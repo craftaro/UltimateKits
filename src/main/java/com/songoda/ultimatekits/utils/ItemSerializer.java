@@ -1,6 +1,6 @@
 package com.songoda.ultimatekits.utils;
 
-import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,9 +38,9 @@ public class ItemSerializer {
 	 */
 	public ItemSerializer() throws NoSuchMethodException, SecurityException, ClassNotFoundException {
 		methodParseString = classMojangsonParser.getMethod("parse", String.class);
-		if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13))
+		if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
 			methodToItemStack = classItemStack.getMethod("a", classNBTTagCompound);
-		else if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_11))
+		else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11))
 			constructorItemStack = classItemStack.getConstructor(classNBTTagCompound);
 		else
 			methodCreateStack = classItemStack.getMethod("createStack", classNBTTagCompound);
@@ -74,9 +74,9 @@ public class ItemSerializer {
 			Object nbtTagCompound = methodParseString.invoke(null, jsonString);
 			Object citemStack;
 
-			if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13))
+			if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13))
 				citemStack = methodToItemStack.invoke(null, nbtTagCompound);
-			else if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_11))
+			else if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_11))
 				citemStack = constructorItemStack.newInstance(nbtTagCompound);
 			else
 				citemStack = methodCreateStack.invoke(null, nbtTagCompound);

@@ -1,67 +1,74 @@
 package com.songoda.ultimatekits;
 
-import com.songoda.ultimatekits.command.CommandManager;
+import com.songoda.core.SongodaCore;
+import com.songoda.core.SongodaPlugin;
+import com.songoda.core.commands.CommandManager;
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.configuration.Config;
+import com.songoda.core.database.DataMigrationManager;
+import com.songoda.core.database.DatabaseConnector;
+import com.songoda.core.database.MySQLConnector;
+import com.songoda.core.database.SQLiteConnector;
+import com.songoda.core.gui.GuiManager;
+import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.hooks.HologramManager;
+import com.songoda.core.utils.TextUtils;
+import com.songoda.ultimatekits.commands.CommandCreatekit;
+import com.songoda.ultimatekits.commands.CommandEdit;
+import com.songoda.ultimatekits.commands.CommandKey;
+import com.songoda.ultimatekits.commands.CommandKit;
+import com.songoda.ultimatekits.commands.CommandPreviewKit;
+import com.songoda.ultimatekits.commands.CommandReload;
+import com.songoda.ultimatekits.commands.CommandRemove;
+import com.songoda.ultimatekits.commands.CommandSet;
+import com.songoda.ultimatekits.commands.CommandSettings;
+import com.songoda.ultimatekits.commands.CommandUltimateKits;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.database.DataManager;
-import com.songoda.ultimatekits.database.DataMigrationManager;
-import com.songoda.ultimatekits.database.DatabaseConnector;
-import com.songoda.ultimatekits.database.MySQLConnector;
-import com.songoda.ultimatekits.database.SQLiteConnector;
-import com.songoda.ultimatekits.economy.Economy;
-import com.songoda.ultimatekits.economy.PlayerPointsEconomy;
-import com.songoda.ultimatekits.economy.ReserveEconomy;
-import com.songoda.ultimatekits.economy.VaultEconomy;
+import com.songoda.ultimatekits.database.migrations._1_InitialMigration;
+import com.songoda.ultimatekits.database.migrations._2_DuplicateMigration;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
-import com.songoda.ultimatekits.hologram.Hologram;
-import com.songoda.ultimatekits.hologram.HologramHolographicDisplays;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
-import com.songoda.ultimatekits.kit.*;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitAnimation;
+import com.songoda.ultimatekits.kit.KitBlockData;
+import com.songoda.ultimatekits.kit.KitItem;
+import com.songoda.ultimatekits.kit.KitManager;
+import com.songoda.ultimatekits.kit.KitType;
 import com.songoda.ultimatekits.listeners.BlockListeners;
 import com.songoda.ultimatekits.listeners.ChatListeners;
 import com.songoda.ultimatekits.listeners.EntityListeners;
 import com.songoda.ultimatekits.listeners.InteractListeners;
-import com.songoda.ultimatekits.utils.*;
-import com.songoda.ultimatekits.utils.locale.Locale;
-import com.songoda.ultimatekits.utils.settings.Setting;
-import com.songoda.ultimatekits.utils.settings.SettingsManager;
-import com.songoda.ultimatekits.utils.updateModules.LocaleModule;
-import com.songoda.update.Plugin;
-import com.songoda.update.SongodaUpdate;
-import org.apache.commons.lang.ArrayUtils;
+import com.songoda.ultimatekits.settings.Settings;
+import com.songoda.ultimatekits.utils.ItemSerializer;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class UltimateKits extends JavaPlugin {
+public class UltimateKits extends SongodaPlugin {
     private static UltimateKits INSTANCE;
 
-    private static CommandSender console = Bukkit.getConsoleSender();
+    private final Config kitFile = new Config(this, "kit.yml");
+    private final Config dataFile = new Config(this, "data.yml");
+    private final Config keyFile = new Config(this, "keys.yml");
+    
+    private final GuiManager guiManager = new GuiManager(this);
+    private final ParticleHandler particleHandler = new ParticleHandler(this);
+    private final DisplayItemHandler displayItemHandler = new DisplayItemHandler(this);
 
-    private Locale locale;
-
-    private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
-
-    private ConfigWrapper kitFile = new ConfigWrapper(this, "", "kit.yml");
-    private ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
-    private ConfigWrapper keyFile = new ConfigWrapper(this, "", "keys.yml");
-
-    private SettingsManager settingsManager;
     private KitManager kitManager;
     private CommandManager commandManager;
     private KeyManager keyManager;
-    private DisplayItemHandler displayItemHandler;
-    private Hologram hologram;
-    private Economy economy;
 
     private ItemSerializer itemSerializer;
 
@@ -78,82 +85,74 @@ public class UltimateKits extends JavaPlugin {
         return INSTANCE;
     }
 
-    /*
-     * On plugin enable.
-     */
-
     @Override
-    public void onEnable() {
+    public void onPluginLoad() {
         INSTANCE = this;
-
-        console.sendMessage(Methods.formatText("&a============================="));
-        console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
-        console.sendMessage(Methods.formatText("&7Action: &aEnabling&7..."));
-
         try {
             this.itemSerializer = new ItemSerializer();
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            console.sendMessage(Methods.formatText("&cCould not load the serialization class! Please report this error."));
+            console.sendMessage(ChatColor.RED + "Could not load the serialization class! Please report this error.");
             e.printStackTrace();
         }
+    }
 
-        this.settingsManager = new SettingsManager(this);
-        this.settingsManager.setupConfig();
+    @Override
+    public void onPluginEnable() {
+        SongodaCore.registerPlugin(this, 14, CompatibleMaterial.BEACON);
 
-        new Locale(this, "en_US");
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
+        // Load Economy
+        EconomyManager.load();
+        // Register Hologram Plugin
+        HologramManager.load(this);
 
-        new Convert(this);
+        // Setup Config
+        Settings.setupConfig();
+		this.setLocale(Settings.LANGUGE_MODE.getString(), false);
+        
+        // Set economy preference
+        EconomyManager.getManager().setPreferredHook(Settings.ECONOMY_PLUGIN.getString());
 
-        new ParticleHandler(this);
-        this.displayItemHandler = new DisplayItemHandler(this);
+        // load kits
+        dataFile.load();
+        checkKeyDefaults();
+        loadKits();
+        keyFile.saveChanges();
 
+        // setup commands
         this.commandManager = new CommandManager(this);
-
-        //Running Songoda Updater
-        Plugin plugin = new Plugin(this, 14);
-        plugin.addModule(new LocaleModule());
-        SongodaUpdate.load(plugin);
+        this.commandManager.addCommand(new CommandKit(guiManager));
+        this.commandManager.addCommand(new CommandPreviewKit(guiManager));
+        this.commandManager.addCommand(new CommandUltimateKits())
+                .addSubCommand(new CommandReload())
+                .addSubCommand(new CommandSettings(guiManager))
+                .addSubCommand(new CommandCreatekit(guiManager))
+                .addSubCommand(new CommandEdit(guiManager))
+                .addSubCommand(new CommandKey())
+                .addSubCommand(new CommandSet())
+                .addSubCommand(new CommandRemove());
 
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
         this.commandManager = new CommandManager(this);
-
-        PluginManager pluginManager = getServer().getPluginManager();
-
-        // Setup Economy
-        if (Setting.VAULT_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Vault"))
-            this.economy = new VaultEconomy();
-        else if (Setting.RESERVE_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Reserve"))
-            this.economy = new ReserveEconomy();
-        else if (Setting.PLAYER_POINTS_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("PlayerPoints"))
-            this.economy = new PlayerPointsEconomy();
-
-        // Register Hologram Plugin
-        if (pluginManager.isPluginEnabled("HolographicDisplays"))
-            hologram = new HologramHolographicDisplays(this);
+        
+        Convert.runKitConversions();
 
         // Event registration
+        PluginManager pluginManager = getServer().getPluginManager();
+        guiManager.init();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new ChatListeners(this), this);
         pluginManager.registerEvents(new EntityListeners(this), this);
-        pluginManager.registerEvents(new InteractListeners(this), this);
-
-        this.loadFromFile();
-
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
-
-        // Starting Metrics
-        new Metrics(this);
+        pluginManager.registerEvents(new InteractListeners(this, guiManager), this);
 
         try {
-            if (Setting.MYSQL_ENABLED.getBoolean()) {
-                String hostname = Setting.MYSQL_HOSTNAME.getString();
-                int port = Setting.MYSQL_PORT.getInt();
-                String database = Setting.MYSQL_DATABASE.getString();
-                String username = Setting.MYSQL_USERNAME.getString();
-                String password = Setting.MYSQL_PASSWORD.getString();
-                boolean useSSL = Setting.MYSQL_USE_SSL.getBoolean();
+            if (Settings.MYSQL_ENABLED.getBoolean()) {
+                String hostname = Settings.MYSQL_HOSTNAME.getString();
+                int port = Settings.MYSQL_PORT.getInt();
+                String database = Settings.MYSQL_DATABASE.getString();
+                String username = Settings.MYSQL_USERNAME.getString();
+                String password = Settings.MYSQL_PASSWORD.getString();
+                boolean useSSL = Settings.MYSQL_USE_SSL.getBoolean();
 
                 this.databaseConnector = new MySQLConnector(this, hostname, port, database, username, password, useSSL);
                 this.getLogger().info("Data handler connected using MySQL.");
@@ -161,47 +160,58 @@ public class UltimateKits extends JavaPlugin {
                 this.databaseConnector = new SQLiteConnector(this);
                 this.getLogger().info("Data handler connected using SQLite.");
             }
+
+            this.dataManager = new DataManager(this.databaseConnector, this);
+            this.dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager,
+                    new _1_InitialMigration(),
+                    new _2_DuplicateMigration(this.databaseConnector instanceof SQLiteConnector));
+            this.dataMigrationManager.runMigrations();
+
         } catch (Exception ex) {
             this.getLogger().severe("Fatal error trying to connect to database. " +
                     "Please make sure all your connection settings are correct and try again. Plugin has been disabled.");
-            Bukkit.getPluginManager().disablePlugin(this);
+            emergencyStop();
+            return;
         }
 
-        this.dataManager = new DataManager(this.databaseConnector, this);
-        this.dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager);
-        this.dataMigrationManager.runMigrations();
-
+        displayItemHandler.start();
+        particleHandler.start();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveKits, 6000, 6000);
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.dataManager.getBlockData((blockData) -> {
                 this.kitManager.setKitLocations(blockData);
-                kitManager.getKitLocations().forEach((location, data) -> {
-                    if (hologram != null) UltimateKits.getInstance().getHologram().add(data);
-                });
+                if(HologramManager.isEnabled()) {
+                    loadHolograms();
+                }
             });
         }, 20L);
-
-        console.sendMessage(Methods.formatText("&a============================="));
     }
 
-    /*
-     * On plugin disable.
-     */
     @Override
-    public void onDisable() {
-        saveToFile();
-        dataFile.saveConfig();
+    public void onPluginDisable() {
+        saveKits();
+        dataFile.save();
         this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
         kitManager.clearKits();
-        console.sendMessage(Methods.formatText("&a============================="));
-        console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
-        console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
-        console.sendMessage(Methods.formatText("&a============================="));
+        HologramManager.removeAllHolograms();
     }
 
-    /*
-     * Load configuration files into memory.
-     */
-    private void loadFromFile() {
+    @Override
+    public List<Config> getExtraConfig() {
+        return Arrays.asList(kitFile, keyFile);
+    }
+
+    @Override
+    public void onConfigReload() {
+        this.setLocale(Settings.LANGUGE_MODE.getString(), true);
+
+        this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        loadKits();
+    }
+
+    void loadKits() {
+        kitFile.load();
+
         Bukkit.getScheduler().runTaskLater(this, () -> {
 
             //Empty kits from manager.
@@ -210,15 +220,17 @@ public class UltimateKits extends JavaPlugin {
             /*
              * Register kit into KitManager from Configuration.
              */
-            for (String kitName : kitFile.getConfig().getConfigurationSection("Kits").getKeys(false)) {
-                int delay = kitFile.getConfig().getInt("Kits." + kitName + ".delay");
-                String title = kitFile.getConfig().getString("Kits." + kitName + ".title");
-                String link = kitFile.getConfig().getString("Kits." + kitName + ".link");
-                Material material = kitFile.getConfig().contains("Kits." + kitName + ".displayItem") ? Material.valueOf(kitFile.getConfig().getString("Kits." + kitName + ".displayItem")) : null;
-                boolean hidden = kitFile.getConfig().getBoolean("Kits." + kitName + ".hidden");
-                double price = kitFile.getConfig().getDouble("Kits." + kitName + ".price");
-                List<String> strContents = kitFile.getConfig().getStringList("Kits." + kitName + ".items");
-                String kitAnimation = kitFile.getConfig().getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
+            for (String kitName : kitFile.getConfigurationSection("Kits").getKeys(false)) {
+                int delay = kitFile.getInt("Kits." + kitName + ".delay");
+                String title = kitFile.getString("Kits." + kitName + ".title");
+                String link = kitFile.getString("Kits." + kitName + ".link");
+                CompatibleMaterial material = kitFile.contains("Kits." + kitName + ".displayItem")
+                        ? CompatibleMaterial.getMaterial(kitFile.getString("Kits." + kitName + ".displayItem"), CompatibleMaterial.DIAMOND_HELMET)
+                        : null;
+                boolean hidden = kitFile.getBoolean("Kits." + kitName + ".hidden");
+                double price = kitFile.getDouble("Kits." + kitName + ".price");
+                List<String> strContents = kitFile.getStringList("Kits." + kitName + ".items");
+                String kitAnimation = kitFile.getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
 
                 List<KitItem> contents = new ArrayList<>();
 
@@ -233,19 +245,20 @@ public class UltimateKits extends JavaPlugin {
             /*
              * Register kit locations into KitManager from Configuration.
              */
-            if (dataFile.getConfig().contains("BlockData")) {
-                for (String key : dataFile.getConfig().getConfigurationSection("BlockData").getKeys(false)) {
+            if (dataFile.contains("BlockData")) {
+                for (String key : dataFile.getConfigurationSection("BlockData").getKeys(false)) {
                     Location location = Methods.unserializeLocation(key);
-                    Kit kit = kitManager.getKit(dataFile.getConfig().getString("BlockData." + key + ".kit"));
-                    KitType type = KitType.valueOf(dataFile.getConfig().getString("BlockData." + key + ".type", "PREVIEW"));
-                    boolean holograms = dataFile.getConfig().getBoolean("BlockData." + key + ".holograms");
-                    boolean displayItems = dataFile.getConfig().getBoolean("BlockData." + key + ".displayItems");
-                    boolean particles = dataFile.getConfig().getBoolean("BlockData." + key + ".particles");
-                    boolean itemOverride = dataFile.getConfig().getBoolean("BlockData." + key + ".itemOverride");
+                    Kit kit = kitManager.getKit(dataFile.getString("BlockData." + key + ".kit"));
+                    KitType type = KitType.valueOf(dataFile.getString("BlockData." + key + ".type", "PREVIEW"));
+                    boolean holograms = dataFile.getBoolean("BlockData." + key + ".holograms");
+                    boolean displayItems = dataFile.getBoolean("BlockData." + key + ".displayItems");
+                    boolean particles = dataFile.getBoolean("BlockData." + key + ".particles");
+                    boolean itemOverride = dataFile.getBoolean("BlockData." + key + ".itemOverride");
 
-                    if (kit == null) dataFile.getConfig().set("BlockData." + key, null);
-                    else
-                        kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride);
+                    if (kit == null) dataFile.set("BlockData." + key, null);
+                    else {
+                        updateHologram(kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride));
+                    }
                 }
             }
 
@@ -258,104 +271,176 @@ public class UltimateKits extends JavaPlugin {
             /*
              * Register keys into KitManager from Configuration.
              */
-            if (keyFile.getConfig().contains("Keys")) {
-                for (String keyName : keyFile.getConfig().getConfigurationSection("Keys").getKeys(false)) {
-                    int amt = keyFile.getConfig().getInt("Keys." + keyName + ".Item Amount");
-                    int kitAmount = keyFile.getConfig().getInt("Keys." + keyName + ".Amount of kit received");
+            if (keyFile.contains("Keys")) {
+                for (String keyName : keyFile.getConfigurationSection("Keys").getKeys(false)) {
+                    int amt = keyFile.getInt("Keys." + keyName + ".Item Amount");
+                    int kitAmount = keyFile.getInt("Keys." + keyName + ".Amount of kit received");
 
                     Key key = new Key(keyName, amt, kitAmount);
                     keyManager.addKey(key);
                 }
             }
-
-            if (hologram != null)
-                hologram.loadHolograms();
-
+            
         }, 10);
     }
 
-    public ServerVersion getServerVersion() {
-        return serverVersion;
+    public void removeHologram(KitBlockData data) {
+        if(HologramManager.isEnabled()) {
+            Location location = getKitLocation(data, Settings.HOLOGRAM_LAYOUT.getStringList().size());
+            HologramManager.removeHologram(location);
+        }
     }
 
-    public boolean isServerVersion(ServerVersion version) {
-        return serverVersion == version;
+    public void updateHologram(Kit kit) {
+        for (KitBlockData data : getKitManager().getKitLocations().values()) {
+            if (data.getKit() != kit) continue;
+            updateHologram(data);
+        }
     }
 
-    public boolean isServerVersion(ServerVersion... versions) {
-        return ArrayUtils.contains(versions, serverVersion);
+    public void updateHologram(KitBlockData data) {
+        if (data != null && data.isInLoadedChunk() && HologramManager.isEnabled()) {
+            List<String> lines = formatHologram(data);
+
+            if (!lines.isEmpty()) {
+                Location location = getKitLocation(data, lines.size());
+                if (!data.showHologram()) {
+                    HologramManager.removeHologram(location);
+                } else {
+                    HologramManager.updateHologram(location, lines);
+                }
+            }
+        }
     }
 
-    public boolean isServerVersionAtLeast(ServerVersion version) {
-        return serverVersion.ordinal() >= version.ordinal();
+    private void loadHolograms() {
+        Collection<KitBlockData> kitBlocks = getKitManager().getKitLocations().values();
+        if (kitBlocks.isEmpty()) return;
+
+        for (KitBlockData data : kitBlocks) {
+            updateHologram(data);
+        }
+    }
+
+    private Location getKitLocation(KitBlockData data, int lines) {
+        Location location = data.getLocation();
+        double multi = .1 * lines;
+        if (data.isDisplayingItems()) {
+            multi += .15;
+        }
+        Material type = location.getBlock().getType();
+        if (type == Material.TRAPPED_CHEST
+                || type == Material.CHEST
+                || type.name().contains("SIGN")
+                || type == Material.ENDER_CHEST) {
+            multi -= .10;
+        }
+        location.add(0, multi, 0);
+        return location;
+    }
+
+    private List<String> formatHologram(KitBlockData data) {
+        getDataManager().updateBlockData(data);
+        KitType kitType = data.getType();
+
+        ArrayList<String> lines = new ArrayList<>();
+
+        List<String> order = Settings.HOLOGRAM_LAYOUT.getStringList();
+
+        Kit kit = data.getKit();
+
+        for (String o : order) {
+            switch (o.toUpperCase()) {
+                case "{TITLE}":
+                    String title = kit.getTitle();
+                    if (title == null) {
+                        lines.add(ChatColor.DARK_PURPLE + TextUtils.formatText(kit.getName(), true));
+                    } else {
+                        lines.add(ChatColor.DARK_PURPLE + TextUtils.formatText(title));
+                    }
+                    break;
+                case "{RIGHT-CLICK}":
+                    if (kitType == KitType.CRATE) {
+                        lines.add(getLocale().getMessage("interface.hologram.crate").getMessage());
+                        break;
+                    }
+                    if (kit.getLink() != null) {
+                        lines.add(getLocale().getMessage("interface.hologram.buylink").getMessage());
+                        break;
+                    }
+                    if (kit.getPrice() != 0) {
+                        lines.add(getLocale().getMessage("interface.hologram.buyeco")
+                                .processPlaceholder("price", kit.getPrice() != 0
+                                        ? Methods.formatEconomy(kit.getPrice())
+                                        : getLocale().getMessage("general.type.free").getMessage())
+                                .getMessage());
+                    }
+                    break;
+                case "{LEFT-CLICK}":
+                    if (kitType == KitType.CLAIM) {
+                        lines.add(getLocale().getMessage("interface.hologram.daily").getMessage());
+                        break;
+                    }
+                    if (kit.getLink() == null && kit.getPrice() == 0) {
+                        lines.add(getLocale().getMessage("interface.hologram.previewonly").getMessage());
+                    } else {
+                        lines.add(getLocale().getMessage("interface.hologram.preview").getMessage());
+                    }
+                    break;
+                default:
+                    lines.add(ChatColor.translateAlternateColorCodes('&', o));
+                    break;
+            }
+        }
+
+        return lines;
     }
 
     /*
      * Saves registered kits to file.
      */
-    private void saveToFile() {
+    private void saveKits() {
 
         // Wipe old kit information
-        kitFile.getConfig().set("Kits", null);
+        kitFile.set("Kits", null);
 
         /*
          * Save kit from KitManager to Configuration.
          */
         for (Kit kit : kitManager.getKits()) {
-            kitFile.getConfig().set("Kits." + kit.getName() + ".delay", kit.getDelay());
-            kitFile.getConfig().set("Kits." + kit.getName() + ".title", kit.getTitle());
-            kitFile.getConfig().set("Kits." + kit.getName() + ".link", kit.getLink());
-            kitFile.getConfig().set("Kits." + kit.getName() + ".price", kit.getPrice());
-            kitFile.getConfig().set("Kits." + kit.getName() + ".hidden", kit.isHidden());
-            kitFile.getConfig().set("Kits." + kit.getName() + ".animation", kit.getKitAnimation().name());
+            kitFile.set("Kits." + kit.getName() + ".delay", kit.getDelay());
+            kitFile.set("Kits." + kit.getName() + ".title", kit.getTitle());
+            kitFile.set("Kits." + kit.getName() + ".link", kit.getLink());
+            kitFile.set("Kits." + kit.getName() + ".price", kit.getPrice());
+            kitFile.set("Kits." + kit.getName() + ".hidden", kit.isHidden());
+            kitFile.set("Kits." + kit.getName() + ".animation", kit.getKitAnimation().name());
             if (kit.getDisplayItem() != null)
-                kitFile.getConfig().set("Kits." + kit.getName() + ".displayItem", kit.getDisplayItem().toString());
+                kitFile.set("Kits." + kit.getName() + ".displayItem", kit.getDisplayItem().toString());
 
             List<KitItem> contents = kit.getContents();
             List<String> strContents = new ArrayList<>();
 
             for (KitItem item : contents) strContents.add(item.getSerialized());
 
-            kitFile.getConfig().set("Kits." + kit.getName() + ".items", strContents);
+            kitFile.set("Kits." + kit.getName() + ".items", strContents);
         }
 
         // Save to file
-        kitFile.saveConfig();
+        kitFile.saveChanges();
     }
 
     /*
      * Insert default key list into config.
      */
     private void checkKeyDefaults() {
-        if (keyFile.getConfig().contains("Keys")) return;
-        keyFile.getConfig().set("Keys.Regular.Item Amount", 3);
-        keyFile.getConfig().set("Keys.Regular.Amount overrides", Collections.singletonList("Tools:2"));
-        keyFile.getConfig().set("Keys.Regular.Amount of kit received", 1);
-        keyFile.getConfig().set("Keys.Ultra.Item Amount", -1);
-        keyFile.getConfig().set("Keys.Ultra.Amount of kit received", 1);
-        keyFile.getConfig().set("Keys.Insane.Item Amount", -1);
-        keyFile.getConfig().set("Keys.Insane.Amount of kit received", 2);
-        keyFile.saveConfig();
-    }
-
-    /**
-     * Reload plugin yaml files.
-     */
-    public void reload() {
-        this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
-        kitFile.reloadConfig();
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
-        this.locale.reloadMessages();
-        settingsManager.reloadConfig();
-        loadFromFile();
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            this.dataManager.getBlockData((blockData) -> {
-                this.kitManager.setKitLocations(blockData);
-                kitManager.getKitLocations().forEach((location, data) -> {
-                    UltimateKits.getInstance().getHologram().add(data);
-                });
-            });
-        }, 20L);
+        if(keyFile.contains("Keys")) return;
+        keyFile.set("Keys.Regular.Item Amount", 3);
+        keyFile.set("Keys.Regular.Amount overrides", Collections.singletonList("Tools:2"));
+        keyFile.set("Keys.Regular.Amount of kit received", 1);
+        keyFile.set("Keys.Ultra.Item Amount", -1);
+        keyFile.set("Keys.Ultra.Amount of kit received", 1);
+        keyFile.set("Keys.Insane.Item Amount", -1);
+        keyFile.set("Keys.Insane.Amount of kit received", 2);
     }
 
     /**
@@ -381,7 +466,7 @@ public class UltimateKits extends JavaPlugin {
      *
      * @return instance of KitFile
      */
-    public ConfigWrapper getKitFile() {
+    public Config getKitFile() {
         return kitFile;
     }
 
@@ -390,26 +475,16 @@ public class UltimateKits extends JavaPlugin {
      *
      * @return instance of DataFile
      */
-    public ConfigWrapper getDataFile() {
+    public Config getDataFile() {
         return dataFile;
-    }
-
-
-    public SettingsManager getSettingsManager() {
-        return settingsManager;
     }
 
     public CommandManager getCommandManager() {
         return commandManager;
     }
 
-    public Hologram getHologram() {
-        return hologram;
-    }
-
-
-    public Economy getEconomy() {
-        return economy;
+    public GuiManager getGuiManager() {
+        return guiManager;
     }
 
     /**
@@ -419,10 +494,6 @@ public class UltimateKits extends JavaPlugin {
      */
     public ItemSerializer getItemSerializer() {
         return this.itemSerializer;
-    }
-
-    public Locale getLocale() {
-        return locale;
     }
 
     public DisplayItemHandler getDisplayItemHandler() {

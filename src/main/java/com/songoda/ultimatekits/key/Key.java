@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.key;
 
+import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.utils.Methods;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.ChatColor;
 
 public class Key {
 
@@ -35,7 +37,7 @@ public class Key {
 
         String kitName;
         if (kit != null)
-            kitName = Methods.formatText(kit.getShowableName(), true);
+            kitName = TextUtils.formatText(kit.getShowableName(), true);
         else
             kitName = "Any";
 
@@ -45,7 +47,7 @@ public class Key {
 
         meta.addEnchant(Enchantment.DURABILITY, 1, true);
         List<String> lore = new ArrayList<>();
-        lore.add(Methods.formatText("&e" + name + " &fKey"));
+        lore.add(ChatColor.YELLOW + name + " " + ChatColor.WHITE + "Key");
 
         String desc1 = plugin.getLocale().getMessage("interface.key.description1")
                 .processPlaceholder("kit", kitName).getMessage();
@@ -55,7 +57,7 @@ public class Key {
         else
             desc1 = desc1.replace("[", "").replace("]", "");
 
-        lore.add(Methods.formatText(desc1));
+        lore.add(desc1);
         if (this.amt == -1)
             lore.add(plugin.getLocale().getMessage("interface.key.description2").getMessage());
         else

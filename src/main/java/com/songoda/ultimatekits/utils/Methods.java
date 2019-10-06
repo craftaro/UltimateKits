@@ -1,64 +1,30 @@
 package com.songoda.ultimatekits.utils;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.gui.Gui;
+import com.songoda.core.gui.GuiUtils;
 import com.songoda.ultimatekits.UltimateKits;
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.*;
+import com.songoda.ultimatekits.settings.Settings;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.RegisteredServiceProvider;
-
-import java.lang.reflect.Field;
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by songoda on 2/24/2017.
  */
 public class Methods {
 
-
-    public static ItemStack getGlass() {
-        UltimateKits instance = UltimateKits.getInstance();
-        return Methods.getGlass(instance.getConfig().getBoolean("Interfaces.Replace Glass Type 1 With Rainbow Glass"), instance.getConfig().getInt("Interfaces.Glass Type 1"));
-    }
-
-    public static ItemStack getBackgroundGlass(boolean type) {
-        UltimateKits instance = UltimateKits.getInstance();
-        if (type)
-            return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 2"));
-        else
-            return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 3"));
-    }
-
-    /**
-     * Creates a glass itemstack
-     *
-     * @param rainbow Whether or not to assign a random color to the glass.
-     * @param type    If rainbow is false, the glass color.
-     * @return A glass itemstack conforming to the params.
-     */
-    public static ItemStack getGlass(boolean rainbow, int type) {
-        int randomNum = 1 + (int) (Math.random() * 6);
-        ItemStack glass;
-        if (rainbow) {
-            glass = new ItemStack(UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) randomNum);
-        } else {
-            glass = new ItemStack(UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) type);
-        }
-        ItemMeta glassmeta = glass.getItemMeta();
-        glassmeta.setDisplayName("§l");
-        glass.setItemMeta(glassmeta);
-        return glass;
-    }
+    static final Random rand = new Random();
 
     public static boolean canGiveKit(Player player) {
         if (player.hasPermission("ultimatekits.cangive")) return true;
@@ -66,22 +32,6 @@ public class Methods {
         if (player.hasPermission("essentials.kit.others")) return true;
         return false;
     }
-
-    public static boolean pay(Player p, double amount) {
-        if (UltimateKits.getInstance().getServer().getPluginManager().getPlugin("Vault") == null) return false;
-        RegisteredServiceProvider<Economy> rsp = UltimateKits.getInstance().getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-
-        net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
-
-        econ.depositPlayer(p, amount);
-        return true;
-    }
-
-
-    public static String getKitFromLocation(Location location) {
-        return UltimateKits.getInstance().getConfig().getString("data.block." + serializeLocation(location));
-    }
-
 
     /**
      * Serializes the location of the block specified.
@@ -138,40 +88,6 @@ public class Methods {
         return location;
     }
 
-
-    public static String convertToInvisibleString(String s) {
-        if (s == null || s.equals(""))
-            return "";
-        StringBuilder hidden = new StringBuilder();
-        for (char c : s.toCharArray()) hidden.append(ChatColor.COLOR_CHAR + "").append(c);
-        return hidden.toString();
-    }
-
-    public static String formatTitle(String text) {
-        if (text == null || text.equals(""))
-            return "";
-        if (!UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_9)) {
-            if (text.length() > 31)
-                text = text.substring(0, 29) + "...";
-        }
-        text = formatText(text);
-        return text;
-    }
-
-    public static String formatText(String text) {
-        if (text == null || text.equals(""))
-            return "";
-        return formatText(text, false);
-    }
-
-    public static String formatText(String text, boolean cap) {
-        if (text == null || text.equals(""))
-            return "";
-        if (cap)
-            text = text.substring(0, 1).toUpperCase() + text.substring(1);
-        return ChatColor.translateAlternateColorCodes('&', text);
-    }
-
     public static String makeReadable(Long time) {
         if (time == null)
             return "";
@@ -193,7 +109,6 @@ public class Methods {
             sb.append(" ").append(seconds).append("s");
         return sb.toString().trim();
     }
-
 
     public static long parseTime(String input) {
         long result = 0;
@@ -223,7 +138,6 @@ public class Methods {
         }
         return 0;
     }
-
 
     /**
      * Formats the specified double into the Economy format specified in the Arconix config.
@@ -259,49 +173,30 @@ public class Methods {
         return s.matches("[-+]?\\d*\\.?\\d+");
     }
 
+    public static void fillGlass(Gui gui) {
 
-    /**
-     * Fills the provided inventory with glass panes of the specified color type.
-     *
-     * @param i The inventory to fill.
-     */
-    public static void fillGlass(Inventory i) {
-        ItemStack glass = getGlass();
-        ItemMeta glassMeta = glass.getItemMeta();
-        glassMeta.setDisplayName("§5");
-        glass.setItemMeta(glassMeta);
-
-        int nu = 0;
-        while (nu != 27) {
-            i.setItem(nu, glass);
-            nu++;
+        // fill center with glass
+        if (Settings.RAINBOW.getBoolean()) {
+            for (int row = 0; row < gui.getRows(); ++row) {
+                for (int col = row == 1 ? 2 : 3; col < (row == 1 ? 7 : 6); ++col) {
+                    gui.setItem(row, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
+                }
+            }
+        } else {
+            gui.setDefaultItem(GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial(CompatibleMaterial.GRAY_STAINED_GLASS_PANE)));
         }
+
+        // decorate the edges
+        ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial(CompatibleMaterial.BLUE_STAINED_GLASS_PANE));
+        ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial(CompatibleMaterial.LIGHT_BLUE_STAINED_GLASS_PANE));
+
+        // edges will be type 3
+        GuiUtils.mirrorFill(gui, 0, 2, true, true, glass3);
+        GuiUtils.mirrorFill(gui, 1, 1, false, true, glass3);
+
+        // decorate corners with type 2
+        GuiUtils.mirrorFill(gui, 0, 0, true, true, glass2);
+        GuiUtils.mirrorFill(gui, 1, 0, true, true, glass2);
+        GuiUtils.mirrorFill(gui, 0, 1, true, true, glass2);
     }
-
-    /**
-     * Adds the specified texture to the supplied head itemstack.
-     *
-     * @param item    A head to apply the texture to.
-     * @param headURL The URL of the texture to apply.
-     * @return The head with the textrue.
-     */
-    public static ItemStack addTexture(ItemStack item, String headURL) {
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
-
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-        byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", new Object[]{headURL}).getBytes());
-        profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
-
-        Field profileField;
-        try {
-            profileField = meta.getClass().getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(meta, profile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        item.setItemMeta(meta);
-        return item;
-    }
-
 }

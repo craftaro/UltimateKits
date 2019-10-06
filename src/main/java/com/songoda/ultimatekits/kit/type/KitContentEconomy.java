@@ -1,16 +1,16 @@
 package com.songoda.ultimatekits.kit.type;
 
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import org.bukkit.ChatColor;
 
 public class KitContentEconomy implements KitContent {
 
-    private double amount;
+    private final double amount;
 
     public KitContentEconomy(double amount) {
         this.amount = amount;
@@ -34,7 +34,7 @@ public class KitContentEconomy implements KitContent {
 
         int index = 0;
         while (index < String.valueOf(amount).length()) {
-            lore.add(Methods.formatText("&a" + (index == 0 ? UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol") : "") + "&a" + String.valueOf(amount).substring(index, Math.min(index + 30, String.valueOf(amount).length()))));
+            lore.add(ChatColor.GREEN + (index == 0 ? UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol") : "") + ChatColor.GREEN + String.valueOf(amount).substring(index, Math.min(index + 30, String.valueOf(amount).length())));
             index += 30;
         }
         meta.setLore(lore);

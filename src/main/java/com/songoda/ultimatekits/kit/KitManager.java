@@ -7,7 +7,7 @@ import java.util.*;
 
 public final class KitManager {
 
-    private Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
+    private final Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
     private final List<Kit> registeredKits = new LinkedList<>();
 
     public boolean addKit(Kit kit) {
@@ -38,8 +38,6 @@ public final class KitManager {
     public KitBlockData addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
         KitBlockData data = new KitBlockData(kit, location, type, hologram, particles, items, itemOverride);
         kitsAtLocations.put(roundLocation(location), data);
-        if (UltimateKits.getInstance().getHologram() != null)
-            UltimateKits.getInstance().getHologram().update(data);
         return data;
     }
 
@@ -73,7 +71,8 @@ public final class KitManager {
     }
 
     public void setKitLocations(Map<Location, KitBlockData> kits) {
-        kitsAtLocations = kits;
+        kitsAtLocations.clear();
+        kitsAtLocations.putAll(kits);
     }
 
     public void clearKits() {

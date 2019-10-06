@@ -198,12 +198,6 @@ public class KitEditorGui extends DoubleGui {
 
     private void setInvItems() {
 
-        this.setPlayerActionForRange(0, 0, 3, 8, event -> {
-            if(!isInInventory && event.player.getItemOnCursor().getType() != Material.AIR) {
-                event.event.setCancelled(true);
-            }
-        });
-
         setPlayerButton(0, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE_TORCH,
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptions").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").getMessage().split("\\|")),

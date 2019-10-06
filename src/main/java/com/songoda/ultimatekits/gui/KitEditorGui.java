@@ -115,7 +115,7 @@ public class KitEditorGui extends DoubleGui {
 
 
             if (!isInFuction)
-                setItem(num, is);
+                setButton(num, is, null);
             else {
                 setButton(num, is,
                         (event) -> {

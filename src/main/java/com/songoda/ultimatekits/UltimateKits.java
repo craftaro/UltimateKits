@@ -13,16 +13,7 @@ import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
 import com.songoda.core.utils.TextUtils;
-import com.songoda.ultimatekits.commands.CommandCreatekit;
-import com.songoda.ultimatekits.commands.CommandEdit;
-import com.songoda.ultimatekits.commands.CommandKey;
-import com.songoda.ultimatekits.commands.CommandKit;
-import com.songoda.ultimatekits.commands.CommandPreviewKit;
-import com.songoda.ultimatekits.commands.CommandReload;
-import com.songoda.ultimatekits.commands.CommandRemove;
-import com.songoda.ultimatekits.commands.CommandSet;
-import com.songoda.ultimatekits.commands.CommandSettings;
-import com.songoda.ultimatekits.commands.CommandUltimateKits;
+import com.songoda.ultimatekits.commands.*;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.database.DataManager;
 import com.songoda.ultimatekits.database.migrations._1_InitialMigration;
@@ -31,12 +22,7 @@ import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
-import com.songoda.ultimatekits.kit.Kit;
-import com.songoda.ultimatekits.kit.KitAnimation;
-import com.songoda.ultimatekits.kit.KitBlockData;
-import com.songoda.ultimatekits.kit.KitItem;
-import com.songoda.ultimatekits.kit.KitManager;
-import com.songoda.ultimatekits.kit.KitType;
+import com.songoda.ultimatekits.kit.*;
 import com.songoda.ultimatekits.listeners.BlockListeners;
 import com.songoda.ultimatekits.listeners.ChatListeners;
 import com.songoda.ultimatekits.listeners.EntityListeners;
@@ -49,11 +35,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+
+import java.util.*;
 
 public class UltimateKits extends SongodaPlugin {
     private static UltimateKits INSTANCE;
@@ -61,7 +44,7 @@ public class UltimateKits extends SongodaPlugin {
     private final Config kitFile = new Config(this, "kit.yml");
     private final Config dataFile = new Config(this, "data.yml");
     private final Config keyFile = new Config(this, "keys.yml");
-    
+
     private final GuiManager guiManager = new GuiManager(this);
     private final ParticleHandler particleHandler = new ParticleHandler(this);
     private final DisplayItemHandler displayItemHandler = new DisplayItemHandler(this);
@@ -107,8 +90,8 @@ public class UltimateKits extends SongodaPlugin {
 
         // Setup Config
         Settings.setupConfig();
-		this.setLocale(Settings.LANGUGE_MODE.getString(), false);
-        
+        this.setLocale(Settings.LANGUGE_MODE.getString(), false);
+
         // Set economy preference
         EconomyManager.getManager().setPreferredHook(Settings.ECONOMY_PLUGIN.getString());
 
@@ -134,7 +117,7 @@ public class UltimateKits extends SongodaPlugin {
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
         this.commandManager = new CommandManager(this);
-        
+
         Convert.runKitConversions();
 
         // Event registration
@@ -180,7 +163,7 @@ public class UltimateKits extends SongodaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.dataManager.getBlockData((blockData) -> {
                 this.kitManager.setKitLocations(blockData);
-                if(HologramManager.isEnabled()) {
+                if (HologramManager.isEnabled()) {
                     loadHolograms();
                 }
             });
@@ -280,12 +263,12 @@ public class UltimateKits extends SongodaPlugin {
                     keyManager.addKey(key);
                 }
             }
-            
+
         }, 10);
     }
 
     public void removeHologram(KitBlockData data) {
-        if(HologramManager.isEnabled()) {
+        if (HologramManager.isEnabled()) {
             Location location = getKitLocation(data, Settings.HOLOGRAM_LAYOUT.getStringList().size());
             HologramManager.removeHologram(location);
         }
@@ -433,7 +416,7 @@ public class UltimateKits extends SongodaPlugin {
      * Insert default key list into config.
      */
     private void checkKeyDefaults() {
-        if(keyFile.contains("Keys")) return;
+        if (keyFile.contains("Keys")) return;
         keyFile.set("Keys.Regular.Item Amount", 3);
         keyFile.set("Keys.Regular.Amount overrides", Collections.singletonList("Tools:2"));
         keyFile.set("Keys.Regular.Amount of kit received", 1);

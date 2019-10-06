@@ -147,8 +147,8 @@ public class PreviewKitGui extends Gui {
             for (String str : meta.getLore()) {
                 newLore.add(str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName()));
             }
+            meta.setLore(newLore);
         }
-        meta.setLore(newLore);
         is.setItemMeta(meta);
         return is;
     }

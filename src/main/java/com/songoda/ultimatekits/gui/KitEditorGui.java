@@ -55,8 +55,13 @@ public class KitEditorGui extends DoubleGui {
 
         setOnClose((event) -> {
             this.saveKit(player, inventory, false);
-
             CompatibleSound.ENTITY_VILLAGER_YES.play(player);
+
+            if (!isInInventory && this.inventoryItems.length != 0) {
+                player.getInventory().setContents(this.inventoryItems);
+                player.updateInventory();
+            }
+
         });
 
         ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
@@ -193,22 +198,22 @@ public class KitEditorGui extends DoubleGui {
 
     private void setInvItems() {
 
-        setPlayerButton(9, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE_TORCH,
+        setPlayerButton(0, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE_TORCH,
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptions").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").getMessage().split("\\|")),
                 (event) -> guiManager.showGUI(player, new KitGeneralOptionsGui(plugin, player, kit, this)));
 
-        setPlayerButton(10, GuiUtils.createButtonItem(CompatibleMaterial.EMERALD,
+        setPlayerButton(1, GuiUtils.createButtonItem(CompatibleMaterial.EMERALD,
                 plugin.getLocale().getMessage("interface.kiteditor.sellingoptions").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.sellingoptionslore").getMessage().split("\\|")),
                 (event) -> guiManager.showGUI(player, new KitSellingOptionsGui(plugin, player, kit, this)));
 
-        setPlayerButton(12, GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
+        setPlayerButton(3, GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
                 plugin.getLocale().getMessage("interface.kiteditor.guioptions").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.guioptionslore").getMessage().split("\\|")),
                 (event) -> guiManager.showGUI(player, new KitGuiOptionsGui(plugin, player, kit, parent)));
 
-        setPlayerButton(13, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
+        setPlayerButton(4, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
                 plugin.getLocale().getMessage("interface.kiteditor.addcommand").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.addcommandlore").getMessage().split("\\|")),
                 (event) -> {
@@ -239,7 +244,7 @@ public class KitEditorGui extends DoubleGui {
                       .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
                 });
 
-        setPlayerButton(14, GuiUtils.createButtonItem(CompatibleMaterial.SUNFLOWER,
+        setPlayerButton(5, GuiUtils.createButtonItem(CompatibleMaterial.SUNFLOWER,
                 plugin.getLocale().getMessage("interface.kiteditor.addeconomy").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.addeconomylore").getMessage().split("\\|")),
                 (event) -> {
@@ -271,7 +276,7 @@ public class KitEditorGui extends DoubleGui {
                     guiManager.showGUI(event.player, gui);
                 });
 
-        setPlayerButton(17, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
+        setPlayerButton(8, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
                 plugin.getLocale().getMessage("interface.kiteditor.animation").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.animationlore")
                         .processPlaceholder("animation", kit.getKitAnimation().name())

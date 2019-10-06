@@ -90,15 +90,21 @@ public class KitEditorGui extends DoubleGui {
         // info icon
         setItem(0, 4, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
                 plugin.getLocale().getMessage("interface.kiteditor.info")
-                .processPlaceholder("kit", kit.getName())
-                .processPlaceholder("perm", "ultimatekits.kit." + kit.getName().toLowerCase())
-                .getMessage().split("\\|"))
+                        .processPlaceholder("kit", kit.getName())
+                        .processPlaceholder("perm", "ultimatekits.kit." + kit.getName().toLowerCase())
+                        .getMessage().split("\\|"))
         );
 
         paint();
     }
 
-    public void paint() {
+    private void paint() {
+        for (int i = 10; i < 44; i++) {
+            if (i == 17 || i == 36)
+                continue;
+            setItem(i, null);
+        }
+
         int num = 10;
         for (ItemStack itemStack : kit.getReadableContents(player, false, true, true)) {
             if (num == 17 || num == 36)
@@ -107,25 +113,33 @@ public class KitEditorGui extends DoubleGui {
             KitItem item = new KitItem(itemStack);
             ItemStack is = getCompiledMeta(item);
 
-            if (is.getAmount() > 64) {
-                int overflow = is.getAmount() % 64;
-                int stackamt = (int) ((long) (is.getAmount() / 64));
-                int num3 = 0;
-                while (num3 != stackamt) {
-                    is.setAmount(64);
-                    setItem(num, is);
-                    num++;
-                    num3++;
-                }
-                if (overflow != 0) {
-                    is.setAmount(overflow);
-                    setItem(num, is);
-                    num++;
-                }
-            } else {
+
+            if (!isInFuction)
                 setItem(num, is);
-                num++;
+            else {
+                setButton(num, is,
+                        (event) -> {
+                            switch (event.clickType) {
+                                case SHIFT_LEFT:
+                                    replaceItem(Action.CHANCE_UP, player, event.clickedItem, event.slot);
+                                    break;
+                                case SHIFT_RIGHT:
+                                    replaceItem(Action.CHANCE_DOWN, player, event.clickedItem, event.slot);
+                                    break;
+                                case LEFT:
+                                    replaceItem(Action.DISPLAY_ITEM, player, event.clickedItem, event.slot);
+                                    break;
+                                case MIDDLE:
+                                    replaceItem(Action.DISPLAY_NAME, player, event.clickedItem, event.slot);
+                                    break;
+                                case RIGHT:
+                                    replaceItem(Action.DISPLAY_LORE, player, event.clickedItem, event.slot);
+                                    break;
+                            }
+
+                        });
             }
+            num++;
         }
         updateInvButton();
     }
@@ -199,7 +213,7 @@ public class KitEditorGui extends DoubleGui {
     private void setInvItems() {
 
         this.setPlayerActionForRange(0, 0, 3, 8, event -> {
-            if(!isInInventory && event.player.getItemOnCursor().getType() != Material.AIR) {
+            if (!isInInventory && event.player.getItemOnCursor().getType() != Material.AIR) {
                 event.event.setCancelled(true);
             }
         });
@@ -246,8 +260,13 @@ public class KitEditorGui extends DoubleGui {
                                 .sendPrefixedMessage(player);
 
                         this.inventory.addItem(parseStack);
-                    }).setOnClose(() -> {event.manager.showGUI(event.player, this); })
-                      .setOnCancel(() -> {event.player.sendMessage(ChatColor.RED + "Edit canceled"); event.manager.showGUI(event.player, this);});
+                    }).setOnClose(() -> {
+                        event.manager.showGUI(event.player, this);
+                    })
+                            .setOnCancel(() -> {
+                                event.player.sendMessage(ChatColor.RED + "Edit canceled");
+                                event.manager.showGUI(event.player, this);
+                            });
                 });
 
         setPlayerButton(5, GuiUtils.createButtonItem(CompatibleMaterial.SUNFLOWER,
@@ -309,9 +328,10 @@ public class KitEditorGui extends DoubleGui {
         items = Arrays.copyOf(items, items.length - 10);
 
         kit.saveKit(Arrays.asList(items));
-        plugin.getLocale().getMessage("interface.kiteditor.saved")
-                .processPlaceholder("kit", kit.getShowableName())
-                .sendPrefixedMessage(player);
+        if (!muteSave)
+            plugin.getLocale().getMessage("interface.kiteditor.saved")
+                    .processPlaceholder("kit", kit.getShowableName())
+                    .sendPrefixedMessage(player);
     }
 
     public void replaceItem(Action action, Player player, ItemStack itemStack, int slot) {
@@ -329,22 +349,32 @@ public class KitEditorGui extends DoubleGui {
         KitItem item = new KitItem(itemStack);
 
         switch (action) {
-            case CHANCE:
-                item.setChance(item.getChance() == 100 ? 5 : (item.getChance() + 5));
+            case CHANCE_UP:
+            case CHANCE_DOWN:
+                if (action == Action.CHANCE_UP)
+                    item.setChance(item.getChance() >= 100 ? 5 : (item.getChance() + 5));
+                else
+                    item.setChance(item.getChance() <= 0 ? 100 : (item.getChance() - 5));
+
                 setItem(slot, getCompiledMeta(item));
                 saveKit(player, inventory, true);
+                paint();
                 break;
             case DISPLAY_ITEM: {
                 AnvilGui gui = new AnvilGui(player, this);
                 gui.setTitle("Enter a Material");
                 gui.setAction(event -> {
-                    Material material = CompatibleMaterial.getMaterial(gui.getInputText()).getMaterial();
-                    if (material == null) {
-                        player.sendMessage(gui.getInputText() + " &8is not a valid material.");
+                    CompatibleMaterial compatibleMaterial = CompatibleMaterial.getMaterial(gui.getInputText());
+                    if (compatibleMaterial == null) {
+                        player.sendMessage(gui.getInputText() + " is not a valid material.");
                     } else {
+                        Material material = compatibleMaterial.getMaterial();
                         KitItem newItem = new KitItem(itemStack);
                         newItem.setDisplayItem(material);
-                        inventory.setItem(slot, newItem.getMoveableItem());
+                        setItem(slot, newItem.getMoveableItem());
+                        player.closeInventory();
+                        saveKit(player, inventory, true);
+                        paint();
                     }
                 });
                 guiManager.showGUI(player, gui);
@@ -357,6 +387,9 @@ public class KitEditorGui extends DoubleGui {
                     KitItem newItem = new KitItem(itemStack);
                     newItem.setDisplayName(gui.getInputText());
                     setItem(slot, getCompiledMeta(newItem));
+                    player.closeInventory();
+                    saveKit(player, inventory, true);
+                    paint();
                 });
                 guiManager.showGUI(player, gui);
             }
@@ -367,8 +400,10 @@ public class KitEditorGui extends DoubleGui {
                 gui.setAction(event -> {
                     KitItem newItem = new KitItem(itemStack);
                     newItem.setDisplayLore(gui.getInputText());
-
                     setItem(slot, getCompiledMeta(newItem));
+                    player.closeInventory();
+                    saveKit(player, inventory, true);
+                    paint();
                 });
                 guiManager.showGUI(player, gui);
             }
@@ -401,5 +436,5 @@ public class KitEditorGui extends DoubleGui {
         return is;
     }
 
-    public enum Action {NONE, CHANCE, DISPLAY_ITEM, DISPLAY_NAME, DISPLAY_LORE}
+    public enum Action {NONE, CHANCE_UP, CHANCE_DOWN, DISPLAY_ITEM, DISPLAY_NAME, DISPLAY_LORE}
 }

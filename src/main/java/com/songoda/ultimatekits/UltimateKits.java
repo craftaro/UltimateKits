@@ -2,15 +2,30 @@ package com.songoda.ultimatekits;
 
 import com.songoda.ultimatekits.command.CommandManager;
 import com.songoda.ultimatekits.conversion.Convert;
-import com.songoda.ultimatekits.hologram.HologramHolographicDisplays;
-import com.songoda.ultimatekits.listeners.*;
+import com.songoda.ultimatekits.database.DataManager;
+import com.songoda.ultimatekits.database.DataMigrationManager;
+import com.songoda.ultimatekits.database.DatabaseConnector;
+import com.songoda.ultimatekits.database.MySQLConnector;
+import com.songoda.ultimatekits.database.SQLiteConnector;
+import com.songoda.ultimatekits.economy.Economy;
+import com.songoda.ultimatekits.economy.PlayerPointsEconomy;
+import com.songoda.ultimatekits.economy.ReserveEconomy;
+import com.songoda.ultimatekits.economy.VaultEconomy;
 import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.hologram.Hologram;
+import com.songoda.ultimatekits.hologram.HologramHolographicDisplays;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
 import com.songoda.ultimatekits.kit.*;
+import com.songoda.ultimatekits.listeners.BlockListeners;
+import com.songoda.ultimatekits.listeners.ChatListeners;
+import com.songoda.ultimatekits.listeners.EntityListeners;
+import com.songoda.ultimatekits.listeners.InteractListeners;
 import com.songoda.ultimatekits.utils.*;
+import com.songoda.ultimatekits.utils.locale.Locale;
+import com.songoda.ultimatekits.utils.settings.Setting;
+import com.songoda.ultimatekits.utils.settings.SettingsManager;
 import com.songoda.ultimatekits.utils.updateModules.LocaleModule;
 import com.songoda.update.Plugin;
 import com.songoda.update.SongodaUpdate;
@@ -22,14 +37,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +46,6 @@ public class UltimateKits extends JavaPlugin {
     private static UltimateKits INSTANCE;
 
     private static CommandSender console = Bukkit.getConsoleSender();
-    private References references;
 
     private Locale locale;
 
@@ -54,8 +61,13 @@ public class UltimateKits extends JavaPlugin {
     private KeyManager keyManager;
     private DisplayItemHandler displayItemHandler;
     private Hologram hologram;
-    
+    private Economy economy;
+
     private ItemSerializer itemSerializer;
+
+    private DatabaseConnector databaseConnector;
+    private DataMigrationManager dataMigrationManager;
+    private DataManager dataManager;
 
     /**
      * Grab instance of UltimateKits
@@ -85,33 +97,38 @@ public class UltimateKits extends JavaPlugin {
             e.printStackTrace();
         }
 
+        this.settingsManager = new SettingsManager(this);
+        this.settingsManager.setupConfig();
+
+        new Locale(this, "en_US");
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
+
         new Convert(this);
 
         new ParticleHandler(this);
         this.displayItemHandler = new DisplayItemHandler(this);
 
-        settingsManager = new SettingsManager(this);
-        settingsManager.updateSettings();
-        setupConfig();
-
-        String langMode = getConfig().getString("System.Language Mode");
-        Locale.init(this);
-        Locale.saveDefaultLocale("en_US");
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
+        this.commandManager = new CommandManager(this);
 
         //Running Songoda Updater
         Plugin plugin = new Plugin(this, 14);
         plugin.addModule(new LocaleModule());
         SongodaUpdate.load(plugin);
 
-        this.references = new References();
-
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
         this.commandManager = new CommandManager(this);
 
         PluginManager pluginManager = getServer().getPluginManager();
-        
+
+        // Setup Economy
+        if (Setting.VAULT_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Vault"))
+            this.economy = new VaultEconomy();
+        else if (Setting.RESERVE_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Reserve"))
+            this.economy = new ReserveEconomy();
+        else if (Setting.PLAYER_POINTS_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("PlayerPoints"))
+            this.economy = new PlayerPointsEconomy();
+
         // Register Hologram Plugin
         if (pluginManager.isPluginEnabled("HolographicDisplays"))
             hologram = new HologramHolographicDisplays(this);
@@ -121,23 +138,59 @@ public class UltimateKits extends JavaPlugin {
         pluginManager.registerEvents(new ChatListeners(this), this);
         pluginManager.registerEvents(new EntityListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
-        
+
         this.loadFromFile();
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveToFile, 6000, 6000);
 
         // Starting Metrics
         new Metrics(this);
-        
-        console.sendMessage(Methods.formatText("&a============================="));
 
+        try {
+            if (Setting.MYSQL_ENABLED.getBoolean()) {
+                String hostname = Setting.MYSQL_HOSTNAME.getString();
+                int port = Setting.MYSQL_PORT.getInt();
+                String database = Setting.MYSQL_DATABASE.getString();
+                String username = Setting.MYSQL_USERNAME.getString();
+                String password = Setting.MYSQL_PASSWORD.getString();
+                boolean useSSL = Setting.MYSQL_USE_SSL.getBoolean();
+
+                this.databaseConnector = new MySQLConnector(this, hostname, port, database, username, password, useSSL);
+                this.getLogger().info("Data handler connected using MySQL.");
+            } else {
+                this.databaseConnector = new SQLiteConnector(this);
+                this.getLogger().info("Data handler connected using SQLite.");
+            }
+        } catch (Exception ex) {
+            this.getLogger().severe("Fatal error trying to connect to database. " +
+                    "Please make sure all your connection settings are correct and try again. Plugin has been disabled.");
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
+
+        this.dataManager = new DataManager(this.databaseConnector, this);
+        this.dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager);
+        this.dataMigrationManager.runMigrations();
+
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            this.dataManager.getBlockData((blockData) -> {
+                this.kitManager.setKitLocations(blockData);
+                kitManager.getKitLocations().forEach((location, data) -> {
+                    if (hologram != null) UltimateKits.getInstance().getHologram().add(data);
+                });
+            });
+        }, 20L);
+
+        console.sendMessage(Methods.formatText("&a============================="));
     }
 
     /*
      * On plugin disable.
      */
+    @Override
     public void onDisable() {
         saveToFile();
+        dataFile.saveConfig();
+        this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
         kitManager.clearKits();
         console.sendMessage(Methods.formatText("&a============================="));
         console.sendMessage(Methods.formatText("&7UltimateKits " + this.getDescription().getVersion() + " by &5Songoda <3!"));
@@ -149,15 +202,15 @@ public class UltimateKits extends JavaPlugin {
      * Load configuration files into memory.
      */
     private void loadFromFile() {
+        Bukkit.getScheduler().runTaskLater(this, () -> {
 
-        //Empty kits from manager.
-        kitManager.clearKits();
+            //Empty kits from manager.
+            kitManager.clearKits();
 
-        /*
-         * Register kit into KitManager from Configuration.
-         */
-        for (String kitName : kitFile.getConfig().getConfigurationSection("Kits").getKeys(false)) {
-            try {
+            /*
+             * Register kit into KitManager from Configuration.
+             */
+            for (String kitName : kitFile.getConfig().getConfigurationSection("Kits").getKeys(false)) {
                 int delay = kitFile.getConfig().getInt("Kits." + kitName + ".delay");
                 String title = kitFile.getConfig().getString("Kits." + kitName + ".title");
                 String link = kitFile.getConfig().getString("Kits." + kitName + ".link");
@@ -175,48 +228,50 @@ public class UltimateKits extends JavaPlugin {
 
                 Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents, KitAnimation.valueOf(kitAnimation));
                 kitManager.addKit(kit);
-            } catch (Exception ex) {
-                console.sendMessage(Methods.formatText("&cYour kit &4" + kitName + " &cis setup incorrectly."));
-                Debugger.runReport(ex);
             }
-        }
 
-        /*
-         * Register kit locations into KitManager from Configuration.
-         */
-        if (dataFile.getConfig().contains("BlockData")) {
-            for (String key : dataFile.getConfig().getConfigurationSection("BlockData").getKeys(false)) {
-                Location location = Methods.unserializeLocation(key);
-                Kit kit = kitManager.getKit(dataFile.getConfig().getString("BlockData." + key + ".kit"));
-                KitType type = KitType.valueOf(dataFile.getConfig().getString("BlockData." + key + ".type", "PREVIEW"));
-                boolean holograms = dataFile.getConfig().getBoolean("BlockData." + key + ".holograms");
-                boolean displayItems = dataFile.getConfig().getBoolean("BlockData." + key + ".displayItems");
-                boolean particles = dataFile.getConfig().getBoolean("BlockData." + key + ".particles");
-                boolean itemOverride = dataFile.getConfig().getBoolean("BlockData." + key + ".itemOverride");
+            /*
+             * Register kit locations into KitManager from Configuration.
+             */
+            if (dataFile.getConfig().contains("BlockData")) {
+                for (String key : dataFile.getConfig().getConfigurationSection("BlockData").getKeys(false)) {
+                    Location location = Methods.unserializeLocation(key);
+                    Kit kit = kitManager.getKit(dataFile.getConfig().getString("BlockData." + key + ".kit"));
+                    KitType type = KitType.valueOf(dataFile.getConfig().getString("BlockData." + key + ".type", "PREVIEW"));
+                    boolean holograms = dataFile.getConfig().getBoolean("BlockData." + key + ".holograms");
+                    boolean displayItems = dataFile.getConfig().getBoolean("BlockData." + key + ".displayItems");
+                    boolean particles = dataFile.getConfig().getBoolean("BlockData." + key + ".particles");
+                    boolean itemOverride = dataFile.getConfig().getBoolean("BlockData." + key + ".itemOverride");
 
-                if (kit == null) dataFile.getConfig().set("BlockData." + key, null);
-                else kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride);
+                    if (kit == null) dataFile.getConfig().set("BlockData." + key, null);
+                    else
+                        kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride);
+                }
             }
-        }
 
-        //Apply default keys.
-        checkKeyDefaults();
+            //Apply default keys.
+            checkKeyDefaults();
 
-        //Empty keys from manager.
-        keyManager.clear();
+            //Empty keys from manager.
+            keyManager.clear();
 
-        /*
-         * Register keys into KitManager from Configuration.
-         */
-        if (keyFile.getConfig().contains("Keys")) {
-            for (String keyName : keyFile.getConfig().getConfigurationSection("Keys").getKeys(false)) {
-                int amt = keyFile.getConfig().getInt("Keys." + keyName + ".Item Amount");
-                int kitAmount = keyFile.getConfig().getInt("Keys." + keyName + ".Amount of kit received");
+            /*
+             * Register keys into KitManager from Configuration.
+             */
+            if (keyFile.getConfig().contains("Keys")) {
+                for (String keyName : keyFile.getConfig().getConfigurationSection("Keys").getKeys(false)) {
+                    int amt = keyFile.getConfig().getInt("Keys." + keyName + ".Item Amount");
+                    int kitAmount = keyFile.getConfig().getInt("Keys." + keyName + ".Amount of kit received");
 
-                Key key = new Key(keyName, amt, kitAmount);
-                keyManager.addKey(key);
+                    Key key = new Key(keyName, amt, kitAmount);
+                    keyManager.addKey(key);
+                }
             }
-        }
+
+            if (hologram != null)
+                hologram.loadHolograms();
+
+        }, 10);
     }
 
     public ServerVersion getServerVersion() {
@@ -226,6 +281,7 @@ public class UltimateKits extends JavaPlugin {
     public boolean isServerVersion(ServerVersion version) {
         return serverVersion == version;
     }
+
     public boolean isServerVersion(ServerVersion... versions) {
         return ArrayUtils.contains(versions, serverVersion);
     }
@@ -263,26 +319,8 @@ public class UltimateKits extends JavaPlugin {
             kitFile.getConfig().set("Kits." + kit.getName() + ".items", strContents);
         }
 
-        // Wipe old block information.
-        dataFile.getConfig().set("BlockData", null);
-
-        /*
-         * Save kit locations from KitManager to Configuration.
-         */
-        for (KitBlockData kitBlockData : kitManager.getKitLocations().values()) {
-            String locationStr = Methods.serializeLocation(kitBlockData.getLocation());
-            if (locationStr == null) continue;
-            dataFile.getConfig().set("BlockData." + locationStr + ".type", kitBlockData.getType().name());
-            dataFile.getConfig().set("BlockData." + locationStr + ".kit", kitBlockData.getKit().getName());
-            dataFile.getConfig().set("BlockData." + locationStr + ".holograms", kitBlockData.showHologram());
-            dataFile.getConfig().set("BlockData." + locationStr + ".displayItems", kitBlockData.isDisplayingItems());
-            dataFile.getConfig().set("BlockData." + locationStr + ".particles", kitBlockData.hasParticles());
-            dataFile.getConfig().set("BlockData." + locationStr + ".itemOverride", kitBlockData.isItemOverride());
-        }
-
         // Save to file
         kitFile.saveConfig();
-        dataFile.saveConfig();
     }
 
     /*
@@ -300,27 +338,24 @@ public class UltimateKits extends JavaPlugin {
         keyFile.saveConfig();
     }
 
-    private void setupConfig() {
-        settingsManager.updateSettings();
-        getConfig().options().copyDefaults(true);
-        saveConfig();
-    }
     /**
      * Reload plugin yaml files.
      */
     public void reload() {
-        try {
-            reloadConfig();
-            kitFile.reloadConfig();
-            String langMode = getConfig().getString("System.Language Mode");
-            this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
-            this.locale.reloadMessages();
-            this.references = new References();
-            this.setupConfig();
-            loadFromFile();
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
-        }
+        this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        kitFile.reloadConfig();
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
+        this.locale.reloadMessages();
+        settingsManager.reloadConfig();
+        loadFromFile();
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            this.dataManager.getBlockData((blockData) -> {
+                this.kitManager.setKitLocations(blockData);
+                kitManager.getKitLocations().forEach((location, data) -> {
+                    UltimateKits.getInstance().getHologram().add(data);
+                });
+            });
+        }, 20L);
     }
 
     /**
@@ -358,7 +393,7 @@ public class UltimateKits extends JavaPlugin {
     public ConfigWrapper getDataFile() {
         return dataFile;
     }
-    
+
 
     public SettingsManager getSettingsManager() {
         return settingsManager;
@@ -372,24 +407,33 @@ public class UltimateKits extends JavaPlugin {
         return hologram;
     }
 
+
+    public Economy getEconomy() {
+        return economy;
+    }
+
     /**
      * Grab instance of the item serializer
-     * 
+     *
      * @return instance of ItemSerializer
      */
     public ItemSerializer getItemSerializer() {
-    	return this.itemSerializer;
+        return this.itemSerializer;
     }
 
     public Locale getLocale() {
         return locale;
     }
 
-    public References getReferences() {
-        return references;
-    }
-
     public DisplayItemHandler getDisplayItemHandler() {
         return displayItemHandler;
+    }
+
+    public DatabaseConnector getDatabaseConnector() {
+        return databaseConnector;
+    }
+
+    public DataManager getDataManager() {
+        return dataManager;
     }
 }

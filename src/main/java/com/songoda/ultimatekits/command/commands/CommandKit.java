@@ -9,10 +9,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandKit extends AbstractCommand {
 
     public CommandKit() {
-        super("Kit", null, false, false);
+        super(false, true,"kit");
     }
 
     @Override
@@ -32,12 +35,12 @@ public class CommandKit extends AbstractCommand {
             Player player = (Player) sender;
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
-                player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
+                instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
             Kit kit = instance.getKitManager().getKit(kitName);
             if (sender.hasPermission("ultimatekits.admin")) {
-                kit.give(player, false, false, true);
+                kit.processGenericUse(player, true);
             } else {
                 kit.buy(player);
             }
@@ -46,28 +49,35 @@ public class CommandKit extends AbstractCommand {
         if (args.length == 2) {
             String kitName = args[0].toLowerCase();
             if (instance.getKitManager().getKit(kitName) == null) {
-                sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
+                instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
 
             if (Bukkit.getPlayerExact(args[1]) == null) {
-                sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.playernotfound"));
+                instance.getLocale().getMessage("command.kit.playernotfound").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
             Player player2 = Bukkit.getPlayer(args[1]);
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!Methods.canGiveKit(player)) {
-                    player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.general.noperms"));
+                    UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
+                            .sendPrefixedMessage(player);
                     return ReturnType.FAILURE;
                 }
             }
             Kit kit = instance.getKitManager().getKit(kitName);
-            kit.give(player2, false, false, true);
-            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&7You gave &9" + player2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7."));
+            kit.processGenericUse(player2, true);
+            instance.getLocale().newMessage("&7You gave &9" + player2.getDisplayName() + "&7 kit &9" + kit.getShowableName() + "&7.")
+                    .sendPrefixedMessage(sender);
             return ReturnType.SUCCESS;
         }
         return ReturnType.SYNTAX_ERROR;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        return new ArrayList<>();
     }
 
     @Override

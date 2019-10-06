@@ -5,16 +5,24 @@ import com.songoda.ultimatekits.command.AbstractCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandSettings extends AbstractCommand {
 
     public CommandSettings(AbstractCommand parent) {
-        super("settings", parent, true, false);
+        super(parent, true, "settings");
     }
 
     @Override
     protected ReturnType runCommand(UltimateKits instance, CommandSender sender, String... args) {
         instance.getSettingsManager().openSettingsManager((Player) sender);
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        return new ArrayList<>();
     }
 
     @Override

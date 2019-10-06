@@ -7,7 +7,6 @@ import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractAnvilGUI;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -51,13 +50,14 @@ public class GUIGeneralOptions extends AbstractGUI {
         inventory.setItem(26, Methods.getBackgroundGlass(true));
 
         createButton(8, Material.valueOf(UltimateKits.getInstance().getConfig().getString("Interfaces.Exit Icon")),
-                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
+                UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage());
 
         ItemStack head = new ItemStack(plugin.isServerVersionAtLeast(ServerVersion.V1_13) ? Material.PLAYER_HEAD : Material.valueOf("SKULL_ITEM"), 1, (byte) 3);
         ItemStack back = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) back.getItemMeta();
         back.setDurability((short) 3);
-        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back"));
+        skull2Meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.back")
+                .getMessage());
         back.setItemMeta(skull2Meta);
 
         inventory.setItem(0, back);
@@ -90,9 +90,9 @@ public class GUIGeneralOptions extends AbstractGUI {
                     plugin.getKitManager().removeKit(kit);
                     if (plugin.getHologram() != null)
                         plugin.getHologram().update(kit);
-                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cKit destroyed successfully."));
+                    plugin.getLocale().newMessage("&cKit destroyed successfully.").sendPrefixedMessage(player);
                 } else {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cKit was not Destroyed."));
+                    plugin.getLocale().newMessage("&cKit was not Destroyed.").sendPrefixedMessage(player);
                 }
             });
 
@@ -109,8 +109,6 @@ public class GUIGeneralOptions extends AbstractGUI {
 
             gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, item);
             gui.open();
-
-            gui.setCloseSound(plugin.isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_GENERIC_EXPLODE : Sound.valueOf("EXPLODE"));
         }));
 
         registerClickable(11, ((player1, inventory1, cursor, slot, type) -> {

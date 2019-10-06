@@ -36,7 +36,7 @@ public class KitContentCommand implements KitContent {
             index += 30;
         }
         meta.setLore(lore);
-        meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("general.type.command"));
+        meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("general.type.command").getMessage());
         stack.setItemMeta(meta);
         return stack;
     }

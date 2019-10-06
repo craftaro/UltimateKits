@@ -3,8 +3,10 @@ package com.songoda.ultimatekits.tasks;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitItem;
+import com.songoda.ultimatekits.utils.ArmorType;
 import com.songoda.ultimatekits.utils.Methods;
 import com.songoda.ultimatekits.utils.ServerVersion;
+import com.songoda.ultimatekits.utils.settings.Setting;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,7 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -84,7 +85,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         num = slow ? 1 : 0;
 
         for (int i = 0; i < 27; i++) {
-            inventory.setItem(i, Methods.toGlass(true, 0));
+            inventory.setItem(i, Methods.getGlass(true, 0));
         }
 
         for (int i = 9; i < 18; i++) {
@@ -96,7 +97,7 @@ public class CrateAnimateTask extends BukkitRunnable {
         inventory.setItem(22, new ItemStack(Material.TRIPWIRE_HOOK));
 
         if (!done) {
-            player.playSound(player.getLocation(), plugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.UI_BUTTON_CLICK : Sound.valueOf("CLICK"), 5f, 5f);
+            player.playSound(player.getLocation(), plugin.getInstance().isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.UI_BUTTON_CLICK : Sound.valueOf("CLICK"), 5f, 5f);
             this.items.addFirst(this.items.getLast());
             this.items.removeLast();
         }
@@ -109,12 +110,18 @@ public class CrateAnimateTask extends BukkitRunnable {
         if (finish) {
             if (inventory.getItem(13).isSimilar(give)) {
                 if (!done) {
-                    Map<Integer, ItemStack> overfilled = player.getInventory().addItem(give);
-                    for (ItemStack item2 : overfilled.values()) {
-                        player.getWorld().dropItemNaturally(player.getLocation(), item2);
+                    if (!Setting.AUTO_EQUIP_ARMOR_ROULETTE.getBoolean()
+                            || !ArmorType.equip(player, give)) {
+                        Map<Integer, ItemStack> overfilled = player.getInventory().addItem(give);
+                        for (ItemStack item2 : overfilled.values()) {
+                            player.getWorld().dropItemNaturally(player.getLocation(), item2);
+                        }
                     }
-                    player.playSound(player.getLocation(), UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP"), 10f, 10f);
-                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.create.won", WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " "))));
+
+                    player.playSound(player.getLocation(), UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_9) ? Sound.ENTITY_PLAYER_LEVELUP : Sound.valueOf("LEVEL_UP"), 10f, 10f);
+                    plugin.getLocale().getMessage("event.create.won")
+                            .processPlaceholder("item", WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))
+                            .sendPrefixedMessage(player);
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::finish, 50);
                 }
                 done = true;
@@ -128,7 +135,7 @@ public class CrateAnimateTask extends BukkitRunnable {
     private void finish() {
         instance.cancel();
         HandlerList.unregisterAll(listener);
-            listener = null;
-            player.closeInventory();
+        listener = null;
+        player.closeInventory();
     }
 }

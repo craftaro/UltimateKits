@@ -8,12 +8,12 @@ import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.tasks.CrateAnimateTask;
-import com.songoda.ultimatekits.utils.Debugger;
+import com.songoda.ultimatekits.utils.ArmorType;
 import com.songoda.ultimatekits.utils.Methods;
 import com.songoda.ultimatekits.utils.ServerVersion;
 import com.songoda.ultimatekits.utils.gui.AbstractGUI;
+import com.songoda.ultimatekits.utils.settings.Setting;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,7 +22,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.*;
 
@@ -60,29 +59,27 @@ public class Kit {
     }
 
     public void buy(Player player) {
-        try {
-            if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
-                give(player, false, false, false);
-                return;
-            }
+        if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+            processGenericUse(player, false);
+            return;
+        }
 
-            if (!player.hasPermission("ultimatekits.buy." + name)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + UltimateKits.getInstance().getLocale().getMessage("command.general.noperms"));
-                return;
-            }
+        if (!player.hasPermission("ultimatekits.buy." + name)) {
+            UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
+                    .sendPrefixedMessage(player);
+            return;
+        }
 
-            if (link != null) {
-                player.sendMessage("");
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&a" + link));
-                player.sendMessage("");
-                player.closeInventory();
-            } else if (price != 0) {
-                new GUIConfirmBuy(plugin, player, this);
-            } else {
-                player.sendMessage(UltimateKits.getInstance().getLocale().getMessage("command.general.noperms"));
-            }
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
+        if (link != null) {
+            player.sendMessage("");
+            plugin.getLocale().newMessage("&a" + link).sendPrefixedMessage(player);
+            player.sendMessage("");
+            player.closeInventory();
+        } else if (price != 0) {
+            new GUIConfirmBuy(plugin, player, this);
+        } else {
+            UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
+                    .sendPrefixedMessage(player);
         }
     }
 
@@ -95,10 +92,10 @@ public class Kit {
         return items;
     }
 
-    private boolean hasRoom(Player p, boolean useKey) {
+    private boolean hasRoom(Player player) {
         int space = 0;
 
-        for (ItemStack content : p.getInventory().getContents()) {
+        for (ItemStack content : player.getInventory().getContents()) {
             if (content == null) {
                 space++;
             }
@@ -106,223 +103,255 @@ public class Kit {
 
         int spaceNeeded = getItemContents().size();
 
-
-        if (useKey) {
-            Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(p.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
-            if (key.getAmt() != -1)
-                spaceNeeded = key.getAmt();
-        }
-
         return space >= spaceNeeded;
     }
 
-    public void give(Player player, boolean useKey, boolean economy, boolean console) {
-        try {
-            if (plugin.getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player, useKey)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.full"));
-                return;
-            }
-            if (plugin.getConfig().getBoolean("Main.Sounds Enabled") && kitAnimation == KitAnimation.NONE) {
-                if (UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_12))
-                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
-            }
-            if (useKey) {
-                if (player.getItemInHand().getType() != Material.TRIPWIRE_HOOK || !player.getItemInHand().hasItemMeta()) {
-                    return;
-                }
+    public void processKeyUse(Player player) {
+        ItemStack item = player.getItemInHand();
+        if (item.getType() != Material.TRIPWIRE_HOOK || !item.hasItemMeta()) {
+            return;
+        }
+        Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(item.getItemMeta().getLore().get(0)).replace(" Key", ""));
 
-                Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(player.getItemInHand().getItemMeta().getLore().get(0)).replace(" Key", ""));
-
-                if (!player.getItemInHand().getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title", showableName))
-                        && !player.getItemInHand().getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title", "Any"))) {
-                    player.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.crate.wrongkey")));
-                    return;
-                }
-                for (int i = 0; i < key.getKitAmount(); i++)
-                    givePartKit(player, key);
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.key.success", showableName));
-                if (player.getInventory().getItemInHand().getAmount() != 1) {
-                    ItemStack is = player.getItemInHand();
-                    is.setAmount(is.getAmount() - 1);
-                    player.setItemInHand(is);
-                } else {
-                    player.setItemInHand(null);
-                }
-                return;
-            }
-
-            if (getNextUse(player) == -1 && !economy && !console) {
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.nottwice"));
-            } else if (getNextUse(player) <= 0 || economy || console) {
-                giveKit(player);
-                if (economy) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.purchasesuccess", showableName));
-                } else {
-                    updateDelay(player);
-                    if (kitAnimation == KitAnimation.NONE) {
-                        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.givesuccess", showableName));
-                    }
-                }
+        if (!item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title")
+                .processPlaceholder("kit", showableName).getMessage())
+                && !item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title")
+                .processPlaceholder("kit", "Any").getMessage())) {
+            plugin.getLocale().getMessage("event.crate.wrongkey").sendPrefixedMessage(player);
+            return;
+        }
+        boolean worked = false;
+        for (int i = 0; i < key.getKitAmount(); i++) {
+            if (giveKit(player, key))
+                worked = true;
+        }
+        if (worked) {
+            plugin.getLocale().getMessage("event.key.success")
+                    .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+            if (player.getInventory().getItemInHand().getAmount() != 1) {
+                ItemStack is = item;
+                is.setAmount(is.getAmount() - 1);
+                player.setItemInHand(is);
             } else {
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.delay", Methods.makeReadable(getNextUse(player))));
+                player.setItemInHand(null);
             }
+        }
+    }
 
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
+    public void processPurchaseUse(Player player) {
+        if (plugin.getEconomy() == null) return;
+
+        if (!player.hasPermission("ultimatekits.buy." + name)) {
+            UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
+                    .sendPrefixedMessage(player);
+            return;
+        } else if (!plugin.getEconomy().hasBalance(player, price)) {
+            plugin.getLocale().getMessage("event.claim.cannotafford")
+                    .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+            return;
+        }
+        if (this.delay > 0) {
+            if (getNextUse(player) == -1) {
+                plugin.getLocale().getMessage("event.claim.nottwice").sendPrefixedMessage(player);
+            } else if (getNextUse(player) != 0) {
+                plugin.getLocale().getMessage("event.claim.delay")
+                        .processPlaceholder("time", Methods.makeReadable(this.getNextUse(player)))
+                        .sendPrefixedMessage(player);
+                return;
+            }
+        }
+        if (giveKit(player)) {
+            plugin.getEconomy().withdrawBalance(player, price);
+            if (delay != 0)
+                updateDelay(player); //updates delay on buy
         }
 
+        plugin.getLocale().getMessage("event.claim.purchasesuccess")
+                .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+    }
+
+    public void processGenericUse(Player player, boolean forced) {
+        if (getNextUse(player) == -1 && !forced) {
+            plugin.getLocale().getMessage("event.claim.nottwice").sendPrefixedMessage(player);
+        } else if (getNextUse(player) <= 0 || forced) {
+            if (giveKit(player)) {
+                updateDelay(player);
+                if (kitAnimation == KitAnimation.NONE)
+                    plugin.getLocale().getMessage("event.claim.givesuccess")
+                            .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+            }
+        } else {
+            plugin.getLocale().getMessage("event.claim.delay")
+                    .processPlaceholder("time", Methods.makeReadable(getNextUse(player)))
+                    .sendPrefixedMessage(player);
+        }
     }
 
     @SuppressWarnings("Duplicates")
     public void display(Player player, AbstractGUI back) {
-        try {
-            if (!player.hasPermission("previewkit.use")
-                    && !player.hasPermission("previewkit." + name)
-                    && !player.hasPermission("ultimatekits.use")
-                    && !player.hasPermission("ultimatekits." + name)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + UltimateKits.getInstance().getLocale().getMessage("command.general.noperms"));
-                return;
-            }
-            if (name == null) {
-                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.kit.kitdoesntexist"));
-                return;
-            }
-
-            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.preview.kit", showableName));
-            new GUIDisplayKit(plugin, back, player, this);
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
+        if (!player.hasPermission("previewkit.use")
+                && !player.hasPermission("previewkit." + name)
+                && !player.hasPermission("ultimatekits.use")
+                && !player.hasPermission("ultimatekits." + name)) {
+            UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
+                    .sendPrefixedMessage(player);
+            return;
+        }
+        if (name == null) {
+            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
+            return;
         }
 
+        plugin.getLocale().getMessage("event.preview.kit")
+                .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+        new GUIDisplayKit(plugin, back, player, this);
     }
 
     public void saveKit(List<ItemStack> items) {
-        try {
-            List<KitItem> list = new ArrayList<>();
-            for (ItemStack is : items) {
-                if (is != null && is.getType() != null && is.getType() != Material.AIR) {
+        List<KitItem> list = new ArrayList<>();
+        for (ItemStack is : items) {
+            if (is != null && is.getType() != Material.AIR) {
 
-                    if (is.getItemMeta().hasLore()) {
-                        ItemMeta meta = is.getItemMeta();
-                        List<String> newLore = new ArrayList<>();
-                        for (String line : meta.getLore()) {
-                            if (line.equals(Methods.convertToInvisibleString("----"))) break;
-                            newLore.add(line);
-                        }
-                        meta.setLore(newLore);
-                        is.setItemMeta(meta);
+                if (is.getItemMeta().hasLore()) {
+                    ItemMeta meta = is.getItemMeta();
+                    List<String> newLore = new ArrayList<>();
+                    for (String line : meta.getLore()) {
+                        if (line.equals(Methods.convertToInvisibleString("----"))) break;
+                        newLore.add(line);
                     }
+                    meta.setLore(newLore);
+                    is.setItemMeta(meta);
+                }
 
-                    if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).endsWith("Command")) {
-                        StringBuilder command = new StringBuilder();
-                        for (String line : is.getItemMeta().getLore()) {
-                            command.append(line);
-                        }
-                        list.add(new KitItem(is, ChatColor.stripColor(command.toString())));
-                    } else if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).endsWith("Money")) {
-                        String money = is.getItemMeta().getLore().get(0);
-                        list.add(new KitItem(is, ChatColor.stripColor(money)));
-                    } else {
-                        list.add(new KitItem(is));
+                if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).endsWith("Command")) {
+                    StringBuilder command = new StringBuilder();
+                    for (String line : is.getItemMeta().getLore()) {
+                        command.append(line);
                     }
+                    list.add(new KitItem(is, ChatColor.stripColor(command.toString())));
+                } else if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).endsWith("Money")) {
+                    String money = is.getItemMeta().getLore().get(0);
+                    list.add(new KitItem(is, ChatColor.stripColor(money)));
+                } else {
+                    list.add(new KitItem(is));
                 }
             }
-            contents = list;
-        } catch (Exception e) {
-            Debugger.runReport(e);
         }
+        contents = list;
     }
 
 
     public List<ItemStack> getReadableContents(Player player, boolean preview, boolean commands, boolean moveable) {
         List<ItemStack> stacks = new ArrayList<>();
-        try {
-            for (KitItem item : getContents()) {
-                if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(plugin.getConfig().getString("Main.Currency Symbol"))) || commands) { //ToDO: I doubt this is correct.
-                    ItemStack stack = moveable ? item.getMoveableItem() : item.getItem();
-                    if (preview) stack = item.getItemForDisplay();
+        for (KitItem item : getContents()) {
+            if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(plugin.getConfig().getString("Main.Currency Symbol"))) || commands) { //ToDO: I doubt this is correct.
+                ItemStack stack = moveable ? item.getMoveableItem() : item.getItem();
+                if (preview) stack = item.getItemForDisplay();
 
-                    ItemStack fin = stack;
-                    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && stack.getItemMeta().getLore() != null) {
-                        ArrayList<String> lore2 = new ArrayList<>();
-                        ItemMeta meta2 = stack.getItemMeta();
-                        for (String lor : stack.getItemMeta().getLore()) {
-                            lor = PlaceholderAPI.setPlaceholders(player, lor.replace(" ", "_")).replace("_", " ");
-                            lore2.add(lor);
-                        }
-                        meta2.setLore(lore2);
-                        fin.setItemMeta(meta2);
+                ItemStack fin = stack;
+                if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && stack.getItemMeta().getLore() != null) {
+                    ArrayList<String> lore2 = new ArrayList<>();
+                    ItemMeta meta2 = stack.getItemMeta();
+                    for (String lor : stack.getItemMeta().getLore()) {
+                        lor = PlaceholderAPI.setPlaceholders(player, lor.replace(" ", "_")).replace("_", " ");
+                        lore2.add(lor);
                     }
-                    stacks.add(fin);
+                    meta2.setLore(lore2);
+                    fin.setItemMeta(meta2);
                 }
+                stacks.add(fin);
             }
-        } catch (Exception e) {
-            Debugger.runReport(e);
         }
         return stacks;
     }
 
-    public void giveKit(Player player) {
-        try {
-            givePartKit(player, null);
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
+    private boolean giveKit(Player player) {
+        return giveKit(player, null);
     }
 
-    private void givePartKit(Player player, Key key) {
-        try {
-            List<KitItem> innerContents = new ArrayList<>(getContents());
-            int amt = innerContents.size();
-            int amtToGive = key == null ? amt : key.getAmt();
+    private boolean giveKit(Player player, Key key) {
+        if (plugin.getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player)) {
+            plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
+            return false;
+        }
+        if (plugin.getConfig().getBoolean("Main.Sounds Enabled")
+                && kitAnimation == KitAnimation.NONE
+                && UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_12))
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
 
-            if (amt != amtToGive || kitAnimation != KitAnimation.NONE)
-                Collections.shuffle(innerContents);
+        List<KitItem> innerContents = new ArrayList<>(getContents());
+        int amt = innerContents.size();
+        int amtToGive = key == null ? amt : key.getAmt();
 
-            for (int i = 0; i < innerContents.size(); i ++) {
-            KitItem item = innerContents.get(i);
-                if (amtToGive == 0) continue;
-                int ch = item.getChance() == 0 ? 100 : item.getChance();
-                double rand = Math.random() * 100;
-                if (rand - ch < 0 || ch == 100) {
-                    if (item.getContent() instanceof KitContentEconomy) {
-                        try {
-                            Methods.pay(player, ((KitContentEconomy) item.getContent()).getAmount());
-                            player.sendMessage(plugin.getLocale().getMessage("event.claim.eco", Methods.formatEconomy(((KitContentEconomy) item.getContent()).getAmount())));
-                        } catch (NumberFormatException ex) {
-                            Debugger.runReport(ex);
-                        }
-                        amtToGive--;
-                        continue;
-                    } else if (item.getContent() instanceof KitContentCommand) {
-                        String parsed = ((KitContentCommand) item.getContent()).getCommand();
-                        parsed = parsed.replace("{player}", player.getName());
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
-                        amtToGive--;
-                        continue;
+        if (amt != amtToGive || kitAnimation != KitAnimation.NONE)
+            Collections.shuffle(innerContents);
+
+        return generateRandomItem(innerContents, amtToGive, player);
+    }
+
+    private boolean generateRandomItem(List<KitItem> innerContents, int amtToGive, Player player) {
+        boolean chosenItem = false;
+        for (KitItem item : innerContents) {
+            if (amtToGive == 0) continue;
+            int ch = item.getChance() == 0 ? 100 : item.getChance();
+            double rand = Math.random() * 100;
+            if (rand - ch < 0 || ch == 100) {
+                chosenItem = true;
+
+                if (item.getContent() instanceof KitContentEconomy) {
+                    try {
+                        Methods.pay(player, ((KitContentEconomy) item.getContent()).getAmount());
+                        plugin.getLocale().getMessage("event.claim.eco")
+                                .processPlaceholder("amt", Methods.formatEconomy(((KitContentEconomy) item.getContent()).getAmount()))
+                                .sendPrefixedMessage(player);
+                    } catch (NumberFormatException ex) {
+                        ex.printStackTrace();
                     }
-
-                    ItemStack parseStack = ((KitContentItem) item.getContent()).getItemStack();
-                    if (parseStack.getType() == Material.AIR) continue;
-
                     amtToGive--;
+                    continue;
+                } else if (item.getContent() instanceof KitContentCommand) {
+                    String parsed = ((KitContentCommand) item.getContent()).getCommand();
+                    parsed = parsed.replace("{player}", player.getName());
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
+                    amtToGive--;
+                    continue;
+                }
 
-                    if (kitAnimation != KitAnimation.NONE) {
-                        new CrateAnimateTask(plugin, player, this, item.getItem());
-                        return;
-                    } else {
-                        Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
-                        for (ItemStack item2 : overfilled.values()) {
-                            player.getWorld().dropItemNaturally(player.getLocation(), item2);
-                        }
+                ItemStack parseStack = ((KitContentItem) item.getContent()).getItemStack();
+
+                if (parseStack.hasItemMeta() && parseStack.getItemMeta().hasLore()) {
+                    ItemMeta meta = parseStack.getItemMeta();
+                    List<String> newLore = new ArrayList<>();
+                    for (String str : parseStack.getItemMeta().getLore()) {
+                        str = str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName());
+                        newLore.add(str);
+                    }
+                    meta.setLore(newLore);
+                    parseStack.setItemMeta(meta);
+                }
+
+                if (parseStack.getType() == Material.AIR) continue;
+
+                amtToGive--;
+
+                if (kitAnimation != KitAnimation.NONE) {
+                    new CrateAnimateTask(plugin, player, this, item.getItem());
+                    return true;
+                } else {
+                    if (Setting.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, item.getItem())) continue;
+
+                    Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
+                    for (ItemStack item2 : overfilled.values()) {
+                        player.getWorld().dropItemNaturally(player.getLocation(), item2);
                     }
                 }
             }
-
-            player.updateInventory();
-        } catch (Exception e) {
-            Debugger.runReport(e);
         }
+
+        if (!chosenItem) generateRandomItem(innerContents, amtToGive, player);
+
+        player.updateInventory();
+        return true;
     }
 
     public void updateDelay(Player player) {
@@ -344,48 +373,10 @@ public class Kit {
         return (last + delay) >= System.currentTimeMillis() ? (last + delay) - System.currentTimeMillis() : 0L;
     }
 
-    public void buyWithEconomy(Player player) {
-        try {
-            if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) return;
-            RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-            net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
-
-            if (!hasPermission(player)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(UltimateKits.getInstance().getLocale().getMessage(UltimateKits.getInstance().getLocale().getMessage("command.general.noperms"))));
-                return;
-            } else if (!econ.has(player, price)) {
-                player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(plugin.getLocale().getMessage("event.claim.cannotafford", showableName)));
-                return;
-            }
-            if (this.delay > 0) {
-
-                if (getNextUse(player) == -1) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText(plugin.getLocale().getMessage("event.claim.nottwice")));
-                } else if (getNextUse(player) != 0) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.claim.delay", Methods.makeReadable(getNextUse(player))));
-                    return;
-                }
-            }
-            if (delay != 0) {
-                updateDelay(player); //updates delay on buy
-            }
-            econ.withdrawPlayer(player, price);
-            give(player, false, true, false);
-
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
-        }
-
-    }
-
     public boolean hasPermission(Player player) {
-        try {
-            if (player.hasPermission("uc.kit." + name.toLowerCase())) return true;
-            if (player.hasPermission("essentials.kit." + name.toLowerCase())) return true;
-            if (player.hasPermission("ultimatekits.kit." + name.toLowerCase())) return true;
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
+        if (player.hasPermission("uc.kit." + name.toLowerCase())) return true;
+        if (player.hasPermission("essentials.kit." + name.toLowerCase())) return true;
+        if (player.hasPermission("ultimatekits.kit." + name.toLowerCase())) return true;
         return false;
     }
 

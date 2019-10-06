@@ -8,10 +8,14 @@ import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class CommandCreatekit extends AbstractCommand {
 
     public CommandCreatekit(AbstractCommand parent) {
-        super("createkit", parent, true, false);
+        super(parent, true, "createkit");
     }
 
     @Override
@@ -20,15 +24,20 @@ public class CommandCreatekit extends AbstractCommand {
         if (args.length != 2) return ReturnType.SYNTAX_ERROR;
         String kitStr = args[1].toLowerCase();
         if (instance.getKitManager().getKit(kitStr) != null) {
-            player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitalreadyexists"));
+            instance.getLocale().getMessage("command.kit.kitalreadyexists").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
 
-        player.sendMessage(UltimateKits.getInstance().getReferences().getPrefix() + Methods.formatText("&aThat kit doesn't exist. Creating it now."));
+        instance.getLocale().newMessage("&aThat kit doesn't exist. Creating it now.").sendPrefixedMessage(player);
         Kit kit = new Kit(kitStr.trim());
         UltimateKits.getInstance().getKitManager().addKit(kit);
         new GUIKitEditor(instance, player, kit, null, null, 0);
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        return Arrays.asList("name");
     }
 
     @Override

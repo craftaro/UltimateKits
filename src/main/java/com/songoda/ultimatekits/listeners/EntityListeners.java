@@ -1,7 +1,6 @@
 package com.songoda.ultimatekits.listeners;
 
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,9 +20,8 @@ public class EntityListeners implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerEntityInteract(EntityDamageEvent e) {
-        try {
-            if (e.getEntity().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.hologramHandler") == null) {
+    public void onPlayerEntityInteract(EntityDamageEvent event) {
+            if (event.getEntity().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.hologramHandler") == null) {
                 return;
             }
             ConfigurationSection section = instance.getConfig().getConfigurationSection("data.hologramHandler");
@@ -32,19 +30,15 @@ public class EntityListeners implements Listener {
                 World world = Bukkit.getServer().getWorld(str[1].substring(0, str[1].length() - 1));
                 double x = Double.parseDouble(str[2].substring(0, str[2].length() - 1)) + .5;
                 double z = Double.parseDouble(str[4]) + .5;
-                if (world == e.getEntity().getLocation().getWorld() && x == e.getEntity().getLocation().getX() && z == e.getEntity().getLocation().getZ()) {
-                    e.setCancelled(true);
+                if (world == event.getEntity().getLocation().getWorld() && x == event.getEntity().getLocation().getX() && z == event.getEntity().getLocation().getZ()) {
+                    event.setCancelled(true);
                 }
             }
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
-        }
     }
 
     @EventHandler
-    public void onPlayerEntityInteract(PlayerInteractAtEntityEvent e) {
-        try {
-            if (e.getRightClicked().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.hologramHandler") == null) {
+    public void onPlayerEntityInteract(PlayerInteractAtEntityEvent event) {
+            if (event.getRightClicked().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.hologramHandler") == null) {
                 return;
             }
             ConfigurationSection section = instance.getConfig().getConfigurationSection("data.hologramHandler");
@@ -53,12 +47,9 @@ public class EntityListeners implements Listener {
                 World w = Bukkit.getServer().getWorld(str[1].substring(0, str[1].length() - 1));
                 double x = Double.parseDouble(str[2].substring(0, str[2].length() - 1)) + .5;
                 double z = Double.parseDouble(str[4]) + .5;
-                if (w == e.getRightClicked().getLocation().getWorld() && x == e.getRightClicked().getLocation().getX() && z == e.getRightClicked().getLocation().getZ()) {
-                    e.setCancelled(true);
+                if (w == event.getRightClicked().getLocation().getWorld() && x == event.getRightClicked().getLocation().getX() && z == event.getRightClicked().getLocation().getZ()) {
+                    event.setCancelled(true);
                 }
             }
-        } catch (Exception ex) {
-            Debugger.runReport(ex);
-        }
     }
 }

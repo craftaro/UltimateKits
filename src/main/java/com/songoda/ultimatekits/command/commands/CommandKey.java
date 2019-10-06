@@ -9,10 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class CommandKey extends AbstractCommand {
 
     public CommandKey(AbstractCommand parent) {
-        super("key", parent, false, false);
+        super(parent, false, "key");
     }
 
     @Override
@@ -22,11 +26,11 @@ public class CommandKey extends AbstractCommand {
         }
         Kit kit = instance.getKitManager().getKit(args[1]);
         if (kit == null && !args[1].toLowerCase().equals("all")) {
-            sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.kit.kitdoesntexist"));
+            instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         if (Bukkit.getPlayer(args[3]) == null && !args[3].trim().equalsIgnoreCase("all")) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&cThat username does not exist, or the user is offline!"));
+            instance.getLocale().newMessage("&cThat username does not exist, or the user is offline!").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         int amt = 1;
@@ -38,13 +42,13 @@ public class CommandKey extends AbstractCommand {
             }
         }
         if (amt == 0) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&a" + args[3] + " &cis not a number."));
+            instance.getLocale().newMessage("&a" + args[3] + " &cis not a number.").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
         Key key = instance.getKeyManager().getKey(args[2]);
         if (key == null) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Methods.formatText("&a" + args[3] + " &cis not a key."));
+            instance.getLocale().newMessage("&a" + args[3] + " &cis not a key.").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
@@ -52,14 +56,42 @@ public class CommandKey extends AbstractCommand {
         if (!args[3].trim().equals("all")) {
             Player p = Bukkit.getPlayer(args[3]);
             p.getInventory().addItem(key.getKeyItem(kit, amt));
-            p.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.key.given", kit == null ? "Any" : kit.getShowableName()));
+            instance.getLocale().getMessage("event.key.given")
+                    .processPlaceholder("kit", kit == null ? "Any" : kit.getShowableName())
+                    .sendPrefixedMessage(p);
             return ReturnType.SUCCESS;
         }
         for (Player pl : instance.getServer().getOnlinePlayers()) {
             pl.getInventory().addItem(key.getKeyItem(kit, amt));
-            pl.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.key.given", kit == null ? "Any" : kit.getShowableName()));
+            instance.getLocale().getMessage("event.key.given")
+                    .processPlaceholder("kit", kit == null ? "Any" : kit.getShowableName())
+                    .sendPrefixedMessage(pl);
         }
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        if (!(sender instanceof Player)) return null;
+
+        List<String> tab = new ArrayList<>();
+
+        if (args.length == 2) {
+            tab.add("all");
+            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
+                tab.add(kit.getName());
+            return tab;
+        } else if (args.length == 3) {
+            for (Key key : UltimateKits.getInstance().getKeyManager().getKeys())
+                tab.add(key.getName());
+            return tab;
+        } else if (args.length == 4) {
+            tab.add("all");
+            for (Player player : Bukkit.getOnlinePlayers())
+                tab.add(player.getName());
+            return tab;
+        } else if (args.length == 5) return Arrays.asList("amount");
+        return tab;
     }
 
     @Override

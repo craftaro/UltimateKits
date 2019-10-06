@@ -34,6 +34,7 @@ public class KitBlockData {
 
         if (UltimateKits.getInstance().getHologram() != null)
             UltimateKits.getInstance().getHologram().remove(this);
+        UltimateKits.getInstance().getDataManager().updateBlockData(this);
     }
 
     public Kit getKit() {

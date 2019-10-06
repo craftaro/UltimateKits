@@ -6,26 +6,42 @@ import com.songoda.ultimatekits.kit.Kit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandPreviewKit extends AbstractCommand {
 
     public CommandPreviewKit() {
-        super("PreviewKit", null, true, false);
+        super(true, true,"PreviewKit");
     }
 
     @Override
     protected ReturnType runCommand(UltimateKits plugin, CommandSender sender, String... args) {
         Player player = (Player) sender;
         if (args.length != 1) {
-            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.kit.nokitsupplied"));
+            plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
         Kit kit = plugin.getKitManager().getKit(args[0].toLowerCase().trim());
         if (kit == null) {
-            player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.kit.kitdoesntexist"));
+            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
         kit.display(player, null);
         return ReturnType.SUCCESS;
+    }
+
+    @Override
+    protected List<String> onTab(UltimateKits instance, CommandSender sender, String... args) {
+        if (!(sender instanceof Player)) return null;
+
+        if (args.length == 2) {
+            List<String> tab = new ArrayList<>();
+            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
+                tab.add(kit.getName());
+            return tab;
+        }
+        return new ArrayList<>();
     }
 
     @Override

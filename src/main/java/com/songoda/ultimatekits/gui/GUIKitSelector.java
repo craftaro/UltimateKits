@@ -49,18 +49,18 @@ public class GUIKitSelector extends AbstractGUI {
             max = 36;
         }
         if (glassless) {
-            if (kitList.size() > n + 34)
-                max = max + 34;
-            else if (kitList.size() > n + 23)
-                max = max + 25;
-            else if (kitList.size() > n + 14)
-                max = max + 16;
-            else if (kitList.size() > n + 7)
-                max = max + 7;
+            if (kitList.size() > n + 36)
+                max = max + 36;
+            else if (kitList.size() > n + 27)
+                max = max + 27;
+            else if (kitList.size() > n + 18)
+                max = max + 18;
+            else if (kitList.size() > n + 9)
+                max = max + 9;
         }
         if (glassless) max -= 18;
 
-        init(plugin.getLocale().getMessage("interface.selector.title"), max);
+        init(plugin.getLocale().getMessage("interface.selector.title").getMessage(), max);
 
         timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             if (inventory.getViewers().isEmpty()) return;
@@ -90,10 +90,12 @@ public class GUIKitSelector extends AbstractGUI {
     @Override
     protected void constructGUI() {
         resetClickables();
+        registerClickables();
 
         ItemStack exit = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Exit Icon")), 1);
         ItemMeta exitmeta = exit.getItemMeta();
-        exitmeta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.exit"));
+        exitmeta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("interface.button.exit")
+                .getMessage());
         exit.setItemMeta(exitmeta);
 
         int num = 0;
@@ -144,7 +146,9 @@ public class GUIKitSelector extends AbstractGUI {
 
             Kit kit = plugin.getKitManager().getKit(kitItem);
 
-            String title = plugin.getLocale().getMessage("interface.selector.kit", Methods.formatText(kitItem, true));
+            String title = plugin.getLocale().getMessage("interface.selector.kit")
+                    .processPlaceholder("kit", Methods.formatText(kitItem, true)).getMessage();
+
             if (kit.getTitle() != null)
                 title = Methods.formatText(kit.getTitle());
 
@@ -155,41 +159,44 @@ public class GUIKitSelector extends AbstractGUI {
             meta.setDisplayName(Methods.convertToInvisibleString(kitItem + ":") + Methods.formatText(title));
             ArrayList<String> lore = new ArrayList<>();
             if (kit.getPrice() != 0)
-                lore.add(Methods.formatText("&7This kit costs &a$" + kit.getPrice() + "&7."));
+                lore.add(plugin.getLocale().getMessage("interface.selector.cost")
+                        .processPlaceholder("cost", kit.getPrice()).getMessage());
             else if (kit.getLink() != null)
-                lore.add(plugin.getLocale().getMessage("general.type.link"));
+                lore.add(plugin.getLocale().getMessage("general.type.link").getMessage());
 
 
             if (!kitsmode) {
-                if (!plugin.getLocale().getMessage("interface.selector.aboutkit").trim().equals("")) {
-                    String[] parts = plugin.getLocale().getMessage("interface.selector.aboutkit").split("\\|");
+                if (!plugin.getLocale().getMessage("interface.selector.aboutkit").getMessage().trim().equals("")) {
+                    String[] parts = plugin.getLocale().getMessage("interface.selector.aboutkit").getMessage().split("\\|");
                     lore.add("");
                     for (String line : parts)
                         lore.add(Methods.formatText(line));
                 }
                 if (kit.hasPermission(player)) {
                     if (kit.getNextUse(player) == -1) {
-                        lore.add(plugin.getLocale().getMessage("event.claim.once"));
+                        lore.add(plugin.getLocale().getMessage("event.claim.once").getMessage());
                     } else if (kit.getNextUse(player) > 0) {
-                        if (!plugin.getLocale().getMessage("event.claim.wait").trim().equals("")) {
-                            lore.add(plugin.getLocale().getMessage("event.claim.wait", Methods.makeReadable(kit.getNextUse(player))));
+                        if (!plugin.getLocale().getMessage("event.claim.wait").getMessage().trim().equals("")) {
+                            lore.add(plugin.getLocale().getMessage("event.claim.wait")
+                                    .processPlaceholder("time", Methods.makeReadable(kit.getNextUse(player)))
+                                    .getMessage());
                         }
-                    } else if (!plugin.getLocale().getMessage("event.claim.ready").trim().equals("")) {
-                        lore.add(plugin.getLocale().getMessage("event.claim.ready"));
+                    } else if (!plugin.getLocale().getMessage("event.claim.ready").getMessage().trim().equals("")) {
+                        lore.add(plugin.getLocale().getMessage("event.claim.ready").getMessage());
                     }
                 } else
-                    lore.add(plugin.getLocale().getMessage("event.claim.noaccess"));
+                    lore.add(plugin.getLocale().getMessage("event.claim.noaccess").getMessage());
                 lore.add("");
-                lore.add(plugin.getLocale().getMessage("interface.selector.leftpreview"));
+                lore.add(plugin.getLocale().getMessage("interface.selector.leftpreview").getMessage());
                 if (kit.hasPermission(player)) {
-                    lore.add(plugin.getLocale().getMessage("interface.selector.rightclaim"));
+                    lore.add(plugin.getLocale().getMessage("interface.selector.rightclaim").getMessage());
                 } else if (kit.getPrice() != 0 || kit.getLink() != null) {
-                    lore.add(plugin.getLocale().getMessage("interface.selector.rightbuy"));
+                    lore.add(plugin.getLocale().getMessage("interface.selector.rightbuy").getMessage());
                 }
 
                 if (player.hasPermission("ultimatekits.admin")) {
                     lore.add("");
-                    lore.add(Methods.formatText("&6Middle Click &7to edit positioning."));
+                    lore.add(plugin.getLocale().getMessage("interface.selector.middleclick").getMessage());
                 }
             } else {
                 lore.add(Methods.formatText("&6&lEdit Mode"));
@@ -242,7 +249,8 @@ public class GUIKitSelector extends AbstractGUI {
         ItemStack info = new ItemStack(Material.BOOK, 1);
         ItemMeta infometa = info.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
-        String[] parts = plugin.getLocale().getMessage("interface.selector.details", player.getName()).split("\\|");
+        String[] parts = plugin.getLocale().getMessage("interface.selector.details")
+                .processPlaceholder("player", player.getName()).getMessage().split("\\|");
         boolean hit = false;
         for (String line : parts) {
             if (!hit)
@@ -258,13 +266,13 @@ public class GUIKitSelector extends AbstractGUI {
         ItemStack skull = Methods.addTexture(head, "http://textures.minecraft.net/texture/1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b");
         SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
         skull.setDurability((short) 3);
-        skullMeta.setDisplayName(plugin.getLocale().getMessage("interface.button.next"));
+        skullMeta.setDisplayName(plugin.getLocale().getMessage("interface.button.next").getMessage());
         skull.setItemMeta(skullMeta);
 
         ItemStack skull2 = Methods.addTexture(head, "http://textures.minecraft.net/texture/3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
         SkullMeta skull2Meta = (SkullMeta) skull2.getItemMeta();
         skull2.setDurability((short) 3);
-        skull2Meta.setDisplayName(plugin.getLocale().getMessage("interface.button.next"));
+        skull2Meta.setDisplayName(plugin.getLocale().getMessage("interface.button.next").getMessage());
         skull2.setItemMeta(skull2Meta);
 
         if (!plugin.getConfig().getBoolean("Interfaces.Do Not Use Glass Borders"))

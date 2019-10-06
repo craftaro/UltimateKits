@@ -7,8 +7,8 @@ import java.util.*;
 
 public final class KitManager {
 
-    private final Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
-    private List<Kit> registeredKits = new LinkedList<>();
+    private Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
+    private final List<Kit> registeredKits = new LinkedList<>();
 
     public boolean addKit(Kit kit) {
         if (kit == null) return false;
@@ -29,14 +29,18 @@ public final class KitManager {
         }
     }
 
-    public void addKitToLocation(Kit kit, Location location) {
-        kitsAtLocations.put(roundLocation(location), new KitBlockData(kit, location));
+    public KitBlockData addKitToLocation(Kit kit, Location location) {
+        KitBlockData data = new KitBlockData(kit, location);
+        kitsAtLocations.put(roundLocation(location), data);
+        return data;
     }
 
-    public void addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
-        KitBlockData kitBlockData = kitsAtLocations.put(roundLocation(location), new KitBlockData(kit, location, type, hologram, particles, items, itemOverride));
+    public KitBlockData addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
+        KitBlockData data = new KitBlockData(kit, location, type, hologram, particles, items, itemOverride);
+        kitsAtLocations.put(roundLocation(location), data);
         if (UltimateKits.getInstance().getHologram() != null)
-            UltimateKits.getInstance().getHologram().update(kitBlockData);
+            UltimateKits.getInstance().getHologram().update(data);
+        return data;
     }
 
     public Kit removeKitFromLocation(Location location) {
@@ -47,13 +51,13 @@ public final class KitManager {
         kit.reset();
 
         KitBlockData removed = kitsAtLocations.remove(roundLocation(location));
+        UltimateKits.getInstance().getDataManager().deleteBlockData(removed);
         return (removed != null ? removed.getKit() : null);
     }
 
     public Kit getKit(String name) {
-        for (Kit kit : registeredKits)
-            if (kit.getName().equalsIgnoreCase(name)) return kit;
-        return null;
+        return registeredKits.stream().filter(kit -> kit.getName().equalsIgnoreCase(name.trim()))
+                .findFirst().orElse(null);
     }
 
     public KitBlockData getKit(Location location) {
@@ -66,6 +70,10 @@ public final class KitManager {
 
     public Map<Location, KitBlockData> getKitLocations() {
         return Collections.unmodifiableMap(kitsAtLocations);
+    }
+
+    public void setKitLocations(Map<Location, KitBlockData> kits) {
+        kitsAtLocations = kits;
     }
 
     public void clearKits() {

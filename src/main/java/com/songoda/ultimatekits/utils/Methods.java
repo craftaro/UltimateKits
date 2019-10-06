@@ -37,15 +37,22 @@ public class Methods {
             return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 3"));
     }
 
-    private static ItemStack getGlass(Boolean rainbow, int type) {
+    /**
+     * Creates a glass itemstack
+     *
+     * @param rainbow Whether or not to assign a random color to the glass.
+     * @param type    If rainbow is false, the glass color.
+     * @return A glass itemstack conforming to the params.
+     */
+    public static ItemStack getGlass(boolean rainbow, int type) {
         int randomNum = 1 + (int) (Math.random() * 6);
         ItemStack glass;
         if (rainbow) {
             glass = new ItemStack(UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE :  Material.valueOf("STAINED_GLASS_PANE"), 1, (short) randomNum);
+                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) randomNum);
         } else {
             glass = new ItemStack(UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE :  Material.valueOf("STAINED_GLASS_PANE"), 1, (short) type);
+                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) type);
         }
         ItemMeta glassmeta = glass.getItemMeta();
         glassmeta.setDisplayName("§l");
@@ -53,15 +60,10 @@ public class Methods {
         return glass;
     }
 
-
     public static boolean canGiveKit(Player player) {
-        try {
-            if (player.hasPermission("ultimatekits.cangive")) return true;
+        if (player.hasPermission("ultimatekits.cangive")) return true;
 
-            if (player.hasPermission("essentials.kit.others")) return true;
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
+        if (player.hasPermission("essentials.kit.others")) return true;
         return false;
     }
 
@@ -81,17 +83,16 @@ public class Methods {
     }
 
 
-
     /**
      * Serializes the location of the block specified.
      *
-     * @param b The block whose location is to be saved.
+     * @param block The block whose location is to be saved.
      * @return The serialized data.
      */
-    public static String serializeLocation(Block b) {
-        if (b == null)
+    public static String serializeLocation(Block block) {
+        if (block == null)
             return "";
-        return serializeLocation(b.getLocation());
+        return serializeLocation(block.getLocation());
     }
 
     /**
@@ -171,17 +172,58 @@ public class Methods {
         return ChatColor.translateAlternateColorCodes('&', text);
     }
 
-    /**
-     * Makes the specified Unix Epoch time human readable as per the format settings in the Arconix config.
-     *
-     * @param time The time to convert.
-     * @return A human readable string representing to specified time.
-     */
     public static String makeReadable(Long time) {
         if (time == null)
             return "";
-        return String.format("%d hour(s), %d min(s), %d sec(s)", TimeUnit.MILLISECONDS.toHours(time), TimeUnit.MILLISECONDS.toMinutes(time) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time)), TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time)));
+
+        StringBuilder sb = new StringBuilder();
+
+        long days = TimeUnit.MILLISECONDS.toDays(time);
+        long hours = TimeUnit.MILLISECONDS.toHours(time) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(time));
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(time));
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(time) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(time));
+
+        if (days != 0L)
+            sb.append(" ").append(days).append("d");
+        if (hours != 0L)
+            sb.append(" ").append(hours).append("h");
+        if (minutes != 0L)
+            sb.append(" ").append(minutes).append("m");
+        if (seconds != 0L)
+            sb.append(" ").append(seconds).append("s");
+        return sb.toString().trim();
     }
+
+
+    public static long parseTime(String input) {
+        long result = 0;
+        StringBuilder number = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (Character.isDigit(c)) {
+                number.append(c);
+            } else if (Character.isLetter(c) && (number.length() > 0)) {
+                result += convert(Integer.parseInt(number.toString()), c);
+                number = new StringBuilder();
+            }
+        }
+        return result;
+    }
+
+    private static long convert(long value, char unit) {
+        switch (unit) {
+            case 'd':
+                return value * 1000 * 60 * 60 * 24;
+            case 'h':
+                return value * 1000 * 60 * 60;
+            case 'm':
+                return value * 1000 * 60;
+            case 's':
+                return value * 1000;
+        }
+        return 0;
+    }
+
 
     /**
      * Formats the specified double into the Economy format specified in the Arconix config.
@@ -218,11 +260,10 @@ public class Methods {
     }
 
 
-
     /**
      * Fills the provided inventory with glass panes of the specified color type.
      *
-     * @param i    The inventory to fill.
+     * @param i The inventory to fill.
      */
     public static void fillGlass(Inventory i) {
         ItemStack glass = getGlass();
@@ -261,26 +302,6 @@ public class Methods {
         }
         item.setItemMeta(meta);
         return item;
-    }
-    /**
-     * Creates a glass itemstack
-     *
-     * @param rainbow Whether or not to assign a random color to the glass.
-     * @param type    If rainbow is false, the glass color.
-     * @return A glass itemstack conforming to the params.
-     */
-    public static ItemStack toGlass(Boolean rainbow, int type) {
-        int randomNum = 1 + (int) (Math.random() * 6);
-        ItemStack glass;
-        if (rainbow) {
-            glass = new ItemStack(Material.LEGACY_STAINED_GLASS_PANE, 1, (short) randomNum);
-        } else {
-            glass = new ItemStack(Material.LEGACY_STAINED_GLASS_PANE, 1, (short) type);
-        }
-        ItemMeta glassMeta = glass.getItemMeta();
-        glassMeta.setDisplayName("§l");
-        glass.setItemMeta(glassMeta);
-        return glass;
     }
 
 }

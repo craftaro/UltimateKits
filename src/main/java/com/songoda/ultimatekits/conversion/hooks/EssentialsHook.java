@@ -5,7 +5,6 @@ import com.earth2me.essentials.Kit;
 import com.earth2me.essentials.MetaItemStack;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.conversion.Hook;
-import com.songoda.ultimatekits.utils.Debugger;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,7 +38,7 @@ public class EssentialsHook implements Hook {
                 stacks.add(metaStack.getItemStack());
             }
         } catch (Exception e) {
-            Debugger.runReport(e);
+            e.printStackTrace();
         }
         return stacks;
     }
@@ -57,6 +56,11 @@ public class EssentialsHook implements Hook {
     }
 
     public long getDelay(String kitName) {
-        return Integer.toUnsignedLong((int) essentials.getSettings().getKit(kitName).getOrDefault("delay", 0));
+        Object object = essentials.getSettings().getKit(kitName).getOrDefault("delay", 0);
+        try {
+            return Integer.toUnsignedLong((int) object);
+        } catch (Exception e) {
+            return (long) object;
+        }
     }
 }

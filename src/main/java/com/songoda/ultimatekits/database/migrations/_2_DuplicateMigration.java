@@ -1,6 +1,6 @@
 package com.songoda.ultimatekits.database.migrations;
 
-import com.songoda.ultimatekits.database.DataMigration;
+import com.songoda.core.database.DataMigration;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,29 +1,34 @@
 package com.songoda.ultimatekits.kit;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.CompatibleSound;
+import com.songoda.core.configuration.Config;
+import com.songoda.core.gui.Gui;
+import com.songoda.core.gui.GuiManager;
+import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.gui.GUIConfirmBuy;
-import com.songoda.ultimatekits.gui.GUIDisplayKit;
+import com.songoda.ultimatekits.gui.AnimatedKitGui;
+import com.songoda.ultimatekits.gui.PreviewKitGui;
+import com.songoda.ultimatekits.gui.ConfirmBuyGui;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
-import com.songoda.ultimatekits.tasks.CrateAnimateTask;
+import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.ArmorType;
 import com.songoda.ultimatekits.utils.Methods;
-import com.songoda.ultimatekits.utils.ServerVersion;
-import com.songoda.ultimatekits.utils.gui.AbstractGUI;
-import com.songoda.ultimatekits.utils.settings.Setting;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -36,13 +41,13 @@ public class Kit {
     private String link, title;
     private int delay;
     private boolean hidden;
-    private Material displayItem;
+    private CompatibleMaterial displayItem;
     private List<KitItem> contents;
     private KitAnimation kitAnimation;
 
-    public Kit(String name, String title, String link, double price, Material displayItem, int delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
+    public Kit(String name, String title, String link, double price, CompatibleMaterial displayItem, int delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
         this.name = name;
-        this.showableName = Methods.formatText(name, true);
+        this.showableName = TextUtils.formatText(name, true);
         this.price = price;
         this.link = link;
         this.kitAnimation = kitAnimation;
@@ -58,7 +63,7 @@ public class Kit {
         this(name, null, null, 0, null, 0, false, new ArrayList<>(), KitAnimation.NONE);
     }
 
-    public void buy(Player player) {
+    public void buy(Player player, GuiManager manager) {
         if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
             processGenericUse(player, false);
             return;
@@ -76,7 +81,7 @@ public class Kit {
             player.sendMessage("");
             player.closeInventory();
         } else if (price != 0) {
-            new GUIConfirmBuy(plugin, player, this);
+            manager.showGUI(player, new ConfirmBuyGui(plugin, player, this, null));
         } else {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
@@ -139,13 +144,13 @@ public class Kit {
     }
 
     public void processPurchaseUse(Player player) {
-        if (plugin.getEconomy() == null) return;
+        if (!EconomyManager.isEnabled()) return;
 
         if (!player.hasPermission("ultimatekits.buy." + name)) {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
             return;
-        } else if (!plugin.getEconomy().hasBalance(player, price)) {
+        } else if (!EconomyManager.hasBalance(player, price)) {
             plugin.getLocale().getMessage("event.claim.cannotafford")
                     .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
             return;
@@ -161,13 +166,14 @@ public class Kit {
             }
         }
         if (giveKit(player)) {
-            plugin.getEconomy().withdrawBalance(player, price);
+            EconomyManager.withdrawBalance(player, price);
             if (delay != 0)
                 updateDelay(player); //updates delay on buy
+
+            plugin.getLocale().getMessage("event.claim.purchasesuccess")
+                    .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
         }
 
-        plugin.getLocale().getMessage("event.claim.purchasesuccess")
-                .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
     }
 
     public void processGenericUse(Player player, boolean forced) {
@@ -188,7 +194,7 @@ public class Kit {
     }
 
     @SuppressWarnings("Duplicates")
-    public void display(Player player, AbstractGUI back) {
+    public void display(Player player, GuiManager manager, Gui back) {
         if (!player.hasPermission("previewkit.use")
                 && !player.hasPermission("previewkit." + name)
                 && !player.hasPermission("ultimatekits.use")
@@ -204,7 +210,7 @@ public class Kit {
 
         plugin.getLocale().getMessage("event.preview.kit")
                 .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
-        new GUIDisplayKit(plugin, back, player, this);
+        manager.showGUI(player, new PreviewKitGui(plugin, player, this, back));
     }
 
     public void saveKit(List<ItemStack> items) {
@@ -216,7 +222,7 @@ public class Kit {
                     ItemMeta meta = is.getItemMeta();
                     List<String> newLore = new ArrayList<>();
                     for (String line : meta.getLore()) {
-                        if (line.equals(Methods.convertToInvisibleString("----"))) break;
+                        if (TextUtils.convertFromInvisibleString(line).equals("----")) break;
                         newLore.add(line);
                     }
                     meta.setLore(newLore);
@@ -244,16 +250,17 @@ public class Kit {
     public List<ItemStack> getReadableContents(Player player, boolean preview, boolean commands, boolean moveable) {
         List<ItemStack> stacks = new ArrayList<>();
         for (KitItem item : getContents()) {
-            if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(plugin.getConfig().getString("Main.Currency Symbol"))) || commands) { //ToDO: I doubt this is correct.
+            if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(Settings.CURRENCY_SYMBOL.getString())) || commands) { //ToDO: I doubt this is correct.
                 ItemStack stack = moveable ? item.getMoveableItem() : item.getItem();
                 if (preview) stack = item.getItemForDisplay();
+                if (stack == null) continue;
 
                 ItemStack fin = stack;
                 if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && stack.getItemMeta().getLore() != null) {
                     ArrayList<String> lore2 = new ArrayList<>();
                     ItemMeta meta2 = stack.getItemMeta();
                     for (String lor : stack.getItemMeta().getLore()) {
-                        lor = PlaceholderAPI.setPlaceholders(player, lor.replace(" ", "_")).replace("_", " ");
+                        lor = me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(player, lor.replace(" ", "_")).replace("_", " ");
                         lore2.add(lor);
                     }
                     meta2.setLore(lore2);
@@ -270,14 +277,12 @@ public class Kit {
     }
 
     private boolean giveKit(Player player, Key key) {
-        if (plugin.getConfig().getBoolean("Main.Prevent The Redeeming of a Kit When Inventory Is Full") && !hasRoom(player)) {
+        if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player)) {
             plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
             return false;
         }
-        if (plugin.getConfig().getBoolean("Main.Sounds Enabled")
-                && kitAnimation == KitAnimation.NONE
-                && UltimateKits.getInstance().isServerVersionAtLeast(ServerVersion.V1_12))
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
+        if (Settings.SOUNDS_ENABLED.getBoolean() && kitAnimation == KitAnimation.NONE)
+            CompatibleSound.ENTITY_PLAYER_LEVELUP.play(player, 0.6F, 15.0F);
 
         List<KitItem> innerContents = new ArrayList<>(getContents());
         int amt = innerContents.size();
@@ -286,21 +291,20 @@ public class Kit {
         if (amt != amtToGive || kitAnimation != KitAnimation.NONE)
             Collections.shuffle(innerContents);
 
-        return generateRandomItem(innerContents, amtToGive, player);
+        return generateRandomItem(innerContents, amtToGive, player, -1);
     }
 
-    private boolean generateRandomItem(List<KitItem> innerContents, int amtToGive, Player player) {
-        boolean chosenItem = false;
+    private boolean generateRandomItem(List<KitItem> innerContents, int amtToGive, Player player, int forceSelect) {
+        int canChoose = 0;
         for (KitItem item : innerContents) {
-            if (amtToGive == 0) continue;
-            int ch = item.getChance() == 0 ? 100 : item.getChance();
+            if (amtToGive == 0) break;
+            int ch = canChoose++ == forceSelect || item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
-            if (rand - ch < 0 || ch == 100) {
-                chosenItem = true;
+            if (rand < ch || ch == 100) {
 
                 if (item.getContent() instanceof KitContentEconomy) {
                     try {
-                        Methods.pay(player, ((KitContentEconomy) item.getContent()).getAmount());
+                        EconomyManager.deposit(player, ((KitContentEconomy) item.getContent()).getAmount());
                         plugin.getLocale().getMessage("event.claim.eco")
                                 .processPlaceholder("amt", Methods.formatEconomy(((KitContentEconomy) item.getContent()).getAmount()))
                                 .sendPrefixedMessage(player);
@@ -335,10 +339,12 @@ public class Kit {
                 amtToGive--;
 
                 if (kitAnimation != KitAnimation.NONE) {
-                    new CrateAnimateTask(plugin, player, this, item.getItem());
+                    // TODO: this is a very bad way to solve this problem.
+                    // Giving the player kit rewards really should be done outside of the Kit class.
+                    plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, this, item.getItem()));
                     return true;
                 } else {
-                    if (Setting.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, item.getItem())) continue;
+                    if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, item.getItem())) continue;
 
                     Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
                     for (ItemStack item2 : overfilled.values()) {
@@ -348,24 +354,27 @@ public class Kit {
             }
         }
 
-        if (!chosenItem) generateRandomItem(innerContents, amtToGive, player);
+        if (amtToGive != 0 && canChoose != 0 && forceSelect == -1) {
+            return generateRandomItem(innerContents, amtToGive, player, (int) (Math.random() * canChoose));
+        } else if (amtToGive != 0) {
+            return false;
+        }
 
         player.updateInventory();
         return true;
     }
 
     public void updateDelay(Player player) {
-        plugin.getDataFile().getConfig().set("Kits." + name + ".delays." + player.getUniqueId().toString(), System.currentTimeMillis());
+        plugin.getDataFile().set("Kits." + name + ".delays." + player.getUniqueId().toString(), System.currentTimeMillis());
     }
 
     public Long getNextUse(Player player) {
         String configSectionPlayer = "Kits." + name + ".delays." + player.getUniqueId().toString();
-        FileConfiguration config = plugin.getDataFile().getConfig();
+        Config config = plugin.getDataFile();
 
         if (!config.contains(configSectionPlayer)) {
             return 0L;
         } else if (this.delay == -1) return -1L;
-
 
         long last = config.getLong(configSectionPlayer);
         long delay = (long) this.delay * 1000;
@@ -428,12 +437,12 @@ public class Kit {
         return showableName;
     }
 
-    public Material getDisplayItem() {
+    public CompatibleMaterial getDisplayItem() {
         return displayItem;
     }
 
-    public void setDisplayItem(Material displayItem) {
-        this.displayItem = displayItem;
+    public void setDisplayItem(ItemStack item) {
+        this.displayItem = item != null ? CompatibleMaterial.getMaterial(item) : null;
     }
 
     public boolean isHidden() {

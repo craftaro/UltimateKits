@@ -1,14 +1,18 @@
 package com.songoda.ultimatekits.listeners;
 
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -28,8 +32,7 @@ public class BlockListeners implements Listener {
         if (kitBlockData == null) return;
         Kit kit = kitBlockData.getKit();
 
-        if (instance.getHologram() != null)
-            instance.getHologram().remove(kitBlockData);
+        instance.removeHologram(kitBlockData);
 
         instance.getKitManager().removeKitFromLocation(block.getLocation());
 
@@ -43,6 +46,12 @@ public class BlockListeners implements Listener {
         KitBlockData kitBlockData = instance.getKitManager().getKit(block.getLocation());
         if (kitBlockData != null) {
             e.setCancelled(true);
+        }
+        ItemStack item = e.getItemInHand();
+        if (item.getType() == Material.TRIPWIRE_HOOK && item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+            Key key = instance.getKeyManager().getKey(ChatColor.stripColor(item.getItemMeta().getLore().get(0)).replace(" Key", ""));
+            if (key != null)
+                e.setCancelled(true);
         }
     }
 }

@@ -32,8 +32,7 @@ public class KitBlockData {
         setHasParticles(false);
         UltimateKits.getInstance().getDisplayItemHandler().displayItem(this);
 
-        if (UltimateKits.getInstance().getHologram() != null)
-            UltimateKits.getInstance().getHologram().remove(this);
+        UltimateKits.getInstance().removeHologram(this);
         UltimateKits.getInstance().getDataManager().updateBlockData(this);
     }
 
@@ -43,6 +42,10 @@ public class KitBlockData {
 
     public Location getLocation() {
         return location.clone();
+    }
+
+    public boolean isInLoadedChunk() {
+        return location != null && location.getWorld() != null && location.getWorld().isChunkLoaded(((int) location.getX()) >> 4, ((int) location.getZ()) >> 4);
     }
 
     public int getX() {

@@ -159,13 +159,6 @@ public class UltimateKits extends SongodaPlugin {
         displayItemHandler.start();
         particleHandler.start();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveKits, 6000, 6000);
-        Bukkit.getScheduler().runTaskLater(this, () ->
-                this.dataManager.getBlockData((blockData) -> {
-                    this.kitManager.setKitLocations(blockData);
-                    if (HologramManager.isEnabled()) {
-                        loadHolograms();
-                    }
-                }), 20L);
     }
 
     @Override
@@ -224,7 +217,7 @@ public class UltimateKits extends SongodaPlugin {
             }
 
             /*
-             * Register kit locations into KitManager from Configuration.
+             * Register legacy kit locations into KitManager from Configuration.
              */
             if (dataFile.contains("BlockData")) {
                 for (String key : dataFile.getConfigurationSection("BlockData").getKeys(false)) {
@@ -242,6 +235,17 @@ public class UltimateKits extends SongodaPlugin {
                     }
                 }
             }
+            
+            /*
+             * Register kit locations into KitManager from Configuration.
+             */
+            Bukkit.getScheduler().runTaskLater(this, () ->
+                    this.dataManager.getBlockData((blockData) -> {
+                        this.kitManager.setKitLocations(blockData);
+                        if (HologramManager.isEnabled()) {
+                            loadHolograms();
+                        }
+                    }), 20L);
 
             //Apply default keys.
             checkKeyDefaults();

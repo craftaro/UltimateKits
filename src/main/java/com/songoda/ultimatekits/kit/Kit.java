@@ -244,6 +244,7 @@ public class Kit {
             }
         }
         contents = list;
+        plugin.saveKits();
     }
 
 

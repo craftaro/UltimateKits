@@ -178,7 +178,7 @@ public class PreviewKitGui extends Gui {
                 lore.add(ChatColor.GRAY + "This is free because");
                 lore.add(ChatColor.GRAY + "you have perms for it.");
                 lore.add(ChatColor.GRAY + "Everyone else buys");
-                lore.add(ChatColor.GRAY + "this for &a$" + Methods.formatEconomy(kit.getPrice()) + ChatColor.GRAY + ".");
+                lore.add(ChatColor.GRAY + "this for " + ChatColor.GREEN + "$" + Methods.formatEconomy(kit.getPrice()) + ChatColor.GRAY + ".");
             }
         } else {
             lore.add(plugin.getLocale().getMessage("interface.button.clickeco")

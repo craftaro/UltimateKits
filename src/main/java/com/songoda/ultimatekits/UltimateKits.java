@@ -116,7 +116,6 @@ public class UltimateKits extends SongodaPlugin {
 
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
-        this.commandManager = new CommandManager(this);
 
         Convert.runKitConversions();
 
@@ -160,14 +159,13 @@ public class UltimateKits extends SongodaPlugin {
         displayItemHandler.start();
         particleHandler.start();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveKits, 6000, 6000);
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            this.dataManager.getBlockData((blockData) -> {
-                this.kitManager.setKitLocations(blockData);
-                if (HologramManager.isEnabled()) {
-                    loadHolograms();
-                }
-            });
-        }, 20L);
+        Bukkit.getScheduler().runTaskLater(this, () ->
+                this.dataManager.getBlockData((blockData) -> {
+                    this.kitManager.setKitLocations(blockData);
+                    if (HologramManager.isEnabled()) {
+                        loadHolograms();
+                    }
+                }), 20L);
     }
 
     @Override
@@ -309,7 +307,7 @@ public class UltimateKits extends SongodaPlugin {
         Location location = data.getLocation();
         double multi = .1 * lines;
         if (data.isDisplayingItems()) {
-            multi += .15;
+            multi += .25;
         }
         Material type = location.getBlock().getType();
         if (type == Material.TRAPPED_CHEST
@@ -384,8 +382,11 @@ public class UltimateKits extends SongodaPlugin {
      */
     private void saveKits() {
 
-        // Wipe old kit information
-        kitFile.set("Kits", null);
+        // Hot fix for kit file resets.
+        for (String kitName : kitFile.getConfigurationSection("Kits").getKeys(false)) {
+            if (kitManager.getKits().stream().noneMatch(kit -> kit.getName().equals(kitName)))
+                kitFile.set("Kits." + kitName, null);
+        }
 
         /*
          * Save kit from KitManager to Configuration.
@@ -399,6 +400,8 @@ public class UltimateKits extends SongodaPlugin {
             kitFile.set("Kits." + kit.getName() + ".animation", kit.getKitAnimation().name());
             if (kit.getDisplayItem() != null)
                 kitFile.set("Kits." + kit.getName() + ".displayItem", kit.getDisplayItem().toString());
+            else
+                kitFile.set("Kits." + kit.getName() + ".displayItem", null);
 
             List<KitItem> contents = kit.getContents();
             List<String> strContents = new ArrayList<>();

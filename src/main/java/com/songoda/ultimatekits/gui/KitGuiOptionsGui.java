@@ -16,8 +16,15 @@ import org.bukkit.inventory.ItemStack;
 
 public class KitGuiOptionsGui extends Gui {
 
+    private final UltimateKits plugin;
+    private final Kit kit;
+    private final Player player;
+
     public KitGuiOptionsGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
         super(back);
+        this.plugin = plugin;
+        this.kit = kit;
+        this.player = player;
         setRows(3);
         setTitle(plugin.getLocale().getMessage("interface.kitblock.title")
                 .processPlaceholder("kit", kit.getShowableName())
@@ -38,100 +45,76 @@ public class KitGuiOptionsGui extends Gui {
                 plugin.getLocale().getMessage("interface.button.back").getMessage()),
                 ClickType.LEFT,
                 event -> event.player.closeInventory());
+        paint();
+    }
 
+    private void paint() {
         // set hologram title
         setButton(1, 2, GuiUtils.createButtonItem(CompatibleMaterial.NAME_TAG,
                 plugin.getLocale().getMessage("interface.kitguioptions.holo").getMessage(),
                 plugin.getLocale().getMessage("interface.kitguioptions.hololore")
-                .processPlaceholder("onoff",
-                        kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", kit.getTitle()).getMessage()
-                                : plugin.getLocale().getMessage("interface.kitguioptions.holooff").getMessage()
-                ).getMessage().split("\\|")),
+                        .processPlaceholder("onoff",
+                                kit.getTitle() != null ? plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", kit.getTitle()).getMessage()
+                                        : plugin.getLocale().getMessage("interface.kitguioptions.holooff").getMessage()
+                        ).getMessage().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitguioptions.holoprompt").getMessage());
                     gui.setAction(aevent -> {
-                        final String msg = gui.getInputText();
+                        final String msg = gui.getInputText().trim();
                         kit.setTitle(msg);
                         plugin.getLocale().getMessage("interface.kitguioptions.holoset")
-                        .processPlaceholder("title", msg)
-                        .processPlaceholder("kit", kit.getShowableName())
-                        .sendPrefixedMessage(player);
+                                .processPlaceholder("title", msg)
+                                .processPlaceholder("kit", kit.getShowableName())
+                                .sendPrefixedMessage(player);
 
                         plugin.updateHologram(kit);
-
-                        updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitguioptions.hololore")
-                                .processPlaceholder("onoff",
-                                        kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", kit.getTitle()).getMessage()
-                                                : plugin.getLocale().getMessage("interface.kitguioptions.holooff").getMessage()
-                                ).getMessage().split("\\|"));
-
                         aevent.player.closeInventory();
+                        paint();
                     });
                     guiManager.showGUI(event.player, gui);
                 });
         setAction(1, 2, ClickType.RIGHT, event -> {
-            kit.setTitle("");
+            kit.setTitle(null);
             plugin.updateHologram(kit);
-
-            updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitguioptions.hololore")
-                    .processPlaceholder("onoff",
-                            kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", kit.getTitle()).getMessage()
-                                    : plugin.getLocale().getMessage("interface.kitguioptions.holooff").getMessage()
-                    ).getMessage().split("\\|"));
+            paint();
         });
 
         setButton(1, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
                 plugin.getLocale().getMessage("interface.kitguioptions.item").getMessage(),
                 plugin.getLocale().getMessage("interface.kitguioptions.itemlore")
-                .processPlaceholder("onoff",
-                        kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon").processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
-                                : plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
-                ).getMessage().split("\\|")),
+                        .processPlaceholder("onoff",
+                                kit.getDisplayItem() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon").processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
+                                        : plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
+                        ).getMessage().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     ItemStack is = player.getItemInHand();
                     if (is.getType() == Material.AIR) {
-                        plugin.getLocale().newMessage("interface.kitguioptions.itemnoitem").sendPrefixedMessage(player);
+                        plugin.getLocale().getMessage("interface.kitguioptions.itemnoitem").sendPrefixedMessage(player);
                     } else {
                         kit.setDisplayItem(is);
-                        plugin.getLocale().newMessage("interface.kitguioptions.itemset").processPlaceholder("item", kit.getShowableName()).sendPrefixedMessage(player);
-                        updateItem(event.slot, kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
-                                plugin.getLocale().getMessage("interface.kitguioptions.item").getMessage(),
-                                plugin.getLocale().getMessage("interface.kitguioptions.itemlore")
-                                .processPlaceholder("onoff",
-                                        kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon").processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
-                                                : plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
-                                ).getMessage().split("\\|"));
+                        plugin.getLocale().getMessage("interface.kitguioptions.itemset").processPlaceholder("item", kit.getShowableName()).sendPrefixedMessage(player);
+                        paint();
                     }
                 });
         setAction(1, 4, ClickType.RIGHT, event -> {
             kit.setDisplayItem(null);
-            plugin.getLocale().newMessage("interface.kitguioptions.itemremoved").processPlaceholder("kit", kit.getShowableName()).sendPrefixedMessage(player);
-            updateItem(event.slot, kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
-                    plugin.getLocale().getMessage("interface.kitguioptions.item").getMessage(),
-                    plugin.getLocale().getMessage("interface.kitguioptions.itemlore")
-                    .processPlaceholder("onoff",
-                            kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon").processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
-                                    : plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
-                    ).getMessage().split("\\|"));
+            plugin.getLocale().getMessage("interface.kitguioptions.itemremoved").processPlaceholder("kit", kit.getShowableName()).sendPrefixedMessage(player);
+            paint();
         });
 
-        setButton(1, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
+        setButton(1, 6, GuiUtils.createButtonItem(CompatibleMaterial.COAL,
                 plugin.getLocale().getMessage("interface.kitguioptions.hide").getMessage(),
                 plugin.getLocale().getMessage("interface.kitguioptions.hidelore")
-                .processPlaceholder("onoff", plugin.getLocale().getMessage(
+                        .processPlaceholder("onoff", plugin.getLocale().getMessage(
                                 kit.isHidden() ? "interface.kitguioptions.hideon" : "interface.kitguioptions.hideoff").getMessage()
-                ).getMessage().split("\\|")),
+                        ).getMessage().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     kit.setHidden(!kit.isHidden());
-
-                    updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitguioptions.hidelore")
-                            .processPlaceholder("onoff", plugin.getLocale().getMessage(
-                                            kit.isHidden() ? "interface.kitguioptions.hideon" : "interface.kitguioptions.hideoff").getMessage()
-                            ).getMessage().split("\\|"));
+                    paint();
                 });
     }
 }

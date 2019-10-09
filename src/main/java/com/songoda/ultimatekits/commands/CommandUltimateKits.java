@@ -24,7 +24,7 @@ public class CommandUltimateKits extends AbstractCommand {
 
         for (AbstractCommand command : instance.getCommandManager().getAllCommands()) {
             if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
-                sender.sendMessage(ChatColor.DARK_GRAY + " - " + ChatColor.GREEN + command.getSyntax() + ChatColor.GRAY + " - " + command.getDescription());
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8 - &a" + command.getSyntax() + "&7 - " + command.getDescription()));
             }
         }
         sender.sendMessage("");

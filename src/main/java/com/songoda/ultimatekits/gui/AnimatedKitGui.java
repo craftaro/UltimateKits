@@ -31,9 +31,9 @@ public class AnimatedKitGui extends Gui {
     private boolean finish = false;
     private boolean done = false;
     private int tick = 0, updateTick = 0;
-    private int ticksPerUpdate = 4;
-    private final int updatesPerSlow = 5;
-    private final int ticksPerUpdateSlow = 15;
+    private int ticksPerUpdate = 3;
+    private final int updatesPerSlow = 6;
+    private final int ticksPerUpdateSlow = 10;
     private int task;
 
     public AnimatedKitGui(UltimateKits plugin, Player player, Kit kit, ItemStack give) {
@@ -61,7 +61,7 @@ public class AnimatedKitGui extends Gui {
         setItem(22, GuiUtils.getBorderItem(CompatibleMaterial.TRIPWIRE_HOOK));
         tick();
         setOnOpen(event -> {
-            task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> tick(), 1L, 5L);
+            task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> tick(), 1L, 1L);
         });
     }
 
@@ -90,7 +90,7 @@ public class AnimatedKitGui extends Gui {
             items.addFirst(items.getLast());
             items.removeLast();
             Iterator<KitItem> itemIter = items.iterator();
-            for (int i = 0; i < 9; i++) {
+                for (int i = 9; i < 18; i++) {
                 setItem(0, i, itemIter.next().getItem());
             }
         }

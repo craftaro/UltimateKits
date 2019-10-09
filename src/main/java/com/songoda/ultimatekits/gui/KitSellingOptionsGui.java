@@ -16,10 +16,15 @@ import java.util.Random;
 
 public class KitSellingOptionsGui extends Gui {
 
-    static final Random rand = new Random();
+    private final UltimateKits plugin;
+    private final Player player;
+    private final Kit kit;
 
     public KitSellingOptionsGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
         super(back);
+        this.plugin = plugin;
+        this.player = player;
+        this.kit = kit;
         setRows(3);
         setTitle(plugin.getLocale().getMessage("interface.kitblock.title")
                 .processPlaceholder("kit", kit.getShowableName())
@@ -39,7 +44,10 @@ public class KitSellingOptionsGui extends Gui {
                 plugin.getLocale().getMessage("interface.button.back").getMessage()),
                 ClickType.LEFT,
                 event -> event.player.closeInventory());
+        paint();
+    }
 
+    private void paint() {
         // remove sale
         setButton(1, 2, GuiUtils.createButtonItem(CompatibleMaterial.BARRIER,
                 plugin.getLocale().getMessage("interface.kitsell.nosell").getMessage(),
@@ -50,10 +58,7 @@ public class KitSellingOptionsGui extends Gui {
                 event -> {
                     kit.setPrice(0);
                     kit.setLink(null);
-                    updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitsell.noselllore")
-                            .processPlaceholder("onoff", plugin.getLocale().getMessage(
-                                            kit.getPrice() != 0 || kit.getLink() != null ? "interface.kitsell.nosellon" : "interface.kitsell.noselloff").getMessage()
-                            ).getMessage().split("|"));
+                    paint();
                 });
 
         // kit link
@@ -68,21 +73,15 @@ public class KitSellingOptionsGui extends Gui {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitsell.linkprompt").getMessage());
                     gui.setAction(aevent -> {
-                        final String msg = gui.getInputText();
+                        final String msg = gui.getInputText().trim();
                         if (kit.getPrice() != 0) {
                             kit.setPrice(0);
                             plugin.getLocale().getMessage("interface.kitsell.linknoeco").sendPrefixedMessage(player);
                         }
                         kit.setLink(msg);
                         plugin.updateHologram(kit);
-
-                        updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitsell.linklore")
-                                .processPlaceholder("onoff",
-                                        kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitsell.linkon").processPlaceholder("kit", kit.getLink()).getMessage()
-                                                : plugin.getLocale().getMessage("interface.kitsell.linkoff").getMessage()
-                                ).getMessage().split("\\|"));
-
                         aevent.player.closeInventory();
+                        paint();
                     });
                     guiManager.showGUI(event.player, gui);
                 });
@@ -92,7 +91,8 @@ public class KitSellingOptionsGui extends Gui {
                 plugin.getLocale().getMessage("interface.kitsell.price").getMessage(),
                 plugin.getLocale().getMessage("interface.kitsell.pricelore")
                 .processPlaceholder("onoff",
-                        kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitsell.priceon").processPlaceholder("kit", kit.getLink()).getMessage()
+                        kit.getPrice() != 0 ? plugin.getLocale().getMessage("interface.kitsell.priceon")
+                                .processPlaceholder("price", kit.getPrice()).getMessage()
                                 : plugin.getLocale().getMessage("interface.kitsell.priceoff").getMessage()
                 ).getMessage().split("\\|")),
                 event -> {
@@ -103,15 +103,12 @@ public class KitSellingOptionsGui extends Gui {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitsell.priceprompt").getMessage());
                     gui.setAction(aevent -> {
-                        final String msg = gui.getInputText();
-                        final String num = msg != null ? msg.replaceAll("[^0-9\\.]", "") : "";
-                        double d = -1;
-                        if (!num.isEmpty()) {
+                        final String msg = gui.getInputText().trim();
+                        double d = 0;
                             try {
-                                d = Double.parseDouble(num);
+                                d = Double.parseDouble(msg);
                             } catch (NumberFormatException e) {
                             }
-                        }
                         if (d <= 0) {
                             plugin.getLocale().getMessage("interface.kitsell.pricenonumber").processPlaceholder("input", msg).sendPrefixedMessage(player);
                         } else {
@@ -122,6 +119,7 @@ public class KitSellingOptionsGui extends Gui {
                             kit.setPrice(d);
                             plugin.updateHologram(kit);
                             aevent.player.closeInventory();
+                            paint();
                         }
                     });
                     guiManager.showGUI(event.player, gui);

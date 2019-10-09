@@ -66,16 +66,16 @@ public class KitGeneralOptionsGui extends Gui {
                 plugin.getLocale().getMessage("interface.kitoptions.destroy").getMessage(),
                 plugin.getLocale().getMessage("interface.kitoptions.destroylore").getMessage().split("\\|")),
                 event -> {
-                    AnvilGui gui = new AnvilGui(event.player, this);
+                    AnvilGui gui = new AnvilGui(event.player);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitoptions.destroyprompt").processPlaceholder("kit", kit.getName()).getMessage());
                     gui.setAction(aevent -> {
                         final String msg = gui.getInputText();
                         if (msg != null && msg.trim().equalsIgnoreCase(kit.getName())) {
                             plugin.getKitManager().removeKit(kit);
                             plugin.updateHologram(kit);
-                            plugin.getLocale().newMessage("interface.kitoptions.destroyok").sendPrefixedMessage(player);
+                            plugin.getLocale().getMessage("interface.kitoptions.destroyok").sendPrefixedMessage(player);
                         } else {
-                            plugin.getLocale().newMessage("interface.kitoptions.destroycancel").sendPrefixedMessage(player);
+                            plugin.getLocale().getMessage("interface.kitoptions.destroycancel").sendPrefixedMessage(player);
                         }
                         aevent.player.closeInventory();
                     });

@@ -46,7 +46,7 @@ public class CommandSet extends AbstractCommand {
             return null;
         }
 
-        if (args.length == 2) {
+        if (args.length == 1) {
             List<String> tab = new ArrayList<>();
             for (Kit kit : UltimateKits.getInstance().getKitManager().getKits()) {
                 tab.add(kit.getName());

@@ -170,8 +170,6 @@ public class KitEditorGui extends DoubleGui {
                     paint();
                 });
 
-        setAcceptsItems(!isInInventory);
-
         ItemStack item2;
 
         if (isInInventory) {
@@ -188,9 +186,12 @@ public class KitEditorGui extends DoubleGui {
                 event -> {
                     if (!isInInventory) {
                         restoreItemsInstance();
+                        setPlayerActionForRange(0, 0, 3, 8, null);
+                        setAcceptsItems(true);
                     } else {
                         saveItemsInstance();
                         setInvItems();
+                        setAcceptsItems(false);
                     }
                     updateInvButton();
                 });
@@ -221,17 +222,26 @@ public class KitEditorGui extends DoubleGui {
         setPlayerButton(0, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE_TORCH,
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptions").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").getMessage().split("\\|")),
-                (event) -> guiManager.showGUI(player, new KitGeneralOptionsGui(plugin, player, kit, this)));
+                (event) -> {
+                    player.closeInventory();
+                    guiManager.showGUI(player, new KitGeneralOptionsGui(plugin, player, kit, this));
+                });
 
         setPlayerButton(1, GuiUtils.createButtonItem(CompatibleMaterial.EMERALD,
                 plugin.getLocale().getMessage("interface.kiteditor.sellingoptions").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.sellingoptionslore").getMessage().split("\\|")),
-                (event) -> guiManager.showGUI(player, new KitSellingOptionsGui(plugin, player, kit, this)));
+                (event) -> {
+                    player.closeInventory();
+                    guiManager.showGUI(player, new KitSellingOptionsGui(plugin, player, kit, this));
+                });
 
         setPlayerButton(3, GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
                 plugin.getLocale().getMessage("interface.kiteditor.guioptions").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.guioptionslore").getMessage().split("\\|")),
-                (event) -> guiManager.showGUI(player, new KitGuiOptionsGui(plugin, player, kit, parent)));
+                (event) -> {
+                    player.closeInventory();
+                    guiManager.showGUI(player, new KitGuiOptionsGui(plugin, player, kit, this));
+                });
 
         setPlayerButton(4, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
                 plugin.getLocale().getMessage("interface.kiteditor.addcommand").getMessage(),
@@ -260,6 +270,7 @@ public class KitEditorGui extends DoubleGui {
                                 .sendPrefixedMessage(player);
 
                         this.inventory.addItem(parseStack);
+                        player.closeInventory();
                     }).setOnClose(() -> {
                         event.manager.showGUI(event.player, this);
                     })
@@ -276,7 +287,7 @@ public class KitEditorGui extends DoubleGui {
                     AnvilGui gui = new AnvilGui(player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kiteditor.addeconomyprompt").getMessage());
                     gui.setAction(aevent -> {
-                        String msg = gui.getInputText();
+                        String msg = gui.getInputText().trim();
 
                         ItemStack parseStack = new ItemStack(Material.PAPER, 1);
                         ItemMeta meta = parseStack.getItemMeta();
@@ -292,10 +303,11 @@ public class KitEditorGui extends DoubleGui {
                         meta.setDisplayName(plugin.getLocale().getMessage("general.type.money").getMessage());
                         parseStack.setItemMeta(meta);
 
-                        plugin.getLocale().getMessage("interface.kiteditor.addeconomyok")
+                        plugin.getLocale().getMessage("interface.kiteditor.addeconomyok").processPlaceholder("amount", msg.trim())
                                 .sendPrefixedMessage(player);
 
                         this.inventory.addItem(parseStack);
+                        player.closeInventory();
 
                     });
                     guiManager.showGUI(event.player, gui);

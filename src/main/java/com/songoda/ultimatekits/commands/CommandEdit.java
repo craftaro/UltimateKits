@@ -51,8 +51,6 @@ public class CommandEdit extends AbstractCommand {
 
     @Override
     protected List<String> onTab(CommandSender sender, String... args) {
-        if (!(sender instanceof Player)) return null;
-
         List<String> tab = new ArrayList<>();
         if (args.length == 1) {
             for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())

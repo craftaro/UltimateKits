@@ -41,7 +41,7 @@ import java.util.*;
 public class UltimateKits extends SongodaPlugin {
     private static UltimateKits INSTANCE;
 
-    private final Config kitFile = new Config(this, "kit.yml");
+    private final Config kitConfig = new Config(this, "kit.yml");
     private final Config dataFile = new Config(this, "data.yml");
     private final Config keyFile = new Config(this, "keys.yml");
 
@@ -159,13 +159,6 @@ public class UltimateKits extends SongodaPlugin {
         displayItemHandler.start();
         particleHandler.start();
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveKits, 6000, 6000);
-        Bukkit.getScheduler().runTaskLater(this, () ->
-                this.dataManager.getBlockData((blockData) -> {
-                    this.kitManager.setKitLocations(blockData);
-                    if (HologramManager.isEnabled()) {
-                        loadHolograms();
-                    }
-                }), 20L);
     }
 
     @Override
@@ -179,7 +172,7 @@ public class UltimateKits extends SongodaPlugin {
 
     @Override
     public List<Config> getExtraConfig() {
-        return Arrays.asList(kitFile, keyFile);
+        return Arrays.asList(kitConfig, keyFile);
     }
 
     @Override
@@ -191,7 +184,7 @@ public class UltimateKits extends SongodaPlugin {
     }
 
     void loadKits() {
-        kitFile.load();
+        kitConfig.load();
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
 
@@ -201,17 +194,17 @@ public class UltimateKits extends SongodaPlugin {
             /*
              * Register kit into KitManager from Configuration.
              */
-            for (String kitName : kitFile.getConfigurationSection("Kits").getKeys(false)) {
-                int delay = kitFile.getInt("Kits." + kitName + ".delay");
-                String title = kitFile.getString("Kits." + kitName + ".title");
-                String link = kitFile.getString("Kits." + kitName + ".link");
-                CompatibleMaterial material = kitFile.contains("Kits." + kitName + ".displayItem")
-                        ? CompatibleMaterial.getMaterial(kitFile.getString("Kits." + kitName + ".displayItem"), CompatibleMaterial.DIAMOND_HELMET)
+            for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
+                int delay = kitConfig.getInt("Kits." + kitName + ".delay");
+                String title = kitConfig.getString("Kits." + kitName + ".title");
+                String link = kitConfig.getString("Kits." + kitName + ".link");
+                CompatibleMaterial material = kitConfig.contains("Kits." + kitName + ".displayItem")
+                        ? CompatibleMaterial.getMaterial(kitConfig.getString("Kits." + kitName + ".displayItem"), CompatibleMaterial.DIAMOND_HELMET)
                         : null;
-                boolean hidden = kitFile.getBoolean("Kits." + kitName + ".hidden");
-                double price = kitFile.getDouble("Kits." + kitName + ".price");
-                List<String> strContents = kitFile.getStringList("Kits." + kitName + ".items");
-                String kitAnimation = kitFile.getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
+                boolean hidden = kitConfig.getBoolean("Kits." + kitName + ".hidden");
+                double price = kitConfig.getDouble("Kits." + kitName + ".price");
+                List<String> strContents = kitConfig.getStringList("Kits." + kitName + ".items");
+                String kitAnimation = kitConfig.getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
 
                 List<KitItem> contents = new ArrayList<>();
 
@@ -224,7 +217,7 @@ public class UltimateKits extends SongodaPlugin {
             }
 
             /*
-             * Register kit locations into KitManager from Configuration.
+             * Register legacy kit locations into KitManager from Configuration.
              */
             if (dataFile.contains("BlockData")) {
                 for (String key : dataFile.getConfigurationSection("BlockData").getKeys(false)) {
@@ -242,6 +235,17 @@ public class UltimateKits extends SongodaPlugin {
                     }
                 }
             }
+
+            /*
+             * Register kit locations into KitManager from Configuration.
+             */
+            Bukkit.getScheduler().runTaskLater(this, () ->
+                    this.dataManager.getBlockData((blockData) -> {
+                        this.kitManager.setKitLocations(blockData);
+                        if (HologramManager.isEnabled()) {
+                            loadHolograms();
+                        }
+                    }), 20L);
 
             //Apply default keys.
             checkKeyDefaults();
@@ -380,39 +384,39 @@ public class UltimateKits extends SongodaPlugin {
     /*
      * Saves registered kits to file.
      */
-    private void saveKits() {
+    public void saveKits() {
 
         // Hot fix for kit file resets.
-        for (String kitName : kitFile.getConfigurationSection("Kits").getKeys(false)) {
+        for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
             if (kitManager.getKits().stream().noneMatch(kit -> kit.getName().equals(kitName)))
-                kitFile.set("Kits." + kitName, null);
+                kitConfig.set("Kits." + kitName, null);
         }
 
         /*
          * Save kit from KitManager to Configuration.
          */
         for (Kit kit : kitManager.getKits()) {
-            kitFile.set("Kits." + kit.getName() + ".delay", kit.getDelay());
-            kitFile.set("Kits." + kit.getName() + ".title", kit.getTitle());
-            kitFile.set("Kits." + kit.getName() + ".link", kit.getLink());
-            kitFile.set("Kits." + kit.getName() + ".price", kit.getPrice());
-            kitFile.set("Kits." + kit.getName() + ".hidden", kit.isHidden());
-            kitFile.set("Kits." + kit.getName() + ".animation", kit.getKitAnimation().name());
+            kitConfig.set("Kits." + kit.getName() + ".delay", kit.getDelay());
+            kitConfig.set("Kits." + kit.getName() + ".title", kit.getTitle());
+            kitConfig.set("Kits." + kit.getName() + ".link", kit.getLink());
+            kitConfig.set("Kits." + kit.getName() + ".price", kit.getPrice());
+            kitConfig.set("Kits." + kit.getName() + ".hidden", kit.isHidden());
+            kitConfig.set("Kits." + kit.getName() + ".animation", kit.getKitAnimation().name());
             if (kit.getDisplayItem() != null)
-                kitFile.set("Kits." + kit.getName() + ".displayItem", kit.getDisplayItem().toString());
+                kitConfig.set("Kits." + kit.getName() + ".displayItem", kit.getDisplayItem().toString());
             else
-                kitFile.set("Kits." + kit.getName() + ".displayItem", null);
+                kitConfig.set("Kits." + kit.getName() + ".displayItem", null);
 
             List<KitItem> contents = kit.getContents();
             List<String> strContents = new ArrayList<>();
 
             for (KitItem item : contents) strContents.add(item.getSerialized());
 
-            kitFile.set("Kits." + kit.getName() + ".items", strContents);
+            kitConfig.set("Kits." + kit.getName() + ".items", strContents);
         }
 
         // Save to file
-        kitFile.saveChanges();
+        kitConfig.saveChanges();
     }
 
     /*
@@ -452,8 +456,8 @@ public class UltimateKits extends SongodaPlugin {
      *
      * @return instance of KitFile
      */
-    public Config getKitFile() {
-        return kitFile;
+    public Config getKitConfig() {
+        return kitConfig;
     }
 
     /**

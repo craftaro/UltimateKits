@@ -125,12 +125,7 @@ public class Kit {
             plugin.getLocale().getMessage("event.crate.wrongkey").sendPrefixedMessage(player);
             return;
         }
-        boolean worked = false;
-        for (int i = 0; i < key.getKitAmount(); i++) {
-            if (giveKit(player, key))
-                worked = true;
-        }
-        if (worked) {
+        if (giveKit(player, key)) {
             plugin.getLocale().getMessage("event.key.success")
                     .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
             if (player.getInventory().getItemInHand().getAmount() != 1) {
@@ -244,6 +239,7 @@ public class Kit {
             }
         }
         contents = list;
+        plugin.saveKits();
     }
 
 

@@ -65,7 +65,7 @@ public class CommandKey extends AbstractCommand {
             return ReturnType.SUCCESS;
         }
         for (Player pl : instance.getServer().getOnlinePlayers()) {
-            PlayerUtils.giveItem(playerTo, key.getKeyItem(kit, amt));
+            PlayerUtils.giveItem(pl, key.getKeyItem(kit, amt));
             instance.getLocale().getMessage("event.key.given")
                     .processPlaceholder("kit", kit == null ? "Any" : kit.getShowableName())
                     .sendPrefixedMessage(pl);

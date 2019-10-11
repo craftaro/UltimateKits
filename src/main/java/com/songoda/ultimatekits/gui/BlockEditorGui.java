@@ -52,7 +52,7 @@ public class BlockEditorGui extends Gui {
                     plugin.updateHologram(kitBlockData);
                     updateItemLore(event.slot, kitTypeLore(plugin));
 
-                    plugin.getKitFile().delaySave();
+                    plugin.getKitConfig().delaySave();
                 });
 
         // decor options

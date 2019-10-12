@@ -9,8 +9,8 @@ import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.gui.AnimatedKitGui;
-import com.songoda.ultimatekits.gui.PreviewKitGui;
 import com.songoda.ultimatekits.gui.ConfirmBuyGui;
+import com.songoda.ultimatekits.gui.PreviewKitGui;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
@@ -24,11 +24,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
+import java.util.*;
 
 /**
  * Created by songoda on 2/24/2017.
@@ -36,31 +33,20 @@ import java.util.Objects;
 public class Kit {
 
     private final String name, showableName;
-    private final UltimateKits plugin;
-    private double price;
-    private String link, title;
-    private long delay;
-    private boolean hidden;
-    private CompatibleMaterial displayItem;
-    private List<KitItem> contents;
-    private KitAnimation kitAnimation;
-
-    public Kit(String name, String title, String link, double price, CompatibleMaterial displayItem, long delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
-        this.name = name;
-        this.showableName = TextUtils.formatText(name, true);
-        this.price = price;
-        this.link = link;
-        this.kitAnimation = kitAnimation;
-        this.title = title;
-        this.delay = delay;
-        this.hidden = hidden;
-        this.displayItem = displayItem;
-        this.contents = contents;
-        this.plugin = UltimateKits.getInstance();
-    }
+    private static UltimateKits plugin;
+    private double price = 0;
+    private String link, title = null;
+    private long delay = 0L;
+    private boolean hidden = false;
+    private CompatibleMaterial displayItem = null;
+    private List<KitItem> contents = new ArrayList<>();
+    private KitAnimation kitAnimation = KitAnimation.NONE;
 
     public Kit(String name) {
-        this(name, null, null, 0, null, 0, false, new ArrayList<>(), KitAnimation.NONE);
+        if (plugin == null)
+            plugin = UltimateKits.getInstance();
+        this.name = name;
+        this.showableName = TextUtils.formatText(name, true);
     }
 
     public void buy(Player player, GuiManager manager) {
@@ -389,40 +375,45 @@ public class Kit {
         return price;
     }
 
-    public void setPrice(double price) {
+    public Kit setPrice(double price) {
         this.price = price;
+        return this;
     }
 
     public String getLink() {
         return link;
     }
 
-    public void setLink(String link) {
+    public Kit setLink(String link) {
         this.link = link;
+        return this;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public Kit setTitle(String title) {
         this.title = title;
+        return this;
     }
 
     public long getDelay() {
         return delay;
     }
 
-    public void setDelay(long delay) {
+    public Kit setDelay(long delay) {
         this.delay = delay;
+        return this;
     }
 
     public List<KitItem> getContents() {
         return this.contents;
     }
 
-    public void setContents(List<KitItem> contents) {
+    public Kit setContents(List<KitItem> contents) {
         this.contents = contents;
+        return this;
     }
 
     public String getName() {
@@ -441,20 +432,27 @@ public class Kit {
         this.displayItem = item != null ? CompatibleMaterial.getMaterial(item) : null;
     }
 
+    public Kit setDisplayItem(CompatibleMaterial material) {
+        this.displayItem = material;
+        return this;
+    }
+
     public boolean isHidden() {
         return hidden;
     }
 
-    public void setHidden(boolean hidden) {
+    public Kit setHidden(boolean hidden) {
         this.hidden = hidden;
+        return this;
     }
 
     public KitAnimation getKitAnimation() {
         return kitAnimation;
     }
 
-    public void setKitAnimation(KitAnimation kitAnimation) {
+    public Kit setKitAnimation(KitAnimation kitAnimation) {
         this.kitAnimation = kitAnimation;
+        return this;
     }
 
     @Override

@@ -100,7 +100,7 @@ public class KitGuiOptionsGui extends Gui {
                     }
                 });
         setAction(1, 4, ClickType.RIGHT, event -> {
-            kit.setDisplayItem(null);
+            kit.setDisplayItem((ItemStack) null);
             plugin.getLocale().getMessage("interface.kitguioptions.itemremoved").processPlaceholder("kit", kit.getShowableName()).sendPrefixedMessage(player);
             paint();
         });

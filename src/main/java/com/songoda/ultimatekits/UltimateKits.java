@@ -95,6 +95,12 @@ public class UltimateKits extends SongodaPlugin {
         // Set economy preference
         EconomyManager.getManager().setPreferredHook(Settings.ECONOMY_PLUGIN.getString());
 
+        this.kitManager = new KitManager();
+        this.keyManager = new KeyManager();
+
+        kitConfig.load();
+        Convert.runKitConversions();
+
         // load kits
         dataFile.load();
         checkKeyDefaults();
@@ -114,10 +120,6 @@ public class UltimateKits extends SongodaPlugin {
                 .addSubCommand(new CommandSet())
                 .addSubCommand(new CommandRemove());
 
-        this.kitManager = new KitManager();
-        this.keyManager = new KeyManager();
-
-        Convert.runKitConversions();
 
         // Event registration
         PluginManager pluginManager = getServer().getPluginManager();
@@ -166,6 +168,7 @@ public class UltimateKits extends SongodaPlugin {
         saveKits();
         dataFile.save();
         this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        saveKits();
         kitManager.clearKits();
         HologramManager.removeAllHolograms();
     }
@@ -195,7 +198,7 @@ public class UltimateKits extends SongodaPlugin {
              * Register kit into KitManager from Configuration.
              */
             for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
-                int delay = kitConfig.getInt("Kits." + kitName + ".delay");
+                long delay = kitConfig.getLong("Kits." + kitName + ".delay");
                 String title = kitConfig.getString("Kits." + kitName + ".title");
                 String link = kitConfig.getString("Kits." + kitName + ".link");
                 CompatibleMaterial material = kitConfig.contains("Kits." + kitName + ".displayItem")
@@ -387,10 +390,11 @@ public class UltimateKits extends SongodaPlugin {
     public void saveKits() {
 
         // Hot fix for kit file resets.
-        for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
-            if (kitManager.getKits().stream().noneMatch(kit -> kit.getName().equals(kitName)))
-                kitConfig.set("Kits." + kitName, null);
-        }
+        if (kitConfig.contains("Kits"))
+            for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
+                if (kitManager.getKits().stream().noneMatch(kit -> kit.getName().equals(kitName)))
+                    kitConfig.set("Kits." + kitName, null);
+            }
 
         /*
          * Save kit from KitManager to Configuration.

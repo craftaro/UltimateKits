@@ -10,9 +10,10 @@ public final class KitManager {
     private final Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
     private final List<Kit> registeredKits = new LinkedList<>();
 
-    public boolean addKit(Kit kit) {
-        if (kit == null) return false;
-        return registeredKits.add(kit);
+    public Kit addKit(Kit kit) {
+        if (kit == null) return null;
+        registeredKits.add(kit);
+        return kit;
     }
 
     public void removeKit(Kit kit) {

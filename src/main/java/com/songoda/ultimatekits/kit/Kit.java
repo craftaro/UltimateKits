@@ -39,13 +39,13 @@ public class Kit {
     private final UltimateKits plugin;
     private double price;
     private String link, title;
-    private int delay;
+    private long delay;
     private boolean hidden;
     private CompatibleMaterial displayItem;
     private List<KitItem> contents;
     private KitAnimation kitAnimation;
 
-    public Kit(String name, String title, String link, double price, CompatibleMaterial displayItem, int delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
+    public Kit(String name, String title, String link, double price, CompatibleMaterial displayItem, long delay, boolean hidden, List<KitItem> contents, KitAnimation kitAnimation) {
         this.name = name;
         this.showableName = TextUtils.formatText(name, true);
         this.price = price;
@@ -409,11 +409,11 @@ public class Kit {
         this.title = title;
     }
 
-    public int getDelay() {
+    public long getDelay() {
         return delay;
     }
 
-    public void setDelay(int delay) {
+    public void setDelay(long delay) {
         this.delay = delay;
     }
 

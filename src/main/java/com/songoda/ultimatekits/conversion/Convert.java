@@ -5,12 +5,14 @@ import com.songoda.ultimatekits.conversion.hooks.CMIHook;
 import com.songoda.ultimatekits.conversion.hooks.DefaultHook;
 import com.songoda.ultimatekits.conversion.hooks.EssentialsHook;
 import com.songoda.ultimatekits.conversion.hooks.UltimateCoreHook;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitItem;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.bukkit.Bukkit;
 
 public class Convert {
 
@@ -38,18 +40,19 @@ public class Convert {
     private static void convertKits(Hook hook) {
         Set<String> kits = hook.getKits();
         for (String kit : kits) {
-            List<String> serializedItems = new ArrayList<>();
+            Kit kitObj = UltimateKits.getInstance().getKitManager().addKit(new Kit(kit));
+            if (kitObj == null) continue;
             for (ItemStack item : hook.getItems(kit)) {
-                serializedItems.add(UltimateKits.getInstance().getItemSerializer().serializeItemStackToJson(item));
+                if (item == null || item.getType() == Material.AIR) continue;
+                kitObj.getContents().add(new KitItem(item));
             }
-            UltimateKits.getInstance().getKitConfig().set("Kits." + kit + ".items", serializedItems);
-            UltimateKits.getInstance().getKitConfig().set("Kits." + kit + ".delay", hook.getDelay(kit));
-            UltimateKits.getInstance().getKitConfig().set("Kits." + kit + ".price", 0D);
+            kitObj.setDelay(hook.getDelay(kit));
         }
-        UltimateKits.getInstance().getKitConfig().save();
+        UltimateKits.getInstance().saveKits();
     }
 
     private static boolean isInJsonFormat() {
+        if (!UltimateKits.getInstance().getKitConfig().contains("Kits")) return false;
         for (String kit : UltimateKits.getInstance().getKitConfig().getConfigurationSection("Kits").getKeys(false)) {
             if (UltimateKits.getInstance().getKitConfig().contains("Kits." + kit + ".items")) {
                 List<String> itemList = UltimateKits.getInstance().getKitConfig().getStringList("Kits." + kit + ".items");

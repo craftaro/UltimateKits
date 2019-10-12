@@ -34,9 +34,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UltimateKits extends SongodaPlugin {
     private static UltimateKits INSTANCE;
@@ -95,6 +97,12 @@ public class UltimateKits extends SongodaPlugin {
         // Set economy preference
         EconomyManager.getManager().setPreferredHook(Settings.ECONOMY_PLUGIN.getString());
 
+        this.kitManager = new KitManager();
+        this.keyManager = new KeyManager();
+
+        kitConfig.load();
+        Convert.runKitConversions();
+
         // load kits
         dataFile.load();
         checkKeyDefaults();
@@ -114,10 +122,6 @@ public class UltimateKits extends SongodaPlugin {
                 .addSubCommand(new CommandSet())
                 .addSubCommand(new CommandRemove());
 
-        this.kitManager = new KitManager();
-        this.keyManager = new KeyManager();
-
-        Convert.runKitConversions();
 
         // Event registration
         PluginManager pluginManager = getServer().getPluginManager();
@@ -166,6 +170,7 @@ public class UltimateKits extends SongodaPlugin {
         saveKits();
         dataFile.save();
         this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        saveKits();
         kitManager.clearKits();
         HologramManager.removeAllHolograms();
     }
@@ -195,25 +200,21 @@ public class UltimateKits extends SongodaPlugin {
              * Register kit into KitManager from Configuration.
              */
             for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
-                int delay = kitConfig.getInt("Kits." + kitName + ".delay");
-                String title = kitConfig.getString("Kits." + kitName + ".title");
-                String link = kitConfig.getString("Kits." + kitName + ".link");
-                CompatibleMaterial material = kitConfig.contains("Kits." + kitName + ".displayItem")
-                        ? CompatibleMaterial.getMaterial(kitConfig.getString("Kits." + kitName + ".displayItem"), CompatibleMaterial.DIAMOND_HELMET)
-                        : null;
-                boolean hidden = kitConfig.getBoolean("Kits." + kitName + ".hidden");
-                double price = kitConfig.getDouble("Kits." + kitName + ".price");
-                List<String> strContents = kitConfig.getStringList("Kits." + kitName + ".items");
-                String kitAnimation = kitConfig.getString("Kits." + kitName + ".animation", KitAnimation.NONE.name());
+                ConfigurationSection section = kitConfig.getConfigurationSection("Kits." + kitName);
+                if (section == null) continue;
 
-                List<KitItem> contents = new ArrayList<>();
-
-                for (String string : strContents) {
-                    contents.add(new KitItem(string));
-                }
-
-                Kit kit = new Kit(kitName, title, link, price, material, delay, hidden, contents, KitAnimation.valueOf(kitAnimation));
-                kitManager.addKit(kit);
+                kitManager.addKit(new Kit(kitName)
+                        .setTitle(section.getString("title"))
+                        .setDelay(section.getLong("delay"))
+                        .setLink(section.getString("link"))
+                        .setDisplayItem(section.contains("displayItem")
+                                ? CompatibleMaterial.getMaterial(section.getString("displayItem"), CompatibleMaterial.DIAMOND_HELMET)
+                                : null)
+                        .setHidden(section.getBoolean("hidden"))
+                        .setPrice(section.getDouble("price"))
+                        .setContents(section.getStringList("items").stream().map(KitItem::new).collect(Collectors.toList()))
+                        .setKitAnimation(KitAnimation.valueOf(section.getString("animation", KitAnimation.NONE.name())))
+                );
             }
 
             /*
@@ -387,10 +388,11 @@ public class UltimateKits extends SongodaPlugin {
     public void saveKits() {
 
         // Hot fix for kit file resets.
-        for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
-            if (kitManager.getKits().stream().noneMatch(kit -> kit.getName().equals(kitName)))
-                kitConfig.set("Kits." + kitName, null);
-        }
+        if (kitConfig.contains("Kits"))
+            for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
+                if (kitManager.getKits().stream().noneMatch(kit -> kit.getName().equals(kitName)))
+                    kitConfig.set("Kits." + kitName, null);
+            }
 
         /*
          * Save kit from KitManager to Configuration.

@@ -254,7 +254,7 @@ public class Kit {
         return stacks;
     }
 
-    private boolean giveKit(Player player) {
+    public boolean giveKit(Player player) {
         return giveKit(player, null);
     }
 

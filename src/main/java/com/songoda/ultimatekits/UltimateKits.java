@@ -27,6 +27,7 @@ import com.songoda.ultimatekits.listeners.BlockListeners;
 import com.songoda.ultimatekits.listeners.ChatListeners;
 import com.songoda.ultimatekits.listeners.EntityListeners;
 import com.songoda.ultimatekits.listeners.InteractListeners;
+import com.songoda.ultimatekits.listeners.PlayerListeners;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.ItemSerializer;
 import com.songoda.ultimatekits.utils.Methods;
@@ -120,7 +121,8 @@ public class UltimateKits extends SongodaPlugin {
                 .addSubCommand(new CommandEdit(guiManager))
                 .addSubCommand(new CommandKey())
                 .addSubCommand(new CommandSet())
-                .addSubCommand(new CommandRemove());
+                .addSubCommand(new CommandRemove())
+                .addSubCommand(new CommandGive());
 
 
         // Event registration
@@ -130,6 +132,7 @@ public class UltimateKits extends SongodaPlugin {
         pluginManager.registerEvents(new ChatListeners(this), this);
         pluginManager.registerEvents(new EntityListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this, guiManager), this);
+        pluginManager.registerEvents(new PlayerListeners(), this);
 
         try {
             if (Settings.MYSQL_ENABLED.getBoolean()) {

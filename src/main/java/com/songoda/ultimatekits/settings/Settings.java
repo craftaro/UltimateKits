@@ -23,6 +23,7 @@ public class Settings {
     public static final ConfigSetting AUTO_EQUIP_ARMOR_ROULETTE = new ConfigSetting(config, "Main.Automatically Equip Armor Given From a Kit with the Roulette Animation", false);
     public static final ConfigSetting CHANCE_IN_PREVIEW = new ConfigSetting(config, "Main.Display Chance In Preview", true);
     public static final ConfigSetting CURRENCY_SYMBOL = new ConfigSetting(config, "Main.Currency Symbol", "$");
+    public static final ConfigSetting STARTER_KIT = new ConfigSetting(config, "Main.Starter Kit", "none");
 
     public static final ConfigSetting ECONOMY_PLUGIN = new ConfigSetting(config, "Main.Economy", EconomyManager.getEconomy() == null ? "Vault" : EconomyManager.getEconomy().getName(),
             "Which economy plugin should be used?",

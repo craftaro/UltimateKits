@@ -121,8 +121,7 @@ public class UltimateKits extends SongodaPlugin {
                 .addSubCommand(new CommandEdit(guiManager))
                 .addSubCommand(new CommandKey())
                 .addSubCommand(new CommandSet())
-                .addSubCommand(new CommandRemove())
-                .addSubCommand(new CommandGive());
+                .addSubCommand(new CommandRemove());
 
 
         // Event registration

@@ -31,9 +31,10 @@ public class AnimatedKitGui extends Gui {
     private boolean finish = false;
     private boolean done = false;
     private int tick = 0, updateTick = 0;
-    private int ticksPerUpdate = 4;
-    private final int updatesPerSlow = 5;
-    private final int ticksPerUpdateSlow = 15;
+    private int ticksPerUpdate = 3; // current animation speed
+    private final int updatesPerSlow = 10; // how many animation ticks before the animation slows
+    private final int slowPerSlow = 3; // ticks per update to slow animation by for ticksPerUpdate
+    private final int ticksPerUpdateSlow = 9; // slowest speed for animation
     private int task;
 
     public AnimatedKitGui(UltimateKits plugin, Player player, Kit kit, ItemStack give) {
@@ -60,9 +61,8 @@ public class AnimatedKitGui extends Gui {
         setItem(4, GuiUtils.getBorderItem(CompatibleMaterial.TRIPWIRE_HOOK));
         setItem(22, GuiUtils.getBorderItem(CompatibleMaterial.TRIPWIRE_HOOK));
         tick();
-        setOnOpen(event -> {
-            task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> tick(), 1L, 5L);
-        });
+        task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> tick(), 1L, 5L);
+        setOnClose(event -> Bukkit.getScheduler().cancelTask(task));
     }
 
     void tick() {
@@ -72,7 +72,8 @@ public class AnimatedKitGui extends Gui {
         tick = 0;
         if (++updateTick >= updatesPerSlow) {
             updateTick = 0;
-            if (++ticksPerUpdate >= ticksPerUpdateSlow) {
+            ticksPerUpdate = Math.min(ticksPerUpdateSlow, ticksPerUpdate + slowPerSlow);
+            if (ticksPerUpdate >= ticksPerUpdateSlow) {
                 finish = true;
             }
         }
@@ -91,7 +92,7 @@ public class AnimatedKitGui extends Gui {
             items.removeLast();
             Iterator<KitItem> itemIter = items.iterator();
             for (int i = 0; i < 9; i++) {
-                setItem(0, i, itemIter.next().getItem());
+                setItem(1, i, itemIter.next().getItem());
             }
         }
 
@@ -123,7 +124,6 @@ public class AnimatedKitGui extends Gui {
 
     }
     private void finish() {
-        Bukkit.getScheduler().cancelTask(task);
         exit();
     }
 }

@@ -10,8 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandKit extends AbstractCommand {
 
@@ -79,7 +79,11 @@ public class CommandKit extends AbstractCommand {
 
     @Override
     protected List<String> onTab(CommandSender sender, String... args) {
-        return new ArrayList<>();
+        final String search = args[0].toLowerCase();
+        return UltimateKits.getInstance().getKitManager().getKits().stream()
+                .map(kit -> kit.getName())
+                .filter(kit -> kit.toLowerCase().startsWith(search))
+                .collect(Collectors.toList());
     }
 
     @Override

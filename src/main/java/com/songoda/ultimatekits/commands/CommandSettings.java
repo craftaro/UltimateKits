@@ -7,7 +7,6 @@ import com.songoda.ultimatekits.UltimateKits;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommandSettings extends AbstractCommand {
@@ -28,7 +27,7 @@ public class CommandSettings extends AbstractCommand {
 
     @Override
     protected List<String> onTab(CommandSender sender, String... args) {
-        return new ArrayList<>();
+        return null;
     }
 
     @Override

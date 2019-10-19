@@ -7,8 +7,8 @@ import com.songoda.ultimatekits.kit.Kit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandPreviewKit extends AbstractCommand {
 
@@ -38,18 +38,14 @@ public class CommandPreviewKit extends AbstractCommand {
 
     @Override
     protected List<String> onTab(CommandSender sender, String... args) {
-        if (!(sender instanceof Player)) {
-            return null;
+        if ((sender instanceof Player) && args.length == 1) {
+            final String search = args[0].toLowerCase();
+            return UltimateKits.getInstance().getKitManager().getKits().stream()
+                    .map(kit -> kit.getName())
+                    .filter(kit -> kit.toLowerCase().startsWith(search))
+                    .collect(Collectors.toList());
         }
-
-        if (args.length == 2) {
-            List<String> tab = new ArrayList<>();
-            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits()) {
-                tab.add(kit.getName());
-            }
-            return tab;
-        }
-        return new ArrayList<>();
+        return null;
     }
 
     @Override

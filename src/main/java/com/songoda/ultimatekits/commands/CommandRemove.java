@@ -8,7 +8,6 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommandRemove extends AbstractCommand {
@@ -37,7 +36,7 @@ public class CommandRemove extends AbstractCommand {
 
     @Override
     protected List<String> onTab(CommandSender sender, String... args) {
-        return new ArrayList<>();
+        return null;
     }
 
     @Override

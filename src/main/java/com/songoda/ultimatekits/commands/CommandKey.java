@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandKey extends AbstractCommand {
     
@@ -85,13 +86,14 @@ public class CommandKey extends AbstractCommand {
                 tab.add(kit.getName());
             return tab;
         } else if (args.length == 2) {
-            for (Key key : UltimateKits.getInstance().getKeyManager().getKeys())
-                tab.add(key.getName());
-            return tab;
+            final String search = args[0].toLowerCase();
+            return UltimateKits.getInstance().getKitManager().getKits().stream()
+                    .map(kit -> kit.getName())
+                    .filter(kit -> kit.toLowerCase().startsWith(search))
+                    .collect(Collectors.toList());
         } else if (args.length == 3) {
             tab.add("all");
-            for (Player player : Bukkit.getOnlinePlayers())
-                tab.add(player.getName());
+            tab.addAll(PlayerUtils.getVisiblePlayerNames(sender, args[2]));
             return tab;
         } else if (args.length == 4) return Arrays.asList("amount");
         return tab;

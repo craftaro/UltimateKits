@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandEdit extends AbstractCommand {
 
@@ -53,13 +54,14 @@ public class CommandEdit extends AbstractCommand {
     protected List<String> onTab(CommandSender sender, String... args) {
         if (!(sender instanceof Player)) return null;
 
-        List<String> tab = new ArrayList<>();
         if (args.length == 1) {
-            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
-                tab.add(kit.getName());
-            return tab;
+            final String search = args[0].toLowerCase();
+            return UltimateKits.getInstance().getKitManager().getKits().stream()
+                    .map(kit -> kit.getName())
+                    .filter(kit -> kit.toLowerCase().startsWith(search))
+                    .collect(Collectors.toList());
         }
-        return tab;
+        return null;
     }
 
     @Override

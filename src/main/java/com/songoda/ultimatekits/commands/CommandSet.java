@@ -8,8 +8,8 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandSet extends AbstractCommand {
 
@@ -46,14 +46,14 @@ public class CommandSet extends AbstractCommand {
             return null;
         }
 
-        if (args.length == 2) {
-            List<String> tab = new ArrayList<>();
-            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits()) {
-                tab.add(kit.getName());
-            }
-            return tab;
+        if (args.length == 1) {
+            final String search = args[0].toLowerCase();
+            return UltimateKits.getInstance().getKitManager().getKits().stream()
+                    .map(kit -> kit.getName())
+                    .filter(kit -> kit.toLowerCase().startsWith(search))
+                    .collect(Collectors.toList());
         }
-        return new ArrayList<>();
+        return null;
     }
 
     @Override

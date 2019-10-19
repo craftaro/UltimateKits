@@ -22,7 +22,6 @@ import com.songoda.ultimatekits.commands.CommandReload;
 import com.songoda.ultimatekits.commands.CommandRemove;
 import com.songoda.ultimatekits.commands.CommandSet;
 import com.songoda.ultimatekits.commands.CommandSettings;
-import com.songoda.ultimatekits.commands.CommandUltimateKits;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.database.DataManager;
 import com.songoda.ultimatekits.database.migrations._1_InitialMigration;
@@ -122,7 +121,7 @@ public class UltimateKits extends SongodaPlugin {
         this.commandManager = new CommandManager(this);
         this.commandManager.addCommand(new CommandKit(guiManager));
         this.commandManager.addCommand(new CommandPreviewKit(guiManager));
-        this.commandManager.addCommand(new CommandUltimateKits())
+        this.commandManager.addMainCommand("KitAdmin")
                 .addSubCommand(new CommandReload())
                 .addSubCommand(new CommandSettings(guiManager))
                 .addSubCommand(new CommandCreatekit(guiManager))

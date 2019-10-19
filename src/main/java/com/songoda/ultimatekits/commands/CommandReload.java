@@ -4,7 +4,6 @@ import com.songoda.core.commands.AbstractCommand;
 import com.songoda.ultimatekits.UltimateKits;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommandReload extends AbstractCommand {
@@ -23,7 +22,7 @@ public class CommandReload extends AbstractCommand {
 
     @Override
     protected List<String> onTab(CommandSender sender, String... args) {
-        return new ArrayList<>();
+        return null;
     }
 
     @Override

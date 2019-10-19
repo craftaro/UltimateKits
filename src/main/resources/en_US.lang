@@ -72,7 +72,7 @@ interface.kitsell.linknoeco = "&8ECO has been removed from this kit. Note you ca
 interface.kitsell.price = "&a&lSet kit price"
 interface.kitsell.priceon = "&7Currently: &a$%price%&7."
 interface.kitsell.priceoff = "&7Currently: &cNot set&7."
-interface.kitsell.pricelore = "%onoff%||&7Clicking this option will|&7allow you to set a price|&7that players will be able to|&7purchase this kit for|&7requires &aVault&7."
+interface.kitsell.pricelore = "%onoff%||&7Clicking this option will|&7allow you to set a price|&7that players will be able to|&7purchase this kit for|&7requires a compatible economy plugin&7."
 interface.kitsell.pricenoeco = "&8You must have an economy plugin installed to utilize economy.."
 interface.kitsell.priceprompt = "Set Price:"
 interface.kitsell.pricenonumber = "&a%input% &8is not a positive number."
@@ -131,7 +131,7 @@ interface.kiteditor.switchtoinventory = "&6Switch To Your Inventory"
 interface.kiteditor.switchtoinventorylore = "&7Click to switch to|&7your inventory."
 interface.kiteditor.switchtokitfunctions = "&6Switch To Kit Functions"
 interface.kiteditor.switchtokitfunctionslore = "&7Click to switch back|&7to the kit functions."
-interface.kiteditor.itemfunctionlore = "&7Display Item: &6%item%|&7Display Name: &6%name%|&7Display Lore: &6||&7Left-Click: &6To set a display item.|&7Middle-Click: &6To set a display name.|&7Right-Click: &6To set display lore.|&7Shift-Click: &6To set chance.||&7Display options only show up on display.|"&7This can be useful if you want to explain|&7What an item does without putting it in the|&7permanent lore.||&6Leave function mode to move items."
+interface.kiteditor.itemfunctionlore = "&7Display Item: &6%item%|&7Display Name: &6%name%|&7Display Lore: &6||&7Left-Click: &6To set a display item.|&7Middle-Click: &6To set a display name.|&7Right-Click: &6To set display lore.|&7Shift-Click: &6To set chance.||&7Display options only show up on display.|&7This can be useful if you want to explain|&7What an item does without putting it in the|&7permanent lore.||&6Leave function mode to move items."
 interface.kiteditor.saved = "&8Changes to &a%kit% &8saved successfully."
 
 #Command Messages

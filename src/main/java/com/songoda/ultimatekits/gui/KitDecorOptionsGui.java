@@ -67,7 +67,9 @@ public class KitDecorOptionsGui extends Gui {
                 plugin.getLocale().getMessage("interface.kitdecor.display").getMessage(),
                 kitBlockData.isDisplayingItems() ? enableLore : disableLore),
                 event -> {
+                    plugin.removeHologram(kitBlockData);
                     kitBlockData.setDisplayingItems(!kitBlockData.isDisplayingItems());
+                    plugin.updateHologram(kitBlockData);
                     updateItemLore(event.slot, kitBlockData.isDisplayingItems() ? enableLore : disableLore);
                 });
 

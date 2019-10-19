@@ -85,6 +85,7 @@ public class DisplayItemHandler {
         Vector vec = new Vector(0, 0, 0);
         item.setVelocity(vec);
         item.setPickupDelay(9999);
+        item.setMetadata("US_EXEMPT", new FixedMetadataValue(UltimateKits.getInstance(), true));
         item.setMetadata("displayItem", new FixedMetadataValue(UltimateKits.getInstance(), true));
         item.setMetadata("betterdrops_ignore", new FixedMetadataValue(UltimateKits.getInstance(), true));
     }

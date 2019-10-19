@@ -324,16 +324,16 @@ public class UltimateKits extends SongodaPlugin {
 
     private Location getKitLocation(KitBlockData data, int lines) {
         Location location = data.getLocation();
-        double multi = .25 * lines;
+        double multi = .1 * lines;
         if (data.isDisplayingItems()) {
-            multi += .40;
+            multi += .15;
         }
         Material type = location.getBlock().getType();
         if (type == Material.TRAPPED_CHEST
                 || type == Material.CHEST
                 || type.name().contains("SIGN")
                 || type == Material.ENDER_CHEST) {
-            multi -= .15;
+            multi -= .10;
         }
         location.add(0, multi, 0);
         return location;

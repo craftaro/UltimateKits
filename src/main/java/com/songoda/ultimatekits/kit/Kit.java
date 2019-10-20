@@ -115,9 +115,8 @@ public class Kit {
             plugin.getLocale().getMessage("event.key.success")
                     .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
             if (player.getInventory().getItemInHand().getAmount() != 1) {
-                ItemStack is = item;
-                is.setAmount(is.getAmount() - 1);
-                player.setItemInHand(is);
+                item.setAmount(item.getAmount() - 1);
+                player.setItemInHand(item);
             } else {
                 player.setItemInHand(null);
             }
@@ -267,19 +266,22 @@ public class Kit {
             CompatibleSound.ENTITY_PLAYER_LEVELUP.play(player, 0.6F, 15.0F);
 
         List<KitItem> innerContents = new ArrayList<>(getContents());
-        int amt = innerContents.size();
-        int amtToGive = key == null ? amt : key.getAmt();
+        int kitSize = innerContents.size();
+        // Amount of items from the kit to give to the player.
+        int itemGiveAmount = key == null ? kitSize : key.getAmount();
+        if (itemGiveAmount == -1) itemGiveAmount = kitSize;
+        if (key != null) itemGiveAmount = itemGiveAmount * key.getKitAmount();
 
-        if (amt != amtToGive || kitAnimation != KitAnimation.NONE)
-            Collections.shuffle(innerContents);
-
-        return generateRandomItem(innerContents, amtToGive, player, -1);
+        return generateRandomItem(innerContents, itemGiveAmount, player, -1);
     }
 
-    private boolean generateRandomItem(List<KitItem> innerContents, int amtToGive, Player player, int forceSelect) {
+    private boolean generateRandomItem(List<KitItem> innerContents, int itemGiveAmount, Player player, int forceSelect) {
+        if (getContents().size() != itemGiveAmount || kitAnimation != KitAnimation.NONE)
+            Collections.shuffle(innerContents);
+
         int canChoose = 0;
         for (KitItem item : innerContents) {
-            if (amtToGive == 0) break;
+            if (itemGiveAmount == 0) break;
             int ch = canChoose++ == forceSelect || item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
             if (rand < ch || ch == 100) {
@@ -293,13 +295,13 @@ public class Kit {
                     } catch (NumberFormatException ex) {
                         ex.printStackTrace();
                     }
-                    amtToGive--;
+                    itemGiveAmount--;
                     continue;
                 } else if (item.getContent() instanceof KitContentCommand) {
                     String parsed = ((KitContentCommand) item.getContent()).getCommand();
                     parsed = parsed.replace("{player}", player.getName());
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
-                    amtToGive--;
+                    itemGiveAmount--;
                     continue;
                 }
 
@@ -318,7 +320,7 @@ public class Kit {
 
                 if (parseStack.getType() == Material.AIR) continue;
 
-                amtToGive--;
+                itemGiveAmount--;
 
                 if (kitAnimation != KitAnimation.NONE) {
                     // TODO: this is a very bad way to solve this problem.
@@ -336,9 +338,9 @@ public class Kit {
             }
         }
 
-        if (amtToGive != 0 && canChoose != 0 && forceSelect == -1) {
-            return generateRandomItem(innerContents, amtToGive, player, (int) (Math.random() * canChoose));
-        } else if (amtToGive != 0) {
+        if (itemGiveAmount != 0 && canChoose != 0 && forceSelect == -1) {
+            return generateRandomItem(innerContents, itemGiveAmount, player, (int) (Math.random() * canChoose));
+        } else if (itemGiveAmount != 0) {
             return false;
         }
 

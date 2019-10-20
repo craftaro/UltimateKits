@@ -3,7 +3,6 @@ package com.songoda.ultimatekits.key;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -19,14 +18,14 @@ public class Key {
     private String name;
 
     // The amount of items this key will give you. -1 is all;
-    private int amt;
+    private int amount;
 
     // The amount of kit given when the key is used.
     private int kitAmount;
 
-    public Key(String name, int amt, int kitAmount) {
+    public Key(String name, int amount, int kitAmount) {
         this.name = name;
-        this.amt = amt;
+        this.amount = amount;
         this.kitAmount = kitAmount;
     }
 
@@ -58,7 +57,7 @@ public class Key {
             desc1 = desc1.replace("[", "").replace("]", "");
 
         lore.add(desc1);
-        if (this.amt == -1)
+        if (this.amount == -1)
             lore.add(plugin.getLocale().getMessage("interface.key.description2").getMessage());
         else
             lore.add(plugin.getLocale().getMessage("interface.key.description3").getMessage());
@@ -77,8 +76,8 @@ public class Key {
         return name;
     }
 
-    public int getAmt() {
-        return amt;
+    public int getAmount() {
+        return amount;
     }
 
     public int getKitAmount() {

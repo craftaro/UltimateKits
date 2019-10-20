@@ -62,6 +62,8 @@ public class UltimateKits extends SongodaPlugin {
     private DataMigrationManager dataMigrationManager;
     private DataManager dataManager;
 
+    private boolean loaded = false;
+
     /**
      * Grab instance of UltimateKits
      *
@@ -268,6 +270,7 @@ public class UltimateKits extends SongodaPlugin {
                     keyManager.addKey(key);
                 }
             }
+            this.loaded = true;
 
         }, 10);
     }
@@ -388,6 +391,7 @@ public class UltimateKits extends SongodaPlugin {
      * Saves registered kits to file.
      */
     public void saveKits() {
+        if (!loaded) return;
 
         // Hot fix for kit file resets.
         if (kitConfig.contains("Kits"))

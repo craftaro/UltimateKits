@@ -110,7 +110,7 @@ public class CommandKit extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/Kit & /Kits";
+        return "/Kit & /Kits | /kit <kit_name> [player]";
     }
 
     @Override

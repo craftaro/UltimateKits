@@ -5,7 +5,6 @@ import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.gui.KitSelectorGui;
 import com.songoda.ultimatekits.kit.Kit;
-import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,11 +32,6 @@ public class CommandKit extends AbstractCommand {
             return ReturnType.SUCCESS;
         }
 
-        if (!sender.hasPermission("ultimatekits.admin")) {
-            instance.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(sender);
-            return ReturnType.FAILURE;
-        }
-
         if (instance.getKitManager().getKit(args[0]) == null) {
             instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
@@ -47,15 +41,18 @@ public class CommandKit extends AbstractCommand {
 
         if (args.length == 1) {
             // /kit <kit> - Gives kit to self.
-            if (!(sender instanceof Player)) {
-                instance.getLocale().newMessage("&cYou must be a player to use this command!").sendMessage(sender);
-                return ReturnType.FAILURE;
-            }
+            if (!(sender instanceof Player))
+                return ReturnType.NEEDS_PLAYER;
 
-            kit.giveKit((Player) sender);
+            kit.processGenericUse((Player) sender, false);
             return ReturnType.SUCCESS;
         } else if (args.length == 2) {
             // /kit <kit> <player> - Gives kit to another player.
+
+            if (!sender.hasPermission("ultimatekits.admin")) {
+                instance.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(sender);
+                return ReturnType.FAILURE;
+            }
 
             if (!args[1].equalsIgnoreCase("all") && Bukkit.getPlayer(args[1]) == null) {
                 instance.getLocale().newMessage("&cThat username does not exist, or the user is offline!").sendPrefixedMessage(sender);
@@ -66,13 +63,13 @@ public class CommandKit extends AbstractCommand {
             String who = player != null ? player.getName() : "everyone";
 
             if (player != null) {
-                kit.giveKit(player);
+                kit.processGenericUse(player, true);
                 instance.getLocale().getMessage("event.claim.givesuccess")
                         .processPlaceholder("kit", kit.getShowableName())
                         .sendPrefixedMessage(sender);
             } else {
                 Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
-                    kit.giveKit(onlinePlayer);
+                    kit.processGenericUse(onlinePlayer, true);
                     instance.getLocale().getMessage("event.claim.givesuccess")
                             .processPlaceholder("kit", kit.getShowableName())
                             .sendPrefixedMessage(sender);

@@ -44,6 +44,12 @@ public class CommandKit extends AbstractCommand {
             if (!(sender instanceof Player))
                 return ReturnType.NEEDS_PLAYER;
 
+
+            if (!kit.hasPermission((Player)sender)) {
+                instance.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(sender);
+                return ReturnType.FAILURE;
+            }
+
             kit.processGenericUse((Player) sender, false);
             return ReturnType.SUCCESS;
         } else if (args.length == 2) {

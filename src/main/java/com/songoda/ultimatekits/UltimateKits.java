@@ -108,6 +108,7 @@ public class UltimateKits extends SongodaPlugin {
 
         // load kits
         dataFile.load();
+        keyFile.load();
         checkKeyDefaults();
         loadKits();
         keyFile.saveChanges();

@@ -167,15 +167,14 @@ public class UltimateKits extends SongodaPlugin {
 
         displayItemHandler.start();
         particleHandler.start();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::saveKits, 6000, 6000);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> saveKits(false), 6000, 6000);
     }
 
     @Override
     public void onPluginDisable() {
-        saveKits();
+        saveKits(false);
         dataFile.save();
         this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
-        saveKits();
         kitManager.clearKits();
         HologramManager.removeAllHolograms();
     }
@@ -190,12 +189,11 @@ public class UltimateKits extends SongodaPlugin {
         this.setLocale(Settings.LANGUGE_MODE.getString(), true);
 
         this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        kitConfig.load();
         loadKits();
     }
 
     void loadKits() {
-        kitConfig.load();
-
         Bukkit.getScheduler().runTaskLater(this, () -> {
 
             //Empty kits from manager.
@@ -391,8 +389,8 @@ public class UltimateKits extends SongodaPlugin {
     /*
      * Saves registered kits to file.
      */
-    public void saveKits() {
-        if (!loaded) return;
+    public void saveKits(boolean force) {
+        if (!loaded && !force) return;
 
         // Hot fix for kit file resets.
         if (kitConfig.contains("Kits"))

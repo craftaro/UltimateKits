@@ -48,7 +48,7 @@ public class Convert {
             }
             kitObj.setDelay(hook.getDelay(kit));
         }
-        UltimateKits.getInstance().saveKits();
+        UltimateKits.getInstance().saveKits(true);
     }
 
     private static boolean isInJsonFormat() {

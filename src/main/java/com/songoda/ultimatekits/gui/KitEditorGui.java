@@ -33,9 +33,7 @@ public class KitEditorGui extends DoubleGui {
     private Kit kit;
     private Player player;
 
-    private ItemStack[] inventoryItems;
-
-    private boolean isInFuction = false;
+    private boolean isInFunction = false;
     private boolean isInInventory = false;
 
     public KitEditorGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
@@ -50,18 +48,10 @@ public class KitEditorGui extends DoubleGui {
                 .processPlaceholder("name", kit.getShowableName())
                 .getMessage());
 
-        saveItemsInstance();
         setInvItems();
-
         setOnClose((event) -> {
             this.saveKit(player, inventory, false);
             CompatibleSound.ENTITY_VILLAGER_YES.play(player);
-
-            if (!isInInventory && this.inventoryItems.length != 0) {
-                player.getInventory().setContents(this.inventoryItems);
-                player.updateInventory();
-            }
-
         });
 
         ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
@@ -114,7 +104,7 @@ public class KitEditorGui extends DoubleGui {
             ItemStack is = getCompiledMeta(item);
 
 
-            if (!isInFuction)
+            if (!isInFunction)
                 setButton(num, is, null);
             else {
                 setButton(num, is,
@@ -147,7 +137,7 @@ public class KitEditorGui extends DoubleGui {
     private void updateInvButton() {
         ItemStack item;
 
-        if (!isInFuction) {
+        if (!isInFunction) {
             setUnlockedRange(1, 1, 1, 7);
             setUnlockedRange(2, 0, 3, 8);
             setUnlockedRange(4, 1, 4, 7);
@@ -165,7 +155,7 @@ public class KitEditorGui extends DoubleGui {
 
         setButton(48, item,
                 (event) -> {
-                    isInFuction = !isInFuction;
+                    isInFunction = !isInFunction;
                     saveKit(player, inventory, true);
                     paint();
                 });
@@ -188,7 +178,9 @@ public class KitEditorGui extends DoubleGui {
                         restoreItemsInstance();
                         setPlayerActionForRange(0, 0, 3, 8, null);
                         setAcceptsItems(true);
+                        setMainAction();
                     } else {
+                        setMainAction();
                         saveItemsInstance();
                         setInvItems();
                         setAcceptsItems(false);
@@ -197,28 +189,33 @@ public class KitEditorGui extends DoubleGui {
                 });
     }
 
+    private void setMainAction() {
+        this.setPlayerActionForRange(0, 0, 3, 8, event -> {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (isInInventory)
+                    stash.put(player, player.getInventory().getContents().clone());
+            }, 0L);
+            if (!isInInventory && event.player.getItemOnCursor().getType() != Material.AIR) {
+                event.event.setCancelled(true);
+            }
+        });
+    }
+
     private void saveItemsInstance() {
         setPlayerUnlockedRange(0, 0, 3, 8, false);
-        inventoryItems = player.getInventory().getContents().clone();
+        stash.put(player, player.getInventory().getContents().clone());
         player.getInventory().clear();
         isInInventory = false;
     }
 
     private void restoreItemsInstance() {
         setPlayerUnlockedRange(0, 0, 3, 8);
-        player.getInventory().setContents(inventoryItems);
+        player.getInventory().setContents(stash.get(player));
         player.updateInventory();
         isInInventory = true;
     }
 
     private void setInvItems() {
-
-        this.setPlayerActionForRange(0, 0, 3, 8, event -> {
-            if (!isInInventory && event.player.getItemOnCursor().getType() != Material.AIR) {
-                event.event.setCancelled(true);
-            }
-        });
-
         setPlayerButton(0, GuiUtils.createButtonItem(CompatibleMaterial.REDSTONE_TORCH,
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptions").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").getMessage().split("\\|")),
@@ -436,7 +433,7 @@ public class KitEditorGui extends DoubleGui {
         else itemLore = new ArrayList<>();
         itemLore.add(TextUtils.convertToInvisibleLoreString("----"));
         itemLore.add(ChatColor.GRAY.toString() + plugin.getLocale().getMessage("general.type.chance") + ": " + ChatColor.GOLD.toString() + item.getChance() + "%");
-        if (isInFuction) {
+        if (isInFunction) {
             itemLore.addAll(Arrays.asList(plugin.getLocale().getMessage("interface.kiteditor.itemfunctionlore")
                     .processPlaceholder("item", item.getDisplayItem() == null ? "" : item.getDisplayItem().name())
                     .processPlaceholder("name", item.getDisplayName())

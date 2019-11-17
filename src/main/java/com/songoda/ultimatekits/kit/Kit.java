@@ -136,14 +136,15 @@ public class Kit {
             return;
         }
         if (this.delay > 0) {
-            if (getNextUse(player) == -1) {
-                plugin.getLocale().getMessage("event.claim.nottwice").sendPrefixedMessage(player);
-            } else if (getNextUse(player) != 0) {
+            if (getNextUse(player) != 0) {
                 plugin.getLocale().getMessage("event.claim.delay")
                         .processPlaceholder("time", Methods.makeReadable(this.getNextUse(player)))
                         .sendPrefixedMessage(player);
                 return;
             }
+        } else if (getNextUse(player) == -1) {
+            plugin.getLocale().getMessage("event.claim.nottwice").sendPrefixedMessage(player);
+            return;
         }
         if (giveKit(player)) {
             EconomyManager.withdrawBalance(player, price);
@@ -153,7 +154,6 @@ public class Kit {
             plugin.getLocale().getMessage("event.claim.purchasesuccess")
                     .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
         }
-
     }
 
     public void processGenericUse(Player player, boolean forced) {

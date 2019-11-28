@@ -209,13 +209,17 @@ public class Kit {
                     is.setItemMeta(meta);
                 }
 
-                if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).endsWith("Command")) {
+                if (is.getType() == Material.PAPER && is.getItemMeta().getDisplayName()
+                        .equals(UltimateKits.getInstance().getLocale().getMessage("general.type.command")
+                                .getMessage())) {
                     StringBuilder command = new StringBuilder();
                     for (String line : is.getItemMeta().getLore()) {
                         command.append(line);
                     }
                     list.add(new KitItem(is, ChatColor.stripColor(command.toString())));
-                } else if (is.getType() == Material.PAPER && ChatColor.stripColor(is.getItemMeta().getDisplayName()).endsWith("Money")) {
+                } else if (is.getType() == Material.PAPER && is.getItemMeta().getDisplayName()
+                        .equals(UltimateKits.getInstance().getLocale().getMessage("general.type.money")
+                                .getMessage())) {
                     String money = is.getItemMeta().getLore().get(0);
                     list.add(new KitItem(is, ChatColor.stripColor(money)));
                 } else {

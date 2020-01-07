@@ -53,6 +53,7 @@ public class KitGeneralOptionsGui extends Gui {
                                 updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.delaylore")
                                         .processPlaceholder("delay", kit.getDelay()).getMessage().split("\\|"));
                                 aevent.player.closeInventory();
+                                return;
                             } catch (NumberFormatException e) {
                             }
                         }

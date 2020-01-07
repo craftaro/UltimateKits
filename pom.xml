@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>UltimateKits</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>maven-version-number</version>
+    <version>2.4.14</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>UltimateKits-${project.version}</finalName>

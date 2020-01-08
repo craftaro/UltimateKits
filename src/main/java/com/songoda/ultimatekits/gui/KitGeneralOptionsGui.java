@@ -49,10 +49,11 @@ public class KitGeneralOptionsGui extends Gui {
                         final String num = msg != null ? msg.replaceAll("[^0-9]", "") : "";
                         if (!num.isEmpty()) {
                             try {
-                                kit.setDelay(Integer.parseInt(num));
+                                kit.setDelay(Integer.parseInt(num.trim()));
                                 updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.delaylore")
                                         .processPlaceholder("delay", kit.getDelay()).getMessage().split("\\|"));
                                 aevent.player.closeInventory();
+                                return;
                             } catch (NumberFormatException e) {
                             }
                         }

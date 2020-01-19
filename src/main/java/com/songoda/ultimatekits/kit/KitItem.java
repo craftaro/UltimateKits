@@ -44,20 +44,20 @@ public class KitItem {
         ItemStack itemStack = item.clone();
         ItemMeta meta = itemStack.getItemMeta();
         if (itemStack.hasItemMeta() && meta.hasDisplayName() && meta.getDisplayName().contains(";")) {
-            translateLine(meta.getDisplayName());
-            String[] split = meta.getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "").split(";", 2);
-            meta.setDisplayName(split[1].contains("faqe") ? null : meta.getDisplayName().split(";", 2)[1]);
+            String translated = translateLine(meta.getDisplayName()).replace(TextUtils.convertToInvisibleString("faqe"), "");
+            if (translated.equalsIgnoreCase(WordUtils.capitalize(item.getType().toString().toLowerCase().replace("_", " "))))
+                meta.setDisplayName(null);
+            else
+                meta.setDisplayName(translated);
             itemStack.setItemMeta(meta);
         }
-        String line = itemStack.hasItemMeta() && itemStack.getItemMeta().hasDisplayName() ? meta.getDisplayName() : "";
-
-        processContent(line, item);
+        processContent(null, itemStack);
     }
 
     private void processContent(String line, ItemStack item) {
-        if (line.startsWith(Settings.CURRENCY_SYMBOL.getString())) {
+        if (line != null && line.startsWith(Settings.CURRENCY_SYMBOL.getString())) {
             this.content = new KitContentEconomy(Double.parseDouble(line.substring(1).trim()));
-        } else if (line.startsWith("/")) {
+        } else if (line != null && line.startsWith("/")) {
             this.content = new KitContentCommand(line.substring(1));
         } else {
             ItemStack itemStack = item == null ? UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(line) : item;
@@ -153,7 +153,7 @@ public class KitItem {
     }
 
     public ItemStack getMoveableItem() {
-        if(content == null) return null;
+        if (content == null) return null;
         ItemStack item = content.getItemForDisplay();
         ItemMeta meta = item.getItemMeta();
         if (chance != 0 || displayItem != null || displayName != null || displayLore != null) {
@@ -168,14 +168,14 @@ public class KitItem {
     }
 
     public ItemStack getItemForDisplay() {
-        if(content == null) return null;
+        if (content == null) return null;
         ItemStack item = content.getItemForDisplay();
         ItemMeta meta = item.getItemMeta();
 
         if (displayItem != null) {
             item.setType(displayItem);
         }
-        if(meta != null) {
+        if (meta != null) {
             if (displayName != null) {
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
             }

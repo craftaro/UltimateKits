@@ -36,7 +36,7 @@ public class BlockListeners implements Listener {
 
         instance.getKitManager().removeKitFromLocation(block.getLocation());
 
-        instance.getLocale().newMessage("&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType() + "&8.")
+        instance.getLocale().newMessage("&8Kit &9" + kit.getKey() + " &8unassigned from: &a" + block.getType() + "&8.")
                 .sendPrefixedMessage(event.getPlayer());
     }
 

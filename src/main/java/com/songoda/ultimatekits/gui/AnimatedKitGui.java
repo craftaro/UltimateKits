@@ -42,7 +42,7 @@ public class AnimatedKitGui extends Gui {
         this.give = give;
         setRows(3);
         setAllowClose(false);
-        setTitle(kit.getShowableName());
+        setTitle(kit.getName());
         setDefaultItem(GuiUtils.getBorderItem(CompatibleMaterial.GRAY_STAINED_GLASS_PANE));
 
         // ideally, we'd populate the items in such a way that the end item isn't far from the center when the animation is complete

@@ -20,7 +20,7 @@ public class KitDecorOptionsGui extends Gui {
         super(parent);
         setRows(3);
         setTitle(plugin.getLocale().getMessage("interface.kitdecor.title")
-                .processPlaceholder("kit", kitBlockData.getKit().getShowableName())
+                .processPlaceholder("kit", kitBlockData.getKit().getName())
                 .getMessage());
 
         Kit kit = kitBlockData.getKit();

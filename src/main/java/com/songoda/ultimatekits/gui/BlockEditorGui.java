@@ -21,7 +21,7 @@ public class BlockEditorGui extends Gui {
         this.kitBlockData = kitBlockData;
         setRows(3);
         setTitle(plugin.getLocale().getMessage("interface.kitblock.title")
-                .processPlaceholder("kit", kitBlockData.getKit().getShowableName())
+                .processPlaceholder("kit", kitBlockData.getKit().getName())
                 .getMessage());
 
         // fill glass borders

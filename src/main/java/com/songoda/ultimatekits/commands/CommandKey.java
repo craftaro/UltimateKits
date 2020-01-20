@@ -60,14 +60,14 @@ public class CommandKey extends AbstractCommand {
         if (playerTo != null) {
             PlayerUtils.giveItem(playerTo, key.getKeyItem(kit, amt));
             instance.getLocale().getMessage("event.key.given")
-                    .processPlaceholder("kit", kit == null ? "Any" : kit.getShowableName())
+                    .processPlaceholder("kit", kit == null ? "Any" : kit.getName())
                     .sendPrefixedMessage(playerTo);
             return ReturnType.SUCCESS;
         }
         for (Player pl : instance.getServer().getOnlinePlayers()) {
             PlayerUtils.giveItem(pl, key.getKeyItem(kit, amt));
             instance.getLocale().getMessage("event.key.given")
-                    .processPlaceholder("kit", kit == null ? "Any" : kit.getShowableName())
+                    .processPlaceholder("kit", kit == null ? "Any" : kit.getName())
                     .sendPrefixedMessage(pl);
         }
         return ReturnType.SUCCESS;
@@ -82,7 +82,7 @@ public class CommandKey extends AbstractCommand {
         if (args.length == 1) {
             tab.add("all");
             for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
-                tab.add(kit.getName());
+                tab.add(kit.getKey());
             return tab;
         } else if (args.length == 2) {
             for (Key key : UltimateKits.getInstance().getKeyManager().getKeys())

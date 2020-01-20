@@ -12,7 +12,6 @@ import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import java.util.Random;
 
 public class KitSellingOptionsGui extends Gui {
 
@@ -27,7 +26,7 @@ public class KitSellingOptionsGui extends Gui {
         this.kit = kit;
         setRows(3);
         setTitle(plugin.getLocale().getMessage("interface.kitblock.title")
-                .processPlaceholder("kit", kit.getShowableName())
+                .processPlaceholder("kit", kit.getName())
                 .getMessage());
 
         // fill glass borders

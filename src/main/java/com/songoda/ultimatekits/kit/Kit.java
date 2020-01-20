@@ -8,6 +8,7 @@ import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.category.Category;
 import com.songoda.ultimatekits.gui.AnimatedKitGui;
 import com.songoda.ultimatekits.gui.ConfirmBuyGui;
 import com.songoda.ultimatekits.gui.PreviewKitGui;
@@ -32,7 +33,9 @@ import java.util.*;
  */
 public class Kit {
 
-    private final String name, showableName;
+    private final String key, name;
+    private Category category = null;
+
     private static UltimateKits plugin;
     private double price = 0;
     private String link, title = null;
@@ -42,11 +45,11 @@ public class Kit {
     private List<KitItem> contents = new ArrayList<>();
     private KitAnimation kitAnimation = KitAnimation.NONE;
 
-    public Kit(String name) {
+    public Kit(String key) {
         if (plugin == null)
             plugin = UltimateKits.getInstance();
-        this.name = name;
-        this.showableName = TextUtils.formatText(name, true);
+        this.key = key;
+        this.name = TextUtils.formatText(key, true);
     }
 
     public void buy(Player player, GuiManager manager) {
@@ -55,7 +58,7 @@ public class Kit {
             return;
         }
 
-        if (!player.hasPermission("ultimatekits.buy." + name)) {
+        if (!player.hasPermission("ultimatekits.buy." + key)) {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
             return;
@@ -105,7 +108,7 @@ public class Kit {
         Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(item.getItemMeta().getLore().get(0)).replace(" Key", ""));
 
         if (!item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title")
-                .processPlaceholder("kit", showableName).getMessage())
+                .processPlaceholder("kit", name).getMessage())
                 && !item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title")
                 .processPlaceholder("kit", "Any").getMessage())) {
             plugin.getLocale().getMessage("event.crate.wrongkey").sendPrefixedMessage(player);
@@ -113,7 +116,7 @@ public class Kit {
         }
         if (giveKit(player, key)) {
             plugin.getLocale().getMessage("event.key.success")
-                    .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+                    .processPlaceholder("kit", name).sendPrefixedMessage(player);
             if (player.getInventory().getItemInHand().getAmount() != 1) {
                 item.setAmount(item.getAmount() - 1);
                 player.setItemInHand(item);
@@ -126,13 +129,13 @@ public class Kit {
     public void processPurchaseUse(Player player) {
         if (!EconomyManager.isEnabled()) return;
 
-        if (!player.hasPermission("ultimatekits.buy." + name)) {
+        if (!player.hasPermission("ultimatekits.buy." + key)) {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
             return;
         } else if (!EconomyManager.hasBalance(player, price)) {
             plugin.getLocale().getMessage("event.claim.cannotafford")
-                    .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+                    .processPlaceholder("kit", name).sendPrefixedMessage(player);
             return;
         }
         if (this.delay > 0) {
@@ -152,7 +155,7 @@ public class Kit {
                 updateDelay(player); //updates delay on buy
 
             plugin.getLocale().getMessage("event.claim.purchasesuccess")
-                    .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+                    .processPlaceholder("kit", name).sendPrefixedMessage(player);
         }
     }
 
@@ -164,7 +167,7 @@ public class Kit {
                 updateDelay(player);
                 if (kitAnimation == KitAnimation.NONE)
                     plugin.getLocale().getMessage("event.claim.givesuccess")
-                            .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+                            .processPlaceholder("kit", name).sendPrefixedMessage(player);
             }
         } else {
             plugin.getLocale().getMessage("event.claim.delay")
@@ -176,20 +179,20 @@ public class Kit {
     @SuppressWarnings("Duplicates")
     public void display(Player player, GuiManager manager, Gui back) {
         if (!player.hasPermission("previewkit.use")
-                && !player.hasPermission("previewkit." + name)
+                && !player.hasPermission("previewkit." + key)
                 && !player.hasPermission("ultimatekits.use")
-                && !player.hasPermission("ultimatekits." + name)) {
+                && !player.hasPermission("ultimatekits." + key)) {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
             return;
         }
-        if (name == null) {
+        if (key == null) {
             plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
             return;
         }
 
         plugin.getLocale().getMessage("event.preview.kit")
-                .processPlaceholder("kit", showableName).sendPrefixedMessage(player);
+                .processPlaceholder("kit", name).sendPrefixedMessage(player);
         manager.showGUI(player, new PreviewKitGui(plugin, player, this, back));
     }
 
@@ -353,11 +356,11 @@ public class Kit {
     }
 
     public void updateDelay(Player player) {
-        plugin.getDataFile().set("Kits." + name + ".delays." + player.getUniqueId().toString(), System.currentTimeMillis());
+        plugin.getDataFile().set("Kits." + key + ".delays." + player.getUniqueId().toString(), System.currentTimeMillis());
     }
 
     public Long getNextUse(Player player) {
-        String configSectionPlayer = "Kits." + name + ".delays." + player.getUniqueId().toString();
+        String configSectionPlayer = "Kits." + key + ".delays." + player.getUniqueId().toString();
         Config config = plugin.getDataFile();
 
         if (!config.contains(configSectionPlayer)) {
@@ -371,9 +374,9 @@ public class Kit {
     }
 
     public boolean hasPermission(Player player) {
-        if (player.hasPermission("uc.kit." + name.toLowerCase())) return true;
-        if (player.hasPermission("essentials.kit." + name.toLowerCase())) return true;
-        if (player.hasPermission("ultimatekits.kit." + name.toLowerCase())) return true;
+        if (player.hasPermission("uc.kit." + key.toLowerCase())) return true;
+        if (player.hasPermission("essentials.kit." + key.toLowerCase())) return true;
+        if (player.hasPermission("ultimatekits.kit." + key.toLowerCase())) return true;
         return false;
     }
 
@@ -413,6 +416,15 @@ public class Kit {
         return this;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public Kit setCategory(Category category) {
+        this.category = category;
+        return this;
+    }
+
     public List<KitItem> getContents() {
         return this.contents;
     }
@@ -422,12 +434,12 @@ public class Kit {
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getKey() {
+        return key;
     }
 
-    public String getShowableName() {
-        return showableName;
+    public String getName() {
+        return name;
     }
 
     public CompatibleMaterial getDisplayItem() {
@@ -463,7 +475,7 @@ public class Kit {
 
     @Override
     public int hashCode() {
-        return 31 * (name != null ? name.hashCode() : 0);
+        return 31 * (key != null ? key.hashCode() : 0);
     }
 
     @Override
@@ -472,7 +484,7 @@ public class Kit {
         if (!(o instanceof Kit)) return false;
 
         Kit kit = (Kit) o;
-        return Objects.equals(name, kit.name);
+        return Objects.equals(key, kit.key);
     }
 
 }

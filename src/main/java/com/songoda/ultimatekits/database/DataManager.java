@@ -33,7 +33,7 @@ public class DataManager extends DataManagerAbstract {
                 for (KitBlockData data : blockData.values()) {
                     if (data == null || data.getWorld() == null) continue;
                     statement.setString(1, data.getType().toString());
-                    statement.setString(2, data.getKit().getName());
+                    statement.setString(2, data.getKit().getKey());
                     statement.setBoolean(3, data.showHologram());
                     statement.setBoolean(4, data.isDisplayingItems());
                     statement.setBoolean(5, data.hasParticles());
@@ -58,7 +58,7 @@ public class DataManager extends DataManagerAbstract {
                     "WHERE world = ? AND x = ? AND y = ? AND z = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateData)) {
                 statement.setString(1, blockData.getType().toString());
-                statement.setString(2, blockData.getKit().getName());
+                statement.setString(2, blockData.getKit().getKey());
                 statement.setBoolean(3, blockData.showHologram());
                 statement.setBoolean(4, blockData.isDisplayingItems());
                 statement.setBoolean(5, blockData.hasParticles());
@@ -80,7 +80,7 @@ public class DataManager extends DataManagerAbstract {
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createData)) {
                 statement.setString(1, blockData.getType().toString());
-                statement.setString(2, blockData.getKit().getName());
+                statement.setString(2, blockData.getKit().getKey());
                 statement.setBoolean(3, blockData.showHologram());
                 statement.setBoolean(4, blockData.isDisplayingItems());
                 statement.setBoolean(5, blockData.hasParticles());

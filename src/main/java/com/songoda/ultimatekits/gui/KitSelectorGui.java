@@ -6,14 +6,10 @@ import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.category.Category;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,21 +17,29 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
 public class KitSelectorGui extends Gui {
 
     private Player player;
     private UltimateKits plugin;
 
     private int timer;
+    private Category category;
     private List<String> kitList;
     private boolean kitsmode = false;
 
     private boolean glassless;
     private int showPerRow, showPerPage;
 
-    public KitSelectorGui(UltimateKits plugin, Player player) {
+    public KitSelectorGui(UltimateKits plugin, Player player, Category category) {
         this.player = player;
         this.plugin = plugin;
+        this.category = category;
         glassless = Settings.DO_NOT_USE_GLASS_BORDERS.getBoolean();
 
         setTitle(plugin.getLocale().getMessage("interface.selector.title").getMessage());
@@ -48,7 +52,7 @@ public class KitSelectorGui extends Gui {
 
         setItem(0, 4, GuiUtils.createButtonItem(CompatibleMaterial.BOOK,
                 plugin.getLocale().getMessage("interface.selector.details")
-                .processPlaceholder("player", player.getName()).getMessage().split("\\|")));
+                        .processPlaceholder("player", player.getName()).getMessage().split("\\|")));
 
         if (pages > 1) {
             this.setNextPage(rows - 1, 5, GuiUtils.createButtonItem(ItemUtils.getCustomHead("1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b"),
@@ -70,8 +74,8 @@ public class KitSelectorGui extends Gui {
         setDefaultItem(AIR);
         GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
 
-        if(!glassless) {
-            if(Settings.RAINBOW.getBoolean()) {
+        if (!glassless) {
+            if (Settings.RAINBOW.getBoolean()) {
                 animateGlass();
                 timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
                     if (inventory.getViewers().isEmpty()) return;
@@ -89,27 +93,35 @@ public class KitSelectorGui extends Gui {
             }
         }
 
+        if (category != null)
+            setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
+                    plugin.getLocale().getMessage("interface.button.back").getMessage()),
+                    event -> guiManager.showGUI(player, new CategorySelectorGui(plugin, player)));
+
+
         showPage();
     }
 
     private void loadKits() {
         boolean showAll = !Settings.ONLY_SHOW_KITS_WITH_PERMS.getBoolean();
         kitList = plugin.getKitManager().getKits().stream()
-                .filter(kit -> !kit.isHidden() && (showAll || kit.hasPermission(player)))
-                .map(kit -> kit.getName())
+                .filter(kit -> !kit.isHidden() && (showAll || kit.hasPermission(player))
+                        && (category == null || kit.getCategory() == category))
+                .map(Kit::getKey)
                 .collect(Collectors.toList());
     }
 
     static final Random rand = new Random();
+
     private void animateGlass() {
-        for(int col = 1; col < 8; ++col) {
+        for (int col = 1; col < 8; ++col) {
             ItemStack it;
-            if((it = getItem(0, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE"))
+            if ((it = getItem(0, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE"))
                 setItem(0, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
-            if((it = getItem(rows - 1, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE"))
+            if ((it = getItem(rows - 1, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE"))
                 setItem(rows - 1, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
         }
-        for(int row = 1; row + 1 < rows; ++row) {
+        for (int row = 1; row + 1 < rows; ++row) {
             setItem(row, 0, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
             setItem(row, 8, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
         }
@@ -119,7 +131,7 @@ public class KitSelectorGui extends Gui {
         int index = (page - 1) * showPerPage;
         for (int row = glassless ? 0 : 1; row < (!glassless || pages != 1 ? rows - 1 : rows); ++row) {
             for (int col = glassless ? 0 : 1; col < (glassless ? 9 : 8); ++col) {
-                if(index >= kitList.size()) {
+                if (index >= kitList.size()) {
                     setItem(row, col, null);
                     clearActions(row, col);
                     continue;
@@ -160,50 +172,50 @@ public class KitSelectorGui extends Gui {
 
     private List<String> getKitLore(Kit kit) {
         ArrayList<String> lore = new ArrayList<>();
-            if (kit.getPrice() != 0)
-                lore.add(plugin.getLocale().getMessage("interface.selector.aboutkitprice")
-                        .processPlaceholder("price", String.valueOf(kit.getPrice()))
-                        .getMessage());
-            else if (kit.getLink() != null)
-                lore.add(plugin.getLocale().getMessage("general.type.link").getMessage());
+        if (kit.getPrice() != 0)
+            lore.add(plugin.getLocale().getMessage("interface.selector.aboutkitprice")
+                    .processPlaceholder("price", String.valueOf(kit.getPrice()))
+                    .getMessage());
+        else if (kit.getLink() != null)
+            lore.add(plugin.getLocale().getMessage("general.type.link").getMessage());
 
-            if (!kitsmode) {
-                if (!plugin.getLocale().getMessage("interface.selector.aboutkit").getMessage().trim().equals("")) {
-                    String[] parts = plugin.getLocale().getMessage("interface.selector.aboutkit").getMessage().split("\\|");
-                    lore.add("");
-                    for (String line : parts)
-                        lore.add(ChatColor.translateAlternateColorCodes('&', line));
-                }
-                if (kit.hasPermission(player)) {
-                    if (kit.getNextUse(player) == -1) {
-                        lore.add(plugin.getLocale().getMessage("event.claim.once").getMessage());
-                    } else if (kit.getNextUse(player) > 0) {
-                        if (!plugin.getLocale().getMessage("event.claim.wait").getMessage().trim().equals("")) {
-                            lore.add(plugin.getLocale().getMessage("event.claim.wait")
-                                    .processPlaceholder("time", Methods.makeReadable(kit.getNextUse(player)))
-                                    .getMessage());
-                        }
-                    } else if (!plugin.getLocale().getMessage("event.claim.ready").getMessage().trim().equals("")) {
-                        lore.add(plugin.getLocale().getMessage("event.claim.ready").getMessage());
-                    }
-                } else
-                    lore.add(plugin.getLocale().getMessage("event.claim.noaccess").getMessage());
+        if (!kitsmode) {
+            if (!plugin.getLocale().getMessage("interface.selector.aboutkit").getMessage().trim().equals("")) {
+                String[] parts = plugin.getLocale().getMessage("interface.selector.aboutkit").getMessage().split("\\|");
                 lore.add("");
-                lore.add(plugin.getLocale().getMessage("interface.selector.leftpreview").getMessage());
-                if (kit.hasPermission(player)) {
-                    lore.add(plugin.getLocale().getMessage("interface.selector.rightclaim").getMessage());
-                } else if (kit.getPrice() != 0 || kit.getLink() != null) {
-                    lore.add(plugin.getLocale().getMessage("interface.selector.rightbuy").getMessage());
-                }
-
-                if (player.hasPermission("ultimatekits.admin")) {
-                    lore.add("");
-                    lore.add(plugin.getLocale().getMessage("interface.selector.adminlore").getMessage());
-                }
-            } else {
-                lore.addAll(Arrays.asList(plugin.getLocale().getMessage("interface.selector.editlore").getMessage().split("\\|")));
+                for (String line : parts)
+                    lore.add(ChatColor.translateAlternateColorCodes('&', line));
             }
-            return lore;
+            if (kit.hasPermission(player)) {
+                if (kit.getNextUse(player) == -1) {
+                    lore.add(plugin.getLocale().getMessage("event.claim.once").getMessage());
+                } else if (kit.getNextUse(player) > 0) {
+                    if (!plugin.getLocale().getMessage("event.claim.wait").getMessage().trim().equals("")) {
+                        lore.add(plugin.getLocale().getMessage("event.claim.wait")
+                                .processPlaceholder("time", Methods.makeReadable(kit.getNextUse(player)))
+                                .getMessage());
+                    }
+                } else if (!plugin.getLocale().getMessage("event.claim.ready").getMessage().trim().equals("")) {
+                    lore.add(plugin.getLocale().getMessage("event.claim.ready").getMessage());
+                }
+            } else
+                lore.add(plugin.getLocale().getMessage("event.claim.noaccess").getMessage());
+            lore.add("");
+            lore.add(plugin.getLocale().getMessage("interface.selector.leftpreview").getMessage());
+            if (kit.hasPermission(player)) {
+                lore.add(plugin.getLocale().getMessage("interface.selector.rightclaim").getMessage());
+            } else if (kit.getPrice() != 0 || kit.getLink() != null) {
+                lore.add(plugin.getLocale().getMessage("interface.selector.rightbuy").getMessage());
+            }
+
+            if (player.hasPermission("ultimatekits.admin")) {
+                lore.add("");
+                lore.add(plugin.getLocale().getMessage("interface.selector.adminlore").getMessage());
+            }
+        } else {
+            lore.addAll(Arrays.asList(plugin.getLocale().getMessage("interface.selector.editlore").getMessage().split("\\|")));
+        }
+        return lore;
     }
 
 }

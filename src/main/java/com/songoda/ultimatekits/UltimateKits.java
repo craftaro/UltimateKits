@@ -300,7 +300,8 @@ public class UltimateKits extends SongodaPlugin {
 
     public void removeHologram(KitBlockData data) {
         if (HologramManager.isEnabled()) {
-            Location location = getKitLocation(data, Settings.HOLOGRAM_LAYOUT.getStringList().size());
+            List<String> lines = formatHologram(data);
+            Location location = getKitLocation(data, lines.size());
             HologramManager.removeHologram(location);
         }
     }

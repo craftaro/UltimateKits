@@ -6,6 +6,7 @@ general:
   type:
     command: '&7Command'
     chance: Chance
+    category: Category
     money: '&6Money'
     link: '&9Link'
     free: Free
@@ -24,6 +25,10 @@ interface:
     rightbuy: '&6&lRIGHT CLICK &7to buy kit.'
     adminlore: '&6Middle Click &7to edit positioning.'
     editlore: '&6&lEdit Mode||&6Left Click &7to move kit left|&6Right Click &7to move kit right||&6Middle Click &7to go back.'
+  categoryselector:
+    title: '&8Server Kit Categories'
+    details: '&7Hello &e%player%&7!|&7Listed below are our server''s kits.||&7Click on a &ecategory &7to view |&7the contained kits.'
+    view: '&6&lCLICK &7to view category.'
   hologram:
     previewonly: Click to Preview!
     preview: Right-Click to Preview!
@@ -115,6 +120,10 @@ interface:
     delaylore: '&7Currently set to: &a%delay%&7.||&7Use this to alter this kit delay.||&7Use &6-1 &7to make this kit single|&7use only.'
     delayprompt: 'Delay in Seconds:'
     delaynonumber: '&a%input% &8is not a number.'
+    category: '&5&lSet Category'
+    categorylore: '&7Currently set to: &a%category%&7.||&7Adding this kit to a category will|&7cause it do be displayed in|&7that category.||&cRight click to remove.'
+    categoryprompt: 'Category name:'
+    notacategory: '&cThat is not a category...'
     destroy: '&c&lDestroy Kit'
     destroylore: '|&7Click this to destroy this kit.'
     destroyprompt: Enter "%kit%"

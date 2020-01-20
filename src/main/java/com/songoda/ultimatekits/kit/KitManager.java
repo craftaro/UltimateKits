@@ -55,7 +55,7 @@ public final class KitManager {
     }
 
     public Kit getKit(String name) {
-        return registeredKits.stream().filter(kit -> kit.getName().equalsIgnoreCase(name.trim()))
+        return registeredKits.stream().filter(kit -> kit.getKey().equalsIgnoreCase(name.trim()))
                 .findFirst().orElse(null);
     }
 

@@ -54,7 +54,7 @@ public class CommandEdit extends AbstractCommand {
         List<String> tab = new ArrayList<>();
         if (args.length == 1) {
             for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
-                tab.add(kit.getName());
+                tab.add(kit.getKey());
             return tab;
         }
         return tab;

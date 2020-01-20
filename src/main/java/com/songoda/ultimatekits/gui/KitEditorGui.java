@@ -45,7 +45,7 @@ public class KitEditorGui extends DoubleGui {
         setDefaultItem(null);
         setRows(6);
         setTitle(plugin.getLocale().getMessage("interface.kiteditor.title")
-                .processPlaceholder("name", kit.getShowableName())
+                .processPlaceholder("name", kit.getName())
                 .getMessage());
 
         setInvItems();
@@ -80,8 +80,8 @@ public class KitEditorGui extends DoubleGui {
         // info icon
         setItem(0, 4, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
                 plugin.getLocale().getMessage("interface.kiteditor.info")
-                        .processPlaceholder("kit", kit.getName())
-                        .processPlaceholder("perm", "ultimatekits.kit." + kit.getName().toLowerCase())
+                        .processPlaceholder("kit", kit.getKey())
+                        .processPlaceholder("perm", "ultimatekits.kit." + kit.getKey().toLowerCase())
                         .getMessage().split("\\|"))
         );
 
@@ -339,7 +339,7 @@ public class KitEditorGui extends DoubleGui {
         kit.saveKit(Arrays.asList(items));
         if (!muteSave)
             plugin.getLocale().getMessage("interface.kiteditor.saved")
-                    .processPlaceholder("kit", kit.getShowableName())
+                    .processPlaceholder("kit", kit.getName())
                     .sendPrefixedMessage(player);
     }
 

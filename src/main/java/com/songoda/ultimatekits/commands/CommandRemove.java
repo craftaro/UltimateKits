@@ -31,7 +31,7 @@ public class CommandRemove extends AbstractCommand {
                     .forEach(data -> instance.removeHologram(data));
         }
 
-        instance.getLocale().newMessage("&8Kit &9" + kit.getName() + " &8unassigned from: &a" + block.getType().toString() + "&8.").sendPrefixedMessage(player);
+        instance.getLocale().newMessage("&8Kit &9" + kit.getKey() + " &8unassigned from: &a" + block.getType().toString() + "&8.").sendPrefixedMessage(player);
         return ReturnType.SUCCESS;
     }
 

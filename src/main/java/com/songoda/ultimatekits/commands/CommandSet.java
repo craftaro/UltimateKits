@@ -34,7 +34,7 @@ public class CommandSet extends AbstractCommand {
         Block b = player.getTargetBlock(null, 200);
         KitBlockData data = instance.getKitManager().addKitToLocation(kit, b.getLocation());
         UltimateKits.getInstance().getDataManager().createBlockData(data);
-        instance.getLocale().newMessage("&8Kit &a" + kit.getName() + " &8set to: &a" + b.getType().toString() + "&8.")
+        instance.getLocale().newMessage("&8Kit &a" + kit.getKey() + " &8set to: &a" + b.getType().toString() + "&8.")
                 .sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
 
@@ -49,7 +49,7 @@ public class CommandSet extends AbstractCommand {
         if (args.length == 1) {
             List<String> tab = new ArrayList<>();
             for (Kit kit : UltimateKits.getInstance().getKitManager().getKits()) {
-                tab.add(kit.getName());
+                tab.add(kit.getKey());
             }
             return tab;
         }

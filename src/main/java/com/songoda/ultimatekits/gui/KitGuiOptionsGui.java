@@ -27,7 +27,7 @@ public class KitGuiOptionsGui extends Gui {
         this.player = player;
         setRows(3);
         setTitle(plugin.getLocale().getMessage("interface.kitblock.title")
-                .processPlaceholder("kit", kit.getShowableName())
+                .processPlaceholder("kit", kit.getName())
                 .getMessage());
         setAcceptsItems(true); // display item takes an item
 
@@ -66,7 +66,7 @@ public class KitGuiOptionsGui extends Gui {
                         kit.setTitle(msg);
                         plugin.getLocale().getMessage("interface.kitguioptions.holoset")
                                 .processPlaceholder("title", msg)
-                                .processPlaceholder("kit", kit.getShowableName())
+                                .processPlaceholder("kit", kit.getName())
                                 .sendPrefixedMessage(player);
 
                         plugin.updateHologram(kit);
@@ -95,13 +95,13 @@ public class KitGuiOptionsGui extends Gui {
                         plugin.getLocale().getMessage("interface.kitguioptions.itemnoitem").sendPrefixedMessage(player);
                     } else {
                         kit.setDisplayItem(is);
-                        plugin.getLocale().getMessage("interface.kitguioptions.itemset").processPlaceholder("item", kit.getShowableName()).sendPrefixedMessage(player);
+                        plugin.getLocale().getMessage("interface.kitguioptions.itemset").processPlaceholder("item", kit.getName()).sendPrefixedMessage(player);
                         paint();
                     }
                 });
         setAction(1, 4, ClickType.RIGHT, event -> {
             kit.setDisplayItem((ItemStack) null);
-            plugin.getLocale().getMessage("interface.kitguioptions.itemremoved").processPlaceholder("kit", kit.getShowableName()).sendPrefixedMessage(player);
+            plugin.getLocale().getMessage("interface.kitguioptions.itemremoved").processPlaceholder("kit", kit.getName()).sendPrefixedMessage(player);
             paint();
         });
 

@@ -36,7 +36,7 @@ public class Key {
 
         String kitName;
         if (kit != null)
-            kitName = TextUtils.formatText(kit.getShowableName(), true);
+            kitName = TextUtils.formatText(kit.getName(), true);
         else
             kitName = "Any";
 

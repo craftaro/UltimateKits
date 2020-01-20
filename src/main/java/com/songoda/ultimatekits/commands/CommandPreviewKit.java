@@ -45,7 +45,7 @@ public class CommandPreviewKit extends AbstractCommand {
         if (args.length == 2) {
             List<String> tab = new ArrayList<>();
             for (Kit kit : UltimateKits.getInstance().getKitManager().getKits()) {
-                tab.add(kit.getName());
+                tab.add(kit.getKey());
             }
             return tab;
         }

@@ -27,7 +27,6 @@ public class PreviewKitGui extends Gui {
     private final boolean buyable;
     private final List<ItemStack> list;
     private final boolean useGlassBorder = !Settings.DO_NOT_USE_GLASS_BORDERS.getBoolean();
-    static final Random rand = new Random();
 
     public PreviewKitGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
         super(back);
@@ -38,7 +37,7 @@ public class PreviewKitGui extends Gui {
         this.buyable = (kit.getLink() != null || kit.getPrice() != 0);
 
         setTitle(plugin.getLocale().getMessage("interface.preview.title")
-                .processPlaceholder("kit", kit.getTitle() != null ? TextUtils.formatText(kit.getTitle(), true) : kit.getShowableName()).getMessage());
+                .processPlaceholder("kit", kit.getTitle() != null ? TextUtils.formatText(kit.getTitle(), true) : kit.getName()).getMessage());
 
         int amt = 0;
         for (ItemStack is : list) {

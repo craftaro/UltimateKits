@@ -156,7 +156,7 @@ interface:
     switchtoinventorylore: '&7Click to switch to|&7your inventory.'
     switchtokitfunctions: '&6Switch To Kit Functions'
     switchtokitfunctionslore: '&7Click to switch back|&7to the kit functions.'
-    itemfunctionlore: '&7Display Item: &6%item%|&7Display Name: &6%name%|&7Display Lore: &6||&7Left-Click: &6To set a display item.|&7Middle-Click: &6To set a display name.|&7Right-Click: &6To set display lore.|&7Shift-Click: &6To set chance.||&7Display options only show up on display.|&7This can be useful if you want to explain|&7What an item does without putting it in the|&7permanent lore.||&6Leave function mode to move items.'
+    itemfunctionlore: '&7Display Item: &6%item%|&7Display Name: &6%name%|&7Display Lore: &6%lore%||&7Left-Click: &6To set a display item.|&7Middle-Click: &6To set a display name.|&7Right-Click: &6To set display lore.|&7Shift-Click: &6To set chance.||&7Display options only show up on display.|&7This can be useful if you want to explain|&7What an item does without putting it in the|&7permanent lore.||&6Leave function mode to move items.'
     saved: '&8Changes to &a%kit% &8saved successfully.'
 
 # Command Messages

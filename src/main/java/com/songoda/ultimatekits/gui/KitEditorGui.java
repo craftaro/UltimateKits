@@ -36,6 +36,8 @@ public class KitEditorGui extends DoubleGui {
     private boolean isInFunction = false;
     private boolean isInInventory = false;
 
+    private ItemStack[] stash;
+
     public KitEditorGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
         super(back);
         this.plugin = plugin;
@@ -51,6 +53,8 @@ public class KitEditorGui extends DoubleGui {
         setInvItems();
         setOnClose((event) -> {
             this.saveKit(player, inventory, false);
+            if (!isInInventory)
+                restoreItemsInstance();
             CompatibleSound.ENTITY_VILLAGER_YES.play(player);
         });
 
@@ -85,6 +89,7 @@ public class KitEditorGui extends DoubleGui {
                         .getMessage().split("\\|"))
         );
 
+        saveItemsInstance();
         paint();
     }
 
@@ -193,7 +198,7 @@ public class KitEditorGui extends DoubleGui {
         this.setPlayerActionForRange(0, 0, 3, 8, event -> {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (isInInventory)
-                    stash.put(player, player.getInventory().getContents().clone());
+                    stash = player.getInventory().getContents().clone();
             }, 0L);
             if (!isInInventory && event.player.getItemOnCursor().getType() != Material.AIR) {
                 event.event.setCancelled(true);
@@ -203,14 +208,15 @@ public class KitEditorGui extends DoubleGui {
 
     private void saveItemsInstance() {
         setPlayerUnlockedRange(0, 0, 3, 8, false);
-        stash.put(player, player.getInventory().getContents().clone());
+        stash = player.getInventory().getContents().clone();
         player.getInventory().clear();
         isInInventory = false;
     }
 
     private void restoreItemsInstance() {
         setPlayerUnlockedRange(0, 0, 3, 8);
-        player.getInventory().setContents(stash.get(player));
+        if (stash != null)
+            player.getInventory().setContents(stash);
         player.updateInventory();
         isInInventory = true;
     }

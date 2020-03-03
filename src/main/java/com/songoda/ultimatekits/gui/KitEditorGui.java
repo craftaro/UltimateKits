@@ -167,15 +167,12 @@ public class KitEditorGui extends DoubleGui {
 
         ItemStack item2;
 
-        if (isInInventory) {
-            item2 = GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
-                    plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctions").getMessage(),
-                    plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctionslore").getMessage().split("\\|"));
-        } else {
-            item2 = GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
-                    plugin.getLocale().getMessage("interface.kiteditor.switchtoinventory").getMessage(),
-                    plugin.getLocale().getMessage("interface.kiteditor.switchtoinventorylore").getMessage().split("\\|"));
-        }
+        item2 = isInInventory ? GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
+                plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctions").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctionslore").getMessage().split("\\|"))
+                : GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
+                plugin.getLocale().getMessage("interface.kiteditor.switchtoinventory").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.switchtoinventorylore").getMessage().split("\\|"));
 
         setButton(50, item2,
                 event -> {
@@ -200,9 +197,8 @@ public class KitEditorGui extends DoubleGui {
                 if (isInInventory)
                     stash = player.getInventory().getContents().clone();
             }, 0L);
-            if (!isInInventory && event.player.getItemOnCursor().getType() != Material.AIR) {
+            if (!isInInventory && event.player.getItemOnCursor().getType() != Material.AIR)
                 event.event.setCancelled(true);
-            }
         });
     }
 

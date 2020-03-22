@@ -17,6 +17,8 @@ import com.songoda.ultimatekits.category.Category;
 import com.songoda.ultimatekits.category.CategoryManager;
 import com.songoda.ultimatekits.commands.*;
 import com.songoda.ultimatekits.conversion.Convert;
+import com.songoda.ultimatekits.crate.Crate;
+import com.songoda.ultimatekits.crate.CrateManager;
 import com.songoda.ultimatekits.database.DataManager;
 import com.songoda.ultimatekits.database.migrations._1_InitialMigration;
 import com.songoda.ultimatekits.database.migrations._2_DuplicateMigration;
@@ -47,6 +49,7 @@ public class UltimateKits extends SongodaPlugin {
     private final Config categoryConfig = new Config(this, "category.yml");
     private final Config dataFile = new Config(this, "data.yml");
     private final Config keyFile = new Config(this, "keys.yml");
+    private final Config crateFile = new Config(this, "crates.yml");
 
     private final GuiManager guiManager = new GuiManager(this);
     private final ParticleHandler particleHandler = new ParticleHandler(this);
@@ -55,6 +58,7 @@ public class UltimateKits extends SongodaPlugin {
     private KitManager kitManager;
     private CommandManager commandManager;
     private KeyManager keyManager;
+    private CrateManager crateManager;
     private CategoryManager categoryManager;
 
     private ItemSerializer itemSerializer;
@@ -103,6 +107,7 @@ public class UltimateKits extends SongodaPlugin {
 
         this.kitManager = new KitManager();
         this.keyManager = new KeyManager();
+        this.crateManager = new CrateManager();
         this.categoryManager = new CategoryManager(this);
 
         kitConfig.load();
@@ -113,9 +118,12 @@ public class UltimateKits extends SongodaPlugin {
         // load kits
         dataFile.load();
         keyFile.load();
+        crateFile.load();
         checkKeyDefaults();
+        checkCrateDefaults();
         loadKits();
         keyFile.saveChanges();
+        crateFile.saveChanges();
 
         // setup commands
         this.commandManager = new CommandManager(this);
@@ -129,7 +137,9 @@ public class UltimateKits extends SongodaPlugin {
                 .addSubCommand(new CommandEdit(guiManager))
                 .addSubCommand(new CommandKey())
                 .addSubCommand(new CommandSet())
-                .addSubCommand(new CommandRemove());
+                .addSubCommand(new CommandRemove())
+
+                .addSubCommand(new CommandCrate());
 
 
         // Event registration
@@ -186,7 +196,7 @@ public class UltimateKits extends SongodaPlugin {
 
     @Override
     public List<Config> getExtraConfig() {
-        return Arrays.asList(kitConfig, keyFile, categoryConfig);
+        return Arrays.asList(kitConfig, keyFile, categoryConfig, crateFile);
     }
 
     @Override
@@ -196,6 +206,8 @@ public class UltimateKits extends SongodaPlugin {
         this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
         kitConfig.load();
         categoryConfig.load();
+        keyFile.load();
+        crateFile.load();
         loadKits();
     }
 
@@ -277,9 +289,11 @@ public class UltimateKits extends SongodaPlugin {
 
             //Apply default keys.
             checkKeyDefaults();
+            checkCrateDefaults();
 
             //Empty keys from manager.
             keyManager.clear();
+            crateManager.clear();
 
             /*
              * Register keys into KitManager from Configuration.
@@ -291,6 +305,19 @@ public class UltimateKits extends SongodaPlugin {
 
                     Key key = new Key(keyName, amt, kitAmount);
                     keyManager.addKey(key);
+                }
+            }
+
+            /*
+             * Register Crates
+             * */
+            if (crateFile.contains("Crates")) {
+                for (String crateName : crateFile.getConfigurationSection("Crates").getKeys(false)) {
+                    int amt = crateFile.getInt("Crates." + crateName + ".Item Amount");
+                    int kitAmount = crateFile.getInt("Crates." + crateName + ".Amount of kit received");
+
+                    Crate crate = new Crate(crateName, amt, kitAmount);
+                    crateManager.addCrate(crate);
                 }
             }
             this.loaded = true;
@@ -464,7 +491,6 @@ public class UltimateKits extends SongodaPlugin {
             categoryConfig.set("Categories." + category.getKey() + ".material", category.getMaterial().name());
         }
 
-
         // Save to file
         kitConfig.saveChanges();
         categoryConfig.saveChanges();
@@ -484,6 +510,17 @@ public class UltimateKits extends SongodaPlugin {
         keyFile.set("Keys.Insane.Amount of kit received", 2);
     }
 
+    private void checkCrateDefaults() {
+        if (crateFile.contains("Crates")) return;
+        crateFile.set("Crates.Regular.Item Amount", 3);
+        crateFile.set("Crates.Regular.Amount overrides", Collections.singletonList("Tools:2"));
+        crateFile.set("Crates.Regular.Amount of kit received", 1);
+        crateFile.set("Crates.Ultra.Item Amount", -1);
+        crateFile.set("Crates.Ultra.Amount of kit received", 1);
+        crateFile.set("Crates.Insane.Item Amount", -1);
+        crateFile.set("Crates.Insane.Amount of kit received", 2);
+    }
+
     /**
      * Get instance of KitManager
      *
@@ -500,6 +537,10 @@ public class UltimateKits extends SongodaPlugin {
      */
     public KeyManager getKeyManager() {
         return keyManager;
+    }
+
+    public CrateManager getCrateManager() {
+        return crateManager;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.listeners;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
@@ -8,6 +9,7 @@ import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.kit.KitType;
 import com.songoda.ultimatekits.utils.Methods;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -17,6 +19,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 public class InteractListeners implements Listener {
 
@@ -90,5 +93,32 @@ public class InteractListeners implements Listener {
 
         }
     }
-}
 
+    @EventHandler
+    public void onCrateClick(PlayerInteractEvent event) {
+        // Would be better to use NBT to make the item persist over aesthetic changes.
+
+        if (event.getAction() == Action.PHYSICAL || // Filter physical actions (pressure plates, buttons)
+                event.getItem() == null ||
+                event.getItem().getType() == CompatibleMaterial.AIR.getMaterial())
+            return;
+
+        ItemStack item = event.getItem();
+        Player player = event.getPlayer();
+
+        if (!item.hasItemMeta() || !item.getItemMeta().hasLore()) return;
+
+        Kit kit = UltimateKits.getInstance().getKitManager().getKit(ChatColor.stripColor(item.getItemMeta().getLore().get(0).split(" ")[0]));
+
+        if (kit == null) return;
+
+        event.setCancelled(true);
+
+        // Function
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            // Open the crate
+            kit.processCrateUse(player, item);
+        } else // There are only left click actions left
+            kit.display(player, guiManager, null);
+    }
+}

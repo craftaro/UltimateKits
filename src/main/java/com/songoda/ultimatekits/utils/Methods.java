@@ -1,6 +1,7 @@
 package com.songoda.ultimatekits.utils;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.ultimatekits.UltimateKits;
@@ -31,6 +32,23 @@ public class Methods {
 
         if (player.hasPermission("essentials.kit.others")) return true;
         return false;
+    }
+
+    public static void consumeItem(Player player, ItemStack original) {
+        ItemStack item = original.clone();
+
+        // Remove or lower amount
+        if (item.getAmount() > 1)
+            item.setAmount(item.getAmount() - 1);
+        else item = null;
+
+        // setItemInHand doesn't work with off hand, would result in a bug (endless crate/key opening)
+        if (ServerVersion.isServerVersionAbove(ServerVersion.V1_8)) {
+            if (original.isSimilar(player.getInventory().getItemInMainHand()))
+                player.getInventory().setItemInMainHand(item);
+            else if (original.isSimilar(player.getInventory().getItemInOffHand()))
+                player.getInventory().setItemInOffHand(item);
+        } else player.setItemInHand(item);
     }
 
     /**

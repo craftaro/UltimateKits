@@ -47,16 +47,13 @@ public class KitGeneralOptionsGui extends Gui {
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitoptions.delayprompt").getMessage());
                     gui.setAction(aevent -> {
                         final String msg = gui.getInputText();
-                        final String num = msg != null ? msg.replaceAll("[^0-9]", "") : "";
-                        if (!num.isEmpty()) {
-                            try {
-                                kit.setDelay(Integer.parseInt(num.trim()));
-                                updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.delaylore")
-                                        .processPlaceholder("delay", kit.getDelay()).getMessage().split("\\|"));
-                                aevent.player.closeInventory();
-                                return;
-                            } catch (NumberFormatException e) {
-                            }
+                        try {
+                            kit.setDelay(Integer.parseInt(msg));
+                            updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.delaylore")
+                                    .processPlaceholder("delay", kit.getDelay()).getMessage().split("\\|"));
+                            aevent.player.closeInventory();
+                            return;
+                        } catch (NumberFormatException e) {
                         }
                         plugin.getLocale().getMessage("interface.kitoptions.delaynonumber").processPlaceholder("input", msg).sendPrefixedMessage(player);
                     });

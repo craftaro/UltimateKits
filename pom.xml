@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>UltimateKits</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>2.5.1</version>
+    <version>2.5.2</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>UltimateKits-${project.version}</finalName>
@@ -89,6 +89,10 @@
             <url>http://repo.songoda.com/artifactory/private/</url>
         </repository>
         <repository>
+            <id>public</id>
+            <url>https://repo.songoda.com/artifactory/public/</url>
+        </repository>
+        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
@@ -118,8 +122,8 @@
         </dependency>
         <dependency>
             <groupId>bammerbom</groupId>
-            <artifactId>ultimatecore</artifactId>
-            <version>2.1.25</version>
+            <artifactId>UltimateCore</artifactId>
+            <version>2.1.26</version>
         </dependency>
         <dependency>
             <groupId>com.zrips</groupId>

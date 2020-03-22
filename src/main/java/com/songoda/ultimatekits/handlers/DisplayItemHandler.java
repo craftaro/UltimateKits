@@ -29,7 +29,7 @@ public class DisplayItemHandler {
     }
 
     public void start() {
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(UltimateKits.getInstance(), this::displayItems, 30L, 30L);
+        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(instance, this::displayItems, 30L, 30L);
     }
 
     private void displayItems() {
@@ -81,12 +81,14 @@ public class DisplayItemHandler {
         ItemMeta meta = is.getItemMeta();
         meta.setDisplayName(TextUtils.convertFromInvisibleString("0"));
         is.setItemMeta(meta);
-        Item item = location.getWorld().dropItem(location.add(0, 1, 0), list.get(0));
-        Vector vec = new Vector(0, 0, 0);
-        item.setVelocity(vec);
-        item.setPickupDelay(9999);
-        item.setMetadata("US_EXEMPT", new FixedMetadataValue(UltimateKits.getInstance(), true));
-        item.setMetadata("displayItem", new FixedMetadataValue(UltimateKits.getInstance(), true));
-        item.setMetadata("betterdrops_ignore", new FixedMetadataValue(UltimateKits.getInstance(), true));
+        Bukkit.getScheduler().runTask(instance, () -> {
+            Item item = location.getWorld().dropItem(location.add(0, 1, 0), list.get(0));
+            Vector vec = new Vector(0, 0, 0);
+            item.setVelocity(vec);
+            item.setPickupDelay(9999);
+            item.setMetadata("US_EXEMPT", new FixedMetadataValue(UltimateKits.getInstance(), true));
+            item.setMetadata("displayItem", new FixedMetadataValue(UltimateKits.getInstance(), true));
+            item.setMetadata("betterdrops_ignore", new FixedMetadataValue(UltimateKits.getInstance(), true));
+        });
     }
 }

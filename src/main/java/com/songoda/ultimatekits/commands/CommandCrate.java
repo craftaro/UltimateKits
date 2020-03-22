@@ -119,12 +119,12 @@ public class CommandCrate extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return "ultimatekits.admin.crate";
+        return "ultimatekits.admin";
     }
 
     @Override
     public String getSyntax() {
-        return "/kitadmin crate <player> <kit> <crate> (amount)";
+        return "/KitAdmin crate <player/all> <kit> <crate> (amount)";
     }
 
     @Override

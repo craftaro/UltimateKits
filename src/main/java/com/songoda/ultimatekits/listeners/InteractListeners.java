@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.listeners;
 
+import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.GuiManager;
@@ -98,9 +99,10 @@ public class InteractListeners implements Listener {
     public void onCrateClick(PlayerInteractEvent event) {
         // Would be better to use NBT to make the item persist over aesthetic changes.
 
-        if (event.getAction() == Action.PHYSICAL || // Filter physical actions (pressure plates, buttons)
-                event.getItem() == null ||
-                event.getItem().getType() == CompatibleMaterial.AIR.getMaterial())
+        // Filter physical actions (pressure plates, buttons)
+        if (event.getAction() == Action.PHYSICAL
+                || event.getItem() == null
+                || event.getItem().getType() == CompatibleMaterial.AIR.getMaterial())
             return;
 
         ItemStack item = event.getItem();
@@ -117,7 +119,7 @@ public class InteractListeners implements Listener {
         // Function
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             // Open the crate
-            kit.processCrateUse(player, item);
+            kit.processCrateUse(player, item, CompatibleHand.getHand(event));
         } else // There are only left click actions left
             kit.display(player, guiManager, null);
     }

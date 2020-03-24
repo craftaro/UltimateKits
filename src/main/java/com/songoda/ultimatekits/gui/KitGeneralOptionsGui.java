@@ -46,7 +46,7 @@ public class KitGeneralOptionsGui extends Gui {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitoptions.delayprompt").getMessage());
                     gui.setAction(aevent -> {
-                        final String msg = gui.getInputText();
+                        final String msg = gui.getInputText().trim();
                         try {
                             kit.setDelay(Integer.parseInt(msg));
                             updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.delaylore")

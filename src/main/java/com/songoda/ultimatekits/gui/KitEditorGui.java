@@ -52,9 +52,8 @@ public class KitEditorGui extends DoubleGui {
 
         setInvItems();
         setOnClose((event) -> {
+            restoreItemsInstance();
             this.saveKit(player, inventory, false);
-            if (!isInInventory)
-                restoreItemsInstance();
             CompatibleSound.ENTITY_VILLAGER_YES.play(player);
         });
 
@@ -72,7 +71,7 @@ public class KitEditorGui extends DoubleGui {
         setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(CompatibleMaterial.OAK_DOOR),
                 plugin.getLocale().getMessage("interface.button.exit").getMessage()),
                 ClickType.LEFT,
-                event -> exit());
+                event -> player.closeInventory());
 
         // back button
         if (parent != null)
@@ -197,6 +196,8 @@ public class KitEditorGui extends DoubleGui {
     }
 
     private void restoreItemsInstance() {
+        if (!isInInventory)
+            player.getInventory().clear();
         setPlayerUnlockedRange(0, 0, 3, 8);
         if (stash != null)
             player.getInventory().setContents(stash);

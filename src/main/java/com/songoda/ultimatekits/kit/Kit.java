@@ -2,6 +2,7 @@ package com.songoda.ultimatekits.kit;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiManager;
@@ -9,6 +10,7 @@ import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.category.Category;
+import com.songoda.ultimatekits.crate.Crate;
 import com.songoda.ultimatekits.gui.AnimatedKitGui;
 import com.songoda.ultimatekits.gui.ConfirmBuyGui;
 import com.songoda.ultimatekits.gui.PreviewKitGui;
@@ -124,6 +126,23 @@ public class Kit {
                 player.setItemInHand(null);
             }
         }
+    }
+
+    public void processCrateUse(Player player, ItemStack item) {
+        Crate crate = plugin.getCrateManager().getCrate(item);
+
+        if (crate == null) {
+            return;
+        }
+
+        if (!giveKit(player, crate)) {
+            return;
+        }
+
+        Methods.consumeItem(player, item);
+
+        plugin.getLocale().getMessage("event.crate.success")
+                .processPlaceholder("crate", name).sendPrefixedMessage(player);
     }
 
     public void processPurchaseUse(Player player) {
@@ -261,23 +280,33 @@ public class Kit {
     }
 
     public boolean giveKit(Player player) {
-        return giveKit(player, null);
+        return giveKit(player, -1, -1);
     }
 
     private boolean giveKit(Player player, Key key) {
+        if (key == null) return giveKit(player);
+        return giveKit(player, key.getAmount(), key.getKitAmount());
+    }
+
+    private boolean giveKit(Player player, Crate crate) {
+        return giveKit(player, crate.getAmount(), crate.getKitAmount());
+    }
+
+    private boolean giveKit(Player player, int itemAmount, int kitAmount) {
         if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player)) {
             plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
             return false;
         }
+
         if (Settings.SOUNDS_ENABLED.getBoolean() && kitAnimation == KitAnimation.NONE)
             CompatibleSound.ENTITY_PLAYER_LEVELUP.play(player, 0.6F, 15.0F);
 
         List<KitItem> innerContents = new ArrayList<>(getContents());
         int kitSize = innerContents.size();
+
         // Amount of items from the kit to give to the player.
-        int itemGiveAmount = key == null ? kitSize : key.getAmount();
-        if (itemGiveAmount == -1) itemGiveAmount = kitSize;
-        if (key != null) itemGiveAmount = itemGiveAmount * key.getKitAmount();
+        int itemGiveAmount = itemAmount > 0 ? itemAmount : kitSize;
+        if (kitAmount > 0) itemGiveAmount = itemGiveAmount * kitAmount;
 
         return generateRandomItem(innerContents, itemGiveAmount, player, -1);
     }

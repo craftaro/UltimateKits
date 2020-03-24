@@ -55,6 +55,12 @@ interface:
     description2: '&rand receive its contents!'
     description3: '&rand receive some of its contents!'
     description4: '&rGives kit &c&l%amt% &rtimes.'
+  crate:
+    title: '&5%kit% &f%crate% Crate'
+    description1: '&rRight-Click to open'
+    description2: '&rand receive its contents!'
+    description3: '&rand receive some of its contents!'
+    description4: '&rLeft-Click to preview'
 
 # Administrative interfaces
 
@@ -170,6 +176,9 @@ command:
     nokitatblock: '&8This block does not contain a kit.'
     kitalreadyexists: '&cThat kit already exists.'
     playernotfound: '&cThis player is not online or doesn''t exist.'
+  crate:
+    given: '&9Gave &7%player% &9crate &7%crate% &9for kit &7%kit%.'
+    doesntexist: '&cThis crate is not loaded.'
 
 # Event Messages
 
@@ -179,6 +188,8 @@ event:
   crate:
     notyet: '&cYou need to wait &4%time% &cbefore you can use this.'
     wrongkey: '&cThis key doesn''t belong to this kit..'
+    success: '&9Successfully opened a crate.'
+    given: '&9You have received a %crate% %kit% crate.'
   claim:
     cannotafford: '&9You cannot afford to buy kit &7%kit%&9.'
     nottwice: '&9You can only receive this kit once.'

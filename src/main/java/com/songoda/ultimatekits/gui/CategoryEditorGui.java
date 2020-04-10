@@ -10,6 +10,7 @@ import com.songoda.ultimatekits.category.Category;
 import com.songoda.ultimatekits.category.CategoryManager;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
@@ -51,7 +52,7 @@ public class CategoryEditorGui extends Gui {
                             categoryManager.addCategory(key, msg);
                             plugin.getLocale().newMessage("&aCategory added successfully!").sendPrefixedMessage(player);
 
-                            player.closeInventory();
+                            Bukkit.getScheduler().runTask(plugin, player::closeInventory);
                         }).setOnClose(() -> {
                             event.manager.showGUI(event.player, new CategoryEditorGui(plugin, event.player));
                         });

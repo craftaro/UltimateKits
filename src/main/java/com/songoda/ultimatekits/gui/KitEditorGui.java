@@ -257,7 +257,7 @@ public class KitEditorGui extends DoubleGui {
                                 .sendPrefixedMessage(player);
 
                         this.inventory.addItem(parseStack);
-                        player.closeInventory();
+                        Bukkit.getScheduler().runTask(plugin, event.player::closeInventory);
                     }).setOnClose(() -> {
                         event.manager.showGUI(event.player, this);
                     })

@@ -7,6 +7,7 @@ import com.songoda.ultimatekits.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -35,7 +36,7 @@ public class ParticleHandler {
 
     private void applyParticles() {
         Map<Location, KitBlockData> kitBlocks = plugin.getKitManager().getKitLocations();
-        for (KitBlockData kitBlockData : kitBlocks.values()) {
+        for (KitBlockData kitBlockData : new ArrayList<>(kitBlocks.values())) {
             if (kitBlockData.getLocation().getWorld() == null || !kitBlockData.hasParticles()) continue;
 
             Location location = kitBlockData.getLocation();

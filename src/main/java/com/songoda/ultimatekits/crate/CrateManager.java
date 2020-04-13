@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,8 +13,7 @@ public class CrateManager {
     private final Set<Crate> registeredCrates = new HashSet<>();
 
     public boolean addCrate(Crate crate) {
-        if (crate == null) return false;
-        return registeredCrates.add(crate);
+        return crate != null && registeredCrates.add(crate);
     }
     public Crate getCrate(String name) {
         for (Crate crate : registeredCrates)
@@ -30,7 +30,7 @@ public class CrateManager {
     }
 
     public Set<Crate> getRegisteredCrates() {
-        return registeredCrates;
+        return Collections.unmodifiableSet(registeredCrates);
     }
 
     public void clear() {

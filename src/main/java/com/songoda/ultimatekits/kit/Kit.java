@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.kit;
 
+import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.compatibility.ServerVersion;
@@ -7,6 +8,7 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.category.Category;
@@ -128,18 +130,13 @@ public class Kit {
         }
     }
 
-    public void processCrateUse(Player player, ItemStack item) {
+    public void processCrateUse(Player player, ItemStack item, CompatibleHand hand) {
         Crate crate = plugin.getCrateManager().getCrate(item);
 
-        if (crate == null) {
+        if (crate == null || !giveKit(player, crate))
             return;
-        }
 
-        if (!giveKit(player, crate)) {
-            return;
-        }
-
-        Methods.consumeItem(player, item);
+        ItemUtils.takeActiveItem(player, hand);
 
         plugin.getLocale().getMessage("event.crate.success")
                 .processPlaceholder("crate", name).sendPrefixedMessage(player);
@@ -284,8 +281,7 @@ public class Kit {
     }
 
     private boolean giveKit(Player player, Key key) {
-        if (key == null) return giveKit(player);
-        return giveKit(player, key.getAmount(), key.getKitAmount());
+        return key == null ? giveKit(player) : giveKit(player, key.getAmount(), key.getKitAmount());
     }
 
     private boolean giveKit(Player player, Crate crate) {

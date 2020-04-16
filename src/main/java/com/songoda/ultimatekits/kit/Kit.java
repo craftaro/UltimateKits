@@ -111,10 +111,19 @@ public class Kit {
         }
         Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(item.getItemMeta().getLore().get(0)).replace(" Key", ""));
 
-        if (!item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title")
-                .processPlaceholder("kit", name).getMessage())
-                && !item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("interface.key.title")
-                .processPlaceholder("kit", "Any").getMessage())) {
+        // This is some legacy support crap.
+        String title = plugin.getLocale().getMessage("interface.key.title")
+                .processPlaceholder("kit", name).getMessage();
+        if (title.startsWith(ChatColor.COLOR_CHAR + "f"))
+            title = title.substring(2);
+
+        String titleAny = plugin.getLocale().getMessage("interface.key.title")
+                .processPlaceholder("kit", "Any").getMessage();
+        if (titleAny.startsWith(ChatColor.COLOR_CHAR + "f"))
+            titleAny = titleAny.substring(2);
+
+        if (!item.getItemMeta().getDisplayName().equals(title)
+                && !item.getItemMeta().getDisplayName().equals(titleAny)) {
             plugin.getLocale().getMessage("event.crate.wrongkey").sendPrefixedMessage(player);
             return;
         }

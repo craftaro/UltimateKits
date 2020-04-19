@@ -90,7 +90,7 @@ public class Kit {
         return items;
     }
 
-    private boolean hasRoom(Player player) {
+    private boolean hasRoom(Player player, int itemAmount) {
         int space = 0;
 
         for (ItemStack content : player.getInventory().getContents()) {
@@ -99,9 +99,8 @@ public class Kit {
             }
         }
 
-        int spaceNeeded = getItemContents().size();
 
-        return space >= spaceNeeded;
+        return space >= itemAmount;
     }
 
     public void processKeyUse(Player player) {
@@ -286,7 +285,7 @@ public class Kit {
     }
 
     public boolean giveKit(Player player) {
-        return giveKit(player, -1, -1);
+        return giveKit(player, getItemContents().size(), -1);
     }
 
     private boolean giveKit(Player player, Key key) {
@@ -298,7 +297,7 @@ public class Kit {
     }
 
     private boolean giveKit(Player player, int itemAmount, int kitAmount) {
-        if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player)) {
+        if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemAmount)) {
             plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
             return false;
         }

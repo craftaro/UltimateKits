@@ -322,7 +322,7 @@ public class Kit {
         int canChoose = 0;
         for (KitItem item : innerContents) {
             if (itemGiveAmount == 0) break;
-            int ch = canChoose++ == forceSelect || item.getChance() == 0 ? 100 : item.getChance();
+            double ch = canChoose++ == forceSelect || item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
             if (rand < ch || ch == 100) {
 

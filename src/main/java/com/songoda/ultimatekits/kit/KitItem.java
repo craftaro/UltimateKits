@@ -22,7 +22,7 @@ public class KitItem {
     private KitContent content;
     private String displayName, displayLore = null;
     private Material displayItem = null;
-    private int chance = 0;
+    private double chance = 0;
 
     public KitItem(String line) {
         if (line.contains(";") && !line.startsWith("{")) {
@@ -77,7 +77,8 @@ public class KitItem {
 
             switch (option) {
                 case "chance":
-                    chance = Integer.parseInt(value);
+                    //chance = Integer.parseInt(value);
+                    chance = Double.parseDouble(value);
                     break;
                 case "display-item":
                     displayItem = Material.valueOf(value);
@@ -116,11 +117,11 @@ public class KitItem {
         return compileOptions() + ";" + this.content.getSerialized();
     }
 
-    public int getChance() {
+    public double getChance() {
         return chance == 0 ? 100 : chance;
     }
 
-    public void setChance(int chance) {
+    public void setChance(double chance) {
         this.chance = chance;
     }
 

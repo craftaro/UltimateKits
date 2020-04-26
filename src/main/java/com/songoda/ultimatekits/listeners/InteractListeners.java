@@ -108,7 +108,7 @@ public class InteractListeners implements Listener {
         ItemStack item = event.getItem();
         Player player = event.getPlayer();
 
-        if (!item.hasItemMeta() || !item.getItemMeta().hasLore()) return;
+        if (!item.hasItemMeta() || !item.getItemMeta().hasLore() || item.getItemMeta().getLore().size() == 0) return;
 
         Kit kit = UltimateKits.getInstance().getKitManager().getKit(ChatColor.stripColor(item.getItemMeta().getLore().get(0).split(" ")[0]));
 

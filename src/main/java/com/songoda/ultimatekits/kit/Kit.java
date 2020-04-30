@@ -3,7 +3,6 @@ package com.songoda.ultimatekits.kit;
 import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
-import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiManager;
@@ -57,12 +56,12 @@ public class Kit {
     }
 
     public void buy(Player player, GuiManager manager) {
-        if (hasPermission(player) && plugin.getConfig().getBoolean("Main.Allow Players To Receive Kits For Free If They Have Permission")) {
+        if (hasPermissionToClaim(player)) {
             processGenericUse(player, false);
             return;
         }
 
-        if (!player.hasPermission("ultimatekits.buy." + key)) {
+        if (!hasPermissionToBuy(player)) {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
             return;
@@ -202,10 +201,7 @@ public class Kit {
 
     @SuppressWarnings("Duplicates")
     public void display(Player player, GuiManager manager, Gui back) {
-        if (!player.hasPermission("previewkit.use")
-                && !player.hasPermission("previewkit." + key)
-                && !player.hasPermission("ultimatekits.use")
-                && !player.hasPermission("ultimatekits." + key)) {
+        if (!hasPermissionToPreview(player)) {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
             return;
@@ -326,37 +322,14 @@ public class Kit {
             double rand = Math.random() * 100;
             if (rand < ch || ch == 100) {
 
-                if (item.getContent() instanceof KitContentEconomy) {
-                    try {
-                        EconomyManager.deposit(player, ((KitContentEconomy) item.getContent()).getAmount());
-                        plugin.getLocale().getMessage("event.claim.eco")
-                                .processPlaceholder("amt", Methods.formatEconomy(((KitContentEconomy) item.getContent()).getAmount()))
-                                .sendPrefixedMessage(player);
-                    } catch (NumberFormatException ex) {
-                        ex.printStackTrace();
-                    }
-                    itemGiveAmount--;
-                    continue;
-                } else if (item.getContent() instanceof KitContentCommand) {
-                    String parsed = ((KitContentCommand) item.getContent()).getCommand();
-                    parsed = parsed.replace("{player}", player.getName());
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
+                if (item.getContent() instanceof KitContentEconomy
+                        || item.getContent() instanceof KitContentCommand) {
+                    item.getContent().process(player);
                     itemGiveAmount--;
                     continue;
                 }
 
-                ItemStack parseStack = ((KitContentItem) item.getContent()).getItemStack();
-
-                if (parseStack.hasItemMeta() && parseStack.getItemMeta().hasLore()) {
-                    ItemMeta meta = parseStack.getItemMeta();
-                    List<String> newLore = new ArrayList<>();
-                    for (String str : parseStack.getItemMeta().getLore()) {
-                        str = str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName());
-                        newLore.add(str);
-                    }
-                    meta.setLore(newLore);
-                    parseStack.setItemMeta(meta);
-                }
+                ItemStack parseStack = item.getContent().process(player);
 
                 if (parseStack.getType() == Material.AIR) continue;
 
@@ -401,16 +374,21 @@ public class Kit {
         } else if (this.delay == -1) return -1L;
 
         long last = config.getLong(configSectionPlayer);
-        long delay = (long) this.delay * 1000;
+        long delay = this.delay * 1000;
 
         return (last + delay) >= System.currentTimeMillis() ? (last + delay) - System.currentTimeMillis() : 0L;
     }
 
-    public boolean hasPermission(Player player) {
-        if (player.hasPermission("uc.kit." + key.toLowerCase())) return true;
-        if (player.hasPermission("essentials.kit." + key.toLowerCase())) return true;
-        if (player.hasPermission("ultimatekits.kit." + key.toLowerCase())) return true;
-        return false;
+    public boolean hasPermissionToClaim(Player player) {
+        return player.hasPermission("ultimatekits.claim." + key.toLowerCase());
+    }
+
+    public boolean hasPermissionToPreview(Player player) {
+        return player.hasPermission("ultimatekits.preview." + key.toLowerCase());
+    }
+
+    public boolean hasPermissionToBuy(Player player) {
+        return player.hasPermission("ultimatekits.buy." + key.toLowerCase());
     }
 
     public double getPrice() {

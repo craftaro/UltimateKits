@@ -17,7 +17,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 public class PreviewKitGui extends Gui {
 
@@ -169,7 +168,7 @@ public class PreviewKitGui extends Gui {
 
     List<String> getBuyLore() {
         ArrayList<String> lore = new ArrayList<>();
-        if (kit.hasPermission(player) && Settings.KITS_FREE_WITH_PERMS.getBoolean()) {
+        if (kit.hasPermissionToClaim(player)) {
             lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
                     .processPlaceholder("price", "0").getMessage());
             if (player.isOp()) {

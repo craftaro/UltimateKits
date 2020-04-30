@@ -1,7 +1,9 @@
 package com.songoda.ultimatekits.kit.type;
 
 import com.songoda.ultimatekits.UltimateKits;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -39,5 +41,13 @@ public class KitContentCommand implements KitContent {
         meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("general.type.command").getMessage());
         stack.setItemMeta(meta);
         return stack;
+    }
+
+    @Override
+    public ItemStack process(Player player) {
+        String parsed = command;
+        parsed = parsed.replace("{player}", player.getName());
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
+        return null;
     }
 }

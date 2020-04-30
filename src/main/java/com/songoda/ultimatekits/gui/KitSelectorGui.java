@@ -103,9 +103,8 @@ public class KitSelectorGui extends Gui {
     }
 
     private void loadKits() {
-        boolean showAll = !Settings.ONLY_SHOW_KITS_WITH_PERMS.getBoolean();
         kitList = plugin.getKitManager().getKits().stream()
-                .filter(kit -> !kit.isHidden() && (showAll || kit.hasPermission(player))
+                .filter(kit -> !kit.isHidden() && kit.hasPermissionToPreview(player)
                         && (category == null || kit.getCategory() == category))
                 .map(Kit::getKey)
                 .collect(Collectors.toList());
@@ -186,7 +185,7 @@ public class KitSelectorGui extends Gui {
                 for (String line : parts)
                     lore.add(ChatColor.translateAlternateColorCodes('&', line));
             }
-            if (kit.hasPermission(player)) {
+            if (kit.hasPermissionToClaim(player)) {
                 if (kit.getNextUse(player) == -1) {
                     lore.add(plugin.getLocale().getMessage("event.claim.once").getMessage());
                 } else if (kit.getNextUse(player) > 0) {
@@ -202,7 +201,7 @@ public class KitSelectorGui extends Gui {
                 lore.add(plugin.getLocale().getMessage("event.claim.noaccess").getMessage());
             lore.add("");
             lore.add(plugin.getLocale().getMessage("interface.selector.leftpreview").getMessage());
-            if (kit.hasPermission(player)) {
+            if (kit.hasPermissionToClaim(player)) {
                 lore.add(plugin.getLocale().getMessage("interface.selector.rightclaim").getMessage());
             } else if (kit.getPrice() != 0 || kit.getLink() != null) {
                 lore.add(plugin.getLocale().getMessage("interface.selector.rightbuy").getMessage());

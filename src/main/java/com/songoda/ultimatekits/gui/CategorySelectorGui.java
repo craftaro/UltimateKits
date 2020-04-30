@@ -25,7 +25,7 @@ public class CategorySelectorGui extends Gui {
         Set<Category> categories = new LinkedHashSet<>();
 
         for (Kit kit : plugin.getKitManager().getKits())
-            if (kit.hasPermission(player) && kit.getCategory() != null)
+            if (kit.hasPermissionToPreview(player) && kit.getCategory() != null)
                 categories.add(kit.getCategory());
 
         setTitle(plugin.getLocale().getMessage("interface.categoryselector.title").getMessage());

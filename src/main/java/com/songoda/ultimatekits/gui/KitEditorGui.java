@@ -84,7 +84,7 @@ public class KitEditorGui extends DoubleGui {
         setItem(0, 4, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
                 plugin.getLocale().getMessage("interface.kiteditor.info")
                         .processPlaceholder("kit", kit.getKey())
-                        .processPlaceholder("perm", "ultimatekits.kit." + kit.getKey().toLowerCase())
+                        .processPlaceholder("perm", "ultimatekits.claim." + kit.getKey().toLowerCase())
                         .getMessage().split("\\|"))
         );
 

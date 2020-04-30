@@ -60,7 +60,7 @@ public class InteractListeners implements Listener {
             }
 
             if (kitBlockData.getType() != KitType.PREVIEW) {
-                if (!kit.hasPermission(player)) {
+                if (!kit.hasPermissionToClaim(player)) {
                     plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(player);
                     return;
                 }

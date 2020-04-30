@@ -18,9 +18,8 @@ public class ConfirmBuyGui extends Gui {
         setRows(3);
 
         double cost = kit.getPrice();
-        if (Settings.KITS_FREE_WITH_PERMS.getBoolean() && kit.hasPermission(player)) {
+        if (kit.hasPermissionToClaim(player))
             cost = 0;
-        }
 
         setTitle(plugin.getLocale().getMessage("interface.yesno.title")
                 .processPlaceholder("price", cost)

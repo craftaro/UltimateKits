@@ -407,10 +407,7 @@ public class Kit {
     }
 
     public boolean hasPermission(Player player) {
-        if (player.hasPermission("uc.kit." + key.toLowerCase())) return true;
-        if (player.hasPermission("essentials.kit." + key.toLowerCase())) return true;
-        if (player.hasPermission("ultimatekits.kit." + key.toLowerCase())) return true;
-        return false;
+        return player.hasPermission("essentials.kit." + key.toLowerCase());
     }
 
     public double getPrice() {

@@ -90,6 +90,9 @@ public class Kit {
             }
         }
 
+        // Since roulette only gives one item, we don't need to check if the user has room for the whole kit.
+        if (kitAnimation == KitAnimation.ROULETTE && space >= 1)
+            return true;
 
         return space >= itemAmount;
     }

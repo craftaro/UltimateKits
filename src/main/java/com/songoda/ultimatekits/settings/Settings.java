@@ -20,7 +20,7 @@ public class Settings {
             "come from the plugin essentials where the user having permission to the",
             "kit allows them to get the kit for free. So when they come to this plugin",
             "they would often report this mechanic as a bug. So enabling this by default",
-            "king of made sense and we get a lot less tickets about this plugin because of that.");
+            "kind of made sense and we get a lot less tickets about this plugin because of that.");
     public static final ConfigSetting DONT_PREVIEW_COMMANDS = new ConfigSetting(config, "Main.Dont Preview Commands In Kits", false);
     public static final ConfigSetting HOLOGRAM_LAYOUT = new ConfigSetting(config, "Main.Hologram Layout", Arrays.asList("{TITLE}", "{LEFT-CLICK}", "{RIGHT-CLICK}"));
     public static final ConfigSetting SOUNDS_ENABLED = new ConfigSetting(config, "Main.Sounds Enabled", true);

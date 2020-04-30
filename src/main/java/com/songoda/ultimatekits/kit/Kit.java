@@ -322,37 +322,14 @@ public class Kit {
             double rand = Math.random() * 100;
             if (rand < ch || ch == 100) {
 
-                if (item.getContent() instanceof KitContentEconomy) {
-                    try {
-                        EconomyManager.deposit(player, ((KitContentEconomy) item.getContent()).getAmount());
-                        plugin.getLocale().getMessage("event.claim.eco")
-                                .processPlaceholder("amt", Methods.formatEconomy(((KitContentEconomy) item.getContent()).getAmount()))
-                                .sendPrefixedMessage(player);
-                    } catch (NumberFormatException ex) {
-                        ex.printStackTrace();
-                    }
-                    itemGiveAmount--;
-                    continue;
-                } else if (item.getContent() instanceof KitContentCommand) {
-                    String parsed = ((KitContentCommand) item.getContent()).getCommand();
-                    parsed = parsed.replace("{player}", player.getName());
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
+                if (item.getContent() instanceof KitContentEconomy
+                        || item.getContent() instanceof KitContentCommand) {
+                    item.getContent().process(player);
                     itemGiveAmount--;
                     continue;
                 }
 
-                ItemStack parseStack = ((KitContentItem) item.getContent()).getItemStack();
-
-                if (parseStack.hasItemMeta() && parseStack.getItemMeta().hasLore()) {
-                    ItemMeta meta = parseStack.getItemMeta();
-                    List<String> newLore = new ArrayList<>();
-                    for (String str : parseStack.getItemMeta().getLore()) {
-                        str = str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName());
-                        newLore.add(str);
-                    }
-                    meta.setLore(newLore);
-                    parseStack.setItemMeta(meta);
-                }
+                ItemStack parseStack = item.getContent().process(player);
 
                 if (parseStack.getType() == Material.AIR) continue;
 

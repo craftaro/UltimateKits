@@ -1,7 +1,10 @@
 package com.songoda.ultimatekits.kit.type;
 
+import com.songoda.core.hooks.EconomyManager;
 import com.songoda.ultimatekits.UltimateKits;
+import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -41,5 +44,18 @@ public class KitContentEconomy implements KitContent {
         meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("general.type.money").getMessage());
         parseStack.setItemMeta(meta);
         return parseStack;
+    }
+
+    @Override
+    public ItemStack process(Player player) {
+        try {
+            EconomyManager.deposit(player, amount);
+            UltimateKits.getInstance().getLocale().getMessage("event.claim.eco")
+                    .processPlaceholder("amt", Methods.formatEconomy(amount))
+                    .sendPrefixedMessage(player);
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 }

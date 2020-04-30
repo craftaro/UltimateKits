@@ -98,15 +98,20 @@ public class AnimatedKitGui extends Gui {
         // should we try to wrap it up?
         if (finish) {
             ItemStack item = getItem(13);
+            KitItem kitItem = items.stream().filter(i -> i.getItem().isSimilar(item)).findFirst().orElse(null);
             if(item == null) {
                 done = true; // idk.
             } else if (item.isSimilar(give)) {
                 if (!done) {
                     done = true;
                     if (!Settings.AUTO_EQUIP_ARMOR_ROULETTE.getBoolean() || !ArmorType.equip(player, give)) {
-                        Map<Integer, ItemStack> overfilled = player.getInventory().addItem(give);
-                        for (ItemStack item2 : overfilled.values()) {
-                            player.getWorld().dropItemNaturally(player.getLocation(), item2);
+
+                        ItemStack processedItem = kitItem.getContent().process(player);
+                        if (processedItem != null) {
+                            Map<Integer, ItemStack> overfilled = player.getInventory().addItem(give);
+                            for (ItemStack item2 : overfilled.values()) {
+                                player.getWorld().dropItemNaturally(player.getLocation(), item2);
+                            }
                         }
                     }
 

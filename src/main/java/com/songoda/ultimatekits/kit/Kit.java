@@ -80,14 +80,6 @@ public class Kit {
         }
     }
 
-    private List<ItemStack> getItemContents() {
-        List<ItemStack> items = new ArrayList<>();
-        for (KitItem item : this.getContents()) {
-            if (item.getContent() instanceof KitContentItem)
-                items.add(((KitContentItem) item.getContent()).getItemStack());
-        }
-        return items;
-    }
 
     private boolean hasRoom(Player player, int itemAmount) {
         int space = 0;
@@ -281,7 +273,7 @@ public class Kit {
     }
 
     public boolean giveKit(Player player) {
-        return giveKit(player, getItemContents().size(), -1);
+        return giveKit(player, getContents().size(), -1);
     }
 
     private boolean giveKit(Player player, Key key) {
@@ -308,42 +300,35 @@ public class Kit {
         int itemGiveAmount = itemAmount > 0 ? itemAmount : kitSize;
         if (kitAmount > 0) itemGiveAmount = itemGiveAmount * kitAmount;
 
-        return generateRandomItem(innerContents, itemGiveAmount, player, -1);
+        return generateRandomItem(innerContents, itemGiveAmount, player);
     }
 
-    private boolean generateRandomItem(List<KitItem> innerContents, int itemGiveAmount, Player player, int forceSelect) {
-        if (getContents().size() != itemGiveAmount || kitAnimation != KitAnimation.NONE)
+    private boolean generateRandomItem(List<KitItem> innerContents, int itemGiveAmount, Player player) {
+
+        if (innerContents.size() != itemGiveAmount || kitAnimation != KitAnimation.NONE)
             Collections.shuffle(innerContents);
 
-        int canChoose = 0;
         for (KitItem item : innerContents) {
             if (itemGiveAmount == 0) break;
-            double ch = canChoose++ == forceSelect || item.getChance() == 0 ? 100 : item.getChance();
+            double ch = item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
             if (rand < ch || ch == 100) {
-
-                if (item.getContent() instanceof KitContentEconomy
-                        || item.getContent() instanceof KitContentCommand) {
-                    item.getContent().process(player);
-                    itemGiveAmount--;
-                    continue;
-                }
-
-                ItemStack parseStack = item.getContent().process(player);
-
-                if (parseStack.getType() == Material.AIR) continue;
-
                 itemGiveAmount--;
 
+                ItemStack parseStack = item.getContent().process(player);
                 if (kitAnimation != KitAnimation.NONE) {
                     // TODO: this is a very bad way to solve this problem.
                     // Giving the player kit rewards really should be done outside of the Kit class.
-                    plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, this, item.getItem()));
+                    plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, this, parseStack));
                     return true;
                 } else {
-                    if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, item.getItem())) continue;
+                    if (item.getContent() instanceof KitContentEconomy
+                            || item.getContent() instanceof KitContentCommand)
+                        continue;
 
-                    Map<Integer, ItemStack> overfilled = player.getInventory().addItem(item.getItem());
+                    if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, parseStack)) continue;
+
+                    Map<Integer, ItemStack> overfilled = player.getInventory().addItem(parseStack);
                     for (ItemStack item2 : overfilled.values()) {
                         player.getWorld().dropItemNaturally(player.getLocation(), item2);
                     }
@@ -351,10 +336,8 @@ public class Kit {
             }
         }
 
-        if (itemGiveAmount != 0 && canChoose != 0 && forceSelect == -1) {
-            return generateRandomItem(innerContents, itemGiveAmount, player, (int) (Math.random() * canChoose));
-        } else if (itemGiveAmount != 0) {
-            return false;
+        if (itemGiveAmount != 0) {
+            return generateRandomItem(innerContents, itemGiveAmount, player);
         }
 
         player.updateInventory();

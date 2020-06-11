@@ -308,7 +308,7 @@ public class Kit {
         if (innerContents.size() != itemGiveAmount || kitAnimation != KitAnimation.NONE)
             Collections.shuffle(innerContents);
 
-        for (KitItem item : innerContents) {
+        for (KitItem item : new ArrayList<>(innerContents)) {
             if (itemGiveAmount == 0) break;
             double ch = item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
@@ -325,6 +325,8 @@ public class Kit {
                     if (item.getContent() instanceof KitContentEconomy
                             || item.getContent() instanceof KitContentCommand)
                         continue;
+
+                    innerContents.remove(item);
 
                     if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, parseStack)) continue;
 

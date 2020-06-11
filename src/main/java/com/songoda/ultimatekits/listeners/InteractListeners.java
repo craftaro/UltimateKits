@@ -98,11 +98,13 @@ public class InteractListeners implements Listener {
     @EventHandler
     public void onCrateClick(PlayerInteractEvent event) {
         // Would be better to use NBT to make the item persist over aesthetic changes.
+        // Yes you really should have used NBT. In fact we have an API for this in SongodaCore...
 
         // Filter physical actions (pressure plates, buttons)
         if (event.getAction() == Action.PHYSICAL
                 || event.getItem() == null
-                || event.getItem().getType() == CompatibleMaterial.AIR.getMaterial())
+                || event.getItem().getType() == CompatibleMaterial.AIR.getMaterial()
+                || CompatibleMaterial.getMaterial(event.getItem()) != CompatibleMaterial.CHEST)
             return;
 
         ItemStack item = event.getItem();

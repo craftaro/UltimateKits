@@ -29,7 +29,7 @@ public class DisplayItemHandler {
     }
 
     public void start() {
-        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(instance, this::displayItems, 30L, 30L);
+        Bukkit.getServer().getScheduler().runTaskTimer(instance, this::displayItems, 30L, 30L);
     }
 
     private void displayItems() {
@@ -48,6 +48,10 @@ public class DisplayItemHandler {
         if (list == null) return;
 
         if (list.isEmpty()) return;
+
+        if (!location.getWorld().isChunkLoaded((int) location.getX() >> 4, (int) location.getZ() >> 4))
+            return;
+
         for (Entity e : location.getChunk().getEntities()) {
             if (e.getType() != EntityType.DROPPED_ITEM
                     || e.getLocation().getX() != location.getX()

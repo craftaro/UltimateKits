@@ -38,17 +38,21 @@ public class Convert {
     }
 
     private static void convertKits(Hook hook) {
-        Set<String> kits = hook.getKits();
-        for (String kit : kits) {
-            Kit kitObj = UltimateKits.getInstance().getKitManager().addKit(new Kit(kit));
-            if (kitObj == null) continue;
-            for (ItemStack item : hook.getItems(kit)) {
-                if (item == null || item.getType() == Material.AIR) continue;
-                kitObj.getContents().add(new KitItem(item));
+        try {
+            Set<String> kits = hook.getKits();
+            for (String kit : kits) {
+                Kit kitObj = UltimateKits.getInstance().getKitManager().addKit(new Kit(kit));
+                if (kitObj == null) continue;
+                for (ItemStack item : hook.getItems(kit)) {
+                    if (item == null || item.getType() == Material.AIR) continue;
+                    kitObj.getContents().add(new KitItem(item));
+                }
+                kitObj.setDelay(hook.getDelay(kit));
             }
-            kitObj.setDelay(hook.getDelay(kit));
+            UltimateKits.getInstance().saveKits(true);
+        } catch (NoSuchMethodError | NoClassDefFoundError e) {
+            System.out.println("UltimateKits conversion failed.");
         }
-        UltimateKits.getInstance().saveKits(true);
     }
 
     private static boolean isInJsonFormat() {

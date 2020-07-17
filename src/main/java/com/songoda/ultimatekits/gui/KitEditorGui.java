@@ -350,6 +350,7 @@ public class KitEditorGui extends DoubleGui {
         switch (action) {
             case CHANCE_UP:
             case CHANCE_DOWN:
+                System.out.println("chance");
                 if (action == Action.CHANCE_UP)
                     item.setChance(item.getChance() >= 100 ? 5 : (item.getChance() + 5));
                 else
@@ -422,7 +423,8 @@ public class KitEditorGui extends DoubleGui {
         if (meta.hasLore()) itemLore = meta.getLore();
         else itemLore = new ArrayList<>();
         itemLore.add(TextUtils.convertToInvisibleLoreString("----"));
-        itemLore.add(ChatColor.GRAY.toString() + plugin.getLocale().getMessage("general.type.chance") + ": " + ChatColor.GOLD.toString() + item.getChance() + "%");
+        itemLore.add(ChatColor.GRAY.toString() + plugin.getLocale().getMessage("general.type.chance").getMessage().replaceFirst("^" + ChatColor.RESET.toString(), "")
+                     + ": " + ChatColor.GOLD.toString() + item.getChance() + "%"); //TODO use a placeholder message in locales
         if (isInFunction) {
             itemLore.addAll(Arrays.asList(plugin.getLocale().getMessage("interface.kiteditor.itemfunctionlore")
                     .processPlaceholder("item", item.getDisplayItem() == null ? "" : item.getDisplayItem().name())

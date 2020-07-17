@@ -350,7 +350,6 @@ public class KitEditorGui extends DoubleGui {
         switch (action) {
             case CHANCE_UP:
             case CHANCE_DOWN:
-                System.out.println("chance");
                 if (action == Action.CHANCE_UP)
                     item.setChance(item.getChance() >= 100 ? 5 : (item.getChance() + 5));
                 else

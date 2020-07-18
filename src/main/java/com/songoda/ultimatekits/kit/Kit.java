@@ -306,7 +306,6 @@ public class Kit {
     }
 
     private boolean generateRandomItem(List<KitItem> innerContents, int itemGiveAmount, Player player) {
-
         if (innerContents.size() != itemGiveAmount || kitAnimation != KitAnimation.NONE)
             Collections.shuffle(innerContents);
 
@@ -314,8 +313,8 @@ public class Kit {
             if (itemGiveAmount == 0) break;
             double ch = item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
+            itemGiveAmount--;
             if (rand < ch || ch == 100) {
-                itemGiveAmount--;
 
                 ItemStack parseStack = item.getContent().process(player);
                 if (kitAnimation != KitAnimation.NONE) {

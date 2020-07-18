@@ -301,8 +301,9 @@ public class UltimateKits extends SongodaPlugin {
                 for (String keyName : keyFile.getConfigurationSection("Keys").getKeys(false)) {
                     int amt = keyFile.getInt("Keys." + keyName + ".Item Amount");
                     int kitAmount = keyFile.getInt("Keys." + keyName + ".Amount of kit received");
+                    boolean enchanted = keyFile.getBoolean("Keys." + keyName + ".Enchanted");
 
-                    Key key = new Key(keyName, amt, kitAmount);
+                    Key key = new Key(keyName, amt, kitAmount, enchanted);
                     keyManager.addKey(key);
                 }
             }
@@ -507,6 +508,7 @@ public class UltimateKits extends SongodaPlugin {
         keyFile.set("Keys.Ultra.Amount of kit received", 1);
         keyFile.set("Keys.Insane.Item Amount", -1);
         keyFile.set("Keys.Insane.Amount of kit received", 2);
+        keyFile.set("Keys.Insane.Enchanted", true);
     }
 
     private void checkCrateDefaults() {

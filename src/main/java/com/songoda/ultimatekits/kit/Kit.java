@@ -7,6 +7,8 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.nbt.NBTItem;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
@@ -99,27 +101,25 @@ public class Kit {
 
     public void processKeyUse(Player player) {
         ItemStack item = player.getItemInHand();
-        if (item.getType() != Material.TRIPWIRE_HOOK || !item.hasItemMeta()) {
+        NBTItem nbtItem = NmsManager.getNbt().of(item);
+
+        if (!nbtItem.has("key") || !nbtItem.has("kit"))
             return;
-        }
-        Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(item.getItemMeta().getLore().get(0)).replace(" Key", ""));
 
-        // This is some legacy support crap.
-        String title = plugin.getLocale().getMessage("interface.key.title")
-                .processPlaceholder("kit", name).getMessage();
-        if (title.startsWith(ChatColor.COLOR_CHAR + "f"))
-            title = title.substring(2);
+        String keyName = nbtItem.getNBTObject("key").asString();
+        String kitName = nbtItem.getNBTObject("kit").asString();
 
-        String titleAny = plugin.getLocale().getMessage("interface.key.title")
-                .processPlaceholder("kit", "Any").getMessage();
-        if (titleAny.startsWith(ChatColor.COLOR_CHAR + "f"))
-            titleAny = titleAny.substring(2);
+        boolean any = kitName.equals("ANY");
+        Key key = plugin.getKeyManager().getKey(keyName);
 
-        if (!item.getItemMeta().getDisplayName().equals(title)
-                && !item.getItemMeta().getDisplayName().equals(titleAny)) {
+        if (key == null && !any)
+            return;
+
+        if (!any && !kitName.equals(name)) {
             plugin.getLocale().getMessage("event.crate.wrongkey").sendPrefixedMessage(player);
             return;
         }
+
         if (giveKit(player, key)) {
             plugin.getLocale().getMessage("event.key.success")
                     .processPlaceholder("kit", name).sendPrefixedMessage(player);

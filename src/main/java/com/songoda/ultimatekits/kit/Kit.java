@@ -84,7 +84,7 @@ public class Kit {
     private boolean hasRoom(Player player, int itemAmount) {
         int space = 0;
 
-        for (ItemStack content : player.getInventory().getContents()) {
+        for (ItemStack content : player.getInventory().getStorageContents()) {
             if (content == null) {
                 space++;
             }
@@ -285,20 +285,21 @@ public class Kit {
     }
 
     private boolean giveKit(Player player, int itemAmount, int kitAmount) {
-        if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemAmount)) {
+        List<KitItem> innerContents = new ArrayList<>(getContents());
+        int kitSize = innerContents.size();
+
+        // Amount of items from the kit to give to the player.
+        if (kitAnimation == KitAnimation.ROULETTE) itemAmount = 1; //TODO how about kitAmount > 1? generateRandomItem() will only give 1 random item instead of kitAmount
+        int itemGiveAmount = itemAmount > 0 ? itemAmount : kitSize;
+        if (kitAmount > 0) itemGiveAmount = itemGiveAmount * kitAmount;
+        
+        if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemGiveAmount)) {
             plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
             return false;
         }
 
         if (Settings.SOUNDS_ENABLED.getBoolean() && kitAnimation == KitAnimation.NONE)
             CompatibleSound.ENTITY_PLAYER_LEVELUP.play(player, 0.6F, 15.0F);
-
-        List<KitItem> innerContents = new ArrayList<>(getContents());
-        int kitSize = innerContents.size();
-
-        // Amount of items from the kit to give to the player.
-        int itemGiveAmount = itemAmount > 0 ? itemAmount : kitSize;
-        if (kitAmount > 0) itemGiveAmount = itemGiveAmount * kitAmount;
 
         return generateRandomItem(innerContents, itemGiveAmount, player);
     }

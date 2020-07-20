@@ -7,6 +7,8 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.nbt.NBTItem;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
@@ -84,39 +86,40 @@ public class Kit {
     private boolean hasRoom(Player player, int itemAmount) {
         int space = 0;
 
-        for (ItemStack content : player.getInventory().getContents()) {
+        for (ItemStack content : player.getInventory().getStorageContents()) {
             if (content == null) {
                 space++;
             }
         }
 
+        // Since roulette only gives one item, we don't need to check if the user has room for the whole kit.
+        if (kitAnimation == KitAnimation.ROULETTE && space >= 1)
+            return true;
 
         return space >= itemAmount;
     }
 
     public void processKeyUse(Player player) {
         ItemStack item = player.getItemInHand();
-        if (item.getType() != Material.TRIPWIRE_HOOK || !item.hasItemMeta()) {
+        NBTItem nbtItem = NmsManager.getNbt().of(item);
+
+        if (!nbtItem.has("key") || !nbtItem.has("kit"))
             return;
-        }
-        Key key = plugin.getKeyManager().getKey(ChatColor.stripColor(item.getItemMeta().getLore().get(0)).replace(" Key", ""));
 
-        // This is some legacy support crap.
-        String title = plugin.getLocale().getMessage("interface.key.title")
-                .processPlaceholder("kit", name).getMessage();
-        if (title.startsWith(ChatColor.COLOR_CHAR + "f"))
-            title = title.substring(2);
+        String keyName = nbtItem.getNBTObject("key").asString();
+        String kitName = nbtItem.getNBTObject("kit").asString();
 
-        String titleAny = plugin.getLocale().getMessage("interface.key.title")
-                .processPlaceholder("kit", "Any").getMessage();
-        if (titleAny.startsWith(ChatColor.COLOR_CHAR + "f"))
-            titleAny = titleAny.substring(2);
+        boolean any = kitName.equals("ANY");
+        Key key = plugin.getKeyManager().getKey(keyName);
 
-        if (!item.getItemMeta().getDisplayName().equals(title)
-                && !item.getItemMeta().getDisplayName().equals(titleAny)) {
+        if (key == null && !any)
+            return;
+
+        if (!any && !kitName.equals(name)) {
             plugin.getLocale().getMessage("event.crate.wrongkey").sendPrefixedMessage(player);
             return;
         }
+
         if (giveKit(player, key)) {
             plugin.getLocale().getMessage("event.key.success")
                     .processPlaceholder("kit", name).sendPrefixedMessage(player);
@@ -217,7 +220,8 @@ public class Kit {
                     ItemMeta meta = is.getItemMeta();
                     List<String> newLore = new ArrayList<>();
                     for (String line : meta.getLore()) {
-                        if (TextUtils.convertFromInvisibleString(line).equals("----")) break;
+                        if (line.contains("Moveable")) continue;
+                        if (line.equals(TextUtils.formatText("&8----"))) break;
                         newLore.add(line);
                     }
                     meta.setLore(newLore);
@@ -285,7 +289,15 @@ public class Kit {
     }
 
     private boolean giveKit(Player player, int itemAmount, int kitAmount) {
-        if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemAmount)) {
+        List<KitItem> innerContents = new ArrayList<>(getContents());
+        int kitSize = innerContents.size();
+
+        // Amount of items from the kit to give to the player.
+        if (kitAnimation == KitAnimation.ROULETTE) itemAmount = 1; //TODO how about kitAmount > 1? generateRandomItem() will only give 1 random item instead of kitAmount
+        int itemGiveAmount = itemAmount > 0 ? itemAmount : kitSize;
+        if (kitAmount > 0) itemGiveAmount = itemGiveAmount * kitAmount;
+        
+        if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemGiveAmount)) {
             plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
             return false;
         }
@@ -293,18 +305,10 @@ public class Kit {
         if (Settings.SOUNDS_ENABLED.getBoolean() && kitAnimation == KitAnimation.NONE)
             CompatibleSound.ENTITY_PLAYER_LEVELUP.play(player, 0.6F, 15.0F);
 
-        List<KitItem> innerContents = new ArrayList<>(getContents());
-        int kitSize = innerContents.size();
-
-        // Amount of items from the kit to give to the player.
-        int itemGiveAmount = itemAmount > 0 ? itemAmount : kitSize;
-        if (kitAmount > 0) itemGiveAmount = itemGiveAmount * kitAmount;
-
         return generateRandomItem(innerContents, itemGiveAmount, player);
     }
 
     private boolean generateRandomItem(List<KitItem> innerContents, int itemGiveAmount, Player player) {
-
         if (innerContents.size() != itemGiveAmount || kitAnimation != KitAnimation.NONE)
             Collections.shuffle(innerContents);
 
@@ -312,8 +316,8 @@ public class Kit {
             if (itemGiveAmount == 0) break;
             double ch = item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
+            itemGiveAmount--;
             if (rand < ch || ch == 100) {
-                itemGiveAmount--;
 
                 ItemStack parseStack = item.getContent().process(player);
                 if (kitAnimation != KitAnimation.NONE) {

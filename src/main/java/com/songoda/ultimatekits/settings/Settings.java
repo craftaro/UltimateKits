@@ -22,6 +22,8 @@ public class Settings {
     public static final ConfigSetting CHANCE_IN_PREVIEW = new ConfigSetting(config, "Main.Display Chance In Preview", true);
     public static final ConfigSetting CURRENCY_SYMBOL = new ConfigSetting(config, "Main.Currency Symbol", "$");
     public static final ConfigSetting STARTER_KIT = new ConfigSetting(config, "Main.Starter Kit", "none");
+    public static final ConfigSetting KEY_MATERIAL = new ConfigSetting(config, "Main.Key Material", "TRIPWIRE_HOOK",
+            "What type of material should be used for kit keys?");
 
     public static final ConfigSetting ECONOMY_PLUGIN = new ConfigSetting(config, "Main.Economy", EconomyManager.getEconomy() == null ? "Vault" : EconomyManager.getEconomy().getName(),
             "Which economy plugin should be used?",

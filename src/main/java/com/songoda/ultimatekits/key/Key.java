@@ -1,57 +1,62 @@
 package com.songoda.ultimatekits.key;
 
+import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.nbt.NBTItem;
+import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
+import com.songoda.ultimatekits.settings.Settings;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.ChatColor;
 
 public class Key {
 
     // The name of the key.
-    private String name;
+    private final String name;
 
     // The amount of items this key will give you. -1 is all;
-    private int amount;
+    private final int amount;
+
+    // Should the key be enchanted?
+    private final boolean enchanted;
 
     // The amount of kit given when the key is used.
-    private int kitAmount;
+    private final int kitAmount;
 
-    public Key(String name, int amount, int kitAmount) {
+    public Key(String name, int amount, int kitAmount, boolean enchanted) {
         this.name = name;
         this.amount = amount;
         this.kitAmount = kitAmount;
+        this.enchanted = enchanted;
     }
 
-
-    public ItemStack getKeyItem(Kit kit, int amt) {
+    public ItemStack getKeyItem(Kit kit, int amount) {
         UltimateKits plugin = UltimateKits.getInstance();
-        ItemStack is = new ItemStack(Material.TRIPWIRE_HOOK, amt);
+        ItemStack item = Settings.KEY_MATERIAL.getMaterial().getItem();
+        item.setAmount(amount);
 
-        String kitName;
-        if (kit != null)
-            kitName = TextUtils.formatText(kit.getName(), true);
-        else
-            kitName = "Any";
+        String kitName = kit != null ? TextUtils.formatText(kit.getName(), true)
+                : plugin.getLocale().getMessage("general.type.any").getMessage();
 
-        ItemMeta meta = is.getItemMeta();
+        ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(plugin.getLocale().getMessage("interface.key.title")
                 .processPlaceholder("kit", kitName).getMessage());
 
-        meta.addEnchant(Enchantment.DURABILITY, 1, true);
+        if (enchanted)
+            ItemUtils.addGlow(item);
+
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.YELLOW + name + " " + ChatColor.WHITE + "Key");
+        lore.add(plugin.getLocale().getMessage("interface.key.name")
+                .processPlaceholder("name", name).getMessage());
 
         String desc1 = plugin.getLocale().getMessage("interface.key.description1")
                 .processPlaceholder("kit", kitName).getMessage();
 
-        if (kitName.equals("Any"))
+        if (kit == null)
             desc1 = desc1.replaceAll("\\[.*?\\]", "");
         else
             desc1 = desc1.replace("[", "").replace("]", "");
@@ -66,11 +71,14 @@ public class Key {
                     .processPlaceholder("amt", this.kitAmount).getMessage());
         meta.setLore(lore);
 
-        is.setItemMeta(meta);
+        item.setItemMeta(meta);
 
-        return is;
+        NBTItem nbtItem = NmsManager.getNbt().of(item);
+        nbtItem.set("key", name);
+        nbtItem.set("kit", kit == null ? "ANY" : kit.getName());
+
+        return nbtItem.finish();
     }
-
 
     public String getName() {
         return name;
@@ -82,5 +90,9 @@ public class Key {
 
     public int getKitAmount() {
         return kitAmount;
+    }
+
+    public boolean isEnchanted() {
+        return enchanted;
     }
 }

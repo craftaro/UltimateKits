@@ -84,6 +84,8 @@ public class KitGeneralOptionsGui extends Gui {
                         guiManager.showGUI(event.player, gui);
                     } else if (event.clickType == ClickType.RIGHT) {
                         kit.setCategory(null);
+                        updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.categorylore")
+                                        .processPlaceholder("category", kit.getCategory() == null ? "none" : kit.getCategory().getName()).getMessage().split("\\|"));
                     }
                 });
 

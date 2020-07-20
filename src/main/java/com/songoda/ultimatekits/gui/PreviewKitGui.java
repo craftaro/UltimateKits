@@ -118,7 +118,7 @@ public class PreviewKitGui extends Gui {
                         || (Settings.DONT_PREVIEW_COMMANDS.getBoolean()
                         && item.getType() == Material.PAPER
                         && item.getItemMeta().hasDisplayName()
-                        && item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("general.type.command")))) {
+                        && item.getItemMeta().getDisplayName().equals(plugin.getLocale().getMessage("general.type.command").getMessage()))) {
                     setItem(row, col, AIR);
                 } else if (item.getAmount() <= 64) {
                     // display item

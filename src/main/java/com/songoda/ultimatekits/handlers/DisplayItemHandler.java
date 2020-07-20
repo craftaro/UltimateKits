@@ -67,11 +67,11 @@ public class DisplayItemHandler {
 
 
             NBTItem nbtItem = NmsManager.getNbt().of(i.getItemStack());
-            int inum = nbtItem.has("num") ? nbtItem.getNBTObject("num").asInt() + 1 : 0;
+            int inum = nbtItem.has("num") ? nbtItem.getNBTObject("num").asInt() + 1 : 1;
 
             if (inum > list.size()) inum = 1;
 
-            ItemStack is = list.get(inum);
+            ItemStack is = list.get(inum - 1);
             if (kitBlockData.isItemOverride()) {
                 if (kit.getDisplayItem() != null)
                     is = kit.getDisplayItem().getItem();

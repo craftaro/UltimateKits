@@ -338,7 +338,8 @@ public class KitEditorGui extends DoubleGui {
             ItemMeta meta = itemStack.getItemMeta();
             List<String> newLore = new ArrayList<>();
             for (String line : meta.getLore()) {
-                if (TextUtils.convertFromInvisibleString(line).equals("----")) break;
+                if (line.contains("Moveable")) continue;
+                if (line.equals(TextUtils.formatText("&8----"))) break;
                 newLore.add(line);
             }
             meta.setLore(newLore);
@@ -421,7 +422,7 @@ public class KitEditorGui extends DoubleGui {
 
         if (meta.hasLore()) itemLore = meta.getLore();
         else itemLore = new ArrayList<>();
-        itemLore.add(TextUtils.convertToInvisibleLoreString("----"));
+        itemLore.add(TextUtils.formatText("&8----"));
         itemLore.add(ChatColor.GRAY.toString() + plugin.getLocale().getMessage("general.type.chance").getMessage().replaceFirst("^" + ChatColor.RESET.toString(), "")
                      + ": " + ChatColor.GOLD.toString() + item.getChance() + "%"); //TODO use a placeholder message in locales
         if (isInFunction) {

@@ -1,5 +1,7 @@
 package com.songoda.ultimatekits.kit;
 
+import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.nbt.NBTItem;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.type.KitContent;
@@ -13,9 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class KitItem {
 
@@ -32,26 +32,13 @@ public class KitItem {
     }
 
     public KitItem(ItemStack item, String line) {
-        ItemStack itemStack = item.clone();
-        ItemMeta meta = itemStack.getItemMeta();
-        if (itemStack.hasItemMeta() && meta.hasDisplayName() && meta.getDisplayName().contains(";")) {
-            translateLine(meta.getDisplayName());
-        }
+        translateTags(item);
         processContent(line, null);
     }
 
     public KitItem(ItemStack item) {
-        ItemStack itemStack = item.clone();
-        ItemMeta meta = itemStack.getItemMeta();
-        if (itemStack.hasItemMeta() && meta.hasDisplayName() && meta.getDisplayName().contains(";")) {
-            String translated = translateLine(meta.getDisplayName()).replace(TextUtils.convertToInvisibleString("faqe"), "");
-            if (translated.equalsIgnoreCase(WordUtils.capitalize(item.getType().toString().toLowerCase().replace("_", " "))))
-                meta.setDisplayName(null);
-            else
-                meta.setDisplayName(translated);
-            itemStack.setItemMeta(meta);
-        }
-        processContent(null, itemStack);
+        translateTags(item);
+        processContent(null, item.clone());
     }
 
     private void processContent(String line, ItemStack item) {
@@ -63,6 +50,18 @@ public class KitItem {
             ItemStack itemStack = item == null ? UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(line) : item;
             this.content = itemStack != null ? new KitContentItem(itemStack) : null;
         }
+    }
+
+    private void translateTags(ItemStack item) {
+        NBTItem nbtItem = NmsManager.getNbt().of(item);
+        if (nbtItem.has("chance"))
+            chance = nbtItem.getNBTObject("chance").asDouble();
+        if (nbtItem.has("display-item"))
+            displayItem = Material.valueOf(nbtItem.getNBTObject("display-item").asString());
+        if (nbtItem.has("display-name"))
+            displayName = nbtItem.getNBTObject("display-name").asString();
+        if (nbtItem.has("display-lore"))
+            displayLore = nbtItem.getNBTObject("display-lore").asString();
     }
 
     private String translateLine(String line) {
@@ -94,7 +93,19 @@ public class KitItem {
         return lineSplit[1];
     }
 
-    private String compileOptions() {
+    private ItemStack compileOptions(ItemStack item) {
+        NBTItem nbtItem = NmsManager.getNbt().of(item);
+        if (chance != 0)
+            nbtItem.set("chance", chance);
+        if (displayItem != null)
+            nbtItem.set("display-item", displayItem.name());
+        if (displayName != null)
+            nbtItem.set("display-name", displayName);
+        if (displayLore != null)
+            nbtItem.set("display-lore", displayLore);
+        return nbtItem.finish();
+    }
+    private String compileOptionsText() {
         String line = "";
         if (chance != 0)
             line += "chance:" + chance;
@@ -114,7 +125,7 @@ public class KitItem {
     public String getSerialized() {
         if (chance == 0 && displayItem == null && displayName == null && displayLore == null)
             return this.content.getSerialized();
-        return compileOptions() + ";" + this.content.getSerialized();
+        return compileOptionsText() + ";" + this.content.getSerialized();
     }
 
     public double getChance() {
@@ -155,17 +166,15 @@ public class KitItem {
 
     public ItemStack getMoveableItem() {
         if (content == null) return null;
-        ItemStack item = content.getItemForDisplay();
+        ItemStack item = content.getItemForDisplay().clone();
         ItemMeta meta = item.getItemMeta();
-        if (chance != 0 || displayItem != null || displayName != null || displayLore != null) {
-            String capitalizedName = meta.hasDisplayName() ? meta.getDisplayName() :
-                    WordUtils.capitalize(item.getType().toString().toLowerCase().replace("_", " "));
-            if (capitalizedName.contains(TextUtils.convertToInvisibleString(";faqe")))
-                capitalizedName = meta.getDisplayName().split(TextUtils.convertToInvisibleString(";faqe"))[1];
-            meta.setDisplayName(TextUtils.convertToInvisibleString(compileOptions() + ";faqe") + capitalizedName);
-        }
+        List<String> lore = meta.hasLore() && meta.getLore().get(0).equals(TextUtils.formatText("&8&oMoveable"))
+                ? new ArrayList<>() : new ArrayList<>(Collections.singletonList(TextUtils.formatText("&8&oMoveable")));
+        if (meta.hasLore())
+            lore.addAll(meta.getLore());
+        meta.setLore(lore);
         item.setItemMeta(meta);
-        return item;
+        return compileOptions(item);
     }
 
     public ItemStack getItemForDisplay() {
@@ -181,19 +190,18 @@ public class KitItem {
                 meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
             }
             if (displayLore != null) {
-                meta.setLore(Arrays.asList(ChatColor.translateAlternateColorCodes('&', displayLore)));
+                meta.setLore(Collections.singletonList(ChatColor.translateAlternateColorCodes('&', displayLore)));
             }
 
             if (UltimateKits.getInstance().getConfig().getBoolean("Main.Display Chance In Preview")) {
                 ArrayDeque<String> lore;
-                if (meta.hasLore()) {
+                if (meta.hasLore())
                     lore = new ArrayDeque<>(meta.getLore());
-                } else {
+                else
                     lore = new ArrayDeque<>();
-                }
 
                 if (!lore.isEmpty()) lore.addFirst("");
-                lore.addFirst(ChatColor.GRAY.toString() + UltimateKits.getInstance().getLocale().getMessage("general.type.chance") + ": " + ChatColor.GOLD + (chance == 0 ? 100 : chance) + "%");
+                lore.addFirst(ChatColor.GRAY.toString() + UltimateKits.getInstance().getLocale().getMessage("general.type.chance").getMessage() + ": " + ChatColor.GOLD + (chance == 0 ? 100 : chance) + "%");
                 meta.setLore(new ArrayList<>(lore));
             }
 

@@ -1,5 +1,7 @@
 package com.songoda.ultimatekits.handlers;
 
+import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.nbt.NBTItem;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,19 +65,24 @@ public class DisplayItemHandler {
 
             if (!kitBlockData.isDisplayingItems()) e.remove();
 
-            int inum = Integer.parseInt(i.getItemStack().getItemMeta().getDisplayName().replace(String.valueOf(ChatColor.COLOR_CHAR), "")) + 1;
+
+            NBTItem nbtItem = NmsManager.getNbt().of(i.getItemStack());
+            int inum = nbtItem.has("num") ? nbtItem.getNBTObject("num").asInt() + 1 : 0;
+
             if (inum > list.size()) inum = 1;
 
-            ItemStack is = list.get(inum - 1);
+            ItemStack is = list.get(inum);
             if (kitBlockData.isItemOverride()) {
                 if (kit.getDisplayItem() != null)
                     is = kit.getDisplayItem().getItem();
             }
-            ItemMeta meta = is.getItemMeta();
             is.setAmount(1);
-            meta.setDisplayName(TextUtils.convertToInvisibleString(Integer.toString(inum)));
+            ItemMeta meta = is.getItemMeta();
+            meta.setDisplayName(null);
             is.setItemMeta(meta);
-            i.setItemStack(is);
+            nbtItem = NmsManager.getNbt().of(is);
+            nbtItem.set("num", inum);
+            i.setItemStack(nbtItem.finish());
             i.setPickupDelay(9999);
             return;
         }
@@ -83,13 +91,18 @@ public class DisplayItemHandler {
         ItemStack is = list.get(0);
         is.setAmount(1);
         ItemMeta meta = is.getItemMeta();
-        meta.setDisplayName(TextUtils.convertFromInvisibleString("0"));
+        meta.setLore(Collections.singletonList("Display Item"));
         is.setItemMeta(meta);
+
+        NBTItem nbtItem = NmsManager.getNbt().of(is);
+        nbtItem.set("num", 0);
+
         Bukkit.getScheduler().runTask(instance, () -> {
-            Item item = location.getWorld().dropItem(location.add(0, 1, 0), list.get(0));
+            Item item = location.getWorld().dropItem(location.add(0, 1, 0), nbtItem.finish());
             Vector vec = new Vector(0, 0, 0);
             item.setVelocity(vec);
             item.setPickupDelay(9999);
+            item.setCustomName(null);
             item.setMetadata("US_EXEMPT", new FixedMetadataValue(UltimateKits.getInstance(), true));
             item.setMetadata("displayItem", new FixedMetadataValue(UltimateKits.getInstance(), true));
             item.setMetadata("betterdrops_ignore", new FixedMetadataValue(UltimateKits.getInstance(), true));

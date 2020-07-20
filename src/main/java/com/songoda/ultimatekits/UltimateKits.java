@@ -182,7 +182,6 @@ public class UltimateKits extends SongodaPlugin {
 
         displayItemHandler.start();
         particleHandler.start();
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> saveKits(false), 6000, 6000);
     }
 
     @Override

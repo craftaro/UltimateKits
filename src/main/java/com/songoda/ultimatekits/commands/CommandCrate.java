@@ -122,7 +122,7 @@ public class CommandCrate extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/KitAdmin crate <player/all> <kit> <crate> (amount)";
+        return "crate <player/all> <kit> <crate> (amount)";
     }
 
     @Override

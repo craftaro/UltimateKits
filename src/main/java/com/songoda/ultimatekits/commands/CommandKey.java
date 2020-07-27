@@ -108,7 +108,7 @@ public class CommandKey extends AbstractCommand {
         for (Key key : UltimateKits.getInstance().getKeyManager().getKeys()) {
             keys.append("/").append(key.getName());
         }
-        return "/KitAdmin key <kit/all> <" + keys.substring(1) + "> <player/all> <amount>";
+        return "key <kit/all> <" + keys.substring(1) + "> <player/all> <amount>";
     }
 
     @Override

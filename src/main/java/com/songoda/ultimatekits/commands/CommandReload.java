@@ -33,7 +33,7 @@ public class CommandReload extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/KitAdmin reload";
+        return "reload";
     }
 
     @Override

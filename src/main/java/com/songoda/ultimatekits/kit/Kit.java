@@ -86,7 +86,7 @@ public class Kit {
     private boolean hasRoom(Player player, int itemAmount) {
         int space = 0;
 
-        for (ItemStack content : player.getInventory().getStorageContents()) {
+        for (ItemStack content : player.getInventory().getContents()) {
             if (content == null) {
                 space++;
             }

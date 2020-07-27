@@ -40,7 +40,7 @@ public class CommandCategories extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/KitAdmin categories";
+        return "categories";
     }
 
     @Override

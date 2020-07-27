@@ -52,7 +52,7 @@ public class CommandCreatekit extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/KitAdmin createkit <name>";
+        return "createkit <name>";
     }
 
     @Override

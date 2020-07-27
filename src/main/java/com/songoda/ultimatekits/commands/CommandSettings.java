@@ -38,7 +38,7 @@ public class CommandSettings extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/KitAdmin settings";
+        return "settings";
     }
 
     @Override

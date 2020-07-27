@@ -47,7 +47,7 @@ public class CommandRemove extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/KitAdmin remove";
+        return "remove";
     }
 
     @Override

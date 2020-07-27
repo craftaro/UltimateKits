@@ -129,7 +129,7 @@ public class UltimateKits extends SongodaPlugin {
         this.commandManager = new CommandManager(this);
         this.commandManager.addCommand(new CommandKit(guiManager));
         this.commandManager.addCommand(new CommandPreviewKit(guiManager));
-        this.commandManager.addCommand(new CommandUltimateKits())
+        this.commandManager.addMainCommand("KitAdmin")
                 .addSubCommand(new CommandReload())
                 .addSubCommand(new CommandSettings(guiManager))
                 .addSubCommand(new CommandCreatekit(guiManager))

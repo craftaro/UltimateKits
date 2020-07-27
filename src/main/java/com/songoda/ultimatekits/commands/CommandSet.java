@@ -63,7 +63,7 @@ public class CommandSet extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/KitAdmin set <kit>";
+        return "set <kit>";
     }
 
     @Override

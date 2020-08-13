@@ -245,7 +245,7 @@ public class KitEditorGui extends DoubleGui {
 
                         int index = 0;
                         while (index < msg.length()) {
-                            lore.add(ChatColor.GREEN + "/" + msg.substring(index, Math.min(index + 30, msg.length())));
+                            lore.add(ChatColor.GREEN + (index == 0 ? "/" : "") + msg.substring(index, Math.min(index + 30, msg.length())));
                             index += 30;
                         }
                         meta.setLore(lore);

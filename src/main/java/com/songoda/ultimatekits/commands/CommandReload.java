@@ -9,16 +9,17 @@ import java.util.List;
 
 public class CommandReload extends AbstractCommand {
 
-    final UltimateKits instance = UltimateKits.getInstance();
+    private final UltimateKits plugin;
 
-    public CommandReload() {
-        super(false, "reload");
+    public CommandReload(UltimateKits plugin) {
+        super(CommandType.CONSOLE_OK, "reload");
+        this.plugin = plugin;
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        instance.reloadConfig();
-        instance.getLocale().getMessage("&7Configuration and Language files reloaded.").sendPrefixedMessage(sender);
+        plugin.reloadConfig();
+        plugin.getLocale().getMessage("&7Configuration and Language files reloaded.").sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
     }
 

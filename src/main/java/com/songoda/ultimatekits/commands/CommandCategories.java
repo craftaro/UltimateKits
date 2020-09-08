@@ -11,11 +11,12 @@ import java.util.List;
 
 public class CommandCategories extends AbstractCommand {
 
-    final UltimateKits plugin = UltimateKits.getInstance();
-    final GuiManager guiManager;
+    private final UltimateKits plugin;
+    private final GuiManager guiManager;
 
-    public CommandCategories(GuiManager guiManager) {
+    public CommandCategories(UltimateKits plugin, GuiManager guiManager) {
         super(CommandType.PLAYER_ONLY, "categories");
+        this.plugin = plugin;
         this.guiManager = guiManager;
     }
 

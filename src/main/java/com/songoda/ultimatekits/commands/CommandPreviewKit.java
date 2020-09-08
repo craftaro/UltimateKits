@@ -12,11 +12,12 @@ import java.util.List;
 
 public class CommandPreviewKit extends AbstractCommand {
 
-    final UltimateKits instance = UltimateKits.getInstance();
-    final GuiManager guiManager;
+    private final UltimateKits plugin;
+    private final GuiManager guiManager;
 
-    public CommandPreviewKit(GuiManager guiManager) {
-        super(true, "PreviewKit");
+    public CommandPreviewKit(UltimateKits plugin, GuiManager guiManager) {
+        super(CommandType.PLAYER_ONLY, "PreviewKit");
+        this.plugin = plugin;
         this.guiManager = guiManager;
     }
 
@@ -24,12 +25,12 @@ public class CommandPreviewKit extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         Player player = (Player) sender;
         if (args.length != 1) {
-            instance.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(player);
+            plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
-        Kit kit = instance.getKitManager().getKit(args[0].toLowerCase().trim());
+        Kit kit = plugin.getKitManager().getKit(args[0].toLowerCase().trim());
         if (kit == null) {
-            instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
+            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
         kit.display(player, guiManager, null);

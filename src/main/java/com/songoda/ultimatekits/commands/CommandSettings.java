@@ -12,17 +12,18 @@ import java.util.List;
 
 public class CommandSettings extends AbstractCommand {
 
-    final UltimateKits instance = UltimateKits.getInstance();
-    final GuiManager guiManager;
+    private final UltimateKits plugin;
+    private final GuiManager guiManager;
 
-    public CommandSettings(GuiManager guiManager) {
-        super(true, "settings");
+    public CommandSettings(UltimateKits plugin, GuiManager guiManager) {
+        super(CommandType.PLAYER_ONLY, "settings");
+        this.plugin = plugin;
         this.guiManager = guiManager;
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        guiManager.showGUI((Player) sender, new PluginConfigGui(instance));
+        guiManager.showGUI((Player) sender, new PluginConfigGui(plugin));
         return ReturnType.SUCCESS;
     }
 

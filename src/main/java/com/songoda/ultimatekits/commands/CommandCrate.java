@@ -24,7 +24,6 @@ public class CommandCrate extends AbstractCommand {
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-
         if (args.length < 3 || args.length > 4) return ReturnType.SYNTAX_ERROR;
 
         OfflinePlayer target = Bukkit.getPlayer(args[0]);

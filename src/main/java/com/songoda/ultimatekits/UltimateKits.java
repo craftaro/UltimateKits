@@ -140,17 +140,17 @@ public class UltimateKits extends SongodaPlugin {
 
         // setup commands
         this.commandManager = new CommandManager(this);
-        this.commandManager.addCommand(new CommandKit(guiManager));
-        this.commandManager.addCommand(new CommandPreviewKit(guiManager));
+        this.commandManager.addCommand(new CommandKit(this, guiManager));
+        this.commandManager.addCommand(new CommandPreviewKit(this, guiManager));
         this.commandManager.addMainCommand("KitAdmin")
-                .addSubCommand(new CommandReload())
-                .addSubCommand(new CommandSettings(guiManager))
-                .addSubCommand(new CommandCreatekit(guiManager))
-                .addSubCommand(new CommandCategories(guiManager))
-                .addSubCommand(new CommandEdit(guiManager))
-                .addSubCommand(new CommandKey())
-                .addSubCommand(new CommandSet())
-                .addSubCommand(new CommandRemove())
+                .addSubCommand(new CommandReload(this))
+                .addSubCommand(new CommandSettings(this, guiManager))
+                .addSubCommand(new CommandCreatekit(this, guiManager))
+                .addSubCommand(new CommandCategories(this, guiManager))
+                .addSubCommand(new CommandEdit(this, guiManager))
+                .addSubCommand(new CommandKey(this))
+                .addSubCommand(new CommandSet(this))
+                .addSubCommand(new CommandRemove(this))
 
                 .addSubCommand(new CommandCrate());
 

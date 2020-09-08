@@ -2,12 +2,10 @@ package com.songoda.ultimatekits.handlers;
 
 import com.songoda.core.nms.NmsManager;
 import com.songoda.core.nms.nbt.NBTItem;
-import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,18 +23,18 @@ import java.util.List;
  */
 public class DisplayItemHandler {
 
-    private final UltimateKits instance;
+    private final UltimateKits plugin;
 
-    public DisplayItemHandler(UltimateKits instance) {
-        this.instance = instance;
+    public DisplayItemHandler(UltimateKits plugin) {
+        this.plugin = plugin;
     }
 
     public void start() {
-        Bukkit.getServer().getScheduler().runTaskTimer(instance, this::displayItems, 30L, 30L);
+        Bukkit.getServer().getScheduler().runTaskTimer(plugin, this::displayItems, 30L, 30L);
     }
 
     private void displayItems() {
-        for (KitBlockData kitBlockData : instance.getKitManager().getKitLocations().values())
+        for (KitBlockData kitBlockData : plugin.getKitManager().getKitLocations().values())
             displayItem(kitBlockData);
     }
 
@@ -97,7 +95,7 @@ public class DisplayItemHandler {
         NBTItem nbtItem = NmsManager.getNbt().of(is);
         nbtItem.set("num", 0);
 
-        Bukkit.getScheduler().runTask(instance, () -> {
+        Bukkit.getScheduler().runTask(plugin, () -> {
             Item item = location.getWorld().dropItem(location.add(0, 1, 0), nbtItem.finish());
             Vector vec = new Vector(0, 0, 0);
             item.setVelocity(vec);

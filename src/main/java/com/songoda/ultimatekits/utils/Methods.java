@@ -1,18 +1,9 @@
 package com.songoda.ultimatekits.utils;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
-import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.settings.Settings;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,12 +11,20 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by songoda on 2/24/2017.
  */
 public class Methods {
 
-    static final Random rand = new Random();
+    private static final Random rand = new Random();
 
     public static boolean canGiveKit(Player player) {
         if (player.hasPermission("ultimatekits.cangive")) return true;
@@ -83,7 +82,9 @@ public class Methods {
         List<String> args = Arrays.asList(str.split("\\s*:\\s*"));
 
         World world = Bukkit.getWorld(args.get(0));
-        double x = Double.parseDouble(args.get(1)), y = Double.parseDouble(args.get(2)), z = Double.parseDouble(args.get(3));
+        double x = Double.parseDouble(args.get(1));
+        double y = Double.parseDouble(args.get(2));
+        double z = Double.parseDouble(args.get(3));
         Location location = new Location(world, x, y, z, 0, 0);
         serializeCache.put(cacheKey, location.clone());
         return location;

@@ -15,11 +15,12 @@ import java.util.List;
 
 public class CommandKit extends AbstractCommand {
 
-    final UltimateKits instance = UltimateKits.getInstance();
-    final GuiManager guiManager;
+    private final UltimateKits plugin;
+    private final GuiManager guiManager;
 
-    public CommandKit(GuiManager guiManager) {
-        super(false, "kit");
+    public CommandKit(UltimateKits plugin, GuiManager guiManager) {
+        super(CommandType.PLAYER_ONLY, "kit");
+        this.plugin = plugin;
         this.guiManager = guiManager;
     }
 
@@ -29,19 +30,19 @@ public class CommandKit extends AbstractCommand {
 
         if (args.length == 0 && sender instanceof Player) {
             // /kit - Opens GUI.
-            if (instance.getKitManager().getKits().stream().anyMatch(kit -> kit.getCategory() != null))
-                guiManager.showGUI((Player) sender, new CategorySelectorGui(instance, (Player) sender));
+            if (plugin.getKitManager().getKits().stream().anyMatch(kit -> kit.getCategory() != null))
+                guiManager.showGUI((Player) sender, new CategorySelectorGui(plugin, (Player) sender));
             else
-                guiManager.showGUI((Player) sender, new KitSelectorGui(instance, (Player) sender, null));
+                guiManager.showGUI((Player) sender, new KitSelectorGui(plugin, (Player) sender, null));
             return ReturnType.SUCCESS;
         }
 
-        if (instance.getKitManager().getKit(args[0]) == null) {
-            instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
+        if (plugin.getKitManager().getKit(args[0]) == null) {
+            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
-        Kit kit = instance.getKitManager().getKit(args[0]);
+        Kit kit = plugin.getKitManager().getKit(args[0]);
 
         if (args.length == 1) {
             // /kit <kit> - Gives kit to self.
@@ -49,7 +50,7 @@ public class CommandKit extends AbstractCommand {
                 return ReturnType.NEEDS_PLAYER;
 
             if (!kit.hasPermissionToClaim((Player) sender)) {
-                instance.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(sender);
+                plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
 
@@ -59,12 +60,12 @@ public class CommandKit extends AbstractCommand {
             // /kit <kit> <player> - Gives kit to another player.
 
             if (!sender.hasPermission("ultimatekits.admin")) {
-                instance.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(sender);
+                plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
 
             if (!args[1].equalsIgnoreCase("all") && Bukkit.getPlayer(args[1]) == null) {
-                instance.getLocale().newMessage("&cThat username does not exist, or the user is offline!").sendPrefixedMessage(sender);
+                plugin.getLocale().newMessage("&cThat username does not exist, or the user is offline!").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
 
@@ -73,19 +74,19 @@ public class CommandKit extends AbstractCommand {
 
             if (player != null) {
                 kit.processGenericUse(player, true);
-                instance.getLocale().getMessage("event.claim.givesuccess")
+                plugin.getLocale().getMessage("event.claim.givesuccess")
                         .processPlaceholder("kit", kit.getName())
                         .sendPrefixedMessage(sender);
             } else {
                 Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
                     kit.processGenericUse(onlinePlayer, true);
-                    instance.getLocale().getMessage("event.claim.givesuccess")
+                    plugin.getLocale().getMessage("event.claim.givesuccess")
                             .processPlaceholder("kit", kit.getName())
                             .sendPrefixedMessage(sender);
                 });
             }
 
-            instance.getLocale().newMessage("&7You gave &9" + who + "&7 kit &9" + kit.getName() + "&7.")
+            plugin.getLocale().newMessage("&7You gave &9" + who + "&7 kit &9" + kit.getName() + "&7.")
                     .sendPrefixedMessage(sender);
             return ReturnType.SUCCESS;
         }
@@ -100,7 +101,7 @@ public class CommandKit extends AbstractCommand {
         if (!(sender instanceof Player)) return tab;
 
         if (args.length == 1) {
-            for (Kit kit : instance.getKitManager().getKits()) tab.add(kit.getKey());
+            for (Kit kit : plugin.getKitManager().getKits()) tab.add(kit.getKey());
         } else if (args.length == 2) {
             tab.add("all");
             Bukkit.getOnlinePlayers().forEach(player -> tab.add(player.getName()));

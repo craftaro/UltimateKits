@@ -13,11 +13,12 @@ import java.util.List;
 
 public class CommandCreatekit extends AbstractCommand {
 
-    final UltimateKits instance = UltimateKits.getInstance();
-    final GuiManager guiManager;
+    private final UltimateKits plugin;
+    private final GuiManager guiManager;
 
-    public CommandCreatekit(GuiManager guiManager) {
-        super(true, "createkit");
+    public CommandCreatekit(UltimateKits plugin, GuiManager guiManager) {
+        super(CommandType.PLAYER_ONLY, "createkit");
+        this.plugin = plugin;
         this.guiManager = guiManager;
     }
 
@@ -28,15 +29,15 @@ public class CommandCreatekit extends AbstractCommand {
             return ReturnType.SYNTAX_ERROR;
         }
         String kitStr = args[0].toLowerCase();
-        if (instance.getKitManager().getKit(kitStr) != null) {
-            instance.getLocale().getMessage("command.kit.kitalreadyexists").sendPrefixedMessage(player);
+        if (plugin.getKitManager().getKit(kitStr) != null) {
+            plugin.getLocale().getMessage("command.kit.kitalreadyexists").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
 
-        instance.getLocale().newMessage("&aThat kit doesn't exist. Creating it now.").sendPrefixedMessage(player);
+        plugin.getLocale().newMessage("&aThat kit doesn't exist. Creating it now.").sendPrefixedMessage(player);
         Kit kit = new Kit(kitStr.trim());
-        UltimateKits.getInstance().getKitManager().addKit(kit);
-        guiManager.showGUI(player, new KitEditorGui(instance, player, kit, null));
+        plugin.getKitManager().addKit(kit);
+        guiManager.showGUI(player, new KitEditorGui(plugin, player, kit, null));
         return ReturnType.SUCCESS;
     }
 

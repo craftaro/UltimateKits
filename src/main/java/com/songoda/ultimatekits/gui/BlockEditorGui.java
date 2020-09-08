@@ -10,6 +10,7 @@ import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class BlockEditorGui extends Gui {
 
     }
 
-    List<String> kitTypeLore(UltimateKits plugin) {
+    private List<String> kitTypeLore(UltimateKits plugin) {
         String[] type = plugin.getLocale().getMessage("interface.kitblock.switchtypelore").getMessage().split("\\|");
         return Arrays.asList(
                 type[0],

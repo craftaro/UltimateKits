@@ -13,25 +13,27 @@ import java.util.List;
 
 public class CommandRemove extends AbstractCommand {
 
-    final UltimateKits instance = UltimateKits.getInstance();
-    public CommandRemove() {
-        super(true, "remove");
+    private final UltimateKits plugin;
+
+    public CommandRemove(UltimateKits plugin) {
+        super(CommandType.PLAYER_ONLY, "remove");
+        this.plugin = plugin;
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         Player player = (Player) sender;
         Block block = player.getTargetBlock(null, 200);
-        Kit kit = instance.getKitManager().removeKitFromLocation(block.getLocation());
+        Kit kit = plugin.getKitManager().removeKitFromLocation(block.getLocation());
         if (kit == null) return ReturnType.FAILURE;
 
         if (HologramManager.isEnabled()) {
-            instance.getKitManager().getKitLocations().values().stream()
+            plugin.getKitManager().getKitLocations().values().stream()
                     .filter(data -> data.getKit() == kit)
-                    .forEach(data -> instance.removeHologram(data));
+                    .forEach(data -> plugin.removeHologram(data));
         }
 
-        instance.getLocale().newMessage("&8Kit &9" + kit.getKey() + " &8unassigned from: &a" + block.getType().toString() + "&8.").sendPrefixedMessage(player);
+        plugin.getLocale().newMessage("&8Kit &9" + kit.getKey() + " &8unassigned from: &a" + block.getType().toString() + "&8.").sendPrefixedMessage(player);
         return ReturnType.SUCCESS;
     }
 

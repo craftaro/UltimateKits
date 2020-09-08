@@ -16,11 +16,12 @@ import java.util.List;
 
 public class CommandEdit extends AbstractCommand {
 
-    final UltimateKits instance = UltimateKits.getInstance();
-    final GuiManager guiManager;
+    private final UltimateKits plugin;
+    private final GuiManager guiManager;
 
-    public CommandEdit(GuiManager guiManager) {
-        super(true, "edit");
+    public CommandEdit(UltimateKits plugin, GuiManager guiManager) {
+        super(CommandType.PLAYER_ONLY, "edit");
+        this.plugin = plugin;
         this.guiManager = guiManager;
     }
 
@@ -31,20 +32,20 @@ public class CommandEdit extends AbstractCommand {
 
         if (args.length == 0) {
             Block block = player.getTargetBlock(null, 200);
-            KitBlockData kitBlockData = instance.getKitManager().getKit(block.getLocation());
+            KitBlockData kitBlockData = plugin.getKitManager().getKit(block.getLocation());
             if (kitBlockData == null) {
-                instance.getLocale().newMessage("command.kit.nokitatblock").sendPrefixedMessage(player);
+                plugin.getLocale().newMessage("command.kit.nokitatblock").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
-            guiManager.showGUI(player, new BlockEditorGui(instance, kitBlockData));
+            guiManager.showGUI(player, new BlockEditorGui(plugin, kitBlockData));
         } else {
             String kitStr = args[0].toLowerCase().trim();
-            if (instance.getKitManager().getKit(kitStr) == null) {
-                instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
+            if (plugin.getKitManager().getKit(kitStr) == null) {
+                plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
                 return ReturnType.FAILURE;
             }
 
-            guiManager.showGUI(player, new KitEditorGui(instance, player, instance.getKitManager().getKit(kitStr), null));
+            guiManager.showGUI(player, new KitEditorGui(plugin, player, plugin.getKitManager().getKit(kitStr), null));
         }
         return ReturnType.SUCCESS;
     }
@@ -53,7 +54,7 @@ public class CommandEdit extends AbstractCommand {
     protected List<String> onTab(CommandSender sender, String... args) {
         List<String> tab = new ArrayList<>();
         if (args.length == 1) {
-            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits())
+            for (Kit kit : plugin.getKitManager().getKits())
                 tab.add(kit.getKey());
             return tab;
         }

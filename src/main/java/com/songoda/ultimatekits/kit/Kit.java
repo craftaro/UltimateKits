@@ -20,7 +20,6 @@ import com.songoda.ultimatekits.gui.PreviewKitGui;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
-import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.ArmorType;
 import com.songoda.ultimatekits.utils.Methods;
@@ -31,14 +30,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by songoda on 2/24/2017.
  */
 public class Kit {
 
-    private final String key, name;
+    private final String key;
+    private final String name;
     private Category category = null;
 
     private static UltimateKits plugin;
@@ -293,10 +297,11 @@ public class Kit {
         int kitSize = innerContents.size();
 
         // Amount of items from the kit to give to the player.
-        if (kitAnimation == KitAnimation.ROULETTE) itemAmount = 1; //TODO how about kitAmount > 1? generateRandomItem() will only give 1 random item instead of kitAmount
+        if (kitAnimation == KitAnimation.ROULETTE)
+            itemAmount = 1; //TODO how about kitAmount > 1? generateRandomItem() will only give 1 random item instead of kitAmount
         int itemGiveAmount = itemAmount > 0 ? itemAmount : kitSize;
         if (kitAmount > 0) itemGiveAmount = itemGiveAmount * kitAmount;
-        
+
         if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemGiveAmount)) {
             plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
             return false;

@@ -15,6 +15,7 @@ public class CrateManager {
     public boolean addCrate(Crate crate) {
         return crate != null && registeredCrates.add(crate);
     }
+
     public Crate getCrate(String name) {
         for (Crate crate : registeredCrates)
             if (crate.getName().equalsIgnoreCase(name))

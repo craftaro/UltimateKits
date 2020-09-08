@@ -85,7 +85,7 @@ public class KitGeneralOptionsGui extends Gui {
                     } else if (event.clickType == ClickType.RIGHT) {
                         kit.setCategory(null);
                         updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.categorylore")
-                                        .processPlaceholder("category", kit.getCategory() == null ? "none" : kit.getCategory().getName()).getMessage().split("\\|"));
+                                .processPlaceholder("category", kit.getCategory() == null ? "none" : kit.getCategory().getName()).getMessage().split("\\|"));
                     }
                 });
 

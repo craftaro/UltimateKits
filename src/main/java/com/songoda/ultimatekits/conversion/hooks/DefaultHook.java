@@ -29,7 +29,7 @@ public class DefaultHook implements Hook {
         for (Kits kit : Kits.values()) {
             if (kit == Kits.BRIANNA_1_12 && ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)
                     || kit == Kits.BRIANNA_1_13 && !ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) continue;
-                kits.add(kit.name().toLowerCase().replace("_1_12", "").replace("_1_13", ""));
+            kits.add(kit.name().toLowerCase().replace("_1_12", "").replace("_1_13", ""));
         }
 
         return kits;

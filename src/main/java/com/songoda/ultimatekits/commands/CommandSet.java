@@ -13,28 +13,29 @@ import java.util.List;
 
 public class CommandSet extends AbstractCommand {
 
-    final UltimateKits instance = UltimateKits.getInstance();
+    private final UltimateKits plugin;
 
-    public CommandSet() {
-        super(true, "set");
+    public CommandSet(UltimateKits plugin) {
+        super(CommandType.PLAYER_ONLY, "set");
+        this.plugin = plugin;
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (args.length != 1) {
-            instance.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(sender);
+            plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         Player player = (Player) sender;
-        Kit kit = instance.getKitManager().getKit(args[0].toLowerCase());
+        Kit kit = plugin.getKitManager().getKit(args[0].toLowerCase());
         if (kit == null) {
-            instance.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
+            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         Block b = player.getTargetBlock(null, 200);
-        KitBlockData data = instance.getKitManager().addKitToLocation(kit, b.getLocation());
+        KitBlockData data = plugin.getKitManager().addKitToLocation(kit, b.getLocation());
         UltimateKits.getInstance().getDataManager().createBlockData(data);
-        instance.getLocale().newMessage("&8Kit &a" + kit.getKey() + " &8set to: &a" + b.getType().toString() + "&8.")
+        plugin.getLocale().newMessage("&8Kit &a" + kit.getKey() + " &8set to: &a" + b.getType().toString() + "&8.")
                 .sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
 

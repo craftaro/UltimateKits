@@ -9,10 +9,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerListeners implements Listener {
 
-    private final UltimateKits instance;
+    private final UltimateKits plugin;
 
     public PlayerListeners() {
-        instance = UltimateKits.getInstance();
+        plugin = UltimateKits.getInstance();
     }
 
     @EventHandler
@@ -21,10 +21,10 @@ public class PlayerListeners implements Listener {
 
         if (player.hasPlayedBefore()) return;
 
-        if (instance.getKitManager().getKit(Settings.STARTER_KIT.getString()) == null
+        if (plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()) == null
                 || Settings.STARTER_KIT.getString() == null
                 || Settings.STARTER_KIT.getString().equalsIgnoreCase("none")) return;
 
-        instance.getKitManager().getKit(Settings.STARTER_KIT.getString()).giveKit(player);
+        plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()).giveKit(player);
     }
 }

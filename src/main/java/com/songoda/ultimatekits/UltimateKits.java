@@ -26,8 +26,18 @@ import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
-import com.songoda.ultimatekits.kit.*;
-import com.songoda.ultimatekits.listeners.*;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitAnimation;
+import com.songoda.ultimatekits.kit.KitBlockData;
+import com.songoda.ultimatekits.kit.KitItem;
+import com.songoda.ultimatekits.kit.KitManager;
+import com.songoda.ultimatekits.kit.KitType;
+import com.songoda.ultimatekits.listeners.BlockListeners;
+import com.songoda.ultimatekits.listeners.ChatListeners;
+import com.songoda.ultimatekits.listeners.ChunkListeners;
+import com.songoda.ultimatekits.listeners.EntityListeners;
+import com.songoda.ultimatekits.listeners.InteractListeners;
+import com.songoda.ultimatekits.listeners.PlayerListeners;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.ItemSerializer;
 import com.songoda.ultimatekits.utils.Methods;
@@ -38,7 +48,11 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class UltimateKits extends SongodaPlugin {
@@ -121,23 +135,22 @@ public class UltimateKits extends SongodaPlugin {
         crateFile.load();
         checkKeyDefaults();
         checkCrateDefaults();
-        loadKits();
         keyFile.saveChanges();
         crateFile.saveChanges();
 
         // setup commands
         this.commandManager = new CommandManager(this);
-        this.commandManager.addCommand(new CommandKit(guiManager));
-        this.commandManager.addCommand(new CommandPreviewKit(guiManager));
+        this.commandManager.addCommand(new CommandKit(this, guiManager));
+        this.commandManager.addCommand(new CommandPreviewKit(this, guiManager));
         this.commandManager.addMainCommand("KitAdmin")
-                .addSubCommand(new CommandReload())
-                .addSubCommand(new CommandSettings(guiManager))
-                .addSubCommand(new CommandCreatekit(guiManager))
-                .addSubCommand(new CommandCategories(guiManager))
-                .addSubCommand(new CommandEdit(guiManager))
-                .addSubCommand(new CommandKey())
-                .addSubCommand(new CommandSet())
-                .addSubCommand(new CommandRemove())
+                .addSubCommand(new CommandReload(this))
+                .addSubCommand(new CommandSettings(this, guiManager))
+                .addSubCommand(new CommandCreatekit(this, guiManager))
+                .addSubCommand(new CommandCategories(this, guiManager))
+                .addSubCommand(new CommandEdit(this, guiManager))
+                .addSubCommand(new CommandKey(this))
+                .addSubCommand(new CommandSet(this))
+                .addSubCommand(new CommandRemove(this))
 
                 .addSubCommand(new CommandCrate());
 
@@ -147,7 +160,7 @@ public class UltimateKits extends SongodaPlugin {
         guiManager.init();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new ChunkListeners(this), this);
-        pluginManager.registerEvents(new ChatListeners(this), this);
+        pluginManager.registerEvents(new ChatListeners(), this);
         pluginManager.registerEvents(new EntityListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this, guiManager), this);
         pluginManager.registerEvents(new PlayerListeners(), this);
@@ -186,6 +199,118 @@ public class UltimateKits extends SongodaPlugin {
     }
 
     @Override
+    public void onDataLoad() {
+        //Empty categories from manager.
+        categoryManager.clearCategories();
+
+        /*
+         * Register categories into CategoryManager from Configuration.
+         */
+        if (categoryConfig.getConfigurationSection("Categories") != null)
+            for (String key : categoryConfig.getConfigurationSection("Categories").getKeys(false)) {
+                ConfigurationSection section = categoryConfig.getConfigurationSection("Categories." + key);
+                if (section == null) continue;
+
+                Category category = categoryManager.addCategory(key, section.getString("name"));
+                if (section.contains("material"))
+                    category.setMaterial(CompatibleMaterial.getMaterial(section.getString("material")).getMaterial());
+            }
+
+        //Empty kits from manager.
+        kitManager.clearKits();
+
+        /*
+         * Register kits into KitManager from Configuration.
+         */
+        if (kitConfig.getConfigurationSection("Kits") != null)
+            for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
+                ConfigurationSection section = kitConfig.getConfigurationSection("Kits." + kitName);
+                if (section == null) continue;
+
+                kitManager.addKit(new Kit(kitName)
+                        .setTitle(section.getString("title"))
+                        .setDelay(section.getLong("delay"))
+                        .setLink(section.getString("link"))
+                        .setDisplayItem(section.contains("displayItem")
+                                ? CompatibleMaterial.getMaterial(section.getString("displayItem"), CompatibleMaterial.DIAMOND_HELMET)
+                                : null)
+                        .setCategory(categoryManager.getCategory(section.getString("category")))
+                        .setHidden(section.getBoolean("hidden"))
+                        .setPrice(section.getDouble("price"))
+                        .setContents(section.getStringList("items").stream().map(KitItem::new).collect(Collectors.toList()))
+                        .setKitAnimation(KitAnimation.valueOf(section.getString("animation", KitAnimation.NONE.name())))
+                );
+            }
+
+        /*
+         * Register legacy kit locations into KitManager from Configuration.
+         */
+        if (dataFile.contains("BlockData")) {
+            for (String key : dataFile.getConfigurationSection("BlockData").getKeys(false)) {
+                Location location = Methods.unserializeLocation(key);
+                Kit kit = kitManager.getKit(dataFile.getString("BlockData." + key + ".kit"));
+                KitType type = KitType.valueOf(dataFile.getString("BlockData." + key + ".type", "PREVIEW"));
+                boolean holograms = dataFile.getBoolean("BlockData." + key + ".holograms");
+                boolean displayItems = dataFile.getBoolean("BlockData." + key + ".displayItems");
+                boolean particles = dataFile.getBoolean("BlockData." + key + ".particles");
+                boolean itemOverride = dataFile.getBoolean("BlockData." + key + ".itemOverride");
+
+                if (kit == null) dataFile.set("BlockData." + key, null);
+                else {
+                    updateHologram(kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride));
+                }
+            }
+        }
+
+        /*
+         * Register kit locations into KitManager from Configuration.
+         */
+        Bukkit.getScheduler().runTaskLater(this, () ->
+                this.dataManager.getBlockData((blockData) -> {
+                    this.kitManager.setKitLocations(blockData);
+                    if (HologramManager.isEnabled()) {
+                        loadHolograms();
+                    }
+                }), 20L);
+
+        //Apply default keys.
+        checkKeyDefaults();
+        checkCrateDefaults();
+
+        //Empty keys from manager.
+        keyManager.clear();
+        crateManager.clear();
+
+        /*
+         * Register keys into KitManager from Configuration.
+         */
+        if (keyFile.contains("Keys")) {
+            for (String keyName : keyFile.getConfigurationSection("Keys").getKeys(false)) {
+                int amt = keyFile.getInt("Keys." + keyName + ".Item Amount");
+                int kitAmount = keyFile.getInt("Keys." + keyName + ".Amount of kit received");
+                boolean enchanted = keyFile.getBoolean("Keys." + keyName + ".Enchanted");
+
+                Key key = new Key(keyName, amt, kitAmount, enchanted);
+                keyManager.addKey(key);
+            }
+        }
+
+        /*
+         * Register Crates
+         * */
+        if (crateFile.contains("Crates")) {
+            for (String crateName : crateFile.getConfigurationSection("Crates").getKeys(false)) {
+                int amt = crateFile.getInt("Crates." + crateName + ".Item Amount");
+                int kitAmount = crateFile.getInt("Crates." + crateName + ".Amount of kit received");
+
+                Crate crate = new Crate(crateName, amt, kitAmount);
+                crateManager.addCrate(crate);
+            }
+        }
+        this.loaded = true;
+    }
+
+    @Override
     public void onPluginDisable() {
         saveKits(false);
         dataFile.save();
@@ -208,122 +333,7 @@ public class UltimateKits extends SongodaPlugin {
         categoryConfig.load();
         keyFile.load();
         crateFile.load();
-        loadKits();
-    }
-
-    void loadKits() {
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-
-            //Empty categories from manager.
-            categoryManager.clearCategories();
-
-            /*
-             * Register categories into CategoryManager from Configuration.
-             */
-            if (categoryConfig.getConfigurationSection("Categories") != null)
-                for (String key : categoryConfig.getConfigurationSection("Categories").getKeys(false)) {
-                    ConfigurationSection section = categoryConfig.getConfigurationSection("Categories." + key);
-                    if (section == null) continue;
-
-                    Category category = categoryManager.addCategory(key, section.getString("name"));
-                    if (section.contains("material"))
-                        category.setMaterial(CompatibleMaterial.getMaterial(section.getString("material")).getMaterial());
-                }
-
-            //Empty kits from manager.
-            kitManager.clearKits();
-
-            /*
-             * Register kits into KitManager from Configuration.
-             */
-            if (kitConfig.getConfigurationSection("Kits") != null)
-                for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
-                    ConfigurationSection section = kitConfig.getConfigurationSection("Kits." + kitName);
-                    if (section == null) continue;
-
-                    kitManager.addKit(new Kit(kitName)
-                            .setTitle(section.getString("title"))
-                            .setDelay(section.getLong("delay"))
-                            .setLink(section.getString("link"))
-                            .setDisplayItem(section.contains("displayItem")
-                                    ? CompatibleMaterial.getMaterial(section.getString("displayItem"), CompatibleMaterial.DIAMOND_HELMET)
-                                    : null)
-                            .setCategory(categoryManager.getCategory(section.getString("category")))
-                            .setHidden(section.getBoolean("hidden"))
-                            .setPrice(section.getDouble("price"))
-                            .setContents(section.getStringList("items").stream().map(KitItem::new).collect(Collectors.toList()))
-                            .setKitAnimation(KitAnimation.valueOf(section.getString("animation", KitAnimation.NONE.name())))
-                    );
-                }
-
-            /*
-             * Register legacy kit locations into KitManager from Configuration.
-             */
-            if (dataFile.contains("BlockData")) {
-                for (String key : dataFile.getConfigurationSection("BlockData").getKeys(false)) {
-                    Location location = Methods.unserializeLocation(key);
-                    Kit kit = kitManager.getKit(dataFile.getString("BlockData." + key + ".kit"));
-                    KitType type = KitType.valueOf(dataFile.getString("BlockData." + key + ".type", "PREVIEW"));
-                    boolean holograms = dataFile.getBoolean("BlockData." + key + ".holograms");
-                    boolean displayItems = dataFile.getBoolean("BlockData." + key + ".displayItems");
-                    boolean particles = dataFile.getBoolean("BlockData." + key + ".particles");
-                    boolean itemOverride = dataFile.getBoolean("BlockData." + key + ".itemOverride");
-
-                    if (kit == null) dataFile.set("BlockData." + key, null);
-                    else {
-                        updateHologram(kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride));
-                    }
-                }
-            }
-
-            /*
-             * Register kit locations into KitManager from Configuration.
-             */
-            Bukkit.getScheduler().runTaskLater(this, () ->
-                    this.dataManager.getBlockData((blockData) -> {
-                        this.kitManager.setKitLocations(blockData);
-                        if (HologramManager.isEnabled()) {
-                            loadHolograms();
-                        }
-                    }), 20L);
-
-            //Apply default keys.
-            checkKeyDefaults();
-            checkCrateDefaults();
-
-            //Empty keys from manager.
-            keyManager.clear();
-            crateManager.clear();
-
-            /*
-             * Register keys into KitManager from Configuration.
-             */
-            if (keyFile.contains("Keys")) {
-                for (String keyName : keyFile.getConfigurationSection("Keys").getKeys(false)) {
-                    int amt = keyFile.getInt("Keys." + keyName + ".Item Amount");
-                    int kitAmount = keyFile.getInt("Keys." + keyName + ".Amount of kit received");
-                    boolean enchanted = keyFile.getBoolean("Keys." + keyName + ".Enchanted");
-
-                    Key key = new Key(keyName, amt, kitAmount, enchanted);
-                    keyManager.addKey(key);
-                }
-            }
-
-            /*
-             * Register Crates
-             * */
-            if (crateFile.contains("Crates")) {
-                for (String crateName : crateFile.getConfigurationSection("Crates").getKeys(false)) {
-                    int amt = crateFile.getInt("Crates." + crateName + ".Item Amount");
-                    int kitAmount = crateFile.getInt("Crates." + crateName + ".Amount of kit received");
-
-                    Crate crate = new Crate(crateName, amt, kitAmount);
-                    crateManager.addCrate(crate);
-                }
-            }
-            this.loaded = true;
-
-        }, 10);
+        onDataLoad();
     }
 
     public void removeHologram(KitBlockData data) {

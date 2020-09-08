@@ -25,16 +25,16 @@ import java.util.stream.Collectors;
 
 public class KitSelectorGui extends Gui {
 
-    private Player player;
-    private UltimateKits plugin;
+    private final Player player;
+    private final UltimateKits plugin;
 
     private int timer;
-    private Category category;
+    private final Category category;
     private List<String> kitList;
     private boolean kitsmode = false;
 
-    private boolean glassless;
-    private int showPerRow, showPerPage;
+    private final boolean glassless;
+    private final int showPerPage;
 
     public KitSelectorGui(UltimateKits plugin, Player player, Category category) {
         this.player = player;
@@ -44,7 +44,7 @@ public class KitSelectorGui extends Gui {
 
         setTitle(plugin.getLocale().getMessage("interface.selector.title").getMessage());
         loadKits();
-        showPerRow = glassless ? 9 : 7;
+        int showPerRow = glassless ? 9 : 7;
         int nrows = (int) Math.ceil(kitList.size() / (double) showPerRow);
         setRows(glassless ? nrows : nrows + 2);
         showPerPage = showPerRow * (glassless ? (nrows == 6 ? 6 : 5) : 4);
@@ -110,7 +110,7 @@ public class KitSelectorGui extends Gui {
                 .collect(Collectors.toList());
     }
 
-    static final Random rand = new Random();
+    private static final Random rand = new Random();
 
     private void animateGlass() {
         for (int col = 1; col < 8; ++col) {
@@ -144,7 +144,7 @@ public class KitSelectorGui extends Gui {
                         .processPlaceholder("kit", TextUtils.formatText(kitItem, true)).getMessage();
 
                 setButton(row, col, GuiUtils.createButtonItem(
-                        kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.ENCHANTED_BOOK,kitTitle,
+                        kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.ENCHANTED_BOOK, kitTitle,
                         getKitLore(kit)),
                         event -> {
                             if (event.clickType == ClickType.MIDDLE && player.hasPermission("ultimatekits.admin")) {

@@ -9,16 +9,17 @@ import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitItem;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.ArmorType;
+import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import org.apache.commons.lang.WordUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class AnimatedKitGui extends Gui {
 
@@ -32,8 +33,6 @@ public class AnimatedKitGui extends Gui {
     private boolean done = false;
     private int tick = 0, updateTick = 0;
     private int ticksPerUpdate = 3;
-    private final int updatesPerSlow = 6;
-    private final int ticksPerUpdateSlow = 10;
     private int task;
 
     public AnimatedKitGui(UltimateKits plugin, Player player, Kit kit, ItemStack give) {
@@ -48,7 +47,7 @@ public class AnimatedKitGui extends Gui {
         // ideally, we'd populate the items in such a way that the end item isn't far from the center when the animation is complete
         // would be something to do if people have large kit loot tables.
         List<KitItem> kitItems = kit.getContents();
-        if(kitItems.isEmpty()) {
+        if (kitItems.isEmpty()) {
             throw new RuntimeException("Cannot give an empty kit!");
         }
         Collections.shuffle(kitItems);
@@ -56,7 +55,7 @@ public class AnimatedKitGui extends Gui {
         while (this.items.size() < 10) {
             items.addAll(kitItems);
         }
-        
+
         setItem(4, GuiUtils.getBorderItem(CompatibleMaterial.TRIPWIRE_HOOK));
         setItem(22, GuiUtils.getBorderItem(CompatibleMaterial.TRIPWIRE_HOOK));
         tick();
@@ -65,13 +64,15 @@ public class AnimatedKitGui extends Gui {
         });
     }
 
-    void tick() {
+    private void tick() {
         if (++tick < ticksPerUpdate) {
             return;
         }
         tick = 0;
+        int updatesPerSlow = 6;
         if (++updateTick >= updatesPerSlow) {
             updateTick = 0;
+            int ticksPerUpdateSlow = 10;
             if (++ticksPerUpdate >= ticksPerUpdateSlow) {
                 finish = true;
             }
@@ -79,7 +80,7 @@ public class AnimatedKitGui extends Gui {
         // now update the display
         // rainbow disco!
         for (int col = 0; col < 9; ++col) {
-            if(col == 4) continue;
+            if (col == 4) continue;
             setItem(0, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
             setItem(2, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneColor(rand.nextInt(16))));
         }
@@ -90,7 +91,7 @@ public class AnimatedKitGui extends Gui {
             items.addFirst(items.getLast());
             items.removeLast();
             Iterator<KitItem> itemIter = items.iterator();
-                for (int i = 9; i < 18; i++) {
+            for (int i = 9; i < 18; i++) {
                 setItem(0, i, itemIter.next().getItem());
             }
         }
@@ -99,7 +100,7 @@ public class AnimatedKitGui extends Gui {
         if (finish) {
             ItemStack item = getItem(13);
             KitItem kitItem = items.stream().filter(i -> i.getItem().isSimilar(item)).findFirst().orElse(null);
-            if(item == null) {
+            if (item == null) {
                 done = true; // idk.
             } else if (item.isSimilar(give)) {
                 if (!done) {
@@ -127,6 +128,7 @@ public class AnimatedKitGui extends Gui {
         }
 
     }
+
     private void finish() {
         Bukkit.getScheduler().cancelTask(task);
         exit();

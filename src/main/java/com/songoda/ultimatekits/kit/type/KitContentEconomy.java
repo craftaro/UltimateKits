@@ -3,13 +3,13 @@ package com.songoda.ultimatekits.kit.type;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.utils.Methods;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import org.bukkit.ChatColor;
 
 public class KitContentEconomy implements KitContent {
 

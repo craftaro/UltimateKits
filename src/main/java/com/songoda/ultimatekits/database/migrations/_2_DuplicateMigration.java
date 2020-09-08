@@ -1,6 +1,7 @@
 package com.songoda.ultimatekits.database.migrations;
 
 import com.songoda.core.database.DataMigration;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 public class _2_DuplicateMigration extends DataMigration {
 
     final boolean sqlite;
+
     public _2_DuplicateMigration(boolean sqlite) {
         super(2);
         this.sqlite = sqlite;
@@ -19,7 +21,7 @@ public class _2_DuplicateMigration extends DataMigration {
     @Override
     public void migrate(Connection connection, String tablePrefix) throws SQLException {
         // Fix duplicate data caused by old sqlite data duplication bug
-        if(sqlite) {
+        if (sqlite) {
             HashMap<String, TempKitData> data = new HashMap();
             // grab a copy of the unique data values
             try (Statement statement = connection.createStatement()) {
@@ -30,7 +32,7 @@ public class _2_DuplicateMigration extends DataMigration {
                     int y = allData.getInt("y");
                     int z = allData.getInt("z");
                     String key = world + ";" + x + ";" + y + ";" + z + ";";
-                    if(!data.containsKey(key)) {
+                    if (!data.containsKey(key)) {
                         data.put(key, new TempKitData(
                                 allData.getString("type"),
                                 allData.getString("kit"),
@@ -44,7 +46,7 @@ public class _2_DuplicateMigration extends DataMigration {
                 }
                 allData.close();
             }
-            if(data.isEmpty()) return;
+            if (data.isEmpty()) return;
             connection.setAutoCommit(false);
             // first delete old data
             try (Statement statement = connection.createStatement()) {
@@ -54,7 +56,7 @@ public class _2_DuplicateMigration extends DataMigration {
             try (PreparedStatement statement = connection.prepareStatement("INSERT INTO " + tablePrefix + "blockdata (" +
                     "type, kit, holograms, displayItems, particles, itemOverride, world, x, y, z)" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
-                for(TempKitData blockData : data.values()) {
+                for (TempKitData blockData : data.values()) {
                     statement.setString(1, blockData.type);
                     statement.setString(2, blockData.kit);
                     statement.setBoolean(3, blockData.holograms);
@@ -77,7 +79,7 @@ public class _2_DuplicateMigration extends DataMigration {
             }
         }
     }
-    
+
     static class TempKitData {
         final String type, kit, world;
         final int x, y, z;

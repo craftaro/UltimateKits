@@ -1,11 +1,16 @@
 package com.songoda.ultimatekits.utils;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiUtils;
-import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.settings.Settings;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,12 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by songoda on 2/24/2017.

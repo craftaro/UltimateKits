@@ -14,6 +14,7 @@ import java.util.List;
 public class CommandRemove extends AbstractCommand {
 
     final UltimateKits instance = UltimateKits.getInstance();
+
     public CommandRemove() {
         super(true, "remove");
     }

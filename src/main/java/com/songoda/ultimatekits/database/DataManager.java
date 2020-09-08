@@ -75,7 +75,7 @@ public class DataManager extends DataManagerAbstract {
     public void createBlockData(KitBlockData blockData) {
         if (blockData.getWorld() == null) return;
         this.async(() -> this.databaseConnector.connect(connection -> {
-            String createData ="INSERT INTO " + this.getTablePrefix() + "blockdata (" +
+            String createData = "INSERT INTO " + this.getTablePrefix() + "blockdata (" +
                     "type, kit, holograms, displayItems, particles, itemOverride, world, x, y, z)" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createData)) {

@@ -4,12 +4,9 @@ import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.gui.CategoryEditorGui;
-import com.songoda.ultimatekits.gui.KitEditorGui;
-import com.songoda.ultimatekits.kit.Kit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class CommandCategories extends AbstractCommand {
@@ -24,7 +21,7 @@ public class CommandCategories extends AbstractCommand {
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        guiManager.showGUI((Player)sender, new CategoryEditorGui(plugin, (Player)sender));
+        guiManager.showGUI((Player) sender, new CategoryEditorGui(plugin, (Player) sender));
         return ReturnType.SUCCESS;
     }
 

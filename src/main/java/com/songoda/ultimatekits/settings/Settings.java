@@ -51,7 +51,7 @@ public class Settings {
 
     public static final ConfigSetting PARTICLE_AMOUNT = new ConfigSetting(config, "data.particlesettings.amount", 25);
     public static final ConfigSetting PARTICLE_TYPE = new ConfigSetting(config, "data.particlesettings.type", "SPELL_WITCH");
-    
+
     /**
      * In order to set dynamic economy comment correctly, this needs to be
      * called after EconomyManager load
@@ -59,7 +59,7 @@ public class Settings {
     public static void setupConfig() {
         config
                 .setDefaultComment("Main", "General settings and options.")
-                .setDefaultComment("Interfaces", 
+                .setDefaultComment("Interfaces",
                         "These settings allow you to alter the way interfaces look.",
                         "They are used in GUI's to make patterns, change them up then open up a",
                         "# GUI to see how it works.")

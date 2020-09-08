@@ -5,12 +5,8 @@ import com.Zrips.CMI.Modules.Kits.Kit;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.conversion.Hook;
 import com.songoda.ultimatekits.kit.type.KitContentCommand;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 

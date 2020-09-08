@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CommandKey extends AbstractCommand {
-    
+
     final UltimateKits instance = UltimateKits.getInstance();
 
     public CommandKey() {

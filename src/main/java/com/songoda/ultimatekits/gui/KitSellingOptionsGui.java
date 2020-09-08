@@ -51,9 +51,9 @@ public class KitSellingOptionsGui extends Gui {
         setButton(1, 2, GuiUtils.createButtonItem(CompatibleMaterial.BARRIER,
                 plugin.getLocale().getMessage("interface.kitsell.nosell").getMessage(),
                 plugin.getLocale().getMessage("interface.kitsell.noselllore")
-                .processPlaceholder("onoff", plugin.getLocale().getMessage(
+                        .processPlaceholder("onoff", plugin.getLocale().getMessage(
                                 kit.getPrice() != 0 || kit.getLink() != null ? "interface.kitsell.nosellon" : "interface.kitsell.noselloff").getMessage()
-                ).getMessage().split("\\|")),
+                        ).getMessage().split("\\|")),
                 event -> {
                     kit.setPrice(0);
                     kit.setLink(null);
@@ -64,10 +64,10 @@ public class KitSellingOptionsGui extends Gui {
         setButton(1, 4, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
                 plugin.getLocale().getMessage("interface.kitsell.link").getMessage(),
                 plugin.getLocale().getMessage("interface.kitsell.linklore")
-                .processPlaceholder("onoff",
-                        kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitsell.linkon").processPlaceholder("kit", kit.getLink()).getMessage()
-                                : plugin.getLocale().getMessage("interface.kitsell.linkoff").getMessage()
-                ).getMessage().split("\\|")),
+                        .processPlaceholder("onoff",
+                                kit.getLink() != null ? plugin.getLocale().getMessage("interface.kitsell.linkon").processPlaceholder("kit", kit.getLink()).getMessage()
+                                        : plugin.getLocale().getMessage("interface.kitsell.linkoff").getMessage()
+                        ).getMessage().split("\\|")),
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitsell.linkprompt").getMessage());
@@ -89,11 +89,11 @@ public class KitSellingOptionsGui extends Gui {
         setButton(1, 6, GuiUtils.createButtonItem(CompatibleMaterial.SUNFLOWER,
                 plugin.getLocale().getMessage("interface.kitsell.price").getMessage(),
                 plugin.getLocale().getMessage("interface.kitsell.pricelore")
-                .processPlaceholder("onoff",
-                        kit.getPrice() != 0 ? plugin.getLocale().getMessage("interface.kitsell.priceon")
-                                .processPlaceholder("price", kit.getPrice()).getMessage()
-                                : plugin.getLocale().getMessage("interface.kitsell.priceoff").getMessage()
-                ).getMessage().split("\\|")),
+                        .processPlaceholder("onoff",
+                                kit.getPrice() != 0 ? plugin.getLocale().getMessage("interface.kitsell.priceon")
+                                        .processPlaceholder("price", kit.getPrice()).getMessage()
+                                        : plugin.getLocale().getMessage("interface.kitsell.priceoff").getMessage()
+                        ).getMessage().split("\\|")),
                 event -> {
                     if (!EconomyManager.isEnabled()) {
                         plugin.getLocale().getMessage("interface.kitsell.pricenoeco").sendPrefixedMessage(event.player);
@@ -104,10 +104,10 @@ public class KitSellingOptionsGui extends Gui {
                     gui.setAction(aevent -> {
                         final String msg = gui.getInputText().trim();
                         double d = 0;
-                            try {
-                                d = Double.parseDouble(msg);
-                            } catch (NumberFormatException e) {
-                            }
+                        try {
+                            d = Double.parseDouble(msg);
+                        } catch (NumberFormatException e) {
+                        }
                         if (d <= 0) {
                             plugin.getLocale().getMessage("interface.kitsell.pricenonumber").processPlaceholder("input", msg).sendPrefixedMessage(player);
                         } else {

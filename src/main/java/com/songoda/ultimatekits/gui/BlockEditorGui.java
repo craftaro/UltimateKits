@@ -10,6 +10,7 @@ import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.ClickType;
+
 import java.util.Arrays;
 import java.util.List;
 

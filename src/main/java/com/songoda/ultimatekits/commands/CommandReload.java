@@ -10,6 +10,7 @@ import java.util.List;
 public class CommandReload extends AbstractCommand {
 
     final UltimateKits instance = UltimateKits.getInstance();
+
     public CommandReload() {
         super(false, "reload");
     }

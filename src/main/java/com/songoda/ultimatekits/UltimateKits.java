@@ -26,8 +26,18 @@ import com.songoda.ultimatekits.handlers.DisplayItemHandler;
 import com.songoda.ultimatekits.handlers.ParticleHandler;
 import com.songoda.ultimatekits.key.Key;
 import com.songoda.ultimatekits.key.KeyManager;
-import com.songoda.ultimatekits.kit.*;
-import com.songoda.ultimatekits.listeners.*;
+import com.songoda.ultimatekits.kit.Kit;
+import com.songoda.ultimatekits.kit.KitAnimation;
+import com.songoda.ultimatekits.kit.KitBlockData;
+import com.songoda.ultimatekits.kit.KitItem;
+import com.songoda.ultimatekits.kit.KitManager;
+import com.songoda.ultimatekits.kit.KitType;
+import com.songoda.ultimatekits.listeners.BlockListeners;
+import com.songoda.ultimatekits.listeners.ChatListeners;
+import com.songoda.ultimatekits.listeners.ChunkListeners;
+import com.songoda.ultimatekits.listeners.EntityListeners;
+import com.songoda.ultimatekits.listeners.InteractListeners;
+import com.songoda.ultimatekits.listeners.PlayerListeners;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.ItemSerializer;
 import com.songoda.ultimatekits.utils.Methods;
@@ -38,7 +48,11 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class UltimateKits extends SongodaPlugin {

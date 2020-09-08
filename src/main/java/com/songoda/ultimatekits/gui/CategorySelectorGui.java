@@ -13,7 +13,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Random;
+import java.util.Set;
 
 public class CategorySelectorGui extends Gui {
 

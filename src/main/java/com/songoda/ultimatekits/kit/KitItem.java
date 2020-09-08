@@ -9,13 +9,15 @@ import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.settings.Settings;
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class KitItem {
 
@@ -106,6 +108,7 @@ public class KitItem {
             nbtItem.set("display-lore", displayLore);
         return nbtItem.finish();
     }
+
     private String compileOptionsText() {
         String line = "";
         if (chance != 0)

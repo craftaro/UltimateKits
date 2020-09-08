@@ -10,6 +10,7 @@ import com.songoda.ultimatekits.kit.KitBlockData;
 import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.event.inventory.ClickType;
+
 import java.util.Random;
 
 public class KitDecorOptionsGui extends Gui {
@@ -77,8 +78,8 @@ public class KitDecorOptionsGui extends Gui {
         setButton(1, 7, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
                 plugin.getLocale().getMessage("interface.kitdecor.displayone").getMessage(),
                 plugin.getLocale().getMessage("interface.kitdecor.displayonelore")
-                .processPlaceholder("enabled", kitBlockData.isItemOverride() ? enableLore : disableLore)
-                .getMessage().split("\\|")),
+                        .processPlaceholder("enabled", kitBlockData.isItemOverride() ? enableLore : disableLore)
+                        .getMessage().split("\\|")),
                 event -> {
                     kitBlockData.setItemOverride(!kitBlockData.isItemOverride());
                     updateItemLore(event.slot, kitBlockData.isItemOverride() ? enableLore : disableLore);

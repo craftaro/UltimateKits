@@ -424,7 +424,7 @@ public class KitEditorGui extends DoubleGui {
         else itemLore = new ArrayList<>();
         itemLore.add(TextUtils.formatText("&8----"));
         itemLore.add(ChatColor.GRAY.toString() + plugin.getLocale().getMessage("general.type.chance").getMessage().replaceFirst("^" + ChatColor.RESET.toString(), "")
-                     + ": " + ChatColor.GOLD.toString() + item.getChance() + "%"); //TODO use a placeholder message in locales
+                + ": " + ChatColor.GOLD.toString() + item.getChance() + "%"); //TODO use a placeholder message in locales
         if (isInFunction) {
             itemLore.addAll(Arrays.asList(plugin.getLocale().getMessage("interface.kiteditor.itemfunctionlore")
                     .processPlaceholder("item", item.getDisplayItem() == null ? "" : item.getDisplayItem().name())

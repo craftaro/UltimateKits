@@ -3,7 +3,12 @@ package com.songoda.ultimatekits.kit;
 import com.songoda.ultimatekits.UltimateKits;
 import org.bukkit.Location;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public final class KitManager {
 

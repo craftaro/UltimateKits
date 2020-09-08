@@ -29,9 +29,9 @@ import java.util.List;
 
 public class KitEditorGui extends DoubleGui {
 
-    private UltimateKits plugin;
-    private Kit kit;
-    private Player player;
+    private final UltimateKits plugin;
+    private final Kit kit;
+    private final Player player;
 
     private boolean isInFunction = false;
     private boolean isInInventory = false;
@@ -408,6 +408,9 @@ public class KitEditorGui extends DoubleGui {
                 guiManager.showGUI(player, gui);
             }
             break;
+            default:
+                paint();
+                break;
         }
     }
 

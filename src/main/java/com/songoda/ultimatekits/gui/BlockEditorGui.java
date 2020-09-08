@@ -74,7 +74,7 @@ public class BlockEditorGui extends Gui {
 
     }
 
-    List<String> kitTypeLore(UltimateKits plugin) {
+    private List<String> kitTypeLore(UltimateKits plugin) {
         String[] type = plugin.getLocale().getMessage("interface.kitblock.switchtypelore").getMessage().split("\\|");
         return Arrays.asList(
                 type[0],

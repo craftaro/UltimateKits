@@ -82,7 +82,7 @@ public class CategorySelectorGui extends Gui {
         }
     }
 
-    static final Random rand = new Random();
+    private static final Random rand = new Random();
 
     private void animateGlass() {
         for (int col = 1; col < 8; ++col) {

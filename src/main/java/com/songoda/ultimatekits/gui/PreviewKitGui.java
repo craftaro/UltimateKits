@@ -24,17 +24,14 @@ public class PreviewKitGui extends Gui {
     private final Kit kit;
     private final Player player;
     private final UltimateKits plugin;
-    private final boolean buyable;
-    private final List<ItemStack> list;
-    private final boolean useGlassBorder = !Settings.DO_NOT_USE_GLASS_BORDERS.getBoolean();
 
     public PreviewKitGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
         super(back);
         this.kit = kit;
         this.player = player;
         this.plugin = plugin;
-        this.list = kit.getReadableContents(player, true, true, false);
-        this.buyable = (kit.getLink() != null || kit.getPrice() != 0);
+        List<ItemStack> list = kit.getReadableContents(player, true, true, false);
+        boolean buyable = (kit.getLink() != null || kit.getPrice() != 0);
 
         setTitle(plugin.getLocale().getMessage("interface.preview.title")
                 .processPlaceholder("kit", kit.getTitle() != null ? TextUtils.formatText(kit.getTitle(), true) : kit.getName()).getMessage());
@@ -58,6 +55,7 @@ public class PreviewKitGui extends Gui {
         }
 
         int min = 0;
+        boolean useGlassBorder = !Settings.DO_NOT_USE_GLASS_BORDERS.getBoolean();
         if (!useGlassBorder) {
             min = 1;
             if (!buyable) {
@@ -139,7 +137,7 @@ public class PreviewKitGui extends Gui {
         }
     }
 
-    ItemStack getKitItem(ItemStack is) {
+    private ItemStack getKitItem(ItemStack is) {
         ItemMeta meta = is.getItemMeta();
         List<String> newLore = new ArrayList<>();
         if (meta != null && meta.hasLore()) {
@@ -152,7 +150,7 @@ public class PreviewKitGui extends Gui {
         return is;
     }
 
-    ItemStack getKitItem(ItemStack is, int amount) {
+    private ItemStack getKitItem(ItemStack is, int amount) {
         ItemStack is2 = is.clone();
         ItemMeta meta = is2.getItemMeta();
         List<String> newLore = new ArrayList<>();
@@ -167,7 +165,7 @@ public class PreviewKitGui extends Gui {
         return is;
     }
 
-    List<String> getBuyLore() {
+    private List<String> getBuyLore() {
         ArrayList<String> lore = new ArrayList<>();
         if (kit.hasPermissionToClaim(player)) {
             lore.add(plugin.getLocale().getMessage("interface.button.clickeco")

@@ -33,8 +33,6 @@ public class AnimatedKitGui extends Gui {
     private boolean done = false;
     private int tick = 0, updateTick = 0;
     private int ticksPerUpdate = 3;
-    private final int updatesPerSlow = 6;
-    private final int ticksPerUpdateSlow = 10;
     private int task;
 
     public AnimatedKitGui(UltimateKits plugin, Player player, Kit kit, ItemStack give) {
@@ -66,13 +64,15 @@ public class AnimatedKitGui extends Gui {
         });
     }
 
-    void tick() {
+    private void tick() {
         if (++tick < ticksPerUpdate) {
             return;
         }
         tick = 0;
+        int updatesPerSlow = 6;
         if (++updateTick >= updatesPerSlow) {
             updateTick = 0;
+            int ticksPerUpdateSlow = 10;
             if (++ticksPerUpdate >= ticksPerUpdateSlow) {
                 finish = true;
             }

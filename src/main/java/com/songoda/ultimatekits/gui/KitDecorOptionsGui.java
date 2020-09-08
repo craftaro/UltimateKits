@@ -15,8 +15,6 @@ import java.util.Random;
 
 public class KitDecorOptionsGui extends Gui {
 
-    static final Random rand = new Random();
-
     public KitDecorOptionsGui(UltimateKits plugin, KitBlockData kitBlockData, Gui parent) {
         super(parent);
         setRows(3);

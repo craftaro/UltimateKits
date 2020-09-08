@@ -53,6 +53,7 @@ public class KitItem {
     }
 
     private void translateTags(ItemStack item) {
+        if (item == null) return;
         NBTItem nbtItem = NmsManager.getNbt().of(item);
         if (nbtItem.has("chance"))
             chance = nbtItem.getNBTObject("chance").asDouble();

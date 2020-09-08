@@ -124,7 +124,8 @@ public class PreviewKitGui extends Gui {
                     setItem(row, col, getKitItem(item));
                 } else {
                     // correct item amounts (up to three slots)
-                    int itAmt = item.getAmount(), slots = 0;
+                    int itAmt = item.getAmount();
+                    int slots = 0;
                     for (; itAmt > 0 && slots < 3 && row <= endRow; ++row) {
                         for (; itAmt > 0 && slots < 3 && col <= endCol; ++col) {
                             setItem(row, col, getKitItem(item, Math.min(64, itAmt)));

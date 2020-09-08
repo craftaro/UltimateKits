@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Methods {
 
-    static final Random rand = new Random();
+    private static final Random rand = new Random();
 
     public static boolean canGiveKit(Player player) {
         if (player.hasPermission("ultimatekits.cangive")) return true;
@@ -82,7 +82,9 @@ public class Methods {
         List<String> args = Arrays.asList(str.split("\\s*:\\s*"));
 
         World world = Bukkit.getWorld(args.get(0));
-        double x = Double.parseDouble(args.get(1)), y = Double.parseDouble(args.get(2)), z = Double.parseDouble(args.get(3));
+        double x = Double.parseDouble(args.get(1));
+        double y = Double.parseDouble(args.get(2));
+        double z = Double.parseDouble(args.get(3));
         Location location = new Location(world, x, y, z, 0, 0);
         serializeCache.put(cacheKey, location.clone());
         return location;

@@ -11,18 +11,18 @@ import org.bukkit.event.world.ChunkLoadEvent;
  */
 public class ChunkListeners implements Listener {
 
-    private final UltimateKits instance;
+    private final UltimateKits plugin;
 
-    public ChunkListeners(UltimateKits instance) {
-        this.instance = instance;
+    public ChunkListeners(UltimateKits plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent event) {
-        instance.getKitManager().getKitLocations().values().stream()
+        plugin.getKitManager().getKitLocations().values().stream()
                 .filter(l -> l.getLocation().getWorld() == event.getWorld()
                         && l.getLocation().getBlockX() >> 4 == event.getChunk().getX()
                         && l.getLocation().getBlockZ() >> 4 == event.getChunk().getZ())
-                .forEach(instance::updateHologram);
+                .forEach(plugin::updateHologram);
     }
 }

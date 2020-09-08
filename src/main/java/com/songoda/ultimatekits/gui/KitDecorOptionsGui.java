@@ -11,8 +11,6 @@ import com.songoda.ultimatekits.settings.Settings;
 import com.songoda.ultimatekits.utils.Methods;
 import org.bukkit.event.inventory.ClickType;
 
-import java.util.Random;
-
 public class KitDecorOptionsGui extends Gui {
 
     public KitDecorOptionsGui(UltimateKits plugin, KitBlockData kitBlockData, Gui parent) {

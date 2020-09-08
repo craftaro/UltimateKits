@@ -160,7 +160,7 @@ public class UltimateKits extends SongodaPlugin {
         guiManager.init();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new ChunkListeners(this), this);
-        pluginManager.registerEvents(new ChatListeners(this), this);
+        pluginManager.registerEvents(new ChatListeners(), this);
         pluginManager.registerEvents(new EntityListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this, guiManager), this);
         pluginManager.registerEvents(new PlayerListeners(), this);

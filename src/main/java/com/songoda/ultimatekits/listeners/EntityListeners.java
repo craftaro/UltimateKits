@@ -13,18 +13,18 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
 public class EntityListeners implements Listener {
 
-    private final UltimateKits instance;
+    private final UltimateKits plugin;
 
-    public EntityListeners(UltimateKits instance) {
-        this.instance = instance;
+    public EntityListeners(UltimateKits plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerEntityInteract(EntityDamageEvent event) {
-        if (event.getEntity().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.hologramHandler") == null) {
+        if (event.getEntity().getType() != EntityType.ARMOR_STAND || plugin.getConfig().getString("data.hologramHandler") == null) {
             return;
         }
-        ConfigurationSection section = instance.getConfig().getConfigurationSection("data.hologramHandler");
+        ConfigurationSection section = plugin.getConfig().getConfigurationSection("data.hologramHandler");
         for (String loc : section.getKeys(false)) {
             String str[] = loc.split(":");
             World world = Bukkit.getServer().getWorld(str[1].substring(0, str[1].length() - 1));
@@ -38,10 +38,10 @@ public class EntityListeners implements Listener {
 
     @EventHandler
     public void onPlayerEntityInteract(PlayerInteractAtEntityEvent event) {
-        if (event.getRightClicked().getType() != EntityType.ARMOR_STAND || instance.getConfig().getString("data.hologramHandler") == null) {
+        if (event.getRightClicked().getType() != EntityType.ARMOR_STAND || plugin.getConfig().getString("data.hologramHandler") == null) {
             return;
         }
-        ConfigurationSection section = instance.getConfig().getConfigurationSection("data.hologramHandler");
+        ConfigurationSection section = plugin.getConfig().getConfigurationSection("data.hologramHandler");
         for (String loc : section.getKeys(false)) {
             String str[] = loc.split(":");
             World w = Bukkit.getServer().getWorld(str[1].substring(0, str[1].length() - 1));

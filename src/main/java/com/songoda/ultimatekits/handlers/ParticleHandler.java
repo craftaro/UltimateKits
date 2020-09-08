@@ -16,9 +16,8 @@ import java.util.Map;
 public class ParticleHandler {
 
     private final UltimateKits plugin;
-    int amt;
-    String typeName;
-    CompatibleParticleHandler.ParticleType type;
+    private int amt;
+    private CompatibleParticleHandler.ParticleType type;
 
     public ParticleHandler(UltimateKits plugin) {
         this.plugin = plugin;
@@ -26,7 +25,7 @@ public class ParticleHandler {
 
     public void start() {
         amt = Settings.PARTICLE_AMOUNT.getInt() / 2;
-        typeName = Settings.PARTICLE_TYPE.getString();
+        String typeName = Settings.PARTICLE_TYPE.getString();
         type = CompatibleParticleHandler.ParticleType.getParticle(typeName);
         if (type == null) {
             type = CompatibleParticleHandler.ParticleType.SPELL_WITCH;

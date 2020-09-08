@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class _2_DuplicateMigration extends DataMigration {
 
-    final boolean sqlite;
+    private final boolean sqlite;
 
     public _2_DuplicateMigration(boolean sqlite) {
         super(2);
@@ -80,10 +80,10 @@ public class _2_DuplicateMigration extends DataMigration {
         }
     }
 
-    static class TempKitData {
-        final String type, kit, world;
-        final int x, y, z;
-        final boolean holograms, displayItems, particles, itemOverride;
+    private static class TempKitData {
+        private final String type, kit, world;
+        private final int x, y, z;
+        private final boolean holograms, displayItems, particles, itemOverride;
 
         public TempKitData(String type, String kit, boolean holograms, boolean displayItems, boolean particles, boolean itemOverride, String world, int x, int y, int z) {
             this.type = type;

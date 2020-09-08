@@ -20,6 +20,7 @@ import java.util.Set;
 public class CategorySelectorGui extends Gui {
 
     private int timer;
+    private static final Random rand = new Random();
 
     public CategorySelectorGui(UltimateKits plugin, Player player) {
         boolean glassless = Settings.DO_NOT_USE_GLASS_BORDERS.getBoolean();
@@ -82,7 +83,6 @@ public class CategorySelectorGui extends Gui {
         }
     }
 
-    private static final Random rand = new Random();
 
     private void animateGlass() {
         for (int col = 1; col < 8; ++col) {

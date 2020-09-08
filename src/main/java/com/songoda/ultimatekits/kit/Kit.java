@@ -41,7 +41,8 @@ import java.util.Objects;
  */
 public class Kit {
 
-    private final String key, name;
+    private final String key;
+    private final String name;
     private Category category = null;
 
     private static UltimateKits plugin;

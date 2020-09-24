@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,6 +79,7 @@ public class DisplayItemHandler {
             is.setAmount(1);
             ItemMeta meta = is.getItemMeta();
             meta.setDisplayName(null);
+            meta.setLore(Collections.singletonList("Some lore stuff man."));
             is.setItemMeta(meta);
             nbtItem = NmsManager.getNbt().of(is);
             nbtItem.set("num", inum);

@@ -19,7 +19,7 @@ public class CommandKit extends AbstractCommand {
     private final GuiManager guiManager;
 
     public CommandKit(UltimateKits plugin, GuiManager guiManager) {
-        super(CommandType.PLAYER_ONLY, "kit");
+        super(CommandType.CONSOLE_OK, "kit");
         this.plugin = plugin;
         this.guiManager = guiManager;
     }

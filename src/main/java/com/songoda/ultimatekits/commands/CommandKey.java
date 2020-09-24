@@ -19,7 +19,7 @@ public class CommandKey extends AbstractCommand {
     private final UltimateKits plugin;
 
     public CommandKey(UltimateKits plugin) {
-        super(CommandType.PLAYER_ONLY, "key");
+        super(CommandType.CONSOLE_OK, "key");
         this.plugin = plugin;
     }
 

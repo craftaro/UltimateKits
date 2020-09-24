@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,7 +68,8 @@ public class DisplayItemHandler {
             NBTItem nbtItem = NmsManager.getNbt().of(i.getItemStack());
             int inum = nbtItem.has("num") ? nbtItem.getNBTObject("num").asInt() + 1 : 0;
 
-            if (inum >= list.size()) inum = 0;
+            int size = list.size();
+            if (inum > size || inum <= 0) inum = 1;
 
             ItemStack is = list.get(inum - 1);
             if (kitBlockData.isItemOverride()) {
@@ -77,6 +79,7 @@ public class DisplayItemHandler {
             is.setAmount(1);
             ItemMeta meta = is.getItemMeta();
             meta.setDisplayName(null);
+            meta.setLore(Collections.singletonList("Some lore stuff man."));
             is.setItemMeta(meta);
             nbtItem = NmsManager.getNbt().of(is);
             nbtItem.set("num", inum);

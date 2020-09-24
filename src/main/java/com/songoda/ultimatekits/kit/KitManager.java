@@ -14,6 +14,7 @@ public final class KitManager {
 
     private final Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
     private final List<Kit> registeredKits = new LinkedList<>();
+    private boolean hasOrderChanged = false;
 
     public Kit addKit(Kit kit) {
         if (kit == null) return null;
@@ -109,6 +110,14 @@ public final class KitManager {
 
         if (action >= 0 && action < registeredKits.size())
             Collections.swap(registeredKits, i, action);
+        hasOrderChanged = true;
+    }
 
+    public boolean hasOrderChanged() {
+        return hasOrderChanged;
+    }
+
+    public void savedOrderChange() {
+        hasOrderChanged = false;
     }
 }

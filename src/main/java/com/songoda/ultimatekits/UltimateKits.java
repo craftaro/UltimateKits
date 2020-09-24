@@ -455,6 +455,12 @@ public class UltimateKits extends SongodaPlugin {
     public void saveKits(boolean force) {
         if (!loaded && !force) return;
 
+        // If we're changing the order the file needs to be wiped.
+        if (kitManager.hasOrderChanged()) {
+            kitConfig.clearConfig(true);
+            kitManager.savedOrderChange();
+        }
+
         // Hot fix for kit file resets.
         if (kitConfig.contains("Kits"))
             for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {

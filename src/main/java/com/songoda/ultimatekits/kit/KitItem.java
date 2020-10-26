@@ -22,6 +22,7 @@ import java.util.List;
 public class KitItem {
 
     private KitContent content;
+    private KitItemType type;
     private String displayName, displayLore = null;
     private Material displayItem = null;
     private double chance = 0;
@@ -46,11 +47,14 @@ public class KitItem {
     private void processContent(String line, ItemStack item) {
         if (line != null && line.startsWith(Settings.CURRENCY_SYMBOL.getString())) {
             this.content = new KitContentEconomy(Double.parseDouble(line.substring(1).trim()));
+            this.type = KitItemType.ECONOMY;
         } else if (line != null && line.startsWith("/")) {
             this.content = new KitContentCommand(line.substring(1));
+            this.type = KitItemType.COMMAND;
         } else {
             ItemStack itemStack = item == null ? UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(line) : item;
             this.content = itemStack != null ? new KitContentItem(itemStack) : null;
+            this.type = KitItemType.ITEM;
         }
     }
 
@@ -212,6 +216,10 @@ public class KitItem {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    public KitItemType getType() {
+        return type;
     }
 
     @Override

@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>UltimateKits</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>2.6.12</version>
+    <version>2.6.12b</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>UltimateKits-${project.version}</finalName>
@@ -85,10 +85,6 @@
     </build>
     <repositories>
         <repository>
-            <id>private</id>
-            <url>http://repo.songoda.com/repository/private/</url>
-        </repository>
-        <repository>
             <id>public</id>
             <url>https://repo.songoda.com/repository/public/</url>
         </repository>
@@ -126,9 +122,10 @@
             <version>2.1.26</version>
         </dependency>
         <dependency>
-            <groupId>com.zrips</groupId>
-            <artifactId>CMI</artifactId>
-            <version>8.6.26.9</version>
+            <groupId>com.github.Zrips</groupId>
+            <artifactId>CMI-API</artifactId>
+            <version>7.6.2.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>

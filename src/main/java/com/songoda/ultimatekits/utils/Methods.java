@@ -193,12 +193,12 @@ public class Methods {
         ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial(CompatibleMaterial.LIGHT_BLUE_STAINED_GLASS_PANE));
 
         // edges will be type 3
-        GuiUtils.mirrorFill(gui, 0, 2, true, true, glass3);
-        GuiUtils.mirrorFill(gui, 1, 1, false, true, glass3);
+        gui.mirrorFill(0, 2, true, true, glass3);
+        gui.mirrorFill( 1, 1, false, true, glass3);
 
         // decorate corners with type 2
-        GuiUtils.mirrorFill(gui, 0, 0, true, true, glass2);
-        GuiUtils.mirrorFill(gui, 1, 0, true, true, glass2);
-        GuiUtils.mirrorFill(gui, 0, 1, true, true, glass2);
+        gui.mirrorFill( 0, 0, true, true, glass2);
+        gui.mirrorFill( 1, 0, true, true, glass2);
+        gui.mirrorFill(0, 1, true, true, glass2);
     }
 }

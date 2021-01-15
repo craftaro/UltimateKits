@@ -32,7 +32,7 @@ public class CategoryEditorGui extends Gui {
 
         // fill glass borders
         Methods.fillGlass(this);
-        GuiUtils.mirrorFill(this, 1, 1, false, true, getDefaultItem());
+        mirrorFill(1, 1, false, true, getDefaultItem());
 
         setButton(4, GuiUtils.createButtonItem(CompatibleMaterial.GREEN_DYE, "Create Category"),
                 (event) -> {

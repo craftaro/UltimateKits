@@ -92,17 +92,17 @@ public class AnimatedKitGui extends Gui {
             items.removeLast();
             Iterator<KitItem> itemIter = items.iterator();
             for (int i = 9; i < 18; i++) {
-                setItem(0, i, itemIter.next().getItem());
+                setItem(0, i, itemIter.next().getItemForDisplay());
             }
         }
 
         // should we try to wrap it up?
         if (finish) {
             ItemStack item = getItem(13);
-            KitItem kitItem = items.stream().filter(i -> i.getItem().isSimilar(item)).findFirst().orElse(null);
+            KitItem kitItem = items.stream().filter(i -> isSimilar(item, i)).findFirst().orElse(null);
             if (item == null) {
                 done = true; // idk.
-            } else if (item.isSimilar(give)) {
+            } else if (isSimilar(give, kitItem)) {
                 if (!done) {
                     done = true;
                     if (!Settings.AUTO_EQUIP_ARMOR_ROULETTE.getBoolean() || !ArmorType.equip(player, give)) {
@@ -127,6 +127,20 @@ public class AnimatedKitGui extends Gui {
             }
         }
 
+    }
+
+    private boolean isSimilar(ItemStack item, KitItem kitItem) {
+        if (kitItem == null) return false;
+        switch (kitItem.getType()) {
+            case COMMAND:
+            case ECONOMY:
+                System.out.println("1 " + item.getItemMeta().getLore());
+                System.out.println("2 " + kitItem.getItemForDisplay().getItemMeta().getLore());
+                System.out.println(item.getItemMeta().getLore().get(0).equals(kitItem.getItemForDisplay().getItemMeta().getLore()));
+                return item.getItemMeta().getLore().get(0).equals(kitItem.getItemForDisplay().getItemMeta().getLore());
+            default:
+                return item.isSimilar(kitItem.getItemForDisplay());
+        }
     }
 
     private void finish() {

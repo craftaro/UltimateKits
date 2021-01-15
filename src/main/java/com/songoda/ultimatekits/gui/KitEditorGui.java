@@ -61,11 +61,11 @@ public class KitEditorGui extends DoubleGui {
         ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial());
         ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
 
-        GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
-        GuiUtils.mirrorFill(this, 0, 1, true, true, glass2);
-        GuiUtils.mirrorFill(this, 1, 0, true, true, glass2);
-        GuiUtils.mirrorFill(this, 0, 2, true, true, glass3);
-        GuiUtils.mirrorFill(this, 0, 3, false, true, glass1);
+        mirrorFill(0, 0, true, true, glass2);
+        mirrorFill(0, 1, true, true, glass2);
+        mirrorFill(1, 0, true, true, glass2);
+        mirrorFill(0, 2, true, true, glass3);
+        mirrorFill(0, 3, false, true, glass1);
 
         // exit button
         setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(CompatibleMaterial.OAK_DOOR),

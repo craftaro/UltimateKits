@@ -24,6 +24,9 @@ public class Settings {
     public static final ConfigSetting STARTER_KIT = new ConfigSetting(config, "Main.Starter Kit", "none");
     public static final ConfigSetting KEY_MATERIAL = new ConfigSetting(config, "Main.Key Material", "TRIPWIRE_HOOK",
             "What type of material should be used for kit keys?");
+    public static final ConfigSetting ROULETTE_LENGTH_MULTIPLIER = new ConfigSetting(config, "Main.Roulette Length Multiplier", 10,
+            "This affects the roulette animation length.",
+            "Lower value is a lower length, and vice-versa.");
 
     public static final ConfigSetting ECONOMY_PLUGIN = new ConfigSetting(config, "Main.Economy", EconomyManager.getEconomy() == null ? "Vault" : EconomyManager.getEconomy().getName(),
             "Which economy plugin should be used?",

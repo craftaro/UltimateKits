@@ -72,7 +72,7 @@ public class AnimatedKitGui extends Gui {
         int updatesPerSlow = 6;
         if (++updateTick >= updatesPerSlow) {
             updateTick = 0;
-            int ticksPerUpdateSlow = 10;
+            int ticksPerUpdateSlow = Settings.ROULETTE_LENGTH_MULTIPLIER.getInt();
             if (++ticksPerUpdate >= ticksPerUpdateSlow) {
                 finish = true;
             }
@@ -92,17 +92,17 @@ public class AnimatedKitGui extends Gui {
             items.removeLast();
             Iterator<KitItem> itemIter = items.iterator();
             for (int i = 9; i < 18; i++) {
-                setItem(0, i, itemIter.next().getItemForDisplay());
+                setItem(0, i, itemIter.next().getItem());
             }
         }
 
         // should we try to wrap it up?
         if (finish) {
             ItemStack item = getItem(13);
-            KitItem kitItem = items.stream().filter(i -> isSimilar(item, i)).findFirst().orElse(null);
+            KitItem kitItem = items.stream().filter(i -> i.getItem().isSimilar(item)).findFirst().orElse(null);
             if (item == null) {
                 done = true; // idk.
-            } else if (isSimilar(give, kitItem)) {
+            } else if (item.isSimilar(give)) {
                 if (!done) {
                     done = true;
                     if (!Settings.AUTO_EQUIP_ARMOR_ROULETTE.getBoolean() || !ArmorType.equip(player, give)) {
@@ -127,20 +127,6 @@ public class AnimatedKitGui extends Gui {
             }
         }
 
-    }
-
-    private boolean isSimilar(ItemStack item, KitItem kitItem) {
-        if (kitItem == null) return false;
-        switch (kitItem.getType()) {
-            case COMMAND:
-            case ECONOMY:
-                System.out.println("1 " + item.getItemMeta().getLore());
-                System.out.println("2 " + kitItem.getItemForDisplay().getItemMeta().getLore());
-                System.out.println(item.getItemMeta().getLore().get(0).equals(kitItem.getItemForDisplay().getItemMeta().getLore()));
-                return item.getItemMeta().getLore().get(0).equals(kitItem.getItemForDisplay().getItemMeta().getLore());
-            default:
-                return item.isSimilar(kitItem.getItemForDisplay());
-        }
     }
 
     private void finish() {

@@ -327,7 +327,7 @@ public class Kit {
                 if (kitAnimation != KitAnimation.NONE) {
                     // TODO: this is a very bad way to solve this problem.
                     // Giving the player kit rewards really should be done outside of the Kit class.
-                    plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, this, item.getItemForDisplay()));
+                    plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, this, item.getItem()));
                     return true;
                 } else {
                     ItemStack parseStack = item.getContent().process(player);

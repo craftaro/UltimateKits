@@ -50,7 +50,6 @@ public class KitEditorGui extends DoubleGui {
                 .processPlaceholder("name", kit.getName())
                 .getMessage());
 
-        setInvItems();
         setOnClose((event) -> {
             restoreItemsInstance();
             this.saveKit(player, inventory, false);
@@ -90,6 +89,8 @@ public class KitEditorGui extends DoubleGui {
 
         saveItemsInstance();
         paint();
+
+        Bukkit.getScheduler().runTaskLater(plugin, this::setInvItems, 3L);
     }
 
     private void paint() {

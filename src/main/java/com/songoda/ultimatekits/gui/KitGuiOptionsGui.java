@@ -21,11 +21,10 @@ public class KitGuiOptionsGui extends Gui {
     private final Player player;
 
     public KitGuiOptionsGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
-        super(back);
+        super(3);
         this.plugin = plugin;
         this.kit = kit;
         this.player = player;
-        setRows(3);
         setTitle(plugin.getLocale().getMessage("interface.kitblock.title")
                 .processPlaceholder("kit", kit.getName())
                 .getMessage());
@@ -44,7 +43,7 @@ public class KitGuiOptionsGui extends Gui {
         setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
                 plugin.getLocale().getMessage("interface.button.back").getMessage()),
                 ClickType.LEFT,
-                event -> event.player.closeInventory());
+                event -> guiManager.showGUI(player, new KitEditorGui(plugin, player, kit, back)));
         paint();
     }
 

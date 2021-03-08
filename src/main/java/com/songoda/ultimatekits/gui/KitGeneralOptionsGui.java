@@ -16,8 +16,7 @@ import org.bukkit.event.inventory.ClickType;
 public class KitGeneralOptionsGui extends Gui {
 
     public KitGeneralOptionsGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
-        super(back);
-        setRows(3);
+        super(3);
         setTitle(plugin.getLocale().getMessage("interface.kitoptions.title")
                 .processPlaceholder("kit", kit.getName())
                 .getMessage());
@@ -35,7 +34,7 @@ public class KitGeneralOptionsGui extends Gui {
         setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
                 plugin.getLocale().getMessage("interface.button.back").getMessage()),
                 ClickType.LEFT,
-                event -> event.player.closeInventory());
+                event -> guiManager.showGUI(player, new KitEditorGui(plugin, player, kit, back)));
 
         // edit delay
         setButton(1, 2, GuiUtils.createButtonItem(CompatibleMaterial.CLOCK,

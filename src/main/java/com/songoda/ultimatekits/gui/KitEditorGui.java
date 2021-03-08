@@ -32,6 +32,7 @@ public class KitEditorGui extends DoubleGui {
     private final UltimateKits plugin;
     private final Kit kit;
     private final Player player;
+    private final Gui back;
 
     private boolean isInFunction = false;
     private boolean isInInventory = false;
@@ -39,13 +40,13 @@ public class KitEditorGui extends DoubleGui {
     private ItemStack[] stash;
 
     public KitEditorGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
-        super(back);
+        super(6);
         this.plugin = plugin;
         this.kit = kit;
         this.player = player;
+        this.back = back;
 
         setDefaultItem(null);
-        setRows(6);
         setTitle(plugin.getLocale().getMessage("interface.kiteditor.title")
                 .processPlaceholder("name", kit.getName())
                 .getMessage());
@@ -77,7 +78,10 @@ public class KitEditorGui extends DoubleGui {
             setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
                     plugin.getLocale().getMessage("interface.button.back").getMessage()),
                     ClickType.LEFT,
-                    event -> event.player.closeInventory());
+                    event -> {
+                        player.closeInventory();
+                        guiManager.showGUI(player, back);
+                    });
 
         // info icon
         setItem(0, 4, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
@@ -212,7 +216,7 @@ public class KitEditorGui extends DoubleGui {
                 plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").getMessage().split("\\|")),
                 (event) -> {
                     player.closeInventory();
-                    guiManager.showGUI(player, new KitGeneralOptionsGui(plugin, player, kit, this));
+                    guiManager.showGUI(player, new KitGeneralOptionsGui(plugin, player, kit, back));
                 });
 
         setPlayerButton(1, GuiUtils.createButtonItem(CompatibleMaterial.EMERALD,
@@ -220,7 +224,7 @@ public class KitEditorGui extends DoubleGui {
                 plugin.getLocale().getMessage("interface.kiteditor.sellingoptionslore").getMessage().split("\\|")),
                 (event) -> {
                     player.closeInventory();
-                    guiManager.showGUI(player, new KitSellingOptionsGui(plugin, player, kit, this));
+                    guiManager.showGUI(player, new KitSellingOptionsGui(plugin, player, kit, back));
                 });
 
         setPlayerButton(3, GuiUtils.createButtonItem(CompatibleMaterial.ITEM_FRAME,
@@ -228,7 +232,7 @@ public class KitEditorGui extends DoubleGui {
                 plugin.getLocale().getMessage("interface.kiteditor.guioptionslore").getMessage().split("\\|")),
                 (event) -> {
                     player.closeInventory();
-                    guiManager.showGUI(player, new KitGuiOptionsGui(plugin, player, kit, this));
+                    guiManager.showGUI(player, new KitGuiOptionsGui(plugin, player, kit, back));
                 });
 
         setPlayerButton(4, GuiUtils.createButtonItem(CompatibleMaterial.PAPER,
@@ -313,6 +317,23 @@ public class KitEditorGui extends DoubleGui {
                         kit.setKitAnimation(KitAnimation.NONE);
                     }
                     setInvItems();
+                });
+
+        setPlayerButton(8, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
+                plugin.getLocale().getMessage("interface.kiteditor.animation").getMessage(),
+                plugin.getLocale().getMessage("interface.kiteditor.animationlore")
+                        .getMessage().split("\\|")),
+                (event) -> {
+                    AnvilGui gui = new AnvilGui(player, this);
+                    gui.setTitle("Enter a name for the new kit");
+                    gui.setAction(evnt -> {
+                        Kit newKit = kit.clone(gui.getInputText());
+                        plugin.getKitManager().addKit(newKit);
+                        player.closeInventory();
+                        guiManager.showGUI(player, new KitEditorGui(plugin, player, newKit, null));
+                        paint();
+                    });
+                    guiManager.showGUI(player, gui);
                 });
     }
 

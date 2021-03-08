@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.gui;
 
+import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.gui.AnvilGui;
@@ -305,6 +306,30 @@ public class KitEditorGui extends DoubleGui {
                     guiManager.showGUI(event.player, gui);
                 });
 
+        setPlayerButton(7, GuiUtils.createButtonItem(CompatibleMaterial.SHEEP_SPAWN_EGG,
+                        plugin.getLocale().getMessage("interface.kiteditor.clone").getMessage(),
+                        plugin.getLocale().getMessage("interface.kiteditor.clonelore")
+                        .getMessage().split("\\|")),
+                (event) -> {
+                    AnvilGui gui = new AnvilGui(player, this);
+                    gui.setTitle("Enter a new kit name");
+                    gui.setAction(evnt -> {
+                        String kitStr = gui.getInputText().toLowerCase().trim();
+
+                        if (plugin.getKitManager().getKit(kitStr) != null) {
+                            plugin.getLocale().getMessage("command.kit.kitalreadyexists").sendPrefixedMessage(player);
+                            player.closeInventory();
+                        } else {
+                            Kit newKit = kit.clone(kitStr);
+                            plugin.getKitManager().addKit(newKit);
+                            player.closeInventory();
+                            Bukkit.getScheduler().runTaskLater(plugin, () ->
+                            guiManager.showGUI(player, new KitEditorGui(plugin, player, newKit, null)), 2L);
+                        }
+                    });
+                    guiManager.showGUI(player, gui);
+                });
+
         setPlayerButton(8, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
                 plugin.getLocale().getMessage("interface.kiteditor.animation").getMessage(),
                 plugin.getLocale().getMessage("interface.kiteditor.animationlore")
@@ -319,22 +344,6 @@ public class KitEditorGui extends DoubleGui {
                     setInvItems();
                 });
 
-        setPlayerButton(8, GuiUtils.createButtonItem(CompatibleMaterial.CHEST,
-                plugin.getLocale().getMessage("interface.kiteditor.animation").getMessage(),
-                plugin.getLocale().getMessage("interface.kiteditor.animationlore")
-                        .getMessage().split("\\|")),
-                (event) -> {
-                    AnvilGui gui = new AnvilGui(player, this);
-                    gui.setTitle("Enter a name for the new kit");
-                    gui.setAction(evnt -> {
-                        Kit newKit = kit.clone(gui.getInputText());
-                        plugin.getKitManager().addKit(newKit);
-                        player.closeInventory();
-                        guiManager.showGUI(player, new KitEditorGui(plugin, player, newKit, null));
-                        paint();
-                    });
-                    guiManager.showGUI(player, gui);
-                });
     }
 
 

@@ -153,6 +153,8 @@ interface:
     addeconomyok: '&8Money &5$%amount%&8 has been added to your kit.'
     animation: '&6Kit Animation'
     animationlore: '&7Currently: &6%animation%'
+    clone: '&aClone Kit'
+    clonelore: '&7Use this to create an identical|&7kit with a different name.'
     itemediting: '&6Switch To Item Editing'
     itemeditinglore: '&7Click to enable|&7item editing.'
     itemmoving: '&6Switch To Item Moving'

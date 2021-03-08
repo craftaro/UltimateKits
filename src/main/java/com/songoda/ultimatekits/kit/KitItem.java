@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class KitItem {
+public class KitItem implements Cloneable {
 
     private KitContent content;
     private KitItemType type;
@@ -220,6 +220,10 @@ public class KitItem {
 
     public KitItemType getType() {
         return type;
+    }
+
+    public KitItem clone() throws CloneNotSupportedException {
+        return (KitItem)super.clone();
     }
 
     @Override

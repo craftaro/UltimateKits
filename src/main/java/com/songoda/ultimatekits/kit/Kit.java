@@ -39,10 +39,10 @@ import java.util.Objects;
 /**
  * Created by songoda on 2/24/2017.
  */
-public class Kit {
+public class Kit implements Cloneable {
 
-    private final String key;
-    private final String name;
+    private String key;
+    private  String name;
     private Category category = null;
 
     private static UltimateKits plugin;
@@ -476,6 +476,26 @@ public class Kit {
     public Kit setKitAnimation(KitAnimation kitAnimation) {
         this.kitAnimation = kitAnimation;
         return this;
+    }
+
+    public Kit clone(String key) {
+        try {
+            Kit newKit = (Kit) super.clone();
+
+            List<KitItem> contents = new ArrayList<>();
+
+            for (KitItem item : newKit.contents)
+                contents.add(item.clone());
+
+            newKit.setContents(contents);
+
+            newKit.key = key;
+            newKit.name = TextUtils.formatText(key, true);
+
+            return newKit;
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 
     @Override

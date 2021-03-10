@@ -42,7 +42,7 @@ import java.util.Objects;
 public class Kit implements Cloneable {
 
     private String key;
-    private  String name;
+    private String name;
     private Category category = null;
 
     private static UltimateKits plugin;
@@ -50,7 +50,7 @@ public class Kit implements Cloneable {
     private String link, title = null;
     private long delay = 0L;
     private boolean hidden = false;
-    private CompatibleMaterial displayItem = null;
+    private ItemStack displayItem = null;
     private List<KitItem> contents = new ArrayList<>();
     private KitAnimation kitAnimation = KitAnimation.NONE;
 
@@ -281,7 +281,7 @@ public class Kit implements Cloneable {
     }
 
     public boolean giveKit(Player player) {
-        return giveKit(player, getContents().size(), -1);
+        return giveKit(player, contents.size(), -1);
     }
 
     private boolean giveKit(Player player, Key key) {
@@ -294,13 +294,13 @@ public class Kit implements Cloneable {
 
     private boolean giveKit(Player player, int itemAmount, int kitAmount) {
         List<KitItem> innerContents = new ArrayList<>(getContents());
-        int kitSize = innerContents.size();
 
         // Amount of items from the kit to give to the player.
         if (kitAnimation == KitAnimation.ROULETTE)
             itemAmount = 1; //TODO how about kitAmount > 1? generateRandomItem() will only give 1 random item instead of kitAmount
-        int itemGiveAmount = itemAmount > 0 ? itemAmount : kitSize;
-        if (kitAmount > 0) itemGiveAmount = itemGiveAmount * kitAmount;
+        System.out.println("itemAmount" + ": " + itemAmount);
+        int itemGiveAmount = kitAmount > 0 ? itemAmount * kitAmount : kitAmount;
+        System.out.println(itemGiveAmount + " : " + kitAmount + " : " + itemAmount);
 
         if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemGiveAmount)) {
             plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
@@ -310,20 +310,21 @@ public class Kit implements Cloneable {
         if (Settings.SOUNDS_ENABLED.getBoolean() && kitAnimation == KitAnimation.NONE)
             CompatibleSound.ENTITY_PLAYER_LEVELUP.play(player, 0.6F, 15.0F);
 
-        return generateRandomItem(innerContents, itemGiveAmount, player);
+        return generateRandomItem(innerContents, itemGiveAmount, 0, player);
     }
 
-    private boolean generateRandomItem(List<KitItem> innerContents, int itemGiveAmount, Player player) {
+    private boolean generateRandomItem(List<KitItem> innerContents, int itemGiveAmount, int itemGivenAmount, Player player) {
         if (innerContents.size() != itemGiveAmount || kitAnimation != KitAnimation.NONE)
             Collections.shuffle(innerContents);
 
         for (KitItem item : new ArrayList<>(innerContents)) {
-            if (itemGiveAmount == 0) break;
+            if (itemGiveAmount <= 0 && itemGivenAmount != 0) break;
             double ch = item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
+            System.out.println("We tryin here [" + ch + ":" + rand + "]");
             itemGiveAmount--;
             if (rand < ch || ch == 100) {
-
+                itemGivenAmount++;
                 if (kitAnimation != KitAnimation.NONE) {
                     // TODO: this is a very bad way to solve this problem.
                     // Giving the player kit rewards really should be done outside of the Kit class.
@@ -347,9 +348,8 @@ public class Kit implements Cloneable {
             }
         }
 
-        if (itemGiveAmount > 0 && !innerContents.isEmpty()) {
-            return generateRandomItem(innerContents, itemGiveAmount, player);
-        }
+        if ((itemGiveAmount > 0 || itemGivenAmount == 0) && !innerContents.isEmpty())
+            return generateRandomItem(innerContents, itemGiveAmount, itemGivenAmount, player);
 
         player.updateInventory();
         return true;
@@ -447,16 +447,12 @@ public class Kit implements Cloneable {
         return name;
     }
 
-    public CompatibleMaterial getDisplayItem() {
+    public ItemStack getDisplayItem() {
         return displayItem;
     }
 
-    public void setDisplayItem(ItemStack item) {
-        this.displayItem = item != null ? CompatibleMaterial.getMaterial(item) : null;
-    }
-
-    public Kit setDisplayItem(CompatibleMaterial material) {
-        this.displayItem = material;
+    public Kit setDisplayItem(ItemStack item) {
+        this.displayItem = item;
         return this;
     }
 

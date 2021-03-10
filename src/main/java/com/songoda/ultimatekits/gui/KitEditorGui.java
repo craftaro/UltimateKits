@@ -1,6 +1,5 @@
 package com.songoda.ultimatekits.gui;
 
-import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.gui.AnvilGui;
@@ -54,7 +53,7 @@ public class KitEditorGui extends DoubleGui {
 
         setOnClose((event) -> {
             restoreItemsInstance();
-            this.saveKit(player, inventory, false);
+            saveKit(player, inventory, false);
             CompatibleSound.ENTITY_VILLAGER_YES.play(player);
         });
 
@@ -262,7 +261,7 @@ public class KitEditorGui extends DoubleGui {
                                 .processPlaceholder("command", msg).getMessage())
                                 .sendPrefixedMessage(player);
 
-                        this.inventory.addItem(parseStack);
+                        inventory.addItem(parseStack);
                         Bukkit.getScheduler().runTask(plugin, event.player::closeInventory);
                     }).setOnClose(() -> {
                         event.manager.showGUI(event.player, this);

@@ -55,6 +55,7 @@ public class KitGeneralOptionsGui extends Gui {
                         } catch (NumberFormatException e) {
                         }
                         plugin.getLocale().getMessage("interface.kitoptions.delaynonumber").processPlaceholder("input", msg).sendPrefixedMessage(player);
+                        plugin.saveKits(false);
                     });
                     guiManager.showGUI(event.player, gui);
                 });
@@ -79,6 +80,7 @@ public class KitGeneralOptionsGui extends Gui {
                                 return;
                             }
                             plugin.getLocale().getMessage("interface.kitoptions.notacategory").processPlaceholder("input", msg).sendPrefixedMessage(player);
+                            plugin.saveKits(false);
                         });
                         guiManager.showGUI(event.player, gui);
                     } else if (event.clickType == ClickType.RIGHT) {
@@ -105,6 +107,7 @@ public class KitGeneralOptionsGui extends Gui {
                             plugin.getLocale().getMessage("interface.kitoptions.destroycancel").sendPrefixedMessage(player);
                         }
                         aevent.player.closeInventory();
+                        plugin.saveKits(false);
                     });
                     guiManager.showGUI(event.player, gui);
                 });

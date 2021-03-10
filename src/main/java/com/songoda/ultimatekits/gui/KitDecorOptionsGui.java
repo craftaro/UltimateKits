@@ -71,7 +71,7 @@ public class KitDecorOptionsGui extends Gui {
                 });
 
         // Item Display Override
-        setButton(1, 7, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
+        setButton(1, 7, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON.getItem(),
                 plugin.getLocale().getMessage("interface.kitdecor.displayone").getMessage(),
                 plugin.getLocale().getMessage("interface.kitdecor.displayonelore")
                         .processPlaceholder("enabled", kitBlockData.isItemOverride() ? enableLore : disableLore)

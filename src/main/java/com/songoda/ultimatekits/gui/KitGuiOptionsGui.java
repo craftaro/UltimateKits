@@ -82,11 +82,12 @@ public class KitGuiOptionsGui extends Gui {
             plugin.saveKits(false);
         });
 
-        setButton(1, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
+        setButton(1, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON.getItem(),
                 plugin.getLocale().getMessage("interface.kitguioptions.item").getMessage(),
                 plugin.getLocale().getMessage("interface.kitguioptions.itemlore")
                         .processPlaceholder("onoff",
-                                kit.getDisplayItem() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon").processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
+                                kit.getDisplayItem() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon")
+                                        .processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
                                         : plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
                         ).getMessage().split("\\|")),
                 ClickType.LEFT,

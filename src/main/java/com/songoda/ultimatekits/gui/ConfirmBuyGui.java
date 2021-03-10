@@ -29,7 +29,7 @@ public class ConfirmBuyGui extends Gui {
         Methods.fillGlass(this);
 
         // Kit information
-        setItem(0, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.DIAMOND_HELMET,
+        setItem(0, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.DIAMOND_HELMET.getItem(),
                 ChatColor.RED + TextUtils.formatText(kit.getKey().toLowerCase(), true),
                 ChatColor.GREEN + Settings.CURRENCY_SYMBOL.getString() + Methods.formatEconomy(cost)));
 

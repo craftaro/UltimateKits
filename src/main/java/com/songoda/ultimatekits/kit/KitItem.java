@@ -9,6 +9,7 @@ import com.songoda.ultimatekits.kit.type.KitContentCommand;
 import com.songoda.ultimatekits.kit.type.KitContentEconomy;
 import com.songoda.ultimatekits.kit.type.KitContentItem;
 import com.songoda.ultimatekits.settings.Settings;
+import com.songoda.ultimatekits.utils.ItemSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -52,7 +53,7 @@ public class KitItem implements Cloneable {
             this.content = new KitContentCommand(line.substring(1));
             this.type = KitItemType.COMMAND;
         } else {
-            ItemStack itemStack = item == null ? UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(line) : item;
+            ItemStack itemStack = item == null ? ItemSerializer.deserializeItemStackFromJson(line) : item;
             this.content = itemStack != null ? new KitContentItem(itemStack) : null;
             this.type = KitItemType.ITEM;
         }

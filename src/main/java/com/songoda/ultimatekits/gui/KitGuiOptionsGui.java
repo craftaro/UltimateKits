@@ -21,11 +21,10 @@ public class KitGuiOptionsGui extends Gui {
     private final Player player;
 
     public KitGuiOptionsGui(UltimateKits plugin, Player player, Kit kit, Gui back) {
-        super(back);
+        super(3);
         this.plugin = plugin;
         this.kit = kit;
         this.player = player;
-        setRows(3);
         setTitle(plugin.getLocale().getMessage("interface.kitblock.title")
                 .processPlaceholder("kit", kit.getName())
                 .getMessage());
@@ -44,7 +43,7 @@ public class KitGuiOptionsGui extends Gui {
         setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
                 plugin.getLocale().getMessage("interface.button.back").getMessage()),
                 ClickType.LEFT,
-                event -> event.player.closeInventory());
+                event -> guiManager.showGUI(player, new KitEditorGui(plugin, player, kit, back)));
         paint();
     }
 
@@ -61,7 +60,7 @@ public class KitGuiOptionsGui extends Gui {
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitguioptions.holoprompt").getMessage());
-                    gui.setAction(aevent -> {
+                    gui.setAction(evnt -> {
                         final String msg = gui.getInputText().trim();
                         kit.setTitle(msg);
                         plugin.getLocale().getMessage("interface.kitguioptions.holoset")
@@ -70,8 +69,9 @@ public class KitGuiOptionsGui extends Gui {
                                 .sendPrefixedMessage(player);
 
                         plugin.updateHologram(kit);
-                        aevent.player.closeInventory();
+                        evnt.player.closeInventory();
                         paint();
+                        plugin.saveKits(false);
                     });
                     guiManager.showGUI(event.player, gui);
                 });
@@ -79,13 +79,15 @@ public class KitGuiOptionsGui extends Gui {
             kit.setTitle(null);
             plugin.updateHologram(kit);
             paint();
+            plugin.saveKits(false);
         });
 
-        setButton(1, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
+        setButton(1, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON.getItem(),
                 plugin.getLocale().getMessage("interface.kitguioptions.item").getMessage(),
                 plugin.getLocale().getMessage("interface.kitguioptions.itemlore")
                         .processPlaceholder("onoff",
-                                kit.getDisplayItem() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon").processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
+                                kit.getDisplayItem() != null ? plugin.getLocale().getMessage("interface.kitguioptions.itemon")
+                                        .processPlaceholder("item", kit.getDisplayItem().toString()).getMessage()
                                         : plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
                         ).getMessage().split("\\|")),
                 ClickType.LEFT,
@@ -98,6 +100,7 @@ public class KitGuiOptionsGui extends Gui {
                         plugin.getLocale().getMessage("interface.kitguioptions.itemset").processPlaceholder("item", kit.getName()).sendPrefixedMessage(player);
                         paint();
                     }
+                    plugin.saveKits(false);
                 });
         setAction(1, 4, ClickType.RIGHT, event -> {
             kit.setDisplayItem((ItemStack) null);
@@ -115,6 +118,7 @@ public class KitGuiOptionsGui extends Gui {
                 event -> {
                     kit.setHidden(!kit.isHidden());
                     paint();
+                    plugin.saveKits(false);
                 });
     }
 }

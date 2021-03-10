@@ -53,6 +53,7 @@ public class CategoryEditorGui extends Gui {
                             plugin.getLocale().newMessage("&aCategory added successfully!").sendPrefixedMessage(player);
 
                             Bukkit.getScheduler().runTask(plugin, player::closeInventory);
+                            plugin.saveKits(false);
                         }).setOnClose(() -> {
                             event.manager.showGUI(event.player, new CategoryEditorGui(plugin, event.player));
                         });

@@ -144,7 +144,7 @@ public class KitSelectorGui extends Gui {
                         .processPlaceholder("kit", TextUtils.formatText(kitItem, true)).getMessage();
 
                 setButton(row, col, GuiUtils.createButtonItem(
-                        kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.ENCHANTED_BOOK, kitTitle,
+                        kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.ENCHANTED_BOOK.getItem(), kitTitle,
                         getKitLore(kit)),
                         event -> {
                             if (event.clickType == ClickType.MIDDLE && player.hasPermission("ultimatekits.admin")) {
@@ -157,6 +157,7 @@ public class KitSelectorGui extends Gui {
                                     plugin.getKitManager().moveKit(kit, false);
                                 }
                                 loadKits();
+                                plugin.saveKits(false);
                                 showPage();
                             } else if (event.clickType == ClickType.LEFT) {
                                 kit.display(player, guiManager, this);

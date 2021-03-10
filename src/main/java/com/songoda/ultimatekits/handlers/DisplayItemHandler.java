@@ -74,7 +74,7 @@ public class DisplayItemHandler {
             ItemStack is = list.get(inum - 1);
             if (kitBlockData.isItemOverride()) {
                 if (kit.getDisplayItem() != null)
-                    is = kit.getDisplayItem().getItem();
+                    is = kit.getDisplayItem();
             }
             is.setAmount(1);
             ItemMeta meta = is.getItemMeta();

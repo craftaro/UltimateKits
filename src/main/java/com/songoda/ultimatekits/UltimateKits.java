@@ -46,6 +46,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.ArrayList;
@@ -75,8 +76,6 @@ public class UltimateKits extends SongodaPlugin {
     private CrateManager crateManager;
     private CategoryManager categoryManager;
 
-    private ItemSerializer itemSerializer;
-
     private DatabaseConnector databaseConnector;
     private DataMigrationManager dataMigrationManager;
     private DataManager dataManager;
@@ -95,12 +94,6 @@ public class UltimateKits extends SongodaPlugin {
     @Override
     public void onPluginLoad() {
         INSTANCE = this;
-        try {
-            this.itemSerializer = new ItemSerializer();
-        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException e) {
-            console.sendMessage(ChatColor.RED + "Could not load the serialization class! Please report this error.");
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -227,13 +220,22 @@ public class UltimateKits extends SongodaPlugin {
                 ConfigurationSection section = kitConfig.getConfigurationSection("Kits." + kitName);
                 if (section == null) continue;
 
+                String itemString = section.getString("displayItem");
+
+                ItemStack item = null;
+
+                if (itemString != null) {
+                    if (itemString.contains("{"))
+                        item = ItemSerializer.deserializeItemStackFromJson(itemString);
+                    else
+                        item = CompatibleMaterial.getMaterial(itemString).getItem();
+                }
+
                 kitManager.addKit(new Kit(kitName)
                         .setTitle(section.getString("title"))
                         .setDelay(section.getLong("delay"))
                         .setLink(section.getString("link"))
-                        .setDisplayItem(section.contains("displayItem")
-                                ? CompatibleMaterial.getMaterial(section.getString("displayItem"), CompatibleMaterial.DIAMOND_HELMET)
-                                : null)
+                        .setDisplayItem(item)
                         .setCategory(categoryManager.getCategory(section.getString("category")))
                         .setHidden(section.getBoolean("hidden"))
                         .setPrice(section.getDouble("price"))
@@ -314,7 +316,7 @@ public class UltimateKits extends SongodaPlugin {
     public void onPluginDisable() {
         saveKits(false);
         dataFile.save();
-        this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
         kitManager.clearKits();
         HologramManager.removeAllHolograms();
     }
@@ -326,9 +328,9 @@ public class UltimateKits extends SongodaPlugin {
 
     @Override
     public void onConfigReload() {
-        this.setLocale(Settings.LANGUGE_MODE.getString(), true);
+        setLocale(Settings.LANGUGE_MODE.getString(), true);
 
-        this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
         kitConfig.load();
         categoryConfig.load();
         keyFile.load();
@@ -488,7 +490,7 @@ public class UltimateKits extends SongodaPlugin {
             if (kit.getCategory() != null)
                 kitConfig.set("Kits." + kit.getKey() + ".category", kit.getCategory().getKey());
             if (kit.getDisplayItem() != null)
-                kitConfig.set("Kits." + kit.getKey() + ".displayItem", kit.getDisplayItem().toString());
+                kitConfig.set("Kits." + kit.getKey() + ".displayItem", ItemSerializer.serializeItemStackToJson(kit.getDisplayItem()));
             else
                 kitConfig.set("Kits." + kit.getKey() + ".displayItem", null);
 
@@ -585,15 +587,6 @@ public class UltimateKits extends SongodaPlugin {
 
     public GuiManager getGuiManager() {
         return guiManager;
-    }
-
-    /**
-     * Grab instance of the item serializer
-     *
-     * @return instance of ItemSerializer
-     */
-    public ItemSerializer getItemSerializer() {
-        return this.itemSerializer;
     }
 
     public DisplayItemHandler getDisplayItemHandler() {

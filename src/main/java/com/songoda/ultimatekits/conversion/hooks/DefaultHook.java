@@ -3,6 +3,7 @@ package com.songoda.ultimatekits.conversion.hooks;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.conversion.Hook;
+import com.songoda.ultimatekits.utils.ItemSerializer;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
@@ -16,7 +17,7 @@ public class DefaultHook implements Hook {
         for (Kits kit : Kits.values()) {
             if (!kit.name().equalsIgnoreCase(kitName)) continue;
             for (String string : kit.items) {
-                items.add(UltimateKits.getInstance().getItemSerializer().deserializeItemStackFromJson(string));
+                items.add(ItemSerializer.deserializeItemStackFromJson(string));
             }
         }
 

@@ -157,6 +157,7 @@ public class KitSelectorGui extends Gui {
                                     plugin.getKitManager().moveKit(kit, false);
                                 }
                                 loadKits();
+                                plugin.saveKits(false);
                                 showPage();
                             } else if (event.clickType == ClickType.LEFT) {
                                 kit.display(player, guiManager, this);

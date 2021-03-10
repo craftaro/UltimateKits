@@ -80,6 +80,7 @@ public class KitSellingOptionsGui extends Gui {
                         plugin.updateHologram(kit);
                         aevent.player.closeInventory();
                         paint();
+                        plugin.saveKits(false);
                     });
                     guiManager.showGUI(event.player, gui);
                 });
@@ -118,6 +119,7 @@ public class KitSellingOptionsGui extends Gui {
                             plugin.updateHologram(kit);
                             aevent.player.closeInventory();
                             paint();
+                            plugin.saveKits(false);
                         }
                     });
                     guiManager.showGUI(event.player, gui);

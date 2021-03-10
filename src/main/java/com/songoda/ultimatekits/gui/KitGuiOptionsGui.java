@@ -60,7 +60,7 @@ public class KitGuiOptionsGui extends Gui {
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitguioptions.holoprompt").getMessage());
-                    gui.setAction(aevent -> {
+                    gui.setAction(evnt -> {
                         final String msg = gui.getInputText().trim();
                         kit.setTitle(msg);
                         plugin.getLocale().getMessage("interface.kitguioptions.holoset")
@@ -69,8 +69,9 @@ public class KitGuiOptionsGui extends Gui {
                                 .sendPrefixedMessage(player);
 
                         plugin.updateHologram(kit);
-                        aevent.player.closeInventory();
+                        evnt.player.closeInventory();
                         paint();
+                        plugin.saveKits(false);
                     });
                     guiManager.showGUI(event.player, gui);
                 });
@@ -78,6 +79,7 @@ public class KitGuiOptionsGui extends Gui {
             kit.setTitle(null);
             plugin.updateHologram(kit);
             paint();
+            plugin.saveKits(false);
         });
 
         setButton(1, 4, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : CompatibleMaterial.BEACON,
@@ -97,6 +99,7 @@ public class KitGuiOptionsGui extends Gui {
                         plugin.getLocale().getMessage("interface.kitguioptions.itemset").processPlaceholder("item", kit.getName()).sendPrefixedMessage(player);
                         paint();
                     }
+                    plugin.saveKits(false);
                 });
         setAction(1, 4, ClickType.RIGHT, event -> {
             kit.setDisplayItem((ItemStack) null);
@@ -114,6 +117,7 @@ public class KitGuiOptionsGui extends Gui {
                 event -> {
                     kit.setHidden(!kit.isHidden());
                     paint();
+                    plugin.saveKits(false);
                 });
     }
 }

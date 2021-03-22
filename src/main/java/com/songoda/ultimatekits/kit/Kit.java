@@ -298,9 +298,7 @@ public class Kit implements Cloneable {
         // Amount of items from the kit to give to the player.
         if (kitAnimation == KitAnimation.ROULETTE)
             itemAmount = 1; //TODO how about kitAmount > 1? generateRandomItem() will only give 1 random item instead of kitAmount
-        System.out.println("itemAmount" + ": " + itemAmount);
-        int itemGiveAmount = kitAmount > 0 ? itemAmount * kitAmount : kitAmount;
-        System.out.println(itemGiveAmount + " : " + kitAmount + " : " + itemAmount);
+        int itemGiveAmount = kitAmount > 0 ? itemAmount * kitAmount : itemAmount;
 
         if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemGiveAmount)) {
             plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
@@ -321,7 +319,6 @@ public class Kit implements Cloneable {
             if (itemGiveAmount <= 0 && itemGivenAmount != 0) break;
             double ch = item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
-            System.out.println("We tryin here [" + ch + ":" + rand + "]");
             itemGiveAmount--;
             if (rand < ch || ch == 100) {
                 itemGivenAmount++;

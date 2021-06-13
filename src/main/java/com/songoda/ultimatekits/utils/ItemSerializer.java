@@ -1,5 +1,6 @@
 package com.songoda.ultimatekits.utils;
 
+import com.songoda.core.compatibility.ClassMapping;
 import com.songoda.core.compatibility.ServerVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -38,10 +39,11 @@ public class ItemSerializer {
      */
     static  {
         try {
-            classMojangsonParser = Class.forName(formatNMS("net.minecraft.server.NMS.MojangsonParser"));
-            classItemStack = Class.forName(formatNMS("net.minecraft.server.NMS.ItemStack"));
+            classMojangsonParser = Class.forName(ServerVersion.isServerVersionAtLeast(ServerVersion.V1_17)
+                    ? "net.minecraft.nbt.MojangsonParser" : formatNMS("net.minecraft.server.NMS.MojangsonParser"));
+            classItemStack = ClassMapping.ITEM_STACK.getClazz();
             classCraftItemStack = Class.forName(formatNMS("org.bukkit.craftbukkit.NMS.inventory.CraftItemStack"));
-            classNBTTagCompound = Class.forName(formatNMS("net.minecraft.server.NMS.NBTTagCompound"));
+            classNBTTagCompound = ClassMapping.NBT_TAG_COMPOUND.getClazz();
             classBukkitItemStack = Class.forName("org.bukkit.inventory.ItemStack");
             methodParseString = classMojangsonParser.getMethod("parse", String.class);
 

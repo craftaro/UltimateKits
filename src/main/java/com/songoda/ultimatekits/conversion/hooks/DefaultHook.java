@@ -1,7 +1,6 @@
 package com.songoda.ultimatekits.conversion.hooks;
 
 import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.conversion.Hook;
 import com.songoda.ultimatekits.utils.ItemSerializer;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DefaultHook implements Hook {
-
     public Set<ItemStack> getItems(String kitName) {
         Set<ItemStack> items = new HashSet<>();
 

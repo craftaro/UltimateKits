@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>UltimateKits</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>2.6.17</version>
+    <version>2.7.0</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>UltimateKits-${project.version}</finalName>
@@ -102,14 +102,14 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.17</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.18-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>SongodaCore</artifactId>
-            <version>LATEST</version>
+            <version>2.6.9</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

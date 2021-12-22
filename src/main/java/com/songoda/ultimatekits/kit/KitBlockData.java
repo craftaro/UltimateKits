@@ -4,7 +4,14 @@ import com.songoda.ultimatekits.UltimateKits;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.UUID;
+
 public class KitBlockData {
+
+    // This is the unique identifier for this block data.
+    // It is reset on every plugin load.
+    // Used for holograms.
+    private final UUID uniqueId = UUID.randomUUID();
 
     private final Kit kit;
     private final Location location;
@@ -104,5 +111,7 @@ public class KitBlockData {
         this.type = type;
     }
 
-
+    public String getHologramId() {
+        return "UltimateKits-" + uniqueId;
+    }
 }

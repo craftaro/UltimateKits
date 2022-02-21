@@ -394,9 +394,9 @@ public class KitEditorGui extends DoubleGui {
                 AnvilGui gui = new AnvilGui(player, this);
                 gui.setTitle("Enter a Material");
                 gui.setAction(event -> {
-                    CompatibleMaterial compatibleMaterial = CompatibleMaterial.getMaterial(gui.getInputText());
+                    CompatibleMaterial compatibleMaterial = CompatibleMaterial.getMaterial(gui.getInputText().trim());
                     if (compatibleMaterial == null) {
-                        player.sendMessage(gui.getInputText() + " is not a valid material.");
+                        player.sendMessage("'" + gui.getInputText().trim() + "' is not a valid material.");
                     } else {
                         Material material = compatibleMaterial.getMaterial();
                         KitItem newItem = new KitItem(itemStack);

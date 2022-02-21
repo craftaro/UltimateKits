@@ -80,13 +80,6 @@
                                         <exclude>LICENSE.**</exclude>
                                     </excludes>
                                 </filter>
-
-                                <!--<filter>-->
-                                <!--    <artifact>org.jetbrains:annotations</artifact>-->
-                                <!--    <excludes>-->
-                                <!--        <exclude>**</exclude>-->
-                                <!--    </excludes>-->
-                                <!--</filter>-->
                             </filters>
                         </configuration>
                     </execution>

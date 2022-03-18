@@ -1,14 +1,12 @@
 package com.songoda.ultimatekits.kit;
 
 import com.songoda.core.compatibility.CompatibleHand;
-import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.CompatibleSound;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.Gui;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
-import com.songoda.core.nms.NmsManager;
-import com.songoda.core.nms.nbt.NBTItem;
+import com.songoda.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
@@ -105,13 +103,13 @@ public class Kit implements Cloneable {
 
     public void processKeyUse(Player player) {
         ItemStack item = player.getItemInHand();
-        NBTItem nbtItem = NmsManager.getNbt().of(item);
+        NBTItem nbtItem = new NBTItem(item);
 
-        if (!nbtItem.has("key") || !nbtItem.has("kit"))
+        if (!nbtItem.hasKey("key") || !nbtItem.hasKey("kit"))
             return;
 
-        String keyName = nbtItem.getNBTObject("key").asString();
-        String kitName = nbtItem.getNBTObject("kit").asString();
+        String keyName = nbtItem.getString("key");
+        String kitName = nbtItem.getString("kit");
 
         boolean any = kitName.equals("ANY");
         Key key = plugin.getKeyManager().getKey(keyName);

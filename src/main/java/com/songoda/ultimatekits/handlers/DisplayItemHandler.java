@@ -1,7 +1,6 @@
 package com.songoda.ultimatekits.handlers;
 
-import com.songoda.core.nms.NmsManager;
-import com.songoda.core.nms.nbt.NBTItem;
+import com.songoda.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.Kit;
 import com.songoda.ultimatekits.kit.KitBlockData;
@@ -15,7 +14,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,8 +63,8 @@ public class DisplayItemHandler {
             if (!kitBlockData.isDisplayingItems()) e.remove();
 
 
-            NBTItem nbtItem = NmsManager.getNbt().of(i.getItemStack());
-            int inum = nbtItem.has("num") ? nbtItem.getNBTObject("num").asInt() + 1 : 0;
+            NBTItem nbtItem = new NBTItem(i.getItemStack());
+            int inum = nbtItem.hasKey("num") ? nbtItem.getInteger("num") + 1 : 0;
 
             int size = list.size();
             if (inum > size || inum <= 0) inum = 1;
@@ -81,9 +79,9 @@ public class DisplayItemHandler {
             meta.setDisplayName(null);
             meta.setLore(Collections.singletonList("Some lore stuff man."));
             is.setItemMeta(meta);
-            nbtItem = NmsManager.getNbt().of(is);
-            nbtItem.set("num", inum);
-            i.setItemStack(nbtItem.finish());
+            nbtItem = new NBTItem(is);
+            nbtItem.setInteger("num", inum);
+            i.setItemStack(nbtItem.getItem());
             i.setPickupDelay(9999);
             return;
         }
@@ -95,11 +93,11 @@ public class DisplayItemHandler {
         meta.setLore(Collections.singletonList("Display Item"));
         is.setItemMeta(meta);
 
-        NBTItem nbtItem = NmsManager.getNbt().of(is);
-        nbtItem.set("num", 0);
+        NBTItem nbtItem = new NBTItem(is);
+        nbtItem.setInteger("num", 0);
 
         Bukkit.getScheduler().runTask(plugin, () -> {
-            Item item = location.getWorld().dropItem(location.add(0, 1, 0), nbtItem.finish());
+            Item item = location.getWorld().dropItem(location.add(0, 1, 0), nbtItem.getItem());
             Vector vec = new Vector(0, 0, 0);
             item.setVelocity(vec);
             item.setPickupDelay(9999);

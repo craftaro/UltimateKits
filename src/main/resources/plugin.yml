@@ -1,29 +1,53 @@
-name: UltimateKits
-main: com.songoda.ultimatekits.UltimateKits
-version: maven-version-number
-softdepend: [HolographicDisplays, Holograms, CMI, Vault, PlayerPoints, Reserve, PlaceholderAPI, UltimateCore, Essentials, MiniKitPvP]
-description: View a kit before you purchase it!
-author: Songoda
+name: ${project.name}
+description: ${project.description}
+version: ${project.version}
 api-version: 1.13
+
+main: com.songoda.ultimatekits.UltimateKits
+softdepend:
+  - CMI
+  - Essentials
+  - Holograms
+  - HolographicDisplays
+  - MiniKitPvP
+  - PlaceholderAPI
+  - PlayerPoints
+  - Reserve
+  - UltimateCore
+  - Vault
+
+author: Songoda
+website: ${project.url}
+
 commands:
   kitadmin:
     description: View information on this plugin.
     default: true
-    aliases: [ultimatekits, kp, uk]
     usage: /<command> [reload]
+    aliases:
+      - kp
+      - uk
+      - ultimatekits
+
   kit:
     description: Preview a kit
     default: true
-    aliases: [kits]
     usage: /<commands>
+    aliases:
+      - kits
+
   previewkit:
     description: Preview a kit
     default: true
-    aliases: [pk, preview]
     usage: /<command> [kit]
+    aliases:
+      - pk
+      - preview
+
 permissions:
   ultimatekits.use:
     description: allows the user to preview kit
     default: true
+
   ultimatekits.admin:
     description: Gives access to admin commands.

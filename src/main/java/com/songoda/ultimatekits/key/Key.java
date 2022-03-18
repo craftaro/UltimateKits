@@ -1,7 +1,6 @@
 package com.songoda.ultimatekits.key;
 
-import com.songoda.core.nms.NmsManager;
-import com.songoda.core.nms.nbt.NBTItem;
+import com.songoda.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.songoda.core.utils.ItemUtils;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
@@ -73,11 +72,11 @@ public class Key {
 
         item.setItemMeta(meta);
 
-        NBTItem nbtItem = NmsManager.getNbt().of(item);
-        nbtItem.set("key", name);
-        nbtItem.set("kit", kit == null ? "ANY" : kit.getName());
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.setString("key", name);
+        nbtItem.setString("kit", kit == null ? "ANY" : kit.getName());
 
-        return nbtItem.finish();
+        return nbtItem.getItem();
     }
 
     public String getName() {

@@ -1,7 +1,6 @@
 package com.songoda.ultimatekits.kit;
 
-import com.songoda.core.nms.NmsManager;
-import com.songoda.core.nms.nbt.NBTItem;
+import com.songoda.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.UltimateKits;
 import com.songoda.ultimatekits.kit.type.KitContent;
@@ -61,15 +60,15 @@ public class KitItem implements Cloneable {
 
     private void translateTags(ItemStack item) {
         if (item == null) return;
-        NBTItem nbtItem = NmsManager.getNbt().of(item);
-        if (nbtItem.has("chance"))
-            chance = nbtItem.getNBTObject("chance").asDouble();
-        if (nbtItem.has("display-item"))
-            displayItem = Material.valueOf(nbtItem.getNBTObject("display-item").asString());
-        if (nbtItem.has("display-name"))
-            displayName = nbtItem.getNBTObject("display-name").asString();
-        if (nbtItem.has("display-lore"))
-            displayLore = nbtItem.getNBTObject("display-lore").asString();
+        NBTItem nbtItem = new NBTItem(item);
+        if (nbtItem.hasKey("chance"))
+            chance = nbtItem.getDouble("chance");
+        if (nbtItem.hasKey("display-item"))
+            displayItem = Material.valueOf(nbtItem.getString("display-item"));
+        if (nbtItem.hasKey("display-name"))
+            displayName = nbtItem.getString("display-name");
+        if (nbtItem.hasKey("display-lore"))
+            displayLore = nbtItem.getString("display-lore");
     }
 
     private String translateLine(String line) {
@@ -102,16 +101,16 @@ public class KitItem implements Cloneable {
     }
 
     private ItemStack compileOptions(ItemStack item) {
-        NBTItem nbtItem = NmsManager.getNbt().of(item);
+        NBTItem nbtItem = new NBTItem(item);
         if (chance != 0)
-            nbtItem.set("chance", chance);
+            nbtItem.setDouble("chance", chance);
         if (displayItem != null)
-            nbtItem.set("display-item", displayItem.name());
+            nbtItem.setString("display-item", displayItem.name());
         if (displayName != null)
-            nbtItem.set("display-name", displayName);
+            nbtItem.setString("display-name", displayName);
         if (displayLore != null)
-            nbtItem.set("display-lore", displayLore);
-        return nbtItem.finish();
+            nbtItem.setString("display-lore", displayLore);
+        return nbtItem.getItem();
     }
 
     private String compileOptionsText() {
@@ -224,7 +223,7 @@ public class KitItem implements Cloneable {
     }
 
     public KitItem clone() throws CloneNotSupportedException {
-        return (KitItem)super.clone();
+        return (KitItem) super.clone();
     }
 
     @Override

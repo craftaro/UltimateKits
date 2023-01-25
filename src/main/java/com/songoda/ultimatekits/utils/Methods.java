@@ -92,7 +92,7 @@ public class Methods {
 
     public static String makeReadable(Long time) {
         if (time == null)
-            return "";
+            return "1s";
 
         StringBuilder sb = new StringBuilder();
 
@@ -109,6 +109,8 @@ public class Methods {
             sb.append(" ").append(minutes).append("m");
         if (seconds != 0L)
             sb.append(" ").append(seconds).append("s");
+        if (sb.length() == 0)
+            sb.append("1s");
         return sb.toString().trim();
     }
 

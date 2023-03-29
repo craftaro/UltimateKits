@@ -15,7 +15,17 @@ import com.songoda.core.hooks.HologramManager;
 import com.songoda.core.utils.TextUtils;
 import com.songoda.ultimatekits.category.Category;
 import com.songoda.ultimatekits.category.CategoryManager;
-import com.songoda.ultimatekits.commands.*;
+import com.songoda.ultimatekits.commands.CommandCategories;
+import com.songoda.ultimatekits.commands.CommandCrate;
+import com.songoda.ultimatekits.commands.CommandCreatekit;
+import com.songoda.ultimatekits.commands.CommandEdit;
+import com.songoda.ultimatekits.commands.CommandKey;
+import com.songoda.ultimatekits.commands.CommandKit;
+import com.songoda.ultimatekits.commands.CommandPreviewKit;
+import com.songoda.ultimatekits.commands.CommandReload;
+import com.songoda.ultimatekits.commands.CommandRemove;
+import com.songoda.ultimatekits.commands.CommandSet;
+import com.songoda.ultimatekits.commands.CommandSettings;
 import com.songoda.ultimatekits.conversion.Convert;
 import com.songoda.ultimatekits.crate.Crate;
 import com.songoda.ultimatekits.crate.CrateManager;
@@ -57,7 +67,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UltimateKits extends SongodaPlugin {
-
     private static UltimateKits INSTANCE;
 
     private final Config kitConfig = new Config(this, "kit.yml");
@@ -77,16 +86,10 @@ public class UltimateKits extends SongodaPlugin {
     private CategoryManager categoryManager;
 
     private DatabaseConnector databaseConnector;
-    private DataMigrationManager dataMigrationManager;
     private DataManager dataManager;
 
     private boolean loaded = false;
 
-    /**
-     * Grab instance of UltimateKits
-     *
-     * @return instance of UltimateKits
-     */
     public static UltimateKits getInstance() {
         return INSTANCE;
     }
@@ -117,30 +120,30 @@ public class UltimateKits extends SongodaPlugin {
         this.crateManager = new CrateManager();
         this.categoryManager = new CategoryManager(this);
 
-        kitConfig.load();
+        this.kitConfig.load();
         Convert.runKitConversions();
 
-        categoryConfig.load();
+        this.categoryConfig.load();
 
         // load kits
-        dataFile.load();
-        keyFile.load();
-        crateFile.load();
+        this.dataFile.load();
+        this.keyFile.load();
+        this.crateFile.load();
         checkKeyDefaults();
         checkCrateDefaults();
-        keyFile.saveChanges();
-        crateFile.saveChanges();
+        this.keyFile.saveChanges();
+        this.crateFile.saveChanges();
 
         // setup commands
         this.commandManager = new CommandManager(this);
-        this.commandManager.addCommand(new CommandKit(this, guiManager));
-        this.commandManager.addCommand(new CommandPreviewKit(this, guiManager));
+        this.commandManager.addCommand(new CommandKit(this, this.guiManager));
+        this.commandManager.addCommand(new CommandPreviewKit(this, this.guiManager));
         this.commandManager.addMainCommand("KitAdmin")
                 .addSubCommand(new CommandReload(this))
-                .addSubCommand(new CommandSettings(this, guiManager))
-                .addSubCommand(new CommandCreatekit(this, guiManager))
-                .addSubCommand(new CommandCategories(this, guiManager))
-                .addSubCommand(new CommandEdit(this, guiManager))
+                .addSubCommand(new CommandSettings(this, this.guiManager))
+                .addSubCommand(new CommandCreatekit(this, this.guiManager))
+                .addSubCommand(new CommandCategories(this, this.guiManager))
+                .addSubCommand(new CommandEdit(this, this.guiManager))
                 .addSubCommand(new CommandKey(this))
                 .addSubCommand(new CommandSet(this))
                 .addSubCommand(new CommandRemove(this))
@@ -149,13 +152,13 @@ public class UltimateKits extends SongodaPlugin {
 
 
         // Event registration
+        this.guiManager.init();
         PluginManager pluginManager = getServer().getPluginManager();
-        guiManager.init();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new ChunkListeners(this), this);
         pluginManager.registerEvents(new ChatListeners(), this);
         pluginManager.registerEvents(new EntityListeners(this), this);
-        pluginManager.registerEvents(new InteractListeners(this, guiManager), this);
+        pluginManager.registerEvents(new InteractListeners(this, this.guiManager), this);
         pluginManager.registerEvents(new PlayerListeners(), this);
 
         try {
@@ -176,11 +179,10 @@ public class UltimateKits extends SongodaPlugin {
             }
 
             this.dataManager = new DataManager(this.databaseConnector, this);
-            this.dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager,
+            DataMigrationManager dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager,
                     new _1_InitialMigration(),
                     new _2_DuplicateMigration(this.databaseConnector instanceof SQLiteConnector));
-            this.dataMigrationManager.runMigrations();
-
+            dataMigrationManager.runMigrations();
         } catch (Exception ex) {
             this.getLogger().severe("Fatal error trying to connect to database. " +
                     "Please make sure all your connection settings are correct and try again. Plugin has been disabled.");
@@ -188,17 +190,17 @@ public class UltimateKits extends SongodaPlugin {
             return;
         }
 
-        displayItemHandler.start();
-        particleHandler.start();
+        this.displayItemHandler.start();
+        this.particleHandler.start();
     }
 
     @Override
     public void onDataLoad() {
-        //Empty categories from manager.
+        // Empty categories from manager
         categoryManager.clearCategories();
 
         /*
-         * Register categories into CategoryManager from Configuration.
+         * Register categories into CategoryManager from Configuration
          */
         if (categoryConfig.getConfigurationSection("Categories") != null) {
             for (String key : categoryConfig.getConfigurationSection("Categories").getKeys(false)) {
@@ -214,11 +216,11 @@ public class UltimateKits extends SongodaPlugin {
             }
         }
 
-        //Empty kits from manager.
+        // Empty kits from manager.
         kitManager.clearKits();
 
         /*
-         * Register kits into KitManager from Configuration.
+         * Register kits into KitManager from Configuration
          */
         if (kitConfig.getConfigurationSection("Kits") != null) {
             for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
@@ -254,7 +256,7 @@ public class UltimateKits extends SongodaPlugin {
         }
 
         /*
-         * Register legacy kit locations into KitManager from Configuration.
+         * Register legacy kit locations into KitManager from Configuration
          */
         if (dataFile.contains("BlockData")) {
             for (String key : dataFile.getConfigurationSection("BlockData").getKeys(false)) {
@@ -275,7 +277,7 @@ public class UltimateKits extends SongodaPlugin {
         }
 
         /*
-         * Register kit locations into KitManager from Configuration.
+         * Register kit locations into KitManager from Configuration
          */
         Bukkit.getScheduler().runTaskLater(this, () ->
                 this.dataManager.getBlockData((blockData) -> {
@@ -287,16 +289,16 @@ public class UltimateKits extends SongodaPlugin {
                     }
                 }), 20L);
 
-        //Apply default keys.
+        // Apply default keys
         checkKeyDefaults();
         checkCrateDefaults();
 
-        //Empty keys from manager.
+        // Empty keys from manager
         keyManager.clear();
         crateManager.clear();
 
         /*
-         * Register keys into KitManager from Configuration.
+         * Register keys into KitManager from Configuration
          */
         if (keyFile.contains("Keys")) {
             for (String keyName : keyFile.getConfigurationSection("Keys").getKeys(false)) {
@@ -311,7 +313,7 @@ public class UltimateKits extends SongodaPlugin {
 
         /*
          * Register Crates
-         * */
+         */
         if (crateFile.contains("Crates")) {
             for (String crateName : crateFile.getConfigurationSection("Crates").getKeys(false)) {
                 int amt = crateFile.getInt("Crates." + crateName + ".Item Amount");
@@ -327,26 +329,26 @@ public class UltimateKits extends SongodaPlugin {
     @Override
     public void onPluginDisable() {
         saveKits(false);
-        dataFile.save();
-        dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
-        kitManager.clearKits();
+        this.dataFile.save();
+        this.dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        this.kitManager.clearKits();
         HologramManager.removeAllHolograms();
     }
 
     @Override
     public List<Config> getExtraConfig() {
-        return Arrays.asList(kitConfig, keyFile, categoryConfig, crateFile);
+        return Arrays.asList(this.kitConfig, this.keyFile, this.categoryConfig, this.crateFile);
     }
 
     @Override
     public void onConfigReload() {
         setLocale(Settings.LANGUGE_MODE.getString(), true);
 
-        dataManager.bulkUpdateBlockData(getKitManager().getKitLocations());
-        kitConfig.load();
-        categoryConfig.load();
-        keyFile.load();
-        crateFile.load();
+        this.dataManager.bulkUpdateBlockData(getKitManager().getKitLocations());
+        this.kitConfig.load();
+        this.categoryConfig.load();
+        this.keyFile.load();
+        this.crateFile.load();
         onDataLoad();
     }
 
@@ -376,6 +378,7 @@ public class UltimateKits extends SongodaPlugin {
         if (data.isDisplayingItems()) {
             multi += .25;
         }
+
         Material type = location.getBlock().getType();
         if (type == Material.TRAPPED_CHEST
                 || type == Material.CHEST
@@ -383,6 +386,7 @@ public class UltimateKits extends SongodaPlugin {
                 || type == Material.ENDER_CHEST) {
             multi -= .10;
         }
+
         location.add(0, multi, 0);
         return location;
     }
@@ -408,15 +412,12 @@ public class UltimateKits extends SongodaPlugin {
 
     private List<String> formatHologram(KitBlockData data) {
         getDataManager().updateBlockData(data);
-        KitType kitType = data.getType();
 
-        ArrayList<String> lines = new ArrayList<>();
-
-        List<String> order = Settings.HOLOGRAM_LAYOUT.getStringList();
+        List<String> lines = new ArrayList<>();
 
         Kit kit = data.getKit();
-
-        for (String o : order) {
+        KitType kitType = data.getType();
+        for (String o : Settings.HOLOGRAM_LAYOUT.getStringList()) {
             switch (o.toUpperCase()) {
                 case "{TITLE}":
                     String title = kit.getTitle();
@@ -426,6 +427,7 @@ public class UltimateKits extends SongodaPlugin {
                         lines.add(ChatColor.DARK_PURPLE + TextUtils.formatText(title));
                     }
                     break;
+
                 case "{RIGHT-CLICK}":
                     if (kitType == KitType.CRATE) {
                         lines.add(getLocale().getMessage("interface.hologram.crate").getMessage());
@@ -443,6 +445,7 @@ public class UltimateKits extends SongodaPlugin {
                                 .getMessage());
                     }
                     break;
+
                 case "{LEFT-CLICK}":
                     if (kitType == KitType.CLAIM) {
                         lines.add(getLocale().getMessage("interface.hologram.daily").getMessage());
@@ -454,6 +457,7 @@ public class UltimateKits extends SongodaPlugin {
                         lines.add(getLocale().getMessage("interface.hologram.preview").getMessage());
                     }
                     break;
+
                 default:
                     lines.add(ChatColor.translateAlternateColorCodes('&', o));
                     break;
@@ -463,26 +467,26 @@ public class UltimateKits extends SongodaPlugin {
         return lines;
     }
 
-    /*
-     * Saves registered kits to file.
+    /**
+     * Saves registered kits to file
      */
     public void saveKits(boolean force) {
         if (!loaded && !force) return;
 
-        // If we're changing the order the file needs to be wiped.
+        // If we're changing the order the file needs to be wiped
         if (kitManager.hasOrderChanged()) {
             kitConfig.clearConfig(true);
             kitManager.savedOrderChange();
         }
 
-        // Hot fix for kit file resets.
+        // Hot fix for kit file resets
         if (kitConfig.contains("Kits"))
             for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
                 if (kitManager.getKits().stream().noneMatch(kit -> kit.getKey().equals(kitName)))
                     kitConfig.set("Kits." + kitName, null);
             }
 
-        // Hot fix for category file resets.
+        // Hot fix for category file resets
         if (categoryConfig.contains("Categories"))
             for (String key : categoryConfig.getConfigurationSection("Categories").getKeys(false)) {
                 if (categoryManager.getCategories().stream().noneMatch(category -> category.getKey().equals(key)))
@@ -490,7 +494,7 @@ public class UltimateKits extends SongodaPlugin {
             }
 
         /*
-         * Save kits from KitManager to Configuration.
+         * Save kits from KitManager to Configuration
          */
         for (Kit kit : kitManager.getKits()) {
             kitConfig.set("Kits." + kit.getKey() + ".delay", kit.getDelay());
@@ -515,7 +519,7 @@ public class UltimateKits extends SongodaPlugin {
         }
 
         /*
-         * Save categories from CategoryManager to Configuration.
+         * Save categories from CategoryManager to Configuration
          */
         for (Category category : categoryManager.getCategories()) {
             categoryConfig.set("Categories." + category.getKey() + ".name", category.getName());
@@ -527,93 +531,87 @@ public class UltimateKits extends SongodaPlugin {
         categoryConfig.saveChanges();
     }
 
-    /*
-     * Insert default key list into config.
+    /**
+     * Insert default key list into config
      */
     private void checkKeyDefaults() {
-        if (keyFile.contains("Keys")) return;
-        keyFile.set("Keys.Regular.Item Amount", 3);
-        keyFile.set("Keys.Regular.Amount overrides", Collections.singletonList("Tools:2"));
-        keyFile.set("Keys.Regular.Amount of kit received", 1);
-        keyFile.set("Keys.Ultra.Item Amount", -1);
-        keyFile.set("Keys.Ultra.Amount of kit received", 1);
-        keyFile.set("Keys.Insane.Item Amount", -1);
-        keyFile.set("Keys.Insane.Amount of kit received", 2);
-        keyFile.set("Keys.Insane.Enchanted", true);
+        if (this.keyFile.contains("Keys")) {
+            return;
+        }
+
+        this.keyFile.set("Keys.Regular.Item Amount", 3);
+        this.keyFile.set("Keys.Regular.Amount overrides", Collections.singletonList("Tools:2"));
+        this.keyFile.set("Keys.Regular.Amount of kit received", 1);
+        this.keyFile.set("Keys.Ultra.Item Amount", -1);
+        this.keyFile.set("Keys.Ultra.Amount of kit received", 1);
+        this.keyFile.set("Keys.Insane.Item Amount", -1);
+        this.keyFile.set("Keys.Insane.Amount of kit received", 2);
+        this.keyFile.set("Keys.Insane.Enchanted", true);
     }
 
     private void checkCrateDefaults() {
-        if (crateFile.contains("Crates")) return;
-        crateFile.set("Crates.Regular.Item Amount", 3);
-        crateFile.set("Crates.Regular.Amount overrides", Collections.singletonList("Tools:2"));
-        crateFile.set("Crates.Regular.Amount of kit received", 1);
-        crateFile.set("Crates.Ultra.Item Amount", -1);
-        crateFile.set("Crates.Ultra.Amount of kit received", 1);
-        crateFile.set("Crates.Insane.Item Amount", -1);
-        crateFile.set("Crates.Insane.Amount of kit received", 2);
+        if (this.crateFile.contains("Crates")) {
+            return;
+        }
+
+        this.crateFile.set("Crates.Regular.Item Amount", 3);
+        this.crateFile.set("Crates.Regular.Amount overrides", Collections.singletonList("Tools:2"));
+        this.crateFile.set("Crates.Regular.Amount of kit received", 1);
+        this.crateFile.set("Crates.Ultra.Item Amount", -1);
+        this.crateFile.set("Crates.Ultra.Amount of kit received", 1);
+        this.crateFile.set("Crates.Insane.Item Amount", -1);
+        this.crateFile.set("Crates.Insane.Amount of kit received", 2);
     }
 
-    /**
-     * Get instance of KitManager
-     *
-     * @return instance of KitManager
-     */
     public KitManager getKitManager() {
-        return kitManager;
+        return this.kitManager;
     }
 
-    /**
-     * Get instance of KeyManager
-     *
-     * @return instance of KeyManager
-     */
     public KeyManager getKeyManager() {
-        return keyManager;
+        return this.keyManager;
     }
 
     public CrateManager getCrateManager() {
-        return crateManager;
+        return this.crateManager;
     }
 
-    /**
-     * Grab instance of Kit File Configuration Wrapper
-     *
-     * @return instance of KitFile
-     */
     public Config getKitConfig() {
-        return kitConfig;
+        return this.kitConfig;
+    }
+
+    public Config getDataFile() {
+        return this.dataFile;
     }
 
     /**
-     * Grab instance of Data File Configuration Wrapper
-     *
-     * @return instance of DataFile
+     * @deprecated Will be made private or removed completely in the future.
      */
-    public Config getDataFile() {
-        return dataFile;
-    }
-
+    @Deprecated
     public CommandManager getCommandManager() {
-        return commandManager;
+        return this.commandManager;
     }
 
     public GuiManager getGuiManager() {
-        return guiManager;
+        return this.guiManager;
     }
 
     public DisplayItemHandler getDisplayItemHandler() {
-        return displayItemHandler;
+        return this.displayItemHandler;
     }
 
+    /**
+     * @deprecated Will be made private or removed completely in the future.
+     */
+    @Deprecated
     public DatabaseConnector getDatabaseConnector() {
-        return databaseConnector;
+        return this.databaseConnector;
     }
 
     public DataManager getDataManager() {
-        return dataManager;
+        return this.dataManager;
     }
 
     public CategoryManager getCategoryManager() {
-        return categoryManager;
+        return this.categoryManager;
     }
 }

@@ -269,7 +269,7 @@ public class UltimateKits extends SongodaPlugin {
                 if (kit == null) {
                     dataFile.set("BlockData." + key, null);
                 } else {
-                    createHologram(kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride));
+                    updateHologram(kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride));
                 }
             }
         }
@@ -280,8 +280,10 @@ public class UltimateKits extends SongodaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () ->
                 this.dataManager.getBlockData((blockData) -> {
                     this.kitManager.setKitLocations(blockData);
-                    if (HologramManager.isEnabled()) {
-                        loadHolograms();
+
+                    Collection<KitBlockData> kitBlocks = getKitManager().getKitLocations().values();
+                    for (KitBlockData data : kitBlocks) {
+                        updateHologram(data);
                     }
                 }), 20L);
 
@@ -340,7 +342,7 @@ public class UltimateKits extends SongodaPlugin {
     public void onConfigReload() {
         setLocale(Settings.LANGUGE_MODE.getString(), true);
 
-        dataManager.bulkUpdateBlockData(this.getKitManager().getKitLocations());
+        dataManager.bulkUpdateBlockData(getKitManager().getKitLocations());
         kitConfig.load();
         categoryConfig.load();
         keyFile.load();
@@ -349,9 +351,7 @@ public class UltimateKits extends SongodaPlugin {
     }
 
     public void removeHologram(KitBlockData data) {
-        if (HologramManager.isEnabled()) {
-            HologramManager.removeHologram(data.getHologramId());
-        }
+        HologramManager.removeHologram(data.getHologramId());
     }
 
     public void updateHologram(Kit kit) {
@@ -364,7 +364,7 @@ public class UltimateKits extends SongodaPlugin {
         }
     }
 
-    public void createHologram(KitBlockData data) {
+    private void createHologram(KitBlockData data) {
         List<String> lines = formatHologram(data);
         Location location = getKitLocation(data, lines.size());
         HologramManager.createHologram(data.getHologramId(), location, lines);
@@ -388,28 +388,22 @@ public class UltimateKits extends SongodaPlugin {
     }
 
     public void updateHologram(KitBlockData data) {
-        if (data != null && data.isInLoadedChunk() && HologramManager.isEnabled()) {
-            List<String> lines = formatHologram(data);
-
-            if (!lines.isEmpty()) {
-                if (!data.showHologram()) {
-                    HologramManager.removeHologram(data.getHologramId());
-                } else if (HologramManager.isHologramLoaded(data.getHologramId())) {
-                    HologramManager.updateHologram(data.getHologramId(), lines);
-                } else {
-                    createHologram(data);
-                }
-            }
+        if (data == null || !data.isInLoadedChunk() || !HologramManager.isEnabled()) {
+            return;
         }
-    }
 
-    private void loadHolograms() {
-        Collection<KitBlockData> kitBlocks = getKitManager().getKitLocations().values();
-        if (kitBlocks.isEmpty()) return;
+        List<String> lines = formatHologram(data);
+        if (lines.isEmpty() || !data.showHologram()) {
+            HologramManager.removeHologram(data.getHologramId());
+            return;
+        }
 
-        for (KitBlockData data : kitBlocks) {
+        if (!HologramManager.isHologramLoaded(data.getHologramId())) {
             createHologram(data);
+            return;
         }
+
+        HologramManager.updateHologram(data.getHologramId(), lines);
     }
 
     private List<String> formatHologram(KitBlockData data) {

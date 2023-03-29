@@ -200,15 +200,19 @@ public class UltimateKits extends SongodaPlugin {
         /*
          * Register categories into CategoryManager from Configuration.
          */
-        if (categoryConfig.getConfigurationSection("Categories") != null)
+        if (categoryConfig.getConfigurationSection("Categories") != null) {
             for (String key : categoryConfig.getConfigurationSection("Categories").getKeys(false)) {
                 ConfigurationSection section = categoryConfig.getConfigurationSection("Categories." + key);
-                if (section == null) continue;
+                if (section == null) {
+                    continue;
+                }
 
                 Category category = categoryManager.addCategory(key, section.getString("name"));
-                if (section.contains("material"))
+                if (section.contains("material")) {
                     category.setMaterial(CompatibleMaterial.getMaterial(section.getString("material")).getMaterial());
+                }
             }
+        }
 
         //Empty kits from manager.
         kitManager.clearKits();
@@ -216,20 +220,23 @@ public class UltimateKits extends SongodaPlugin {
         /*
          * Register kits into KitManager from Configuration.
          */
-        if (kitConfig.getConfigurationSection("Kits") != null)
+        if (kitConfig.getConfigurationSection("Kits") != null) {
             for (String kitName : kitConfig.getConfigurationSection("Kits").getKeys(false)) {
                 ConfigurationSection section = kitConfig.getConfigurationSection("Kits." + kitName);
-                if (section == null) continue;
+                if (section == null) {
+                    continue;
+                }
 
                 String itemString = section.getString("displayItem");
 
                 ItemStack item = null;
 
                 if (itemString != null) {
-                    if (itemString.contains("{"))
+                    if (itemString.contains("{")) {
                         item = ItemSerializer.deserializeItemStackFromJson(itemString);
-                    else
+                    } else {
                         item = CompatibleMaterial.getMaterial(itemString).getItem();
+                    }
                 }
 
                 kitManager.addKit(new Kit(kitName)
@@ -244,6 +251,7 @@ public class UltimateKits extends SongodaPlugin {
                         .setKitAnimation(KitAnimation.valueOf(section.getString("animation", KitAnimation.NONE.name())))
                 );
             }
+        }
 
         /*
          * Register legacy kit locations into KitManager from Configuration.
@@ -258,8 +266,9 @@ public class UltimateKits extends SongodaPlugin {
                 boolean particles = dataFile.getBoolean("BlockData." + key + ".particles");
                 boolean itemOverride = dataFile.getBoolean("BlockData." + key + ".itemOverride");
 
-                if (kit == null) dataFile.set("BlockData." + key, null);
-                else {
+                if (kit == null) {
+                    dataFile.set("BlockData." + key, null);
+                } else {
                     createHologram(kitManager.addKitToLocation(kit, location, type, holograms, particles, displayItems, itemOverride));
                 }
             }
@@ -347,7 +356,10 @@ public class UltimateKits extends SongodaPlugin {
 
     public void updateHologram(Kit kit) {
         for (KitBlockData data : getKitManager().getKitLocations().values()) {
-            if (data.getKit() != kit) continue;
+            if (data.getKit() != kit) {
+                continue;
+            }
+
             updateHologram(data);
         }
     }

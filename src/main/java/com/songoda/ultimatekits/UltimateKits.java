@@ -185,7 +185,7 @@ public class UltimateKits extends SongodaPlugin {
             dataMigrationManager.runMigrations();
         } catch (Exception ex) {
             this.getLogger().severe("Fatal error trying to connect to database. " +
-                    "Please make sure all your connection settings are correct and try again. Plugin has been disabled.");
+                    "Please make sure all your connection settings are correct and try again. Plugin has been disabled. (" + ex.getMessage() + ")");
             emergencyStop();
             return;
         }

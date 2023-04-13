@@ -6,7 +6,7 @@
 
     <groupId>com.songoda</groupId>
     <artifactId>UltimateKits</artifactId>
-    <version>2.7.6-BETA</version>
+    <version>2.7.6</version>
 
     <name>UltimateKits</name>
     <description>Creating and displaying your servers kits has never been easier</description>

@@ -192,6 +192,7 @@ public class KitItem implements Cloneable {
 
         if (displayItem != null) {
             item.setType(displayItem);
+            meta = item.getItemMeta();
         }
         if (meta != null) {
             if (displayName != null) {

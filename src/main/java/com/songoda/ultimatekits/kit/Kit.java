@@ -283,11 +283,27 @@ public class Kit implements Cloneable {
     }
 
     private boolean giveKit(Player player, Key key) {
-        return key == null ? giveKit(player) : giveKit(player, key.getAmount(), key.getKitAmount());
+        if (key == null) {
+            return giveKit(player);
+        }
+
+        int amount = key.getAmount();
+        if (amount == -1) {
+            // FIXME: I don't understand how Crates, Keys, etc. actually are supposed to work.
+            //        I think the give-algorithms are generally wrongly implemented and confusing naming is making it hard to understand.
+            amount = contents.size();
+        }
+        return giveKit(player, amount, key.getKitAmount());
     }
 
     private boolean giveKit(Player player, Crate crate) {
-        return giveKit(player, crate.getAmount(), crate.getKitAmount());
+        int amount = crate.getAmount();
+        if (amount == -1) {
+            // FIXME: I don't understand how Crates, Keys, etc. actually are supposed to work.
+            //        I think the give-algorithms are generally wrongly implemented and confusing naming is making it hard to understand.
+            amount = contents.size();
+        }
+        return giveKit(player, amount, crate.getKitAmount());
     }
 
     private boolean giveKit(Player player, int itemAmount, int kitAmount) {

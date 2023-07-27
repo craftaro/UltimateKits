@@ -3,7 +3,7 @@ description: ${project.description}
 version: ${project.version}
 api-version: 1.13
 
-main: com.songoda.ultimatekits.UltimateKits
+main: com.craftaro.ultimatekits.UltimateKits
 softdepend:
   - CMI
   - Essentials

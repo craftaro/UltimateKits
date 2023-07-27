@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.songoda</groupId>
+    <groupId>com.craftaro</groupId>
     <artifactId>UltimateKits</artifactId>
     <version>2.7.7</version>
 
     <name>UltimateKits</name>
     <description>Creating and displaying your servers kits has never been easier</description>
-    <url>https://songoda.com/marketplace/product/14</url>
+    <url>https://craftaro.com/marketplace/product/ultimatekits.14</url>
 
     <properties>
         <java.version>1.8</java.version>
@@ -19,14 +19,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <issueManagement>
-        <url>https://support.songoda.com/servicedesk/customer/portal/3</url>
-        <system>Jira Service Desk</system>
-    </issueManagement>
-
     <scm>
-        <url>https://github.com/songoda/UltimateKits</url>
-        <connection>scm:git:git:github.com/songoda/UltimateKits.git</connection>
+        <url>https://github.com/craftaro/UltimateKits</url>
+        <connection>scm:git:git:github.com/craftaro/UltimateKits.git</connection>
     </scm>
 
     <build>
@@ -60,13 +55,14 @@
                         <configuration>
                             <finalName>${project.name}-${project.version}</finalName>
 
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <useDependencyReducedPomInJar>true</useDependencyReducedPomInJar>
                             <minimizeJar>true</minimizeJar>
 
                             <relocations>
                                 <relocation>
-                                    <pattern>com.songoda.core</pattern>
-                                    <shadedPattern>com.songoda.epicanchors.core</shadedPattern>
+                                    <pattern>com.craftaro.core</pattern>
+                                    <shadedPattern>com.craftaro.ultimatestacker.core</shadedPattern>
                                 </relocation>
                             </relocations>
 
@@ -79,6 +75,15 @@
                                         <exclude>LICENSE</exclude>
                                         <exclude>LICENSE.**</exclude>
                                     </excludes>
+                                </filter>
+
+                                <filter>
+                                    <artifact>com.craftaro:CraftaroCore</artifact>
+                                    <excludeDefaults>false</excludeDefaults>
+                                    <includes>
+                                        <include>**/nms/v*/**</include>
+                                        <include>**/core/third_party/**</include>
+                                    </includes>
                                 </filter>
                             </filters>
                         </configuration>
@@ -102,7 +107,7 @@
         </repository>
 
         <repository>
-            <id>songoda-public</id>
+            <id>public</id>
             <url>https://repo.songoda.com/repository/public/</url>
         </repository>
     </repositories>
@@ -111,14 +116,14 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18-R0.1-SNAPSHOT</version>
+            <version>1.20.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>SongodaCore</artifactId>
-            <version>2.6.21</version>
+            <groupId>com.craftaro</groupId>
+            <artifactId>CraftaroCore</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

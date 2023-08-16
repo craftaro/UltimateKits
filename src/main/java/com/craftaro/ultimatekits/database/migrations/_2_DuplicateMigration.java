@@ -1,8 +1,6 @@
 package com.craftaro.ultimatekits.database.migrations;
 
-
 import com.craftaro.core.database.DataMigration;
-import com.craftaro.core.database.DatabaseConnector;
 import com.craftaro.core.database.SQLiteConnector;
 
 import java.sql.Connection;
@@ -13,17 +11,14 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 public class _2_DuplicateMigration extends DataMigration {
-
-
     public _2_DuplicateMigration() {
         super(2);
     }
 
     @Override
-    public void migrate(DatabaseConnector databaseConnector, String tablePrefix) throws SQLException {
+    public void migrate(Connection connection, String tablePrefix) throws SQLException {
         // Fix duplicate data caused by old sqlite data duplication bug
-        Connection connection = databaseConnector.getConnection();
-        boolean sqlite = databaseConnector instanceof SQLiteConnector;
+        boolean sqlite = connection instanceof SQLiteConnector;
         if (sqlite) {
             HashMap<String, TempKitData> data = new HashMap();
             // grab a copy of the unique data values

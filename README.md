@@ -3,7 +3,7 @@
 <img src="https://craftaro.com/images/products/493/icons/2hG0tPkGtUknkEKG7X13mwesVyeie8k3g3xpoU9v.png" width="128px">
 
 # UltimateKits
-**Creating and displaying your servers kits has never been easier.**
+**Creating and displaying your server&#39;s kits has never been easier.**
 **Use a GUI to drag kit items in then players can browse through them and even use crate keys on them.**
 
 

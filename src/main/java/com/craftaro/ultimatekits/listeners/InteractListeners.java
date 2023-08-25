@@ -4,12 +4,12 @@ import com.craftaro.core.compatibility.CompatibleHand;
 import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.gui.GuiManager;
 import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.core.utils.TimeUtils;
 import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.gui.BlockEditorGui;
 import com.craftaro.ultimatekits.kit.Kit;
 import com.craftaro.ultimatekits.kit.KitBlockData;
 import com.craftaro.ultimatekits.kit.KitType;
-import com.craftaro.ultimatekits.utils.Methods;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -34,23 +34,30 @@ public class InteractListeners implements Listener {
 
     @EventHandler
     public void onBlockInteract(PlayerInteractEvent event) {
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
-            if (event.getHand() == EquipmentSlot.OFF_HAND) return;
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) {
+            if (event.getHand() == EquipmentSlot.OFF_HAND) {
+                return;
+            }
+        }
 
         Block block = event.getClickedBlock();
+        if (block == null) {
+            return;
+        }
 
-        if (event.getClickedBlock() == null) return;
-
-        KitBlockData kitBlockData = plugin.getKitManager().getKit(block.getLocation());
-
-        if (kitBlockData == null) return;
+        KitBlockData kitBlockData = this.plugin.getKitManager().getKit(block.getLocation());
+        if (kitBlockData == null) {
+            return;
+        }
 
         Kit kit = kitBlockData.getKit();
 
         Player player = event.getPlayer();
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 
-            if (player.isSneaking()) return;
+            if (player.isSneaking()) {
+                return;
+            }
             event.setCancelled(true);
 
             if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
@@ -61,7 +68,7 @@ public class InteractListeners implements Listener {
 
             if (kitBlockData.getType() != KitType.PREVIEW) {
                 if (!kit.hasPermissionToClaim(player)) {
-                    plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(player);
+                    this.plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(player);
                     return;
                 }
                 if (kit.getNextUse(player) <= 0) {
@@ -69,20 +76,23 @@ public class InteractListeners implements Listener {
                     kit.updateDelay(player);
                 } else {
                     long time = kit.getNextUse(player);
-                    plugin.getLocale().getMessage("event.crate.notyet").processPlaceholder("time",
-                            Methods.makeReadable(time)).sendPrefixedMessage(player);
+                    this.plugin
+                            .getLocale()
+                            .getMessage("event.crate.notyet")
+                            .processPlaceholder("time", TimeUtils.makeReadable(time))
+                            .sendPrefixedMessage(player);
                 }
             } else if (kit.getLink() != null || kit.getPrice() != 0) {
-                kit.buy(player, guiManager);
+                kit.buy(player, this.guiManager);
             } else {
-                kit.display(player, guiManager, null);
+                kit.display(player, this.guiManager, null);
             }
         } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (block.getState() instanceof InventoryHolder || block.getType() == Material.ENDER_CHEST) {
                 event.setCancelled(true);
             }
             if (player.isSneaking() && player.hasPermission("ultimatekits.admin")) {
-                guiManager.showGUI(player, new BlockEditorGui(plugin, kitBlockData));
+                this.guiManager.showGUI(player, new BlockEditorGui(this.plugin, kitBlockData));
                 return;
             }
             if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
@@ -90,7 +100,7 @@ public class InteractListeners implements Listener {
                 kit.processKeyUse(player);
                 return;
             }
-            kit.display(player, guiManager, null);
+            kit.display(player, this.guiManager, null);
 
         }
     }
@@ -104,17 +114,22 @@ public class InteractListeners implements Listener {
         if (event.getAction() == Action.PHYSICAL
                 || event.getItem() == null
                 || event.getItem().getType() == XMaterial.AIR.parseMaterial()
-                || XMaterial.matchXMaterial(event.getItem()) != XMaterial.CHEST)
+                || XMaterial.matchXMaterial(event.getItem()) != XMaterial.CHEST) {
             return;
+        }
 
         ItemStack item = event.getItem();
         Player player = event.getPlayer();
 
-        if (!item.hasItemMeta() || !item.getItemMeta().hasLore() || item.getItemMeta().getLore().size() == 0) return;
+        if (!item.hasItemMeta() || !item.getItemMeta().hasLore() || item.getItemMeta().getLore().isEmpty()) {
+            return;
+        }
 
         Kit kit = UltimateKits.getInstance().getKitManager().getKit(ChatColor.stripColor(item.getItemMeta().getLore().get(0).split(" ")[0]));
 
-        if (kit == null) return;
+        if (kit == null) {
+            return;
+        }
 
         event.setCancelled(true);
 
@@ -123,6 +138,8 @@ public class InteractListeners implements Listener {
             // Open the crate
             kit.processCrateUse(player, item, CompatibleHand.getHand(event));
         } else // There are only left click actions left
-            kit.display(player, guiManager, null);
+        {
+            kit.display(player, this.guiManager, null);
+        }
     }
 }

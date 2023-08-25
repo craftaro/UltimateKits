@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class Settings {
-
     static final Config config = UltimateKits.getInstance().getCoreConfig();
 
     public static final ConfigSetting DONT_PREVIEW_COMMANDS = new ConfigSetting(config, "Main.Dont Preview Commands In Kits", false);

@@ -51,7 +51,6 @@ public class ItemSerializer {
      * Deserializes a JSON String
      *
      * @param jsonString the JSON String to parse
-     *
      * @return the deserialized ItemStack
      */
     public static ItemStack deserializeItemStackFromJson(String jsonString) {
@@ -79,7 +78,6 @@ public class ItemSerializer {
      * Serializes an item stack
      *
      * @param itemStack the ItemStack to parse
-     *
      * @return condensed JSON String
      */
     public static String serializeItemStackToJson(ItemStack itemStack) {

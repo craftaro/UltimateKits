@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Crate {
-
     // Name of the crate
     private String name;
 
@@ -35,51 +34,55 @@ public class Crate {
         ItemStack itemStack = new ItemStack(Material.CHEST, amount);
 
         String kitName;
-        if (kit != null)
+        if (kit != null) {
             kitName = TextUtils.formatText(kit.getName(), true);
-        else
+        } else {
             kitName = "Any";
+        }
 
         ItemMeta meta = itemStack.getItemMeta();
 
         meta.setDisplayName(plugin.getLocale().getMessage("interface.crate.title")
                 .processPlaceholder("kit", kitName)
-                .processPlaceholder("crate", name)
+                .processPlaceholder("crate", this.name)
                 .getMessage());
 
         meta.addEnchant(Enchantment.DURABILITY, 1, true);
 
         List<String> lore = new ArrayList<>();
         // Dtools Ultra Crate
-        lore.add(ChatColor.DARK_PURPLE + kitName + " " + ChatColor.YELLOW + name + " " + ChatColor.WHITE + "Crate");
+        lore.add(ChatColor.DARK_PURPLE + kitName + " " + ChatColor.YELLOW + this.name + " " + ChatColor.WHITE + "Crate");
 
         String desc1 = plugin.getLocale().getMessage("interface.crate.description1")
                 .processPlaceholder("kit", kitName)
-                .processPlaceholder("crate", name)
+                .processPlaceholder("crate", this.name)
                 .getMessage();
 
-        if (kitName.equals("Any"))
+        if (kitName.equals("Any")) {
             desc1 = desc1.replaceAll("\\[.*?]", "");
-        else
+        } else {
             desc1 = desc1.replace("[", "").replace("]", "");
+        }
 
         lore.add(desc1);
-        if (this.amount == -1)
+        if (this.amount == -1) {
             lore.add(plugin.getLocale().getMessage("interface.crate.description2")
                     .processPlaceholder("kit", kitName)
-                    .processPlaceholder("crate", name)
+                    .processPlaceholder("crate", this.name)
                     .getMessage());
-        else
+        } else {
             lore.add(plugin.getLocale().getMessage("interface.crate.description3")
                     .processPlaceholder("kit", kitName)
-                    .processPlaceholder("crate", name)
+                    .processPlaceholder("crate", this.name)
                     .getMessage());
-        if (kitAmount > 1)
+        }
+        if (this.kitAmount > 1) {
             lore.add(plugin.getLocale().getMessage("interface.crate.description4")
                     .processPlaceholder("amt", this.kitAmount)
                     .processPlaceholder("kit", kitName)
-                    .processPlaceholder("crate", name)
+                    .processPlaceholder("crate", this.name)
                     .getMessage());
+        }
 
         meta.setLore(lore);
 
@@ -89,7 +92,7 @@ public class Crate {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -97,7 +100,7 @@ public class Crate {
     }
 
     public int getAmount() {
-        return amount;
+        return this.amount;
     }
 
     public void setAmount(int amount) {
@@ -105,7 +108,7 @@ public class Crate {
     }
 
     public int getKitAmount() {
-        return kitAmount;
+        return this.kitAmount;
     }
 
     public void setKitAmount(int kitAmount) {

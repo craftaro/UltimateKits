@@ -20,7 +20,7 @@ public class _2_DuplicateMigration extends DataMigration {
         // Fix duplicate data caused by old sqlite data duplication bug
         boolean sqlite = connection instanceof SQLiteConnector;
         if (sqlite) {
-            HashMap<String, TempKitData> data = new HashMap();
+            HashMap<String, TempKitData> data = new HashMap<>();
             // grab a copy of the unique data values
             try (Statement statement = connection.createStatement()) {
                 ResultSet allData = statement.executeQuery("SELECT * FROM " + tablePrefix + "blockdata");
@@ -44,7 +44,9 @@ public class _2_DuplicateMigration extends DataMigration {
                 }
                 allData.close();
             }
-            if (data.isEmpty()) return;
+            if (data.isEmpty()) {
+                return;
+            }
             connection.setAutoCommit(false);
             // first delete old data
             try (Statement statement = connection.createStatement()) {

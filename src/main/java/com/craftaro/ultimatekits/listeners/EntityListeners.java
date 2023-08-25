@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 
 public class EntityListeners implements Listener {
-
     private final UltimateKits plugin;
 
     public EntityListeners(UltimateKits plugin) {
@@ -21,12 +20,12 @@ public class EntityListeners implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerEntityInteract(EntityDamageEvent event) {
-        if (event.getEntity().getType() != EntityType.ARMOR_STAND || plugin.getConfig().getString("data.hologramHandler") == null) {
+        if (event.getEntity().getType() != EntityType.ARMOR_STAND || this.plugin.getConfig().getString("data.hologramHandler") == null) {
             return;
         }
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection("data.hologramHandler");
+        ConfigurationSection section = this.plugin.getConfig().getConfigurationSection("data.hologramHandler");
         for (String loc : section.getKeys(false)) {
-            String str[] = loc.split(":");
+            String[] str = loc.split(":");
             World world = Bukkit.getServer().getWorld(str[1].substring(0, str[1].length() - 1));
             double x = Double.parseDouble(str[2].substring(0, str[2].length() - 1)) + .5;
             double z = Double.parseDouble(str[4]) + .5;
@@ -38,12 +37,13 @@ public class EntityListeners implements Listener {
 
     @EventHandler
     public void onPlayerEntityInteract(PlayerInteractAtEntityEvent event) {
-        if (event.getRightClicked().getType() != EntityType.ARMOR_STAND || plugin.getConfig().getString("data.hologramHandler") == null) {
+        if (event.getRightClicked().getType() != EntityType.ARMOR_STAND || this.plugin.getConfig().getString("data.hologramHandler") == null) {
             return;
         }
-        ConfigurationSection section = plugin.getConfig().getConfigurationSection("data.hologramHandler");
+
+        ConfigurationSection section = this.plugin.getConfig().getConfigurationSection("data.hologramHandler");
         for (String loc : section.getKeys(false)) {
-            String str[] = loc.split(":");
+            String[] str = loc.split(":");
             World w = Bukkit.getServer().getWorld(str[1].substring(0, str[1].length() - 1));
             double x = Double.parseDouble(str[2].substring(0, str[2].length() - 1)) + .5;
             double z = Double.parseDouble(str[4]) + .5;

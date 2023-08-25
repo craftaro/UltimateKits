@@ -8,23 +8,25 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerListeners implements Listener {
-
     private final UltimateKits plugin;
 
-    public PlayerListeners() {
-        plugin = UltimateKits.getInstance();
+    public PlayerListeners(UltimateKits plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        if (player.hasPlayedBefore()) {
+            return;
+        }
 
-        if (player.hasPlayedBefore()) return;
-
-        if (plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()) == null
+        if (this.plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()) == null
                 || Settings.STARTER_KIT.getString() == null
-                || Settings.STARTER_KIT.getString().equalsIgnoreCase("none")) return;
+                || Settings.STARTER_KIT.getString().equalsIgnoreCase("none")) {
+            return;
+        }
 
-        plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()).giveKit(player);
+        this.plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()).giveKit(player);
     }
 }

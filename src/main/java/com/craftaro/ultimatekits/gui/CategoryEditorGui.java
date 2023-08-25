@@ -17,7 +17,6 @@ import org.bukkit.event.inventory.ClickType;
 import java.util.List;
 
 public class CategoryEditorGui extends Gui {
-
     private final UltimateKits plugin;
     private final Player player;
     private final CategoryManager categoryManager;
@@ -36,7 +35,7 @@ public class CategoryEditorGui extends Gui {
 
         setButton(4, GuiUtils.createButtonItem(XMaterial.GREEN_DYE, "Create Category"),
                 (event) -> {
-                    if (categoryManager.getCategories().size() >= 7) {
+                    if (this.categoryManager.getCategories().size() >= 7) {
                         plugin.getLocale().newMessage("&cYou already have the maximum amount of categories...").sendPrefixedMessage(player);
                     } else {
                         ChatPrompt.showPrompt(event.manager.getPlugin(), event.player, "Enter a category name:", response -> {
@@ -44,12 +43,12 @@ public class CategoryEditorGui extends Gui {
 
                             String key = msg.toUpperCase().replace(" ", "_");
 
-                            if (categoryManager.getCategory(key) != null) {
+                            if (this.categoryManager.getCategory(key) != null) {
                                 plugin.getLocale().newMessage("&cA category with that name already exists...").sendPrefixedMessage(player);
                                 return;
                             }
 
-                            categoryManager.addCategory(key, msg);
+                            this.categoryManager.addCategory(key, msg);
                             plugin.getLocale().newMessage("&aCategory added successfully!").sendPrefixedMessage(player);
 
                             Bukkit.getScheduler().runTask(plugin, player::closeInventory);
@@ -62,14 +61,14 @@ public class CategoryEditorGui extends Gui {
 
         // exit button
         setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(XMaterial.OAK_DOOR),
-                plugin.getLocale().getMessage("interface.button.exit").getMessage()),
+                        plugin.getLocale().getMessage("interface.button.exit").getMessage()),
                 ClickType.LEFT,
                 event -> exit());
         paint();
     }
 
     private void paint() {
-        List<Category> categories = categoryManager.getCategories();
+        List<Category> categories = this.categoryManager.getCategories();
         for (int i = 0; i < categories.size(); i++) {
             Category category = categories.get(i);
             setButton(i + 10,
@@ -83,17 +82,17 @@ public class CategoryEditorGui extends Gui {
                             TextUtils.formatText("&cRight click to remove."),
                             TextUtils.formatText("&c(Kits will not be removed)")),
                     (event) -> {
-                        if (event.clickType == ClickType.LEFT)
+                        if (event.clickType == ClickType.LEFT) {
                             ChatPrompt.showPrompt(event.manager.getPlugin(), event.player, "Enter a name:", response -> {
                                 category.setName(response.getMessage().trim());
-                                event.manager.showGUI(event.player, new CategoryEditorGui(plugin, event.player));
+                                event.manager.showGUI(event.player, new CategoryEditorGui(this.plugin, event.player));
                             });
-                        else if (event.clickType == ClickType.MIDDLE) {
-                            category.setMaterial(player.getItemInHand().getType());
-                            event.manager.showGUI(event.player, new CategoryEditorGui(plugin, event.player));
+                        } else if (event.clickType == ClickType.MIDDLE) {
+                            category.setMaterial(this.player.getItemInHand().getType());
+                            event.manager.showGUI(event.player, new CategoryEditorGui(this.plugin, event.player));
                         } else if (event.clickType == ClickType.RIGHT) {
-                            categoryManager.removeCategory(category);
-                            event.manager.showGUI(event.player, new CategoryEditorGui(plugin, event.player));
+                            this.categoryManager.removeCategory(category);
+                            event.manager.showGUI(event.player, new CategoryEditorGui(this.plugin, event.player));
                         }
                     });
         }

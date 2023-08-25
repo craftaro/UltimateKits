@@ -17,11 +17,7 @@ import org.bukkit.util.Vector;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by songoda on 2/24/2017.
- */
 public class DisplayItemHandler {
-
     private final UltimateKits plugin;
 
     public DisplayItemHandler(UltimateKits plugin) {
@@ -29,12 +25,13 @@ public class DisplayItemHandler {
     }
 
     public void start() {
-        Bukkit.getServer().getScheduler().runTaskTimer(plugin, this::displayItems, 30L, 30L);
+        Bukkit.getServer().getScheduler().runTaskTimer(this.plugin, this::displayItems, 30L, 30L);
     }
 
     private void displayItems() {
-        for (KitBlockData kitBlockData : plugin.getKitManager().getKitLocations().values())
+        for (KitBlockData kitBlockData : this.plugin.getKitManager().getKitLocations().values()) {
             displayItem(kitBlockData);
+        }
     }
 
     public void displayItem(KitBlockData kitBlockData) {
@@ -42,15 +39,22 @@ public class DisplayItemHandler {
         location.add(0.5, 0, 0.5);
 
         Kit kit = kitBlockData.getKit();
-        if (kit == null) return;
+        if (kit == null) {
+            return;
+        }
 
         List<ItemStack> list = kit.getReadableContents(null, false, false, false);
-        if (list == null) return;
-
-        if (list.isEmpty()) return;
-
-        if (!location.getWorld().isChunkLoaded((int) location.getX() >> 4, (int) location.getZ() >> 4))
+        if (list == null) {
             return;
+        }
+
+        if (list.isEmpty()) {
+            return;
+        }
+
+        if (!location.getWorld().isChunkLoaded((int) location.getX() >> 4, (int) location.getZ() >> 4)) {
+            return;
+        }
 
         for (Entity e : location.getChunk().getEntities()) {
             if (e.getType() != EntityType.DROPPED_ITEM
@@ -60,19 +64,24 @@ public class DisplayItemHandler {
             }
             Item i = (Item) e;
 
-            if (!kitBlockData.isDisplayingItems()) e.remove();
+            if (!kitBlockData.isDisplayingItems()) {
+                e.remove();
+            }
 
 
             NBTItem nbtItem = new NBTItem(i.getItemStack());
-            int inum = nbtItem.hasKey("num") ? nbtItem.getInteger("num") + 1 : 0;
+            int inum = nbtItem.hasTag("num") ? nbtItem.getInteger("num") + 1 : 0;
 
             int size = list.size();
-            if (inum > size || inum <= 0) inum = 1;
+            if (inum > size || inum <= 0) {
+                inum = 1;
+            }
 
             ItemStack is = list.get(inum - 1);
             if (kitBlockData.isItemOverride()) {
-                if (kit.getDisplayItem() != null)
+                if (kit.getDisplayItem() != null) {
                     is = kit.getDisplayItem();
+                }
             }
             is.setAmount(1);
             ItemMeta meta = is.getItemMeta();
@@ -85,7 +94,9 @@ public class DisplayItemHandler {
             i.setPickupDelay(9999);
             return;
         }
-        if (!kitBlockData.isDisplayingItems()) return;
+        if (!kitBlockData.isDisplayingItems()) {
+            return;
+        }
 
         ItemStack is = list.get(0);
         is.setAmount(1);
@@ -96,15 +107,15 @@ public class DisplayItemHandler {
         NBTItem nbtItem = new NBTItem(is);
         nbtItem.setInteger("num", 0);
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        Bukkit.getScheduler().runTask(this.plugin, () -> {
             Item item = location.getWorld().dropItem(location.add(0, 1, 0), nbtItem.getItem());
             Vector vec = new Vector(0, 0, 0);
             item.setVelocity(vec);
             item.setPickupDelay(9999);
             item.setCustomName(null);
-            item.setMetadata("US_EXEMPT", new FixedMetadataValue(UltimateKits.getInstance(), true));
-            item.setMetadata("displayItem", new FixedMetadataValue(UltimateKits.getInstance(), true));
-            item.setMetadata("betterdrops_ignore", new FixedMetadataValue(UltimateKits.getInstance(), true));
+            item.setMetadata("US_EXEMPT", new FixedMetadataValue(this.plugin, true));
+            item.setMetadata("displayItem", new FixedMetadataValue(this.plugin, true));
+            item.setMetadata("betterdrops_ignore", new FixedMetadataValue(this.plugin, true));
         });
     }
 }

@@ -9,18 +9,18 @@ import com.craftaro.core.third_party.com.cryptomorin.xseries.XSound;
 import com.craftaro.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.craftaro.core.utils.ItemUtils;
 import com.craftaro.core.utils.TextUtils;
+import com.craftaro.core.utils.TimeUtils;
 import com.craftaro.ultimatekits.UltimateKits;
-import com.craftaro.ultimatekits.gui.PreviewKitGui;
-import com.craftaro.ultimatekits.key.Key;
-import com.craftaro.ultimatekits.kit.type.KitContentCommand;
-import com.craftaro.ultimatekits.kit.type.KitContentEconomy;
 import com.craftaro.ultimatekits.category.Category;
 import com.craftaro.ultimatekits.crate.Crate;
 import com.craftaro.ultimatekits.gui.AnimatedKitGui;
 import com.craftaro.ultimatekits.gui.ConfirmBuyGui;
+import com.craftaro.ultimatekits.gui.PreviewKitGui;
+import com.craftaro.ultimatekits.key.Key;
+import com.craftaro.ultimatekits.kit.type.KitContentCommand;
+import com.craftaro.ultimatekits.kit.type.KitContentEconomy;
 import com.craftaro.ultimatekits.settings.Settings;
 import com.craftaro.ultimatekits.utils.ArmorType;
-import com.craftaro.ultimatekits.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -53,8 +53,9 @@ public class Kit implements Cloneable {
     private KitAnimation kitAnimation = KitAnimation.NONE;
 
     public Kit(String key) {
-        if (plugin == null)
+        if (plugin == null) {
             plugin = UltimateKits.getInstance();
+        }
         this.key = key;
         this.name = TextUtils.formatText(key, true);
     }
@@ -71,12 +72,12 @@ public class Kit implements Cloneable {
             return;
         }
 
-        if (link != null) {
+        if (this.link != null) {
             player.sendMessage("");
-            plugin.getLocale().newMessage("&a" + link).sendPrefixedMessage(player);
+            plugin.getLocale().newMessage("&a" + this.link).sendPrefixedMessage(player);
             player.sendMessage("");
             player.closeInventory();
-        } else if (price != 0) {
+        } else if (this.price != 0) {
             manager.showGUI(player, new ConfirmBuyGui(plugin, player, this, null));
         } else {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
@@ -95,8 +96,9 @@ public class Kit implements Cloneable {
         }
 
         // Since roulette only gives one item, we don't need to check if the user has room for the whole kit.
-        if (kitAnimation == KitAnimation.ROULETTE && space >= 1)
+        if (this.kitAnimation == KitAnimation.ROULETTE && space >= 1) {
             return true;
+        }
 
         return space >= itemAmount;
     }
@@ -105,8 +107,9 @@ public class Kit implements Cloneable {
         ItemStack item = player.getItemInHand();
         NBTItem nbtItem = new NBTItem(item);
 
-        if (!nbtItem.hasKey("key") || !nbtItem.hasKey("kit"))
+        if (!nbtItem.hasKey("key") || !nbtItem.hasKey("kit")) {
             return;
+        }
 
         String keyName = nbtItem.getString("key");
         String kitName = nbtItem.getString("kit");
@@ -114,17 +117,18 @@ public class Kit implements Cloneable {
         boolean any = kitName.equals("ANY");
         Key key = plugin.getKeyManager().getKey(keyName);
 
-        if (key == null && !any)
+        if (key == null && !any) {
             return;
+        }
 
-        if (!any && !kitName.equals(name)) {
+        if (!any && !kitName.equals(this.name)) {
             plugin.getLocale().getMessage("event.crate.wrongkey").sendPrefixedMessage(player);
             return;
         }
 
         if (giveKit(player, key)) {
             plugin.getLocale().getMessage("event.key.success")
-                    .processPlaceholder("kit", name).sendPrefixedMessage(player);
+                    .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
             if (player.getInventory().getItemInHand().getAmount() != 1) {
                 item.setAmount(item.getAmount() - 1);
                 player.setItemInHand(item);
@@ -137,31 +141,34 @@ public class Kit implements Cloneable {
     public void processCrateUse(Player player, ItemStack item, CompatibleHand hand) {
         Crate crate = plugin.getCrateManager().getCrate(item);
 
-        if (crate == null || !giveKit(player, crate))
+        if (crate == null || !giveKit(player, crate)) {
             return;
+        }
 
         ItemUtils.takeActiveItem(player, hand);
 
         plugin.getLocale().getMessage("event.crate.success")
-                .processPlaceholder("crate", name).sendPrefixedMessage(player);
+                .processPlaceholder("crate", this.name).sendPrefixedMessage(player);
     }
 
     public void processPurchaseUse(Player player) {
-        if (!EconomyManager.isEnabled()) return;
+        if (!EconomyManager.isEnabled()) {
+            return;
+        }
 
-        if (!player.hasPermission("ultimatekits.buy." + key)) {
+        if (!player.hasPermission("ultimatekits.buy." + this.key)) {
             UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
                     .sendPrefixedMessage(player);
             return;
-        } else if (!EconomyManager.hasBalance(player, price)) {
+        } else if (!EconomyManager.hasBalance(player, this.price)) {
             plugin.getLocale().getMessage("event.claim.cannotafford")
-                    .processPlaceholder("kit", name).sendPrefixedMessage(player);
+                    .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
             return;
         }
         if (this.delay > 0) {
             if (getNextUse(player) != 0) {
                 plugin.getLocale().getMessage("event.claim.delay")
-                        .processPlaceholder("time", Methods.makeReadable(this.getNextUse(player)))
+                        .processPlaceholder("time", TimeUtils.makeReadable(this.getNextUse(player)))
                         .sendPrefixedMessage(player);
                 return;
             }
@@ -170,12 +177,13 @@ public class Kit implements Cloneable {
             return;
         }
         if (giveKit(player)) {
-            EconomyManager.withdrawBalance(player, price);
-            if (delay != 0)
+            EconomyManager.withdrawBalance(player, this.price);
+            if (this.delay != 0) {
                 updateDelay(player); //updates delay on buy
+            }
 
             plugin.getLocale().getMessage("event.claim.purchasesuccess")
-                    .processPlaceholder("kit", name).sendPrefixedMessage(player);
+                    .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
         }
     }
 
@@ -185,13 +193,14 @@ public class Kit implements Cloneable {
         } else if (getNextUse(player) <= 0 || forced) {
             if (giveKit(player)) {
                 updateDelay(player);
-                if (kitAnimation == KitAnimation.NONE)
+                if (this.kitAnimation == KitAnimation.NONE) {
                     plugin.getLocale().getMessage("event.claim.givesuccess")
-                            .processPlaceholder("kit", name).sendPrefixedMessage(player);
+                            .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
+                }
             }
         } else {
             plugin.getLocale().getMessage("event.claim.delay")
-                    .processPlaceholder("time", Methods.makeReadable(getNextUse(player)))
+                    .processPlaceholder("time", TimeUtils.makeReadable(getNextUse(player)))
                     .sendPrefixedMessage(player);
         }
     }
@@ -203,13 +212,13 @@ public class Kit implements Cloneable {
                     .sendPrefixedMessage(player);
             return;
         }
-        if (key == null) {
+        if (this.key == null) {
             plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
             return;
         }
 
         plugin.getLocale().getMessage("event.preview.kit")
-                .processPlaceholder("kit", name).sendPrefixedMessage(player);
+                .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
         manager.showGUI(player, new PreviewKitGui(plugin, player, this, back));
     }
 
@@ -222,8 +231,12 @@ public class Kit implements Cloneable {
                     ItemMeta meta = is.getItemMeta();
                     List<String> newLore = new ArrayList<>();
                     for (String line : meta.getLore()) {
-                        if (line.contains("Moveable")) continue;
-                        if (line.equals(TextUtils.formatText("&8----"))) break;
+                        if (line.contains("Moveable")) {
+                            continue;
+                        }
+                        if (line.equals(TextUtils.formatText("&8----"))) {
+                            break;
+                        }
                         newLore.add(line);
                     }
                     meta.setLore(newLore);
@@ -248,7 +261,7 @@ public class Kit implements Cloneable {
                 }
             }
         }
-        contents = list;
+        this.contents = list;
         plugin.saveKits(false);
     }
 
@@ -258,8 +271,12 @@ public class Kit implements Cloneable {
         for (KitItem item : getContents()) {
             if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(Settings.CURRENCY_SYMBOL.getString())) || commands) { //ToDO: I doubt this is correct.
                 ItemStack stack = moveable ? item.getMoveableItem() : item.getItem();
-                if (preview) stack = item.getItemForDisplay();
-                if (stack == null) continue;
+                if (preview) {
+                    stack = item.getItemForDisplay();
+                }
+                if (stack == null) {
+                    continue;
+                }
 
                 ItemStack fin = stack;
                 if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") && stack.getItemMeta().getLore() != null) {
@@ -279,7 +296,7 @@ public class Kit implements Cloneable {
     }
 
     public boolean giveKit(Player player) {
-        return giveKit(player, contents.size(), -1);
+        return giveKit(player, this.contents.size(), -1);
     }
 
     private boolean giveKit(Player player, Key key) {
@@ -291,7 +308,7 @@ public class Kit implements Cloneable {
         if (amount == -1) {
             // FIXME: I don't understand how Crates, Keys, etc. actually are supposed to work.
             //        I think the give-algorithms are generally wrongly implemented and confusing naming is making it hard to understand.
-            amount = contents.size();
+            amount = this.contents.size();
         }
         return giveKit(player, amount, key.getKitAmount());
     }
@@ -301,7 +318,7 @@ public class Kit implements Cloneable {
         if (amount == -1) {
             // FIXME: I don't understand how Crates, Keys, etc. actually are supposed to work.
             //        I think the give-algorithms are generally wrongly implemented and confusing naming is making it hard to understand.
-            amount = contents.size();
+            amount = this.contents.size();
         }
         return giveKit(player, amount, crate.getKitAmount());
     }
@@ -310,8 +327,9 @@ public class Kit implements Cloneable {
         List<KitItem> innerContents = new ArrayList<>(getContents());
 
         // Amount of items from the kit to give to the player.
-        if (kitAnimation == KitAnimation.ROULETTE)
+        if (this.kitAnimation == KitAnimation.ROULETTE) {
             itemAmount = 1; //TODO how about kitAmount > 1? generateRandomItem() will only give 1 random item instead of kitAmount
+        }
         int itemGiveAmount = kitAmount > 0 ? itemAmount * kitAmount : itemAmount;
 
         if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemGiveAmount)) {
@@ -319,24 +337,28 @@ public class Kit implements Cloneable {
             return false;
         }
 
-        if (Settings.SOUNDS_ENABLED.getBoolean() && kitAnimation == KitAnimation.NONE)
+        if (Settings.SOUNDS_ENABLED.getBoolean() && this.kitAnimation == KitAnimation.NONE) {
             XSound.ENTITY_PLAYER_LEVELUP.play(player, 0.6F, 15.0F);
+        }
 
         return generateRandomItem(innerContents, itemGiveAmount, 0, player);
     }
 
     private boolean generateRandomItem(List<KitItem> innerContents, int itemGiveAmount, int itemGivenAmount, Player player) {
-        if (innerContents.size() != itemGiveAmount || kitAnimation != KitAnimation.NONE)
+        if (innerContents.size() != itemGiveAmount || this.kitAnimation != KitAnimation.NONE) {
             Collections.shuffle(innerContents);
+        }
 
         for (KitItem item : new ArrayList<>(innerContents)) {
-            if (itemGiveAmount <= 0 && itemGivenAmount != 0) break;
+            if (itemGiveAmount <= 0 && itemGivenAmount != 0) {
+                break;
+            }
             double ch = item.getChance() == 0 ? 100 : item.getChance();
             double rand = Math.random() * 100;
             itemGiveAmount--;
             if (rand < ch || ch == 100) {
                 itemGivenAmount++;
-                if (kitAnimation != KitAnimation.NONE) {
+                if (this.kitAnimation != KitAnimation.NONE) {
                     // TODO: this is a very bad way to solve this problem.
                     // Giving the player kit rewards really should be done outside of the Kit class.
                     plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, this, item.getItem()));
@@ -344,12 +366,15 @@ public class Kit implements Cloneable {
                 } else {
                     ItemStack parseStack = item.getContent().process(player);
                     if (item.getContent() instanceof KitContentEconomy
-                            || item.getContent() instanceof KitContentCommand)
+                            || item.getContent() instanceof KitContentCommand) {
                         continue;
+                    }
 
                     innerContents.remove(item);
 
-                    if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, parseStack)) continue;
+                    if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, parseStack)) {
+                        continue;
+                    }
 
                     Map<Integer, ItemStack> overfilled = player.getInventory().addItem(parseStack);
                     for (ItemStack item2 : overfilled.values()) {
@@ -359,24 +384,27 @@ public class Kit implements Cloneable {
             }
         }
 
-        if ((itemGiveAmount > 0 || itemGivenAmount == 0) && !innerContents.isEmpty())
+        if ((itemGiveAmount > 0 || itemGivenAmount == 0) && !innerContents.isEmpty()) {
             return generateRandomItem(innerContents, itemGiveAmount, itemGivenAmount, player);
+        }
 
         player.updateInventory();
         return true;
     }
 
     public void updateDelay(Player player) {
-        plugin.getDataFile().set("Kits." + key + ".delays." + player.getUniqueId().toString(), System.currentTimeMillis());
+        plugin.getDataFile().set("Kits." + this.key + ".delays." + player.getUniqueId(), System.currentTimeMillis());
     }
 
     public Long getNextUse(Player player) {
-        String configSectionPlayer = "Kits." + key + ".delays." + player.getUniqueId().toString();
+        String configSectionPlayer = "Kits." + this.key + ".delays." + player.getUniqueId();
         Config config = plugin.getDataFile();
 
         if (!config.contains(configSectionPlayer)) {
             return 0L;
-        } else if (this.delay == -1) return -1L;
+        } else if (this.delay == -1) {
+            return -1L;
+        }
 
         long last = config.getLong(configSectionPlayer);
         long delay = this.delay * 1000;
@@ -385,19 +413,19 @@ public class Kit implements Cloneable {
     }
 
     public boolean hasPermissionToClaim(Player player) {
-        return player.hasPermission("ultimatekits.claim." + key.toLowerCase());
+        return player.hasPermission("ultimatekits.claim." + this.key.toLowerCase());
     }
 
     public boolean hasPermissionToPreview(Player player) {
-        return player.hasPermission("ultimatekits.preview." + key.toLowerCase());
+        return player.hasPermission("ultimatekits.preview." + this.key.toLowerCase());
     }
 
     public boolean hasPermissionToBuy(Player player) {
-        return player.hasPermission("ultimatekits.buy." + key.toLowerCase());
+        return player.hasPermission("ultimatekits.buy." + this.key.toLowerCase());
     }
 
     public double getPrice() {
-        return price;
+        return this.price;
     }
 
     public Kit setPrice(double price) {
@@ -406,7 +434,7 @@ public class Kit implements Cloneable {
     }
 
     public String getLink() {
-        return link;
+        return this.link;
     }
 
     public Kit setLink(String link) {
@@ -415,7 +443,7 @@ public class Kit implements Cloneable {
     }
 
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     public Kit setTitle(String title) {
@@ -424,7 +452,7 @@ public class Kit implements Cloneable {
     }
 
     public long getDelay() {
-        return delay;
+        return this.delay;
     }
 
     public Kit setDelay(long delay) {
@@ -433,7 +461,7 @@ public class Kit implements Cloneable {
     }
 
     public Category getCategory() {
-        return category;
+        return this.category;
     }
 
     public Kit setCategory(Category category) {
@@ -451,15 +479,15 @@ public class Kit implements Cloneable {
     }
 
     public String getKey() {
-        return key;
+        return this.key;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public ItemStack getDisplayItem() {
-        return displayItem;
+        return this.displayItem;
     }
 
     public Kit setDisplayItem(ItemStack item) {
@@ -468,7 +496,7 @@ public class Kit implements Cloneable {
     }
 
     public boolean isHidden() {
-        return hidden;
+        return this.hidden;
     }
 
     public Kit setHidden(boolean hidden) {
@@ -477,7 +505,7 @@ public class Kit implements Cloneable {
     }
 
     public KitAnimation getKitAnimation() {
-        return kitAnimation;
+        return this.kitAnimation;
     }
 
     public Kit setKitAnimation(KitAnimation kitAnimation) {
@@ -491,8 +519,9 @@ public class Kit implements Cloneable {
 
             List<KitItem> contents = new ArrayList<>();
 
-            for (KitItem item : newKit.contents)
+            for (KitItem item : newKit.contents) {
                 contents.add(item.clone());
+            }
 
             newKit.setContents(contents);
 
@@ -507,16 +536,19 @@ public class Kit implements Cloneable {
 
     @Override
     public int hashCode() {
-        return 31 * (key != null ? key.hashCode() : 0);
+        return 31 * (this.key != null ? this.key.hashCode() : 0);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Kit)) return false;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Kit)) {
+            return false;
+        }
 
-        Kit kit = (Kit) o;
-        return Objects.equals(key, kit.key);
+        Kit kit = (Kit) obj;
+        return Objects.equals(this.key, kit.key);
     }
-
 }

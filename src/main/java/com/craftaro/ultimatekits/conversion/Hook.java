@@ -5,10 +5,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Set;
 
 public interface Hook {
-
     Set<String> getKits();
 
-    Set<ItemStack> getItems(String kit);
+    Set<ItemStack> getItems(String kitName);
 
-    long getDelay(String kit);
+    long getDelay(String kitName);
 }

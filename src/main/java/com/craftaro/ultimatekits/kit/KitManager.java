@@ -11,75 +11,79 @@ import java.util.List;
 import java.util.Map;
 
 public final class KitManager {
-
     private final Map<Location, KitBlockData> kitsAtLocations = new HashMap<>();
     private final List<Kit> registeredKits = new LinkedList<>();
     private boolean hasOrderChanged = false;
 
     public Kit addKit(Kit kit) {
-        if (kit == null) return null;
-        registeredKits.add(kit);
+        if (kit == null) {
+            return null;
+        }
+
+        this.registeredKits.add(kit);
         return kit;
     }
 
     public void removeKit(Kit kit) {
-        registeredKits.remove(kit);
+        this.registeredKits.remove(kit);
         removeLocationsFromKit(kit);
     }
 
     public void removeLocationsFromKit(Kit kit) {
-        for (Map.Entry<Location, KitBlockData> entry : new ArrayList<>(kitsAtLocations.entrySet())) {
+        for (Map.Entry<Location, KitBlockData> entry : new ArrayList<>(this.kitsAtLocations.entrySet())) {
             if (entry.getValue().getKit() == kit) {
                 entry.getValue().reset();
-                kitsAtLocations.remove(entry.getKey());
+                this.kitsAtLocations.remove(entry.getKey());
             }
         }
     }
 
     public KitBlockData addKitToLocation(Kit kit, Location location) {
         KitBlockData data = new KitBlockData(kit, location);
-        kitsAtLocations.put(roundLocation(location), data);
+        this.kitsAtLocations.put(roundLocation(location), data);
         return data;
     }
 
     public KitBlockData addKitToLocation(Kit kit, Location location, KitType type, boolean hologram, boolean particles, boolean items, boolean itemOverride) {
         KitBlockData data = new KitBlockData(kit, location, type, hologram, particles, items, itemOverride);
-        kitsAtLocations.put(roundLocation(location), data);
+        this.kitsAtLocations.put(roundLocation(location), data);
         return data;
     }
 
     public Kit removeKitFromLocation(Location location) {
         KitBlockData kit = getKit(roundLocation(location));
 
-        if (kit == null) return null;
+        if (kit == null) {
+            return null;
+        }
 
         kit.reset();
 
-        KitBlockData removed = kitsAtLocations.remove(roundLocation(location));
+        KitBlockData removed = this.kitsAtLocations.remove(roundLocation(location));
         UltimateKits.getInstance().getKitDataManager().deleteBlockData(removed);
         return (removed != null ? removed.getKit() : null);
     }
 
     public Kit getKit(String name) {
-        return registeredKits.stream().filter(kit -> kit.getKey().equalsIgnoreCase(name.trim()))
+        return this.registeredKits.stream().filter(kit -> kit.getKey().equalsIgnoreCase(name.trim()))
                 .findFirst().orElse(null);
     }
 
     public KitBlockData getKit(Location location) {
-        return kitsAtLocations.get(roundLocation(location));
+        return this.kitsAtLocations.get(roundLocation(location));
     }
 
     public List<Kit> getKits() {
-        return Collections.unmodifiableList(registeredKits);
+        return Collections.unmodifiableList(this.registeredKits);
     }
 
     public Map<Location, KitBlockData> getKitLocations() {
-        return Collections.unmodifiableMap(kitsAtLocations);
+        return Collections.unmodifiableMap(this.kitsAtLocations);
     }
 
     public void setKitLocations(Map<Location, KitBlockData> kits) {
-        kitsAtLocations.clear();
-        kitsAtLocations.putAll(kits);
+        this.kitsAtLocations.clear();
+        this.kitsAtLocations.putAll(kits);
     }
 
     public void clearKits() {
@@ -96,28 +100,34 @@ public final class KitManager {
     }
 
     public void moveKit(Kit kit, boolean up) {
-        if (kit == null) return;
+        if (kit == null) {
+            return;
+        }
 
         int i = 0;
-        for (Kit kit2 : registeredKits) {
-            if (kit == kit2)
+        for (Kit kit2 : this.registeredKits) {
+            if (kit == kit2) {
                 break;
+            }
             i++;
         }
 
         int action = i - 1;
-        if (up) action = i + 1;
+        if (up) {
+            action = i + 1;
+        }
 
-        if (action >= 0 && action < registeredKits.size())
-            Collections.swap(registeredKits, i, action);
-        hasOrderChanged = true;
+        if (action >= 0 && action < this.registeredKits.size()) {
+            Collections.swap(this.registeredKits, i, action);
+        }
+        this.hasOrderChanged = true;
     }
 
     public boolean hasOrderChanged() {
-        return hasOrderChanged;
+        return this.hasOrderChanged;
     }
 
     public void savedOrderChange() {
-        hasOrderChanged = false;
+        this.hasOrderChanged = false;
     }
 }

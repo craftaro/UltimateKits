@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandRemove extends AbstractCommand {
-
     private final UltimateKits plugin;
 
     public CommandRemove(UltimateKits plugin) {
@@ -24,16 +23,18 @@ public class CommandRemove extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         Player player = (Player) sender;
         Block block = player.getTargetBlock(null, 200);
-        Kit kit = plugin.getKitManager().removeKitFromLocation(block.getLocation());
-        if (kit == null) return ReturnType.FAILURE;
-
-        if (HologramManager.isEnabled()) {
-            plugin.getKitManager().getKitLocations().values().stream()
-                    .filter(data -> data.getKit() == kit)
-                    .forEach(data -> plugin.removeHologram(data));
+        Kit kit = this.plugin.getKitManager().removeKitFromLocation(block.getLocation());
+        if (kit == null) {
+            return ReturnType.FAILURE;
         }
 
-        plugin.getLocale().newMessage("&8Kit &9" + kit.getKey() + " &8unassigned from: &a" + block.getType().toString() + "&8.").sendPrefixedMessage(player);
+        if (HologramManager.isEnabled()) {
+            this.plugin.getKitManager().getKitLocations().values().stream()
+                    .filter(data -> data.getKit() == kit)
+                    .forEach(this.plugin::removeHologram);
+        }
+
+        this.plugin.getLocale().newMessage("&8Kit &9" + kit.getKey() + " &8unassigned from: &a" + block.getType() + "&8.").sendPrefixedMessage(player);
         return ReturnType.SUCCESS;
     }
 

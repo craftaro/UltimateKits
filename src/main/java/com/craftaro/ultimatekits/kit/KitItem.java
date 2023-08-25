@@ -2,10 +2,10 @@ package com.craftaro.ultimatekits.kit;
 
 import com.craftaro.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.craftaro.core.utils.TextUtils;
+import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.kit.type.KitContent;
 import com.craftaro.ultimatekits.kit.type.KitContentCommand;
 import com.craftaro.ultimatekits.kit.type.KitContentEconomy;
-import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.kit.type.KitContentItem;
 import com.craftaro.ultimatekits.settings.Settings;
 import com.craftaro.ultimatekits.utils.ItemSerializer;
@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class KitItem implements Cloneable {
-
     private KitContent content;
     private KitItemType type;
     private String displayName, displayLore = null;
@@ -59,41 +58,51 @@ public class KitItem implements Cloneable {
     }
 
     private void translateTags(ItemStack item) {
-        if (item == null) return;
+        if (item == null) {
+            return;
+        }
         NBTItem nbtItem = new NBTItem(item);
-        if (nbtItem.hasKey("chance"))
-            chance = nbtItem.getDouble("chance");
-        if (nbtItem.hasKey("display-item"))
-            displayItem = Material.valueOf(nbtItem.getString("display-item"));
-        if (nbtItem.hasKey("display-name"))
-            displayName = nbtItem.getString("display-name");
-        if (nbtItem.hasKey("display-lore"))
-            displayLore = nbtItem.getString("display-lore");
+        if (nbtItem.hasKey("chance")) {
+            this.chance = nbtItem.getDouble("chance");
+        }
+        if (nbtItem.hasKey("display-item")) {
+            this.displayItem = Material.valueOf(nbtItem.getString("display-item"));
+        }
+        if (nbtItem.hasKey("display-name")) {
+            this.displayName = nbtItem.getString("display-name");
+        }
+        if (nbtItem.hasKey("display-lore")) {
+            this.displayLore = nbtItem.getString("display-lore");
+        }
     }
 
     private String translateLine(String line) {
         String[] lineSplit = line.trim().split(";", 2);
         String[] kitOptions = lineSplit[0].replace(String.valueOf(ChatColor.COLOR_CHAR), "").split("~");
         for (String s : kitOptions) {
-            if (s.equals("")) continue;
+            if (s.isEmpty()) {
+                continue;
+            }
             String[] sSplit = s.split(":", 2);
-            if (sSplit.length != 2) return line;
+            if (sSplit.length != 2) {
+                return line;
+            }
             String option = sSplit[0].toLowerCase();
             String value = sSplit[1].trim();
 
             switch (option) {
                 case "chance":
                     //chance = Integer.parseInt(value);
-                    chance = Double.parseDouble(value);
+                    this.chance = Double.parseDouble(value);
                     break;
                 case "display-item":
-                    displayItem = Material.valueOf(value);
+                    this.displayItem = Material.valueOf(value);
                     break;
                 case "display-lore":
-                    displayLore = value;
+                    this.displayLore = value;
                     break;
                 case "display-name":
-                    displayName = value;
+                    this.displayName = value;
                     break;
             }
         }
@@ -102,42 +111,51 @@ public class KitItem implements Cloneable {
 
     private ItemStack compileOptions(ItemStack item) {
         NBTItem nbtItem = new NBTItem(item);
-        if (chance != 0)
-            nbtItem.setDouble("chance", chance);
-        if (displayItem != null)
-            nbtItem.setString("display-item", displayItem.name());
-        if (displayName != null)
-            nbtItem.setString("display-name", displayName);
-        if (displayLore != null)
-            nbtItem.setString("display-lore", displayLore);
+        if (this.chance != 0) {
+            nbtItem.setDouble("chance", this.chance);
+        }
+        if (this.displayItem != null) {
+            nbtItem.setString("display-item", this.displayItem.name());
+        }
+        if (this.displayName != null) {
+            nbtItem.setString("display-name", this.displayName);
+        }
+        if (this.displayLore != null) {
+            nbtItem.setString("display-lore", this.displayLore);
+        }
         return nbtItem.getItem();
     }
 
     private String compileOptionsText() {
         String line = "";
-        if (chance != 0)
-            line += "chance:" + chance;
-        if (displayItem != null)
-            line += "~display-item:" + displayItem;
-        if (displayName != null)
-            line += "~display-name:" + displayName;
-        if (displayLore != null)
-            line += "~display-lore:" + displayLore;
+        if (this.chance != 0) {
+            line += "chance:" + this.chance;
+        }
+        if (this.displayItem != null) {
+            line += "~display-item:" + this.displayItem;
+        }
+        if (this.displayName != null) {
+            line += "~display-name:" + this.displayName;
+        }
+        if (this.displayLore != null) {
+            line += "~display-lore:" + this.displayLore;
+        }
         return line.trim();
     }
 
     public KitContent getContent() {
-        return content;
+        return this.content;
     }
 
     public String getSerialized() {
-        if (chance == 0 && displayItem == null && displayName == null && displayLore == null)
+        if (this.chance == 0 && this.displayItem == null && this.displayName == null && this.displayLore == null) {
             return this.content.getSerialized();
+        }
         return compileOptionsText() + ";" + this.content.getSerialized();
     }
 
     public double getChance() {
-        return chance == 0 ? 100 : chance;
+        return this.chance == 0 ? 100 : this.chance;
     }
 
     public void setChance(double chance) {
@@ -145,7 +163,7 @@ public class KitItem implements Cloneable {
     }
 
     public Material getDisplayItem() {
-        return displayItem;
+        return this.displayItem;
     }
 
     public void setDisplayItem(Material displayItem) {
@@ -153,7 +171,7 @@ public class KitItem implements Cloneable {
     }
 
     public String getDisplayName() {
-        return displayName;
+        return this.displayName;
     }
 
     public void setDisplayName(String displayName) {
@@ -161,7 +179,7 @@ public class KitItem implements Cloneable {
     }
 
     public String getDisplayLore() {
-        return displayLore;
+        return this.displayLore;
     }
 
     public void setDisplayLore(String displayLore) {
@@ -169,48 +187,56 @@ public class KitItem implements Cloneable {
     }
 
     public ItemStack getItem() {
-        return content.getItemForDisplay();
+        return this.content.getItemForDisplay();
     }
 
     public ItemStack getMoveableItem() {
-        if (content == null) return null;
-        ItemStack item = content.getItemForDisplay().clone();
+        if (this.content == null) {
+            return null;
+        }
+        ItemStack item = this.content.getItemForDisplay().clone();
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.hasLore() && meta.getLore().get(0).equals(TextUtils.formatText("&8&oMoveable"))
                 ? new ArrayList<>() : new ArrayList<>(Collections.singletonList(TextUtils.formatText("&8&oMoveable")));
-        if (meta.hasLore())
+        if (meta.hasLore()) {
             lore.addAll(meta.getLore());
+        }
         meta.setLore(lore);
         item.setItemMeta(meta);
         return compileOptions(item);
     }
 
     public ItemStack getItemForDisplay() {
-        if (content == null) return null;
-        ItemStack item = content.getItemForDisplay();
+        if (this.content == null) {
+            return null;
+        }
+        ItemStack item = this.content.getItemForDisplay();
         ItemMeta meta = item.getItemMeta();
 
-        if (displayItem != null) {
-            item.setType(displayItem);
+        if (this.displayItem != null) {
+            item.setType(this.displayItem);
             meta = item.getItemMeta();
         }
         if (meta != null) {
-            if (displayName != null) {
-                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
+            if (this.displayName != null) {
+                meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', this.displayName));
             }
-            if (displayLore != null) {
-                meta.setLore(Collections.singletonList(ChatColor.translateAlternateColorCodes('&', displayLore)));
+            if (this.displayLore != null) {
+                meta.setLore(Collections.singletonList(ChatColor.translateAlternateColorCodes('&', this.displayLore)));
             }
 
             if (UltimateKits.getInstance().getConfig().getBoolean("Main.Display Chance In Preview")) {
                 ArrayDeque<String> lore;
-                if (meta.hasLore())
+                if (meta.hasLore()) {
                     lore = new ArrayDeque<>(meta.getLore());
-                else
+                } else {
                     lore = new ArrayDeque<>();
+                }
 
-                if (!lore.isEmpty()) lore.addFirst("");
-                lore.addFirst(ChatColor.GRAY.toString() + UltimateKits.getInstance().getLocale().getMessage("general.type.chance").getMessage() + ": " + ChatColor.GOLD + (chance == 0 ? 100 : chance) + "%");
+                if (!lore.isEmpty()) {
+                    lore.addFirst("");
+                }
+                lore.addFirst(ChatColor.GRAY + UltimateKits.getInstance().getLocale().getMessage("general.type.chance").getMessage() + ": " + ChatColor.GOLD + (this.chance == 0 ? 100 : this.chance) + "%");
                 meta.setLore(new ArrayList<>(lore));
             }
 
@@ -220,7 +246,7 @@ public class KitItem implements Cloneable {
     }
 
     public KitItemType getType() {
-        return type;
+        return this.type;
     }
 
     public KitItem clone() throws CloneNotSupportedException {
@@ -230,12 +256,11 @@ public class KitItem implements Cloneable {
     @Override
     public String toString() {
         return "KitItem:{"
-                + "Item:\"" + content.getSerialized() + "\","
-                + "Chance:" + chance + "\","
-                + "Display Item:" + displayItem + "\","
-                + "Display Name:" + displayName + "\","
-                + "Display Lore:" + displayLore
+                + "Item:\"" + this.content.getSerialized() + "\","
+                + "Chance:" + this.chance + "\","
+                + "Display Item:" + this.displayItem + "\","
+                + "Display Name:" + this.displayName + "\","
+                + "Display Lore:" + this.displayLore
                 + "}";
     }
-
 }

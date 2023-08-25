@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandSet extends AbstractCommand {
-
     private final UltimateKits plugin;
 
     public CommandSet(UltimateKits plugin) {
@@ -23,19 +22,19 @@ public class CommandSet extends AbstractCommand {
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (args.length != 1) {
-            plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(sender);
+            this.plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         Player player = (Player) sender;
-        Kit kit = plugin.getKitManager().getKit(args[0].toLowerCase());
+        Kit kit = this.plugin.getKitManager().getKit(args[0].toLowerCase());
         if (kit == null) {
-            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
+            this.plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         Block b = player.getTargetBlock(null, 200);
-        KitBlockData data = plugin.getKitManager().addKitToLocation(kit, b.getLocation());
-        UltimateKits.getInstance().getKitDataManager().createBlockData(data);
-        plugin.getLocale().newMessage("&8Kit &a" + kit.getKey() + " &8set to: &a" + b.getType().toString() + "&8.")
+        KitBlockData data = this.plugin.getKitManager().addKitToLocation(kit, b.getLocation());
+        this.plugin.getKitDataManager().createBlockData(data);
+        this.plugin.getLocale().newMessage("&8Kit &a" + kit.getKey() + " &8set to: &a" + b.getType() + "&8.")
                 .sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
 
@@ -49,7 +48,7 @@ public class CommandSet extends AbstractCommand {
 
         if (args.length == 1) {
             List<String> tab = new ArrayList<>();
-            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits()) {
+            for (Kit kit : this.plugin.getKitManager().getKits()) {
                 tab.add(kit.getKey());
             }
             return tab;

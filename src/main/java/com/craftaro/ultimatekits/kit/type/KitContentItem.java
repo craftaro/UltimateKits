@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KitContentItem implements KitContent {
-
     private final ItemStack itemStack;
 
     private String serialized = null;
@@ -19,24 +18,27 @@ public class KitContentItem implements KitContent {
     }
 
     public ItemStack getItemStack() {
-        return itemStack;
+        return this.itemStack;
     }
 
     @Override
     public String getSerialized() {
-        if (serialized != null) return serialized;
-        serialized = ItemSerializer.serializeItemStackToJson(itemStack);
-        return serialized;
+        if (this.serialized != null) {
+            return this.serialized;
+        }
+
+        this.serialized = ItemSerializer.serializeItemStackToJson(this.itemStack);
+        return this.serialized;
     }
 
     @Override
     public ItemStack getItemForDisplay() {
-        return itemStack.clone();
+        return this.itemStack.clone();
     }
 
     @Override
     public ItemStack process(Player player) {
-        ItemStack parseStack = itemStack;
+        ItemStack parseStack = this.itemStack;
 
         if (parseStack.hasItemMeta() && parseStack.getItemMeta().hasLore()) {
             ItemMeta meta = parseStack.getItemMeta();

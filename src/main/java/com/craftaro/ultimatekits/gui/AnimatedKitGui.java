@@ -23,13 +23,12 @@ import java.util.Map;
 import java.util.Random;
 
 public class AnimatedKitGui extends Gui {
-
     static final Random rand = new Random();
 
     private final UltimateKits plugin;
     private final Player player;
     private final ItemStack give;
-    private final ArrayDeque<KitItem> items = new ArrayDeque();
+    private final ArrayDeque<KitItem> items = new ArrayDeque<>();
     private boolean finish = false;
     private boolean done = false;
     private int tick = 0, updateTick = 0;
@@ -54,84 +53,83 @@ public class AnimatedKitGui extends Gui {
         Collections.shuffle(kitItems);
         this.items.addAll(kitItems);
         while (this.items.size() < 10) {
-            items.addAll(kitItems);
+            this.items.addAll(kitItems);
         }
 
         setItem(4, GuiUtils.getBorderItem(XMaterial.TRIPWIRE_HOOK));
         setItem(22, GuiUtils.getBorderItem(XMaterial.TRIPWIRE_HOOK));
         tick();
-        setOnOpen(event -> {
-            task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> tick(), 1L, 1L);
-        });
+        setOnOpen(event -> this.task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::tick, 1L, 1L));
     }
 
     private void tick() {
-        if (++tick < ticksPerUpdate) {
+        if (++this.tick < this.ticksPerUpdate) {
             return;
         }
-        tick = 0;
+        this.tick = 0;
         int updatesPerSlow = 6;
-        if (++updateTick >= updatesPerSlow) {
-            updateTick = 0;
+        if (++this.updateTick >= updatesPerSlow) {
+            this.updateTick = 0;
             int ticksPerUpdateSlow = Settings.ROULETTE_LENGTH_MULTIPLIER.getInt();
-            if (++ticksPerUpdate >= ticksPerUpdateSlow) {
-                finish = true;
+            if (++this.ticksPerUpdate >= ticksPerUpdateSlow) {
+                this.finish = true;
             }
         }
         // now update the display
         // rainbow disco!
         for (int col = 0; col < 9; ++col) {
-            if (col == 4) continue;
+            if (col == 4) {
+                continue;
+            }
+
             setItem(0, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneForColor(rand.nextInt(16))));
             setItem(2, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneForColor(rand.nextInt(16))));
         }
 
         // item slider
-        if (!done) {
-            XSound.UI_BUTTON_CLICK.play(player, 5F, 5F);
-            items.addFirst(items.getLast());
-            items.removeLast();
-            Iterator<KitItem> itemIter = items.iterator();
+        if (!this.done) {
+            XSound.UI_BUTTON_CLICK.play(this.player, 5F, 5F);
+            this.items.addFirst(this.items.getLast());
+            this.items.removeLast();
+            Iterator<KitItem> itemIter = this.items.iterator();
             for (int i = 9; i < 18; i++) {
                 setItem(0, i, itemIter.next().getItem());
             }
         }
 
         // should we try to wrap it up?
-        if (finish) {
+        if (this.finish) {
             ItemStack item = getItem(13);
-            KitItem kitItem = items.stream().filter(i -> i.getItem().isSimilar(item)).findFirst().orElse(null);
+            KitItem kitItem = this.items.stream().filter(i -> i.getItem().isSimilar(item)).findFirst().orElse(null);
             if (item == null) {
-                done = true; // idk.
-            } else if (item.isSimilar(give)) {
-                if (!done) {
-                    done = true;
-                    if (!Settings.AUTO_EQUIP_ARMOR_ROULETTE.getBoolean() || !ArmorType.equip(player, give)) {
+                this.done = true; // idk.
+            } else if (item.isSimilar(this.give)) {
+                if (!this.done) {
+                    this.done = true;
+                    if (!Settings.AUTO_EQUIP_ARMOR_ROULETTE.getBoolean() || !ArmorType.equip(this.player, this.give)) {
 
-                        ItemStack processedItem = kitItem.getContent().process(player);
+                        ItemStack processedItem = kitItem.getContent().process(this.player);
                         if (processedItem != null) {
-                            Map<Integer, ItemStack> overfilled = player.getInventory().addItem(give);
+                            Map<Integer, ItemStack> overfilled = this.player.getInventory().addItem(this.give);
                             for (ItemStack item2 : overfilled.values()) {
-                                player.getWorld().dropItemNaturally(player.getLocation(), item2);
+                                this.player.getWorld().dropItemNaturally(this.player.getLocation(), item2);
                             }
                         }
                     }
 
-                    XSound.ENTITY_PLAYER_LEVELUP.play(player, 10f, 10f);
-                    plugin.getLocale().getMessage("event.create.won")
-                            .processPlaceholder("item", WordUtils.capitalize(give.getType().name().toLowerCase().replace("_", " ")))
-                            .sendPrefixedMessage(player);
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, this::finish, 50);
+                    XSound.ENTITY_PLAYER_LEVELUP.play(this.player, 10f, 10f);
+                    this.plugin.getLocale().getMessage("event.create.won")
+                            .processPlaceholder("item", WordUtils.capitalize(this.give.getType().name().toLowerCase().replace("_", " ")))
+                            .sendPrefixedMessage(this.player);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, this::finish, 50);
                     setAllowClose(true);
                 }
-
             }
         }
-
     }
 
     private void finish() {
-        Bukkit.getScheduler().cancelTask(task);
+        Bukkit.getScheduler().cancelTask(this.task);
         exit();
     }
 }

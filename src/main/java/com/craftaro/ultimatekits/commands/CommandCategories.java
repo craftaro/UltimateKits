@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public class CommandCategories extends AbstractCommand {
-
     private final UltimateKits plugin;
     private final GuiManager guiManager;
 
@@ -22,7 +21,7 @@ public class CommandCategories extends AbstractCommand {
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        guiManager.showGUI((Player) sender, new CategoryEditorGui(plugin, (Player) sender));
+        this.guiManager.showGUI((Player) sender, new CategoryEditorGui(this.plugin, (Player) sender));
         return ReturnType.SUCCESS;
     }
 

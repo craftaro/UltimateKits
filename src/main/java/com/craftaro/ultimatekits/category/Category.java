@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import java.util.Objects;
 
 public class Category {
-
     private final String key;
     private String name;
     private Material material = Material.DIAMOND;
@@ -16,11 +15,11 @@ public class Category {
     }
 
     public String getKey() {
-        return key;
+        return this.key;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -28,7 +27,7 @@ public class Category {
     }
 
     public Material getMaterial() {
-        return material;
+        return this.material;
     }
 
     public void setMaterial(Material material) {
@@ -37,14 +36,19 @@ public class Category {
 
     @Override
     public int hashCode() {
-        return Objects.hash(key);
+        return Objects.hash(this.key);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Category category = (Category) o;
-        return Objects.equals(key, category.key);
+        return Objects.equals(this.key, category.key);
     }
 }

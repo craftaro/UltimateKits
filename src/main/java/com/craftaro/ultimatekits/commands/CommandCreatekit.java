@@ -9,10 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CommandCreatekit extends AbstractCommand {
-
     private final UltimateKits plugin;
     private final GuiManager guiManager;
 
@@ -29,21 +29,21 @@ public class CommandCreatekit extends AbstractCommand {
             return ReturnType.SYNTAX_ERROR;
         }
         String kitStr = args[0].toLowerCase().trim();
-        if (plugin.getKitManager().getKit(kitStr) != null) {
-            plugin.getLocale().getMessage("command.kit.kitalreadyexists").sendPrefixedMessage(player);
+        if (this.plugin.getKitManager().getKit(kitStr) != null) {
+            this.plugin.getLocale().getMessage("command.kit.kitalreadyexists").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
 
-        plugin.getLocale().newMessage("&aThat kit doesn't exist. Creating it now.").sendPrefixedMessage(player);
+        this.plugin.getLocale().newMessage("&aThat kit doesn't exist. Creating it now.").sendPrefixedMessage(player);
         Kit kit = new Kit(kitStr);
-        plugin.getKitManager().addKit(kit);
-        guiManager.showGUI(player, new KitEditorGui(plugin, player, kit, null));
+        this.plugin.getKitManager().addKit(kit);
+        this.guiManager.showGUI(player, new KitEditorGui(this.plugin, player, kit, null));
         return ReturnType.SUCCESS;
     }
 
     @Override
     protected List<String> onTab(CommandSender sender, String... args) {
-        return Arrays.asList("name");
+        return Collections.singletonList("name");
     }
 
     @Override

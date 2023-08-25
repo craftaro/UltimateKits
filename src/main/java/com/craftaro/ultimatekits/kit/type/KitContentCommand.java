@@ -11,7 +11,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 
 public class KitContentCommand implements KitContent {
-
     private final String command; // Stored like "eco give <player> 100"
 
     public KitContentCommand(String command) {
@@ -19,12 +18,12 @@ public class KitContentCommand implements KitContent {
     }
 
     public String getCommand() {
-        return command;
+        return this.command;
     }
 
     @Override
     public String getSerialized() {
-        return "/" + command;
+        return "/" + this.command;
     }
 
     @Override
@@ -33,8 +32,8 @@ public class KitContentCommand implements KitContent {
         ItemMeta meta = stack.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
         int index = 0;
-        while (index < command.length()) {
-            lore.add(ChatColor.GREEN + (index == 0 ? "/" : "") + ChatColor.GREEN + command.substring(index, Math.min(index + 30, command.length())));
+        while (index < this.command.length()) {
+            lore.add(ChatColor.GREEN + (index == 0 ? "/" : "") + ChatColor.GREEN + this.command.substring(index, Math.min(index + 30, this.command.length())));
             index += 30;
         }
         meta.setLore(lore);
@@ -45,7 +44,7 @@ public class KitContentCommand implements KitContent {
 
     @Override
     public ItemStack process(Player player) {
-        String parsed = command;
+        String parsed = this.command;
         parsed = parsed.replace("{player}", player.getName());
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parsed);
         return null;

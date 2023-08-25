@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandPreviewKit extends AbstractCommand {
-
     private final UltimateKits plugin;
     private final GuiManager guiManager;
 
@@ -25,15 +24,15 @@ public class CommandPreviewKit extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         Player player = (Player) sender;
         if (args.length != 1) {
-            plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(player);
+            this.plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
-        Kit kit = plugin.getKitManager().getKit(args[0].toLowerCase().trim());
+        Kit kit = this.plugin.getKitManager().getKit(args[0].toLowerCase().trim());
         if (kit == null) {
-            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
+            this.plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
-        kit.display(player, guiManager, null);
+        kit.display(player, this.guiManager, null);
         return ReturnType.SUCCESS;
     }
 
@@ -45,7 +44,7 @@ public class CommandPreviewKit extends AbstractCommand {
 
         if (args.length == 2) {
             List<String> tab = new ArrayList<>();
-            for (Kit kit : UltimateKits.getInstance().getKitManager().getKits()) {
+            for (Kit kit : this.plugin.getKitManager().getKits()) {
                 tab.add(kit.getKey());
             }
             return tab;

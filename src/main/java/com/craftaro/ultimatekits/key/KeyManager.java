@@ -5,30 +5,35 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class KeyManager {
-
     private final Set<Key> registeredKeys = new HashSet<>();
 
     public boolean addKey(Key key) {
-        if (key == null) return false;
-        return registeredKeys.add(key);
+        if (key == null) {
+            return false;
+        }
+
+        return this.registeredKeys.add(key);
     }
 
     public void removeKey(Key key) {
-        registeredKeys.remove(key);
+        this.registeredKeys.remove(key);
     }
 
     public Key getKey(String name) {
-        for (Key key : registeredKeys)
-            if (key.getName().equalsIgnoreCase(name)) return key;
+        for (Key key : this.registeredKeys) {
+            if (key.getName().equalsIgnoreCase(name)) {
+                return key;
+            }
+        }
         return null;
     }
 
 
     public Set<Key> getKeys() {
-        return Collections.unmodifiableSet(registeredKeys);
+        return Collections.unmodifiableSet(this.registeredKeys);
     }
 
     public void clear() {
-        registeredKeys.clear();
+        this.registeredKeys.clear();
     }
 }

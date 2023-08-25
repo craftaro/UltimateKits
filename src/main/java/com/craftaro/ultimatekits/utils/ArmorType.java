@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public enum ArmorType {
-
     LEATHER_BOOTS("Boots"),
     LEATHER_CHESTPLATE("Chestplate"),
     LEATHER_HELMET("Helmet"),
@@ -41,7 +40,7 @@ public enum ArmorType {
     ELYTRA("Chestplate"),
     SHIELD("OffHand");
 
-    String slot;
+    final String slot;
 
     ArmorType(String slot) {
         this.slot = slot;
@@ -49,51 +48,51 @@ public enum ArmorType {
     }
 
     public boolean isHelmet() {
-        return slot.equalsIgnoreCase("Helmet");
+        return this.slot.equalsIgnoreCase("Helmet");
     }
 
     public boolean isChestplate() {
-        return slot.equalsIgnoreCase("Chestplate");
+        return this.slot.equalsIgnoreCase("Chestplate");
     }
 
     public boolean isLeggings() {
-        return slot.equalsIgnoreCase("Leggings");
+        return this.slot.equalsIgnoreCase("Leggings");
     }
 
     public boolean isBoots() {
-        return slot.equalsIgnoreCase("Boots");
+        return this.slot.equalsIgnoreCase("Boots");
     }
 
     public boolean isOffHand() {
-        return slot.equalsIgnoreCase("OffHand");
+        return this.slot.equalsIgnoreCase("OffHand");
     }
 
     public static boolean equip(Player player, ItemStack item) {
         try {
             ArmorType type = ArmorType.valueOf(item.getType().toString());
-
-            boolean equipped = false;
-
-            if ((type.isHelmet() && player.getInventory().getHelmet() == null)
+            boolean equipped = (type.isHelmet() && player.getInventory().getHelmet() == null)
                     || (type.isChestplate() && player.getInventory().getChestplate() == null)
                     || (type.isLeggings() && player.getInventory().getLeggings() == null)
                     || (type.isBoots() && player.getInventory().getBoots() == null)
-                    || (type.isOffHand() && player.getInventory().getItemInOffHand().getType() == Material.AIR))
-                equipped = true;
+                    || (type.isOffHand() && player.getInventory().getItemInOffHand().getType() == Material.AIR);
 
-            if (type.isHelmet() && player.getInventory().getHelmet() == null)
+            if (type.isHelmet() && player.getInventory().getHelmet() == null) {
                 player.getInventory().setHelmet(item);
-            if (type.isChestplate() && player.getInventory().getChestplate() == null)
+            }
+            if (type.isChestplate() && player.getInventory().getChestplate() == null) {
                 player.getInventory().setChestplate(item);
-            if (type.isLeggings() && player.getInventory().getLeggings() == null)
+            }
+            if (type.isLeggings() && player.getInventory().getLeggings() == null) {
                 player.getInventory().setLeggings(item);
-            if (type.isBoots() && player.getInventory().getBoots() == null)
+            }
+            if (type.isBoots() && player.getInventory().getBoots() == null) {
                 player.getInventory().setBoots(item);
-            if (type.isOffHand() && player.getInventory().getItemInOffHand().getType() == Material.AIR)
+            }
+            if (type.isOffHand() && player.getInventory().getItemInOffHand().getType() == Material.AIR) {
                 player.getInventory().setItemInOffHand(item);
+            }
 
             return equipped;
-
         } catch (IllegalArgumentException e) {
             return false;
         }

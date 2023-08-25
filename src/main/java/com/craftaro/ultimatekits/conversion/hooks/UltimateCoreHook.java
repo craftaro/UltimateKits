@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 public class UltimateCoreHook implements Hook {
-
     @Override
     public Set<String> getKits() {
         Set<String> list = new HashSet<>();
@@ -22,14 +21,13 @@ public class UltimateCoreHook implements Hook {
     }
 
     @Override
-    public Set<ItemStack> getItems(String kit) {
-        UKit uKit = new UKit(kit);
-        Set<ItemStack> items = new HashSet<>(uKit.getItems());
-        return items;
+    public Set<ItemStack> getItems(String kitName) {
+        UKit uKit = new UKit(kitName);
+        return new HashSet<>(uKit.getItems());
     }
 
     @Override
-    public long getDelay(String kit) {
+    public long getDelay(String kitName) {
         return 0;
     }
 }

@@ -7,7 +7,6 @@ import org.bukkit.World;
 import java.util.UUID;
 
 public class KitBlockData {
-
     // This is the unique identifier for this block data.
     // It is reset on every plugin load.
     // Used for holograms.
@@ -44,35 +43,35 @@ public class KitBlockData {
     }
 
     public Kit getKit() {
-        return kit;
+        return this.kit;
     }
 
     public Location getLocation() {
-        return location.clone();
+        return this.location.clone();
     }
 
     public boolean isInLoadedChunk() {
-        return location != null && location.getWorld() != null && location.getWorld().isChunkLoaded(((int) location.getX()) >> 4, ((int) location.getZ()) >> 4);
+        return this.location != null && this.location.getWorld() != null && this.location.getWorld().isChunkLoaded(((int) this.location.getX()) >> 4, ((int) this.location.getZ()) >> 4);
     }
 
     public int getX() {
-        return location.getBlockX();
+        return this.location.getBlockX();
     }
 
     public int getY() {
-        return location.getBlockY();
+        return this.location.getBlockY();
     }
 
     public int getZ() {
-        return location.getBlockZ();
+        return this.location.getBlockZ();
     }
 
     public World getWorld() {
-        return location.getWorld();
+        return this.location.getWorld();
     }
 
     public boolean showHologram() {
-        return hologram;
+        return this.hologram;
     }
 
     public void setShowHologram(boolean hologram) {
@@ -80,7 +79,7 @@ public class KitBlockData {
     }
 
     public boolean hasParticles() {
-        return particles;
+        return this.particles;
     }
 
     public void setHasParticles(boolean particles) {
@@ -88,7 +87,7 @@ public class KitBlockData {
     }
 
     public boolean isDisplayingItems() {
-        return items;
+        return this.items;
     }
 
     public void setDisplayingItems(boolean items) {
@@ -96,7 +95,7 @@ public class KitBlockData {
     }
 
     public boolean isItemOverride() {
-        return itemOverride;
+        return this.itemOverride;
     }
 
     public void setItemOverride(boolean itemOverride) {
@@ -104,7 +103,7 @@ public class KitBlockData {
     }
 
     public KitType getType() {
-        return type;
+        return this.type;
     }
 
     public void setType(KitType type) {
@@ -112,6 +111,6 @@ public class KitBlockData {
     }
 
     public String getHologramId() {
-        return "UltimateKits-" + uniqueId;
+        return "UltimateKits-" + this.uniqueId;
     }
 }

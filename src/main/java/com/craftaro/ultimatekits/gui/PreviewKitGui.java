@@ -2,8 +2,9 @@ package com.craftaro.ultimatekits.gui;
 
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.SkullUtils;
 import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
-import com.craftaro.core.utils.ItemUtils;
+import com.craftaro.core.utils.NumberUtils;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.kit.Kit;
@@ -14,13 +15,13 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class PreviewKitGui extends Gui {
-
     private final Kit kit;
     private final Player player;
     private final UltimateKits plugin;
@@ -82,20 +83,23 @@ public class PreviewKitGui extends Gui {
 
             // exit button is only visible with a glass border
             setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(XMaterial.OAK_DOOR),
-                    plugin.getLocale().getMessage("interface.button.exit").getMessage()),
+                            plugin.getLocale().getMessage("interface.button.exit").getMessage()),
                     event -> exit());
 
             if (back != null) {
-                setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
-                        plugin.getLocale().getMessage("interface.button.back").getMessage()),
+                ItemStack buttonItem = XMaterial.PLAYER_HEAD.parseItem();
+                SkullMeta meta = SkullUtils.applySkin(buttonItem.getItemMeta(), "3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
+                buttonItem.setItemMeta(meta);
+
+                setButton(0, 0, GuiUtils.createButtonItem(buttonItem, plugin.getLocale().getMessage("interface.button.back").getMessage()),
                         event -> event.player.closeInventory());
             }
         }
         // purchase button
         if (buyable) {
-            setButton(rows - 1, 4, GuiUtils.createButtonItem(Settings.BUY_ICON.getMaterial(XMaterial.EMERALD),
-                    plugin.getLocale().getMessage("interface.button.buynow").getMessage(),
-                    getBuyLore()),
+            setButton(this.rows - 1, 4, GuiUtils.createButtonItem(Settings.BUY_ICON.getMaterial(XMaterial.EMERALD),
+                            plugin.getLocale().getMessage("interface.button.buynow").getMessage(),
+                            getBuyLore()),
                     event -> {
                         exit();
                         kit.buy(event.player, event.manager);
@@ -105,7 +109,7 @@ public class PreviewKitGui extends Gui {
         // display the kit items here
         Iterator<ItemStack> items = list.iterator();
         int startRow = useGlassBorder ? 1 : 0;
-        int endRow = useGlassBorder ? rows - 2 : rows - 1;
+        int endRow = useGlassBorder ? this.rows - 2 : this.rows - 1;
         int startCol = useGlassBorder ? 1 : 0;
         int endCol = useGlassBorder ? 7 : 8;
         for (int row = startRow; row <= endRow; ++row) {
@@ -143,7 +147,7 @@ public class PreviewKitGui extends Gui {
         List<String> newLore = new ArrayList<>();
         if (meta != null && meta.hasLore()) {
             for (String str : meta.getLore()) {
-                newLore.add(str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName()));
+                newLore.add(str.replace("{PLAYER}", this.player.getName()).replace("<PLAYER>", this.player.getName()));
             }
             meta.setLore(newLore);
         }
@@ -157,7 +161,7 @@ public class PreviewKitGui extends Gui {
         List<String> newLore = new ArrayList<>();
         if (meta != null && meta.hasLore()) {
             for (String str : meta.getLore()) {
-                newLore.add(str.replace("{PLAYER}", player.getName()).replace("<PLAYER>", player.getName()));
+                newLore.add(str.replace("{PLAYER}", this.player.getName()).replace("<PLAYER>", this.player.getName()));
             }
         }
         meta.setLore(newLore);
@@ -168,21 +172,21 @@ public class PreviewKitGui extends Gui {
 
     private List<String> getBuyLore() {
         ArrayList<String> lore = new ArrayList<>();
-        if (kit.hasPermissionToClaim(player)) {
-            lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
+        if (this.kit.hasPermissionToClaim(this.player)) {
+            lore.add(this.plugin.getLocale().getMessage("interface.button.clickeco")
                     .processPlaceholder("price", "0").getMessage());
-            if (player.isOp()) {
+            if (this.player.isOp()) {
                 lore.add("");
                 lore.add(ChatColor.GRAY + "This is free because");
                 lore.add(ChatColor.GRAY + "you have perms for it.");
                 lore.add(ChatColor.GRAY + "Everyone else buys");
-                lore.add(ChatColor.GRAY + "this for " + ChatColor.GREEN + "$" + Methods.formatEconomy(kit.getPrice()) + ChatColor.GRAY + ".");
+                lore.add(ChatColor.GRAY + "this for " + ChatColor.GREEN + "$" + NumberUtils.formatNumber(this.kit.getPrice()) + ChatColor.GRAY + ".");
             }
         } else {
-            lore.add(plugin.getLocale().getMessage("interface.button.clickeco")
-                    .processPlaceholder("price", Methods.formatEconomy(kit.getPrice())).getMessage());
+            lore.add(this.plugin.getLocale().getMessage("interface.button.clickeco")
+                    .processPlaceholder("price", NumberUtils.formatNumber(this.kit.getPrice())).getMessage());
         }
-        if (kit.getDelay() != 0 && player.isOp()) {
+        if (this.kit.getDelay() != 0 && this.player.isOp()) {
             lore.add("");
             lore.add(ChatColor.GRAY + "You do not have a delay");
             lore.add(ChatColor.GRAY + "because you have perms");
@@ -190,5 +194,4 @@ public class PreviewKitGui extends Gui {
         }
         return lore;
     }
-
 }

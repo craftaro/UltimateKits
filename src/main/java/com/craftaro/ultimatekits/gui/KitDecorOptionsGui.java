@@ -12,7 +12,6 @@ import com.craftaro.ultimatekits.utils.Methods;
 import org.bukkit.event.inventory.ClickType;
 
 public class KitDecorOptionsGui extends Gui {
-
     public KitDecorOptionsGui(UltimateKits plugin, KitBlockData kitBlockData, Gui parent) {
         super(parent);
         setRows(3);
@@ -27,13 +26,13 @@ public class KitDecorOptionsGui extends Gui {
 
         // exit button
         setButton(0, 8, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(XMaterial.OAK_DOOR),
-                plugin.getLocale().getMessage("interface.button.exit").getMessage()),
+                        plugin.getLocale().getMessage("interface.button.exit").getMessage()),
                 ClickType.LEFT,
                 event -> exit());
 
         // back button
         setButton(0, 0, GuiUtils.createButtonItem(ItemUtils.getCustomHead("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23"),
-                plugin.getLocale().getMessage("interface.button.back").getMessage()),
+                        plugin.getLocale().getMessage("interface.button.back").getMessage()),
                 ClickType.LEFT,
                 event -> event.player.closeInventory());
 
@@ -42,8 +41,8 @@ public class KitDecorOptionsGui extends Gui {
 
         // Hologram
         setButton(1, 1, GuiUtils.createButtonItem(XMaterial.NAME_TAG,
-                plugin.getLocale().getMessage("interface.kitdecor.hologram").getMessage(),
-                kitBlockData.showHologram() ? enableLore : disableLore),
+                        plugin.getLocale().getMessage("interface.kitdecor.hologram").getMessage(),
+                        kitBlockData.showHologram() ? enableLore : disableLore),
                 event -> {
                     kitBlockData.setShowHologram(!kitBlockData.showHologram());
                     plugin.updateHologram(kitBlockData);
@@ -52,8 +51,8 @@ public class KitDecorOptionsGui extends Gui {
 
         // Particle effects
         setButton(1, 3, GuiUtils.createButtonItem(XMaterial.POTION,
-                plugin.getLocale().getMessage("interface.kitdecor.particle").getMessage(),
-                kitBlockData.hasParticles() ? enableLore : disableLore),
+                        plugin.getLocale().getMessage("interface.kitdecor.particle").getMessage(),
+                        kitBlockData.hasParticles() ? enableLore : disableLore),
                 event -> {
                     kitBlockData.setHasParticles(!kitBlockData.hasParticles());
                     updateItemLore(event.slot, kitBlockData.hasParticles() ? enableLore : disableLore);
@@ -61,8 +60,8 @@ public class KitDecorOptionsGui extends Gui {
 
         // Item Display
         setButton(1, 5, GuiUtils.createButtonItem(XMaterial.DIAMOND,
-                plugin.getLocale().getMessage("interface.kitdecor.display").getMessage(),
-                kitBlockData.isDisplayingItems() ? enableLore : disableLore),
+                        plugin.getLocale().getMessage("interface.kitdecor.display").getMessage(),
+                        kitBlockData.isDisplayingItems() ? enableLore : disableLore),
                 event -> {
                     plugin.removeHologram(kitBlockData);
                     kitBlockData.setDisplayingItems(!kitBlockData.isDisplayingItems());
@@ -72,15 +71,13 @@ public class KitDecorOptionsGui extends Gui {
 
         // Item Display Override
         setButton(1, 7, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : XMaterial.BEACON.parseItem(),
-                plugin.getLocale().getMessage("interface.kitdecor.displayone").getMessage(),
-                plugin.getLocale().getMessage("interface.kitdecor.displayonelore")
-                        .processPlaceholder("enabled", kitBlockData.isItemOverride() ? enableLore : disableLore)
-                        .getMessage().split("\\|")),
+                        plugin.getLocale().getMessage("interface.kitdecor.displayone").getMessage(),
+                        plugin.getLocale().getMessage("interface.kitdecor.displayonelore")
+                                .processPlaceholder("enabled", kitBlockData.isItemOverride() ? enableLore : disableLore)
+                                .getMessage().split("\\|")),
                 event -> {
                     kitBlockData.setItemOverride(!kitBlockData.isItemOverride());
                     updateItemLore(event.slot, kitBlockData.isItemOverride() ? enableLore : disableLore);
                 });
-
     }
-
 }

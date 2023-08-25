@@ -6,8 +6,8 @@ import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.ultimatekits.UltimateKits;
-import com.craftaro.ultimatekits.kit.Kit;
 import com.craftaro.ultimatekits.category.Category;
+import com.craftaro.ultimatekits.kit.Kit;
 import com.craftaro.ultimatekits.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,7 +19,6 @@ import java.util.Random;
 import java.util.Set;
 
 public class CategorySelectorGui extends Gui {
-
     private int timer;
     private static final Random rand = new Random();
 
@@ -28,9 +27,11 @@ public class CategorySelectorGui extends Gui {
 
         Set<Category> categories = new LinkedHashSet<>();
 
-        for (Kit kit : plugin.getKitManager().getKits())
-            if (kit.hasPermissionToPreview(player) && kit.getCategory() != null)
+        for (Kit kit : plugin.getKitManager().getKits()) {
+            if (kit.hasPermissionToPreview(player) && kit.getCategory() != null) {
                 categories.add(kit.getCategory());
+            }
+        }
 
         setTitle(plugin.getLocale().getMessage("interface.categoryselector.title").getMessage());
 
@@ -43,8 +44,8 @@ public class CategorySelectorGui extends Gui {
                         .processPlaceholder("player", player.getName()).getMessage().split("\\|")));
 
         if (!glassless) {
-            setButton(rows - 1, 4, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(XMaterial.OAK_DOOR),
-                    UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage()),
+            setButton(this.rows - 1, 4, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(XMaterial.OAK_DOOR),
+                            UltimateKits.getInstance().getLocale().getMessage("interface.button.exit").getMessage()),
                     event -> exit());
         }
 
@@ -55,11 +56,13 @@ public class CategorySelectorGui extends Gui {
         if (!glassless) {
             if (Settings.RAINBOW.getBoolean()) {
                 animateGlass();
-                timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-                    if (inventory.getViewers().isEmpty()) return;
+                this.timer = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+                    if (this.inventory.getViewers().isEmpty()) {
+                        return;
+                    }
                     animateGlass();
                 }, 20L, 20L);
-                setOnClose(event -> Bukkit.getScheduler().cancelTask(timer));
+                setOnClose(event -> Bukkit.getScheduler().cancelTask(this.timer));
             } else {
                 ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
                 ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
@@ -74,11 +77,11 @@ public class CategorySelectorGui extends Gui {
         int i = 10;
         for (Category category : categories) {
             setButton(i, GuiUtils.createButtonItem(XMaterial.matchXMaterial(category.getMaterial()),
-                    TextUtils.formatText(category.getName()),
-                    "",
-                    plugin.getLocale().getMessage("interface.categoryselector.view").getMessage()),
+                            TextUtils.formatText(category.getName()),
+                            "",
+                            plugin.getLocale().getMessage("interface.categoryselector.view").getMessage()),
                     event -> {
-                        guiManager.showGUI(player, new KitSelectorGui(plugin, player, category));
+                        this.guiManager.showGUI(player, new KitSelectorGui(plugin, player, category));
                     });
             i++;
         }
@@ -88,12 +91,14 @@ public class CategorySelectorGui extends Gui {
     private void animateGlass() {
         for (int col = 1; col < 8; ++col) {
             ItemStack it;
-            if ((it = getItem(0, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE"))
+            if ((it = getItem(0, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE")) {
                 setItem(0, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneForColor(rand.nextInt(16))));
-            if ((it = getItem(rows - 1, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE"))
-                setItem(rows - 1, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneForColor(rand.nextInt(16))));
+            }
+            if ((it = getItem(this.rows - 1, col)) == null || it.getType() == Material.AIR || it.getType().name().contains("PANE")) {
+                setItem(this.rows - 1, col, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneForColor(rand.nextInt(16))));
+            }
         }
-        for (int row = 1; row + 1 < rows; ++row) {
+        for (int row = 1; row + 1 < this.rows; ++row) {
             setItem(row, 0, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneForColor(rand.nextInt(16))));
             setItem(row, 8, GuiUtils.getBorderItem(CompatibleMaterial.getGlassPaneForColor(rand.nextInt(16))));
         }

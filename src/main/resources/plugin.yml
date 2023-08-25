@@ -6,6 +6,7 @@ api-version: 1.13
 main: com.craftaro.ultimatekits.UltimateKits
 softdepend:
   - CMI
+  - DecentHolograms
   - Essentials
   - Holograms
   - HolographicDisplays
@@ -16,26 +17,24 @@ softdepend:
   - UltimateCore
   - Vault
 
-author: Songoda
+author: Craftaro
 website: ${project.url}
 
 commands:
   kitadmin:
     description: View information on this plugin.
     default: true
-    usage: /<command> [reload]
+    usage: /<command>
     aliases:
       - kp
       - uk
       - ultimatekits
-
   kit:
     description: Preview a kit
     default: true
     usage: /<commands>
     aliases:
       - kits
-
   previewkit:
     description: Preview a kit
     default: true
@@ -45,9 +44,9 @@ commands:
       - preview
 
 permissions:
-  ultimatekits.use:
+  UltimateKits.use:
     description: allows the user to preview kit
     default: true
 
-  ultimatekits.admin:
+  UltimateKits.admin:
     description: Gives access to admin commands.

@@ -1,5 +1,4 @@
 # General Messages
-
 general:
   nametag:
     prefix: '&8[&9UltimateKits&8]'
@@ -11,6 +10,7 @@ general:
     link: '&9Link'
     free: Free
     any: Any
+
 # Interface Messages
 interface:
   selector:
@@ -165,6 +165,7 @@ interface:
     switchtokitfunctionslore: '&7Click to switch back|&7to the kit functions.'
     itemfunctionlore: '&7Display Item: &6%item%|&7Display Name: &6%name%|&7Display Lore: &6%lore%||&7Left-Click: &6To set a display item.|&7Middle-Click: &6To set a display name.|&7Right-Click: &6To set display lore.|&7Shift-Click: &6To set chance.||&7Display options only show up on display.|&7This can be useful if you want to explain|&7What an item does without putting it in the|&7permanent lore.||&6Leave function mode to move items.'
     saved: '&8Changes to &a%kit% &8saved successfully.'
+
 # Command Messages
 command:
   general:
@@ -178,6 +179,7 @@ command:
   crate:
     given: '&9Gave &7%player% &9crate &7%crate% &9for kit &7%kit%.'
     doesntexist: '&cThis crate is not loaded.'
+
 # Event Messages
 event:
   preview:

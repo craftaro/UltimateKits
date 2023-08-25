@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import com.songoda.ultimatekits.settings.Settings;
 
 public class InteractListeners implements Listener {
 
@@ -48,50 +49,64 @@ public class InteractListeners implements Listener {
         Kit kit = kitBlockData.getKit();
 
         Player player = event.getPlayer();
+
+        Material itemInHand = player.getItemInHand().getType();
+
+        Material keyMaterial = Settings.KEY_MATERIAL.getMaterial().getItem().getType();
+
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 
-            if (player.isSneaking()) return;
-            event.setCancelled(true);
-
-            if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
-                event.setCancelled(true);
-                kit.processKeyUse(player);
+            if (player.isSneaking()) {
                 return;
             }
 
-            if (kitBlockData.getType() != KitType.PREVIEW) {
+            event.setCancelled(true);
+
+            if (kitBlockData.getType() == KitType.PREVIEW) {
+                kit.display(player, guiManager, null);
+
+            } else if(kitBlockData.getType() == KitType.CRATE) {
+
+                if (itemInHand == keyMaterial) {
+                    kit.processKeyUse(player);
+                } else {
+                    plugin.getLocale().getMessage("event.crate.needkey").sendPrefixedMessage(player);
+                    return;
+                }
+
+            } else if (kitBlockData.getType() == KitType.CLAIM) {
+
                 if (!kit.hasPermissionToClaim(player)) {
                     plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(player);
                     return;
                 }
-                if (kit.getNextUse(player) <= 0) {
-                    kit.processGenericUse(player, false);
-                    kit.updateDelay(player);
-                } else {
+
+                if (kit.getNextUse(player) > 0) {
                     long time = kit.getNextUse(player);
-                    plugin.getLocale().getMessage("event.crate.notyet").processPlaceholder("time",
-                            Methods.makeReadable(time)).sendPrefixedMessage(player);
+                    plugin.getLocale().getMessage("event.crate.notyet").processPlaceholder("time", Methods.makeReadable(time)).sendPrefixedMessage(player);
+                    return;
                 }
-            } else if (kit.getLink() != null || kit.getPrice() != 0) {
-                kit.buy(player, guiManager);
-            } else {
-                kit.display(player, guiManager, null);
+
+                if (kit.getLink() != null || kit.getPrice() != 0) {
+                    kit.buy(player, guiManager);
+                } else {
+                    kit.processGenericUse(player, false);
+                }
+
+                kit.updateDelay(player);
             }
-        } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (block.getState() instanceof InventoryHolder || block.getType() == Material.ENDER_CHEST) {
-                event.setCancelled(true);
-            }
+        }
+
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+
+            event.setCancelled(true);
+
             if (player.isSneaking() && player.hasPermission("ultimatekits.admin")) {
                 guiManager.showGUI(player, new BlockEditorGui(plugin, kitBlockData));
                 return;
             }
-            if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
-                event.setCancelled(true);
-                kit.processKeyUse(player);
-                return;
-            }
-            kit.display(player, guiManager, null);
 
+            kit.display(player, guiManager, null);
         }
     }
 

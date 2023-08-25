@@ -10,6 +10,7 @@ import com.craftaro.ultimatekits.gui.BlockEditorGui;
 import com.craftaro.ultimatekits.kit.Kit;
 import com.craftaro.ultimatekits.kit.KitBlockData;
 import com.craftaro.ultimatekits.kit.KitType;
+import com.craftaro.ultimatekits.settings.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,11 +20,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class InteractListeners implements Listener {
-
     private final UltimateKits plugin;
     private final GuiManager guiManager;
 
@@ -53,55 +52,58 @@ public class InteractListeners implements Listener {
         Kit kit = kitBlockData.getKit();
 
         Player player = event.getPlayer();
-        if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 
+        Material itemInHand = player.getItemInHand().getType();
+
+        Material keyMaterial = Settings.KEY_MATERIAL.getMaterial().parseMaterial();
+        if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
             if (player.isSneaking()) {
                 return;
             }
+
             event.setCancelled(true);
 
-            if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
-                event.setCancelled(true);
-                kit.processKeyUse(player);
-                return;
-            }
+            if (kitBlockData.getType() == KitType.PREVIEW) {
+                kit.display(player, this.guiManager, null);
 
-            if (kitBlockData.getType() != KitType.PREVIEW) {
+            } else if (kitBlockData.getType() == KitType.CRATE) {
+                if (itemInHand == keyMaterial) {
+                    kit.processKeyUse(player);
+                } else {
+                    this.plugin.getLocale().getMessage("event.crate.needkey").sendPrefixedMessage(player);
+                    return;
+                }
+            } else if (kitBlockData.getType() == KitType.CLAIM) {
                 if (!kit.hasPermissionToClaim(player)) {
                     this.plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(player);
                     return;
                 }
-                if (kit.getNextUse(player) <= 0) {
-                    kit.processGenericUse(player, false);
-                    kit.updateDelay(player);
-                } else {
+
+                if (kit.getNextUse(player) > 0) {
                     long time = kit.getNextUse(player);
-                    this.plugin
-                            .getLocale()
-                            .getMessage("event.crate.notyet")
-                            .processPlaceholder("time", TimeUtils.makeReadable(time))
-                            .sendPrefixedMessage(player);
+                    this.plugin.getLocale().getMessage("event.crate.notyet").processPlaceholder("time", TimeUtils.makeReadable(time)).sendPrefixedMessage(player);
+                    return;
                 }
-            } else if (kit.getLink() != null || kit.getPrice() != 0) {
-                kit.buy(player, this.guiManager);
-            } else {
-                kit.display(player, this.guiManager, null);
+
+                if (kit.getLink() != null || kit.getPrice() != 0) {
+                    kit.buy(player, this.guiManager);
+                } else {
+                    kit.processGenericUse(player, false);
+                }
+
+                kit.updateDelay(player);
             }
-        } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            if (block.getState() instanceof InventoryHolder || block.getType() == Material.ENDER_CHEST) {
-                event.setCancelled(true);
-            }
+        }
+
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            event.setCancelled(true);
+
             if (player.isSneaking() && player.hasPermission("ultimatekits.admin")) {
                 this.guiManager.showGUI(player, new BlockEditorGui(this.plugin, kitBlockData));
                 return;
             }
-            if (player.getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
-                event.setCancelled(true);
-                kit.processKeyUse(player);
-                return;
-            }
-            kit.display(player, this.guiManager, null);
 
+            kit.display(player, this.guiManager, null);
         }
     }
 
@@ -113,8 +115,8 @@ public class InteractListeners implements Listener {
         // Filter physical actions (pressure plates, buttons)
         if (event.getAction() == Action.PHYSICAL
                 || event.getItem() == null
-                || event.getItem().getType() == XMaterial.AIR.parseMaterial()
-                || XMaterial.matchXMaterial(event.getItem()) != XMaterial.CHEST) {
+                || XMaterial.AIR.isSimilar(event.getItem())
+                || !XMaterial.CHEST.isSimilar(event.getItem())) {
             return;
         }
 
@@ -125,7 +127,7 @@ public class InteractListeners implements Listener {
             return;
         }
 
-        Kit kit = UltimateKits.getInstance().getKitManager().getKit(ChatColor.stripColor(item.getItemMeta().getLore().get(0).split(" ")[0]));
+        Kit kit = this.plugin.getKitManager().getKit(ChatColor.stripColor(item.getItemMeta().getLore().get(0).split(" ")[0]));
 
         if (kit == null) {
             return;

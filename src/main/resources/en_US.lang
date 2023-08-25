@@ -189,6 +189,7 @@ event:
     wrongkey: '&cThis key doesn''t belong to this kit..'
     success: '&9Successfully opened a crate.'
     given: '&9You have received a %crate% %kit% crate.'
+    needkey: '&cYou need the right key to get this kit'
   claim:
     cannotafford: '&9You cannot afford to buy kit &7%kit%&9.'
     nottwice: '&9You can only receive this kit once.'

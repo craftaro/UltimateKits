@@ -6,7 +6,7 @@
 
     <groupId>com.craftaro</groupId>
     <artifactId>UltimateKits</artifactId>
-    <version>3.0.0-b2-SNAPSHOT</version>
+    <version>3.0.0</version>
 
     <name>UltimateKits</name>
     <description>Creating and displaying your server's kits has never been easier</description>

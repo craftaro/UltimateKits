@@ -2,10 +2,10 @@ package com.craftaro.ultimatekits.gui;
 
 import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
-import com.craftaro.core.third_party.com.cryptomorin.xseries.SkullUtils;
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.utils.NumberUtils;
 import com.craftaro.core.utils.TextUtils;
+import com.craftaro.third_party.com.cryptomorin.xseries.SkullUtils;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.kit.Kit;
 import com.craftaro.ultimatekits.settings.Settings;

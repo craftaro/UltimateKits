@@ -12,67 +12,62 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class Convert {
+
     public static void runKitConversions(UltimateKits plugin) {
         if (!plugin.getKitConfig().contains("Kits")) {
             if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
                 try {
                     Class.forName("com.earth2me.essentials.metrics.MetricsListener");
                 } catch (ClassNotFoundException ex) {
-                    convertKits(new EssentialsHook());
+                    convertKits(plugin, new EssentialsHook());
                 }
             }
-            if (Bukkit.getPluginManager().isPluginEnabled("UltimateCore")) {
-                convertKits(new UltimateCoreHook());
-            }
-            if (Bukkit.getPluginManager().isPluginEnabled("CMI")) {
-                convertKits(new CMIHook());
-            }
+            if (Bukkit.getPluginManager().isPluginEnabled("UltimateCore"))
+                convertKits(plugin, new UltimateCoreHook());
+            if (Bukkit.getPluginManager().isPluginEnabled("CMI"))
+                convertKits(plugin, new CMIHook());
         }
-        if (!isInJsonFormat()) {
-            convertKits(new DefaultHook());
-        }
+        if (!isInJsonFormat(plugin))
+            convertKits(plugin, new DefaultHook());
     }
 
-    private static void convertKits(Hook hook) {
+    private static void convertKits(UltimateKits plugin, Hook hook) {
         try {
-            Set<String> kits = hook.getKits();
-            for (String kit : kits) {
-                Kit kitObj = UltimateKits.getInstance().getKitManager().addKit(new Kit(kit));
-                if (kitObj == null) {
+            Map<String, ConversionKit> kits = hook.getKits();
+            for (Map.Entry<String, ConversionKit> entry : kits.entrySet()) {
+                Kit kitObj = plugin.getKitManager().addKit(new Kit(entry.getKey()));
+                if (kitObj == null)
                     continue;
-                }
-                for (ItemStack item : hook.getItems(kit)) {
-                    if (item == null || item.getType() == Material.AIR) {
+
+                ConversionKit cvt = entry.getValue();
+
+                for (ItemStack item : cvt.getItemStacks()) {
+                    if (item == null || item.getType() == Material.AIR)
                         continue;
-                    }
                     kitObj.getContents().add(new KitItem(item));
                 }
-                kitObj.setDelay(hook.getDelay(kit));
+                kitObj.setDelay(cvt.getDelay());
             }
-            UltimateKits.getInstance().saveKits(true);
+            plugin.saveKits(true);
         } catch (NoSuchMethodError | NoClassDefFoundError e) {
             System.out.println("UltimateKits conversion failed.");
         }
     }
 
-    private static boolean isInJsonFormat() {
-        if (!UltimateKits.getInstance().getKitConfig().contains("Kits")) {
+    private static boolean isInJsonFormat(UltimateKits plugin) {
+        if (!plugin.getKitConfig().contains("Kits"))
             return false;
-        }
 
-        for (String kit : UltimateKits.getInstance().getKitConfig().getConfigurationSection("Kits").getKeys(false)) {
-            if (UltimateKits.getInstance().getKitConfig().contains("Kits." + kit + ".items")) {
-                List<String> itemList = UltimateKits.getInstance().getKitConfig().getStringList("Kits." + kit + ".items");
-                if (!itemList.isEmpty()) {
-                    if (itemList.get(0).startsWith("{")) {
+        for (String kit : plugin.getKitConfig().getConfigurationSection("Kits").getKeys(false))
+            if (plugin.getKitConfig().contains("Kits." + kit + ".items")) {
+                List<String> itemList = plugin.getKitConfig().getStringList("Kits." + kit + ".items");
+                if (!itemList.isEmpty())
+                    if (itemList.get(0).startsWith("{"))
                         return true;
-                    }
-                }
             }
-        }
 
         return false;
     }

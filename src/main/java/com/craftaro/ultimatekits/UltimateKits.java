@@ -34,12 +34,7 @@ import com.craftaro.ultimatekits.handlers.DisplayItemHandler;
 import com.craftaro.ultimatekits.handlers.ParticleHandler;
 import com.craftaro.ultimatekits.key.Key;
 import com.craftaro.ultimatekits.key.KeyManager;
-import com.craftaro.ultimatekits.kit.Kit;
-import com.craftaro.ultimatekits.kit.KitAnimation;
-import com.craftaro.ultimatekits.kit.KitBlockData;
-import com.craftaro.ultimatekits.kit.KitItem;
-import com.craftaro.ultimatekits.kit.KitManager;
-import com.craftaro.ultimatekits.kit.KitType;
+import com.craftaro.ultimatekits.kit.*;
 import com.craftaro.ultimatekits.listeners.BlockListeners;
 import com.craftaro.ultimatekits.listeners.ChatListeners;
 import com.craftaro.ultimatekits.listeners.ChunkListeners;
@@ -81,6 +76,8 @@ public class UltimateKits extends SongodaPlugin {
     private CrateManager crateManager;
     private CategoryManager categoryManager;
     private DataManager dataManager;
+
+    private KitHandler kitHandler;
 
     private boolean loaded = false;
 
@@ -133,9 +130,11 @@ public class UltimateKits extends SongodaPlugin {
         this.keyFile.saveChanges();
         this.crateFile.saveChanges();
 
+        kitHandler = new KitHandler(this);
+
         // setup commands
         this.commandManager = new CommandManager(this);
-        this.commandManager.addCommand(new CommandKit(this, this.guiManager));
+        this.commandManager.addCommand(new CommandKit(this, this.guiManager, this.kitHandler));
         this.commandManager.addCommand(new CommandPreviewKit(this, this.guiManager));
         this.commandManager.addMainCommand("KitAdmin")
                 .addSubCommand(new CommandReload(this))
@@ -151,17 +150,17 @@ public class UltimateKits extends SongodaPlugin {
 
 
         // Event registration
-        this.guiManager.init();
+        guiManager.init();
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new ChunkListeners(this), this);
         pluginManager.registerEvents(new ChatListeners(), this);
         pluginManager.registerEvents(new EntityListeners(this), this);
-        pluginManager.registerEvents(new InteractListeners(this, this.guiManager), this);
+        pluginManager.registerEvents(new InteractListeners(this, guiManager, kitHandler), this);
         pluginManager.registerEvents(new PlayerListeners(this), this);
 
-        this.displayItemHandler.start();
-        this.particleHandler.start();
+        displayItemHandler.start();
+        particleHandler.start();
     }
 
     @Override
@@ -586,5 +585,9 @@ public class UltimateKits extends SongodaPlugin {
 
     public CategoryManager getCategoryManager() {
         return this.categoryManager;
+    }
+
+    public KitHandler getKitHandler() {
+        return kitHandler;
     }
 }

@@ -6,6 +6,7 @@ import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.gui.CategorySelectorGui;
 import com.craftaro.ultimatekits.gui.KitSelectorGui;
 import com.craftaro.ultimatekits.kit.Kit;
+import com.craftaro.ultimatekits.kit.KitHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,11 +17,13 @@ import java.util.List;
 public class CommandKit extends AbstractCommand {
     private final UltimateKits plugin;
     private final GuiManager guiManager;
+    private final KitHandler kitHandler;
 
-    public CommandKit(UltimateKits plugin, GuiManager guiManager) {
+    public CommandKit(UltimateKits plugin, GuiManager guiManager, KitHandler kitHandler) {
         super(CommandType.CONSOLE_OK, "kit");
         this.plugin = plugin;
         this.guiManager = guiManager;
+        this.kitHandler = kitHandler;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class CommandKit extends AbstractCommand {
                 return ReturnType.FAILURE;
             }
 
-            kit.processGenericUse((Player) sender, false);
+            kitHandler.processGenericUse(kit, (Player) sender, false);
             return ReturnType.SUCCESS;
         } else {
             // /kit <kit> <player> - Gives kit to another player.
@@ -76,14 +79,14 @@ public class CommandKit extends AbstractCommand {
             String who = player != null ? player.getName() : "everyone";
 
             if (player != null) {
-                kit.processGenericUse(player, true);
-                this.plugin.getLocale().getMessage("event.claim.givesuccess")
+                kitHandler.processGenericUse(kit, player, true);
+                plugin.getLocale().getMessage("event.claim.givesuccess")
                         .processPlaceholder("kit", kit.getName())
                         .sendPrefixedMessage(sender);
             } else {
                 Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
-                    kit.processGenericUse(onlinePlayer, true);
-                    this.plugin.getLocale().getMessage("event.claim.givesuccess")
+                    kitHandler.processGenericUse(kit, onlinePlayer, true);
+                    plugin.getLocale().getMessage("event.claim.givesuccess")
                             .processPlaceholder("kit", kit.getName())
                             .sendPrefixedMessage(sender);
                 });

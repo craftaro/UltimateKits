@@ -276,7 +276,7 @@ public class KitHandler {
                     plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, kit, item.getItem()));
                     return true;
                 } else {
-                    ItemStack parseStack = item.getContent().process(player);
+                    ItemStack parseStack = item.getContent().process(player).clone();
                     if (!(item.getContent() instanceof KitContentEconomy || item.getContent() instanceof KitContentCommand)) {
                         if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, parseStack)) {
                             continue;

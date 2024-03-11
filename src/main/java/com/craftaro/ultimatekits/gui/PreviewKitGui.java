@@ -102,7 +102,7 @@ public class PreviewKitGui extends Gui {
                             getBuyLore()),
                     event -> {
                         exit();
-                        kit.buy(event.player, event.manager);
+                        plugin.getKitHandler().buy(kit, event.player, event.manager);
                     });
         }
 

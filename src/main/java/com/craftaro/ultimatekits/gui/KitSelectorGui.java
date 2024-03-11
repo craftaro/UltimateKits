@@ -165,9 +165,9 @@ public class KitSelectorGui extends Gui {
                                 this.plugin.saveKits(false);
                                 showPage();
                             } else if (event.clickType == ClickType.LEFT) {
-                                kit.display(this.player, this.guiManager, this);
+                                plugin.getKitHandler().display(kit, player, guiManager, this);
                             } else if (event.clickType == ClickType.RIGHT) {
-                                kit.buy(event.player, event.manager);
+                                plugin.getKitHandler().buy(kit, event.player, event.manager);
                             }
                         });
             }

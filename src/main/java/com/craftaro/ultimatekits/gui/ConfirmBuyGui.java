@@ -38,7 +38,7 @@ public class ConfirmBuyGui extends Gui {
         setButton(1, 2, GuiUtils.createButtonItem(Settings.BUY_ICON.getMaterial(XMaterial.EMERALD),
                         plugin.getLocale().getMessage("interface.yesno.yes").getMessage()),
                 event -> {
-                    kit.processPurchaseUse(event.player);
+                    plugin.getKitHandler().processPurchaseUse(kit, event.player);
                     exit();
                 });
 

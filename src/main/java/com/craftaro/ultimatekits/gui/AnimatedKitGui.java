@@ -15,12 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayDeque;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class AnimatedKitGui extends Gui {
     static final Random rand = new Random();
@@ -46,7 +41,7 @@ public class AnimatedKitGui extends Gui {
 
         // ideally, we'd populate the items in such a way that the end item isn't far from the center when the animation is complete
         // would be something to do if people have large kit loot tables.
-        List<KitItem> kitItems = kit.getContents();
+        List<KitItem> kitItems = new ArrayList<>(kit.getContents());
         if (kitItems.isEmpty()) {
             throw new RuntimeException("Cannot give an empty kit!");
         }

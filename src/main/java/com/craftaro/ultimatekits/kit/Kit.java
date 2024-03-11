@@ -60,40 +60,13 @@ public class Kit implements Cloneable {
         this.name = TextUtils.formatText(key, true);
     }
 
-    public void buy(Player player, GuiManager manager) {
-        if (hasPermissionToClaim(player)) {
-            processGenericUse(player, false);
-            return;
-        }
 
-        if (!hasPermissionToBuy(player)) {
-            UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
-                    .sendPrefixedMessage(player);
-            return;
-        }
-
-        if (this.link != null) {
-            player.sendMessage("");
-            plugin.getLocale().newMessage("&a" + this.link).sendPrefixedMessage(player);
-            player.sendMessage("");
-            player.closeInventory();
-        } else if (this.price != 0) {
-            manager.showGUI(player, new ConfirmBuyGui(plugin, player, this, null));
-        } else {
-            UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
-                    .sendPrefixedMessage(player);
-        }
-    }
-
-
-    private boolean hasRoom(Player player, int itemAmount) {
+    public boolean hasRoom(Player player, int itemAmount) {
         int space = 0;
 
-        for (ItemStack content : player.getInventory().getContents()) {
-            if (content == null) {
+        for (ItemStack content : player.getInventory().getContents())
+            if (content == null)
                 space++;
-            }
-        }
 
         // Since roulette only gives one item, we don't need to check if the user has room for the whole kit.
         if (this.kitAnimation == KitAnimation.ROULETTE && space >= 1) {
@@ -101,125 +74,6 @@ public class Kit implements Cloneable {
         }
 
         return space >= itemAmount;
-    }
-
-    public void processKeyUse(Player player) {
-        ItemStack item = player.getItemInHand();
-        NBTItem nbtItem = new NBTItem(item);
-
-        if (!nbtItem.hasKey("key") || !nbtItem.hasKey("kit")) {
-            return;
-        }
-
-        String keyName = nbtItem.getString("key");
-        String kitName = nbtItem.getString("kit");
-
-        boolean any = kitName.equals("ANY");
-        Key key = plugin.getKeyManager().getKey(keyName);
-
-        if (key == null && !any) {
-            return;
-        }
-
-        if (!any && !kitName.equals(this.name)) {
-            plugin.getLocale().getMessage("event.crate.wrongkey").sendPrefixedMessage(player);
-            return;
-        }
-
-        if (giveKit(player, key)) {
-            plugin.getLocale().getMessage("event.key.success")
-                    .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
-            if (player.getInventory().getItemInHand().getAmount() != 1) {
-                item.setAmount(item.getAmount() - 1);
-                player.setItemInHand(item);
-            } else {
-                player.setItemInHand(null);
-            }
-        }
-    }
-
-    public void processCrateUse(Player player, ItemStack item, CompatibleHand hand) {
-        Crate crate = plugin.getCrateManager().getCrate(item);
-
-        if (crate == null || !giveKit(player, crate)) {
-            return;
-        }
-
-        ItemUtils.takeActiveItem(player, hand);
-
-        plugin.getLocale().getMessage("event.crate.success")
-                .processPlaceholder("crate", this.name).sendPrefixedMessage(player);
-    }
-
-    public void processPurchaseUse(Player player) {
-        if (!EconomyManager.isEnabled()) {
-            return;
-        }
-
-        if (!player.hasPermission("ultimatekits.buy." + this.key)) {
-            UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
-                    .sendPrefixedMessage(player);
-            return;
-        } else if (!EconomyManager.hasBalance(player, this.price)) {
-            plugin.getLocale().getMessage("event.claim.cannotafford")
-                    .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
-            return;
-        }
-        if (this.delay > 0) {
-            if (getNextUse(player) != 0) {
-                plugin.getLocale().getMessage("event.claim.delay")
-                        .processPlaceholder("time", TimeUtils.makeReadable(this.getNextUse(player)))
-                        .sendPrefixedMessage(player);
-                return;
-            }
-        } else if (getNextUse(player) == -1) {
-            plugin.getLocale().getMessage("event.claim.nottwice").sendPrefixedMessage(player);
-            return;
-        }
-        if (giveKit(player)) {
-            EconomyManager.withdrawBalance(player, this.price);
-            if (this.delay != 0) {
-                updateDelay(player); //updates delay on buy
-            }
-
-            plugin.getLocale().getMessage("event.claim.purchasesuccess")
-                    .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
-        }
-    }
-
-    public void processGenericUse(Player player, boolean forced) {
-        if (getNextUse(player) == -1 && !forced) {
-            plugin.getLocale().getMessage("event.claim.nottwice").sendPrefixedMessage(player);
-        } else if (getNextUse(player) <= 0 || forced) {
-            if (giveKit(player)) {
-                updateDelay(player);
-                if (this.kitAnimation == KitAnimation.NONE) {
-                    plugin.getLocale().getMessage("event.claim.givesuccess")
-                            .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
-                }
-            }
-        } else {
-            plugin.getLocale().getMessage("event.claim.delay")
-                    .processPlaceholder("time", TimeUtils.makeReadable(getNextUse(player)))
-                    .sendPrefixedMessage(player);
-        }
-    }
-
-    @SuppressWarnings("Duplicates")
-    public void display(Player player, GuiManager manager, Gui back) {
-        if (!hasPermissionToPreview(player)) {
-            UltimateKits.getInstance().getLocale().getMessage("command.general.noperms")
-                    .sendPrefixedMessage(player);
-            return;
-        }
-        if (this.key == null) {
-            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
-            return;
-        }
-
-        plugin.getLocale().getMessage("event.preview.kit")
-                .processPlaceholder("kit", this.name).sendPrefixedMessage(player);
-        manager.showGUI(player, new PreviewKitGui(plugin, player, this, back));
     }
 
     public void saveKit(List<ItemStack> items) {
@@ -293,103 +147,6 @@ public class Kit implements Cloneable {
             }
         }
         return stacks;
-    }
-
-    public boolean giveKit(Player player) {
-        return giveKit(player, this.contents.size(), -1);
-    }
-
-    private boolean giveKit(Player player, Key key) {
-        if (key == null) {
-            return giveKit(player);
-        }
-
-        int amount = key.getAmount();
-        if (amount == -1) {
-            // FIXME: I don't understand how Crates, Keys, etc. actually are supposed to work.
-            //        I think the give-algorithms are generally wrongly implemented and confusing naming is making it hard to understand.
-            amount = this.contents.size();
-        }
-        return giveKit(player, amount, key.getKitAmount());
-    }
-
-    private boolean giveKit(Player player, Crate crate) {
-        int amount = crate.getAmount();
-        if (amount == -1) {
-            // FIXME: I don't understand how Crates, Keys, etc. actually are supposed to work.
-            //        I think the give-algorithms are generally wrongly implemented and confusing naming is making it hard to understand.
-            amount = this.contents.size();
-        }
-        return giveKit(player, amount, crate.getKitAmount());
-    }
-
-    private boolean giveKit(Player player, int itemAmount, int kitAmount) {
-        List<KitItem> innerContents = new ArrayList<>(getContents());
-
-        // Amount of items from the kit to give to the player.
-        if (this.kitAnimation == KitAnimation.ROULETTE) {
-            itemAmount = 1; //TODO how about kitAmount > 1? generateRandomItem() will only give 1 random item instead of kitAmount
-        }
-        int itemGiveAmount = kitAmount > 0 ? itemAmount * kitAmount : itemAmount;
-
-        if (Settings.NO_REDEEM_WHEN_FULL.getBoolean() && !hasRoom(player, itemGiveAmount)) {
-            plugin.getLocale().getMessage("event.claim.full").sendPrefixedMessage(player);
-            return false;
-        }
-
-        if (Settings.SOUNDS_ENABLED.getBoolean() && this.kitAnimation == KitAnimation.NONE) {
-            XSound.ENTITY_PLAYER_LEVELUP.play(player, 0.6F, 15.0F);
-        }
-
-        return generateRandomItem(innerContents, itemGiveAmount, 0, player);
-    }
-
-    private boolean generateRandomItem(List<KitItem> innerContents, int itemGiveAmount, int itemGivenAmount, Player player) {
-        if (innerContents.size() != itemGiveAmount || this.kitAnimation != KitAnimation.NONE) {
-            Collections.shuffle(innerContents);
-        }
-
-        for (KitItem item : new ArrayList<>(innerContents)) {
-            if (itemGiveAmount <= 0 && itemGivenAmount != 0) {
-                break;
-            }
-            double ch = item.getChance() == 0 ? 100 : item.getChance();
-            double rand = Math.random() * 100;
-            itemGiveAmount--;
-            if (rand < ch || ch == 100) {
-                itemGivenAmount++;
-                if (this.kitAnimation != KitAnimation.NONE) {
-                    // TODO: this is a very bad way to solve this problem.
-                    // Giving the player kit rewards really should be done outside of the Kit class.
-                    plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, this, item.getItem()));
-                    return true;
-                } else {
-                    ItemStack parseStack = item.getContent().process(player);
-                    if (item.getContent() instanceof KitContentEconomy
-                            || item.getContent() instanceof KitContentCommand) {
-                        continue;
-                    }
-
-                    innerContents.remove(item);
-
-                    if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, parseStack)) {
-                        continue;
-                    }
-
-                    Map<Integer, ItemStack> overfilled = player.getInventory().addItem(parseStack);
-                    for (ItemStack item2 : overfilled.values()) {
-                        player.getWorld().dropItemNaturally(player.getLocation(), item2);
-                    }
-                }
-            }
-        }
-
-        if ((itemGiveAmount > 0 || itemGivenAmount == 0) && !innerContents.isEmpty()) {
-            return generateRandomItem(innerContents, itemGiveAmount, itemGivenAmount, player);
-        }
-
-        player.updateInventory();
-        return true;
     }
 
     public void updateDelay(Player player) {
@@ -470,7 +227,7 @@ public class Kit implements Cloneable {
     }
 
     public List<KitItem> getContents() {
-        return this.contents;
+        return Collections.unmodifiableList(this.contents);
     }
 
     public Kit setContents(List<KitItem> contents) {

@@ -17,16 +17,15 @@ public class PlayerListeners implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player.hasPlayedBefore()) {
+        if (player.hasPlayedBefore())
             return;
-        }
 
-        if (this.plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()) == null
+        if (plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()) == null
                 || Settings.STARTER_KIT.getString() == null
                 || Settings.STARTER_KIT.getString().equalsIgnoreCase("none")) {
             return;
         }
 
-        this.plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()).giveKit(player);
+        plugin.getKitHandler().giveKit(plugin.getKitManager().getKit(Settings.STARTER_KIT.getString()), player);
     }
 }

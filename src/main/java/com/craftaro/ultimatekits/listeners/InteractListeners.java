@@ -9,6 +9,7 @@ import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.gui.BlockEditorGui;
 import com.craftaro.ultimatekits.kit.Kit;
 import com.craftaro.ultimatekits.kit.KitBlockData;
+import com.craftaro.ultimatekits.kit.KitHandler;
 import com.craftaro.ultimatekits.kit.KitType;
 import com.craftaro.ultimatekits.settings.Settings;
 import org.bukkit.ChatColor;
@@ -25,29 +26,27 @@ import org.bukkit.inventory.ItemStack;
 public class InteractListeners implements Listener {
     private final UltimateKits plugin;
     private final GuiManager guiManager;
+    private final KitHandler kitHandler;
 
-    public InteractListeners(UltimateKits plugin, GuiManager guiManager) {
+    public InteractListeners(UltimateKits plugin, GuiManager guiManager, KitHandler kitHandler) {
         this.plugin = plugin;
         this.guiManager = guiManager;
+        this.kitHandler = kitHandler;
     }
 
     @EventHandler
     public void onBlockInteract(PlayerInteractEvent event) {
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) {
-            if (event.getHand() == EquipmentSlot.OFF_HAND) {
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
+            if (event.getHand() == EquipmentSlot.OFF_HAND)
                 return;
-            }
-        }
 
         Block block = event.getClickedBlock();
-        if (block == null) {
+        if (block == null)
             return;
-        }
 
         KitBlockData kitBlockData = this.plugin.getKitManager().getKit(block.getLocation());
-        if (kitBlockData == null) {
+        if (kitBlockData == null)
             return;
-        }
 
         Kit kit = kitBlockData.getKit();
 
@@ -57,38 +56,37 @@ public class InteractListeners implements Listener {
 
         Material keyMaterial = Settings.KEY_MATERIAL.getMaterial().parseMaterial();
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            if (player.isSneaking()) {
+            if (player.isSneaking())
                 return;
-            }
 
             event.setCancelled(true);
 
             if (kitBlockData.getType() == KitType.PREVIEW) {
-                kit.display(player, this.guiManager, null);
+                kitHandler.display(kit, player, this.guiManager, null);
 
             } else if (kitBlockData.getType() == KitType.CRATE) {
                 if (itemInHand == keyMaterial) {
-                    kit.processKeyUse(player);
+                    kitHandler.processKeyUse(kit, player);
                 } else {
-                    this.plugin.getLocale().getMessage("event.crate.needkey").sendPrefixedMessage(player);
+                    plugin.getLocale().getMessage("event.crate.needkey").sendPrefixedMessage(player);
                     return;
                 }
             } else if (kitBlockData.getType() == KitType.CLAIM) {
                 if (!kit.hasPermissionToClaim(player)) {
-                    this.plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(player);
+                    plugin.getLocale().getMessage("command.general.noperms").sendPrefixedMessage(player);
                     return;
                 }
 
                 if (kit.getNextUse(player) > 0) {
                     long time = kit.getNextUse(player);
-                    this.plugin.getLocale().getMessage("event.crate.notyet").processPlaceholder("time", TimeUtils.makeReadable(time)).sendPrefixedMessage(player);
+                    plugin.getLocale().getMessage("event.crate.notyet").processPlaceholder("time", TimeUtils.makeReadable(time)).sendPrefixedMessage(player);
                     return;
                 }
 
                 if (kit.getLink() != null || kit.getPrice() != 0) {
-                    kit.buy(player, this.guiManager);
+                    kitHandler.buy(kit, player, guiManager);
                 } else {
-                    kit.processGenericUse(player, false);
+                    kitHandler.processGenericUse(kit, player, false);
                 }
 
                 kit.updateDelay(player);
@@ -99,14 +97,20 @@ public class InteractListeners implements Listener {
             event.setCancelled(true);
 
             if (player.isSneaking() && player.hasPermission("ultimatekits.admin")) {
-                this.guiManager.showGUI(player, new BlockEditorGui(this.plugin, kitBlockData));
+                guiManager.showGUI(player, new BlockEditorGui(plugin, kitBlockData));
                 return;
             }
 
-            kit.display(player, this.guiManager, null);
+            kitHandler.display(kit, player, guiManager, null);
         }
     }
 
+    /**
+     * When a crate item is used on any block.
+     * The crate item and the crate keys are not the same.
+     *
+     * @param event PlayerInteractEvent
+     */
     @EventHandler
     public void onCrateClick(PlayerInteractEvent event) {
         // Would be better to use NBT to make the item persist over aesthetic changes.
@@ -138,10 +142,9 @@ public class InteractListeners implements Listener {
         // Function
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             // Open the crate
-            kit.processCrateUse(player, item, CompatibleHand.getHand(event));
-        } else // There are only left click actions left
-        {
-            kit.display(player, this.guiManager, null);
+            kitHandler.processCrateUse(kit, player, item, CompatibleHand.getHand(event));
+        } else {
+            kitHandler.display(kit, player, this.guiManager, null);
         }
     }
 }

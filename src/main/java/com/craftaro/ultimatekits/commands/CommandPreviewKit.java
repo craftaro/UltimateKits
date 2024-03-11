@@ -24,29 +24,28 @@ public class CommandPreviewKit extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         Player player = (Player) sender;
         if (args.length != 1) {
-            this.plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(player);
+            plugin.getLocale().getMessage("command.kit.nokitsupplied").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
         Kit kit = this.plugin.getKitManager().getKit(args[0].toLowerCase().trim());
         if (kit == null) {
-            this.plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
+            plugin.getLocale().getMessage("command.kit.kitdoesntexist").sendPrefixedMessage(player);
             return ReturnType.FAILURE;
         }
-        kit.display(player, this.guiManager, null);
+        plugin.getKitHandler().display(kit, player, guiManager, null);
         return ReturnType.SUCCESS;
     }
 
     @Override
     protected List<String> onTab(CommandSender sender, String... args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player))
             return null;
-        }
 
         if (args.length == 2) {
             List<String> tab = new ArrayList<>();
-            for (Kit kit : this.plugin.getKitManager().getKits()) {
+            for (Kit kit : plugin.getKitManager().getKits())
                 tab.add(kit.getKey());
-            }
+
             return tab;
         }
         return new ArrayList<>();

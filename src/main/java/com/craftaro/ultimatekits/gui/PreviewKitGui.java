@@ -94,6 +94,15 @@ public class PreviewKitGui extends Gui {
                 setButton(0, 0, GuiUtils.createButtonItem(buttonItem, plugin.getLocale().getMessage("interface.button.back").getMessage()),
                         event -> event.player.closeInventory());
             }
+
+            if (player.hasPermission("ultimatekits.admin")) {
+                setButton(0, 4, GuiUtils.createButtonItem(XMaterial.REDSTONE,
+                                plugin.getLocale().getMessage("interface.button.edit").getMessage()),
+                        event -> {
+                            exit();
+                            plugin.getGuiManager().showGUI(player, new KitEditorGui(plugin, player, kit, this));
+                        });
+            }
         }
         // purchase button
         if (buyable) {

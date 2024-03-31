@@ -42,6 +42,7 @@ interface:
     next: '&7Next Page'
     last: '&7Last Page'
     clickeco: '&7Click to buy for &a%price%&7.'
+    edit: '&6Edit'
   preview:
     title: '&9Previewing kit: &8%kit%'
   yesno:

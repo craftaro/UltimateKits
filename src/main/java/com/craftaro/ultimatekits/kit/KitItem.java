@@ -195,15 +195,9 @@ public class KitItem implements Cloneable {
             return null;
         }
         ItemStack item = this.content.getItemForDisplay().clone();
-        ItemMeta meta = item.getItemMeta();
-        List<String> lore = meta.hasLore() && meta.getLore().get(0).equals(TextUtils.formatText("&8&oMoveable"))
-                ? new ArrayList<>() : new ArrayList<>(Collections.singletonList(TextUtils.formatText("&8&oMoveable")));
-        if (meta.hasLore()) {
-            lore.addAll(meta.getLore());
-        }
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-        return compileOptions(item);
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.setBoolean("moveable", true);
+        return compileOptions(nbtItem.getItem());
     }
 
     public ItemStack getItemForDisplay(Kit kit) {

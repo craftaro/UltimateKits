@@ -80,14 +80,10 @@ public class Kit implements Cloneable {
         List<KitItem> list = new ArrayList<>();
         for (ItemStack is : items) {
             if (is != null && is.getType() != Material.AIR) {
-
                 if (is.getItemMeta().hasLore()) {
                     ItemMeta meta = is.getItemMeta();
                     List<String> newLore = new ArrayList<>();
                     for (String line : meta.getLore()) {
-                        if (line.contains("Moveable")) {
-                            continue;
-                        }
                         if (line.equals(TextUtils.formatText("&8----"))) {
                             break;
                         }

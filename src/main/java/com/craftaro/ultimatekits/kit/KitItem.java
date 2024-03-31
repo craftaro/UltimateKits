@@ -206,7 +206,7 @@ public class KitItem implements Cloneable {
         return compileOptions(item);
     }
 
-    public ItemStack getItemForDisplay() {
+    public ItemStack getItemForDisplay(Kit kit) {
         if (this.content == null) {
             return null;
         }
@@ -225,7 +225,7 @@ public class KitItem implements Cloneable {
                 meta.setLore(Collections.singletonList(ChatColor.translateAlternateColorCodes('&', this.displayLore)));
             }
 
-            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Display Chance In Preview")) {
+            if (UltimateKits.getInstance().getConfig().getBoolean("Main.Display Chance In Preview") && !kit.all100Percent()) {
                 ArrayDeque<String> lore;
                 if (meta.hasLore()) {
                     lore = new ArrayDeque<>(meta.getLore());

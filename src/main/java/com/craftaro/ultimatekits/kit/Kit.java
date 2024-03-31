@@ -80,14 +80,10 @@ public class Kit implements Cloneable {
         List<KitItem> list = new ArrayList<>();
         for (ItemStack is : items) {
             if (is != null && is.getType() != Material.AIR) {
-
                 if (is.getItemMeta().hasLore()) {
                     ItemMeta meta = is.getItemMeta();
                     List<String> newLore = new ArrayList<>();
                     for (String line : meta.getLore()) {
-                        if (line.contains("Moveable")) {
-                            continue;
-                        }
                         if (line.equals(TextUtils.formatText("&8----"))) {
                             break;
                         }
@@ -126,7 +122,7 @@ public class Kit implements Cloneable {
             if ((!item.getSerialized().startsWith("/") && !item.getSerialized().startsWith(Settings.CURRENCY_SYMBOL.getString())) || commands) { //ToDO: I doubt this is correct.
                 ItemStack stack = moveable ? item.getMoveableItem() : item.getItem();
                 if (preview) {
-                    stack = item.getItemForDisplay();
+                    stack = item.getItemForDisplay(this);
                 }
                 if (stack == null) {
                     continue;
@@ -241,6 +237,15 @@ public class Kit implements Cloneable {
 
     public String getName() {
         return this.name;
+    }
+
+    public boolean all100Percent() {
+        for (KitItem item : this.contents) {
+            if (item.getChance() != 100) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public ItemStack getDisplayItem() {

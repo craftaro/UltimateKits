@@ -377,15 +377,8 @@ public class KitEditorGui extends DoubleGui {
         if (itemStack.getItemMeta().hasLore()) {
             ItemMeta meta = itemStack.getItemMeta();
             List<String> newLore = new ArrayList<>();
-            for (String line : meta.getLore()) {
-                if (line.contains("Moveable")) {
-                    continue;
-                }
-                if (line.equals(TextUtils.formatText("&8----"))) {
-                    break;
-                }
+            for (String line : meta.getLore())
                 newLore.add(line);
-            }
             meta.setLore(newLore);
             itemStack.setItemMeta(meta);
         }

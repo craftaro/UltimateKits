@@ -47,7 +47,7 @@ public class Convert {
                 for (ItemStack item : cvt.getItemStacks()) {
                     if (item == null || item.getType() == Material.AIR)
                         continue;
-                    kitObj.getContents().add(new KitItem(item));
+                    kitObj.addItem(new KitItem(item));
                 }
                 kitObj.setDelay(cvt.getDelay());
             }

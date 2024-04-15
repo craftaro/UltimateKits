@@ -53,7 +53,8 @@ public class Convert {
             }
             plugin.saveKits(true);
         } catch (NoSuchMethodError | NoClassDefFoundError e) {
-            System.out.println("UltimateKits conversion failed.");
+            plugin.getLogger().severe("Failed to convert kits from " + hook.getClass().getSimpleName() + "most likely due to an outdated plugin version.");
+            e.printStackTrace();
         }
     }
 

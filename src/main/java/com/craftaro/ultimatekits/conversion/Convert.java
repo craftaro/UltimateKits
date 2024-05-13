@@ -4,7 +4,6 @@ import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.conversion.hooks.CMIHook;
 import com.craftaro.ultimatekits.conversion.hooks.DefaultHook;
 import com.craftaro.ultimatekits.conversion.hooks.EssentialsHook;
-import com.craftaro.ultimatekits.conversion.hooks.UltimateCoreHook;
 import com.craftaro.ultimatekits.kit.Kit;
 import com.craftaro.ultimatekits.kit.KitItem;
 import org.bukkit.Bukkit;
@@ -25,8 +24,6 @@ public class Convert {
                     convertKits(plugin, new EssentialsHook());
                 }
             }
-            if (Bukkit.getPluginManager().isPluginEnabled("UltimateCore"))
-                convertKits(plugin, new UltimateCoreHook());
             if (Bukkit.getPluginManager().isPluginEnabled("CMI"))
                 convertKits(plugin, new CMIHook());
         }

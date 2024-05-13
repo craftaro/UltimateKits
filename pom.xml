@@ -181,13 +181,6 @@
         </dependency>
 
         <dependency>
-            <groupId>bammerbom</groupId>
-            <artifactId>UltimateCore</artifactId>
-            <version>2.1.26</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.github.Zrips</groupId>
             <artifactId>CMI-API</artifactId>
             <version>7.6.2.0</version>

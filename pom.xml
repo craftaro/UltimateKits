@@ -112,18 +112,23 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+            <id>songoda-minecraft-plugins</id>
+            <url>https://repo.songoda.com/repository/minecraft-plugins/</url>
         </repository>
 
         <repository>
-            <id>spigotmc-repo</id>
+            <id>SpigotMC</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
         <repository>
-            <id>essentials-snapshots</id>
-            <url>https://repo.essentialsx.net/snapshots/</url>
+            <id>PaperMC</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
 
         <repository>
@@ -132,13 +137,8 @@
         </repository>
 
         <repository>
-            <id>paper-repo</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
-        </repository>
-
-        <repository>
-            <id>public</id>
-            <url>https://repo.craftaro.com/repository/public/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io/</url>
         </repository>
     </repositories>
 

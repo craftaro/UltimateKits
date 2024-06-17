@@ -276,7 +276,7 @@ public class KitHandler {
                     plugin.getGuiManager().showGUI(player, new AnimatedKitGui(plugin, player, kit, item.getItem()));
                     return true;
                 } else {
-                    ItemStack parseStack = item.getContent().process(player).clone();
+                    ItemStack parseStack  = removeMoveableTag(item.getContent().process(player).clone());
                     if (!(item.getContent() instanceof KitContentEconomy || item.getContent() instanceof KitContentCommand)) {
                         if (Settings.AUTO_EQUIP_ARMOR.getBoolean() && ArmorType.equip(player, parseStack)) {
                             continue;
@@ -318,5 +318,14 @@ public class KitHandler {
         plugin.getLocale().getMessage("event.preview.kit")
                 .processPlaceholder("kit", kit.getName()).sendPrefixedMessage(player);
         manager.showGUI(player, new PreviewKitGui(plugin, player, kit, back));
+    }
+    //Removes Moveable NBT tag that prevented item stacking.
+    public ItemStack removeMoveableTag(ItemStack item) {
+        if (item == null) {
+            return null;
+        }
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.removeKey("moveable");
+        return nbtItem.getItem();
     }
 }

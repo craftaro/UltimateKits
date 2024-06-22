@@ -4,8 +4,10 @@ import com.craftaro.core.gui.Gui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.utils.NumberUtils;
 import com.craftaro.core.utils.TextUtils;
-import com.craftaro.third_party.com.cryptomorin.xseries.SkullUtils;
 import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.third_party.com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.craftaro.third_party.com.cryptomorin.xseries.profiles.objects.ProfileInputType;
+import com.craftaro.third_party.com.cryptomorin.xseries.profiles.objects.Profileable;
 import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.kit.Kit;
 import com.craftaro.ultimatekits.settings.Settings;
@@ -15,7 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -87,9 +88,7 @@ public class PreviewKitGui extends Gui {
                     event -> exit());
 
             if (back != null) {
-                ItemStack buttonItem = XMaterial.PLAYER_HEAD.parseItem();
-                SkullMeta meta = SkullUtils.applySkin(buttonItem.getItemMeta(), "3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23");
-                buttonItem.setItemMeta(meta);
+                ItemStack buttonItem = XSkull.createItem().profile(new Profileable.StringProfileable("3ebf907494a935e955bfcadab81beafb90fb9be49c7026ba97d798d5f1a23", ProfileInputType.TEXTURE_HASH)).apply();
 
                 setButton(0, 0, GuiUtils.createButtonItem(buttonItem, plugin.getLocale().getMessage("interface.button.back").getMessage()),
                         event -> event.player.closeInventory());

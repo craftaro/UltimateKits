@@ -140,6 +140,11 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io/</url>
         </repository>
+
+        <repository>
+            <id>songoda-third-party</id>
+            <url>https://repo.songoda.com/repository/third-party/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -172,9 +177,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.Zrips</groupId>
+            <groupId>CMI-API</groupId>
             <artifactId>CMI-API</artifactId>
-            <version>7.6.2.0</version>
+            <version>9.7.4.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

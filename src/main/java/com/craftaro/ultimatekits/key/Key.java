@@ -38,11 +38,11 @@ public class Key {
         item.setAmount(amount);
 
         String kitName = kit != null ? TextUtils.formatText(kit.getName(), true)
-                : plugin.getLocale().getMessage("general.type.any").getMessage();
+                : plugin.getLocale().getMessage("general.type.any").toText();
 
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(plugin.getLocale().getMessage("interface.key.title")
-                .processPlaceholder("kit", kitName).getMessage());
+                .processPlaceholder("kit", kitName).toText());
 
         if (this.enchanted) {
             ItemUtils.addGlow(item);
@@ -50,10 +50,10 @@ public class Key {
 
         List<String> lore = new ArrayList<>();
         lore.add(plugin.getLocale().getMessage("interface.key.name")
-                .processPlaceholder("name", this.name).getMessage());
+                .processPlaceholder("name", this.name).toText());
 
         String desc1 = plugin.getLocale().getMessage("interface.key.description1")
-                .processPlaceholder("kit", kitName).getMessage();
+                .processPlaceholder("kit", kitName).toText();
 
         if (kit == null) {
             desc1 = desc1.replaceAll("\\[.*?\\]", "");
@@ -63,13 +63,13 @@ public class Key {
 
         lore.add(desc1);
         if (this.amount == -1) {
-            lore.add(plugin.getLocale().getMessage("interface.key.description2").getMessage());
+            lore.add(plugin.getLocale().getMessage("interface.key.description2").toText());
         } else {
-            lore.add(plugin.getLocale().getMessage("interface.key.description3").getMessage());
+            lore.add(plugin.getLocale().getMessage("interface.key.description3").toText());
         }
         if (this.kitAmount > 1) {
             lore.add(plugin.getLocale().getMessage("interface.key.description4")
-                    .processPlaceholder("amt", this.kitAmount).getMessage());
+                    .processPlaceholder("amt", this.kitAmount).toText());
         }
         meta.setLore(lore);
 

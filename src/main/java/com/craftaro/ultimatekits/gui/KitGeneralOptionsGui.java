@@ -37,9 +37,9 @@ public class KitGeneralOptionsGui extends Gui {
 
         // edit delay
         setButton(1, 2, GuiUtils.createButtonItem(XMaterial.CLOCK,
-                        plugin.getLocale().getMessage("interface.kitoptions.delay").getMessage(),
+                        plugin.getLocale().getMessage("interface.kitoptions.delay").toText(),
                         plugin.getLocale().getMessage("interface.kitoptions.delaylore")
-                                .processPlaceholder("delay", kit.getDelay()).getMessage().split("\\|")),
+                                .processPlaceholder("delay", kit.getDelay()).toText().split("\\|")),
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitoptions.delayprompt").getMessage());
@@ -48,7 +48,7 @@ public class KitGeneralOptionsGui extends Gui {
                         try {
                             kit.setDelay(Integer.parseInt(msg));
                             updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.delaylore")
-                                    .processPlaceholder("delay", kit.getDelay()).getMessage().split("\\|"));
+                                    .processPlaceholder("delay", kit.getDelay()).toText().split("\\|"));
                             aevent.player.closeInventory();
                             return;
                         } catch (NumberFormatException e) {
@@ -61,9 +61,9 @@ public class KitGeneralOptionsGui extends Gui {
 
         // edit category
         setButton(1, 4, GuiUtils.createButtonItem(XMaterial.BOOK,
-                        plugin.getLocale().getMessage("interface.kitoptions.category").getMessage(),
+                        plugin.getLocale().getMessage("interface.kitoptions.category").toText(),
                         plugin.getLocale().getMessage("interface.kitoptions.categorylore")
-                                .processPlaceholder("category", kit.getCategory() == null ? "none" : kit.getCategory().getName()).getMessage().split("\\|")),
+                                .processPlaceholder("category", kit.getCategory() == null ? "none" : kit.getCategory().getName()).toText().split("\\|")),
                 event -> {
                     if (event.clickType == ClickType.LEFT) {
                         AnvilGui gui = new AnvilGui(event.player, this);
@@ -74,7 +74,7 @@ public class KitGeneralOptionsGui extends Gui {
                             if (category != null) {
                                 kit.setCategory(category);
                                 updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.categorylore")
-                                        .processPlaceholder("category", kit.getCategory() == null ? "none" : kit.getCategory().getName()).getMessage().split("\\|"));
+                                        .processPlaceholder("category", kit.getCategory() == null ? "none" : kit.getCategory().getName()).toText().split("\\|"));
                                 aevent.player.closeInventory();
                                 return;
                             }
@@ -85,14 +85,14 @@ public class KitGeneralOptionsGui extends Gui {
                     } else if (event.clickType == ClickType.RIGHT) {
                         kit.setCategory(null);
                         updateItemLore(event.slot, plugin.getLocale().getMessage("interface.kitoptions.categorylore")
-                                .processPlaceholder("category", kit.getCategory() == null ? "none" : kit.getCategory().getName()).getMessage().split("\\|"));
+                                .processPlaceholder("category", kit.getCategory() == null ? "none" : kit.getCategory().getName()).toText().split("\\|"));
                     }
                 });
 
         // delete
         setButton(1, 6, GuiUtils.createButtonItem(XMaterial.TNT,
-                        plugin.getLocale().getMessage("interface.kitoptions.destroy").getMessage(),
-                        plugin.getLocale().getMessage("interface.kitoptions.destroylore").getMessage().split("\\|")),
+                        plugin.getLocale().getMessage("interface.kitoptions.destroy").toText(),
+                        plugin.getLocale().getMessage("interface.kitoptions.destroylore").toText().split("\\|")),
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player);
                     gui.setTitle(plugin.getLocale().getMessage("interface.kitoptions.destroyprompt").processPlaceholder("kit", kit.getKey()).getMessage());

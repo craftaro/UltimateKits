@@ -49,12 +49,12 @@ public class KitGuiOptionsGui extends Gui {
     private void paint() {
         // set hologram title
         setButton(1, 2, GuiUtils.createButtonItem(XMaterial.NAME_TAG,
-                        this.plugin.getLocale().getMessage("interface.kitguioptions.holo").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.kitguioptions.holo").toText(),
                         this.plugin.getLocale().getMessage("interface.kitguioptions.hololore")
                                 .processPlaceholder("onoff",
                                         this.kit.getTitle() != null ? this.plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", this.kit.getTitle()).getMessage()
                                                 : this.plugin.getLocale().getMessage("interface.kitguioptions.holooff").getMessage()
-                                ).getMessage().split("\\|")),
+                                ).toText().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
@@ -82,13 +82,13 @@ public class KitGuiOptionsGui extends Gui {
         });
 
         setButton(1, 4, GuiUtils.createButtonItem(this.kit.getDisplayItem() != null ? this.kit.getDisplayItem() : XMaterial.BEACON.parseItem(),
-                        this.plugin.getLocale().getMessage("interface.kitguioptions.item").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.kitguioptions.item").toText(),
                         this.plugin.getLocale().getMessage("interface.kitguioptions.itemlore")
                                 .processPlaceholder("onoff",
                                         this.kit.getDisplayItem() != null ? this.plugin.getLocale().getMessage("interface.kitguioptions.itemon")
                                                 .processPlaceholder("item", this.kit.getDisplayItem().toString()).getMessage()
                                                 : this.plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
-                                ).getMessage().split("\\|")),
+                                ).toText().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     ItemStack is = this.player.getItemInHand();
@@ -108,11 +108,11 @@ public class KitGuiOptionsGui extends Gui {
         });
 
         setButton(1, 6, GuiUtils.createButtonItem(XMaterial.COAL,
-                        this.plugin.getLocale().getMessage("interface.kitguioptions.hide").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.kitguioptions.hide").toText(),
                         this.plugin.getLocale().getMessage("interface.kitguioptions.hidelore")
                                 .processPlaceholder("onoff", this.plugin.getLocale().getMessage(
                                         this.kit.isHidden() ? "interface.kitguioptions.hideon" : "interface.kitguioptions.hideoff").getMessage()
-                                ).getMessage().split("\\|")),
+                                ).toText().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     this.kit.setHidden(!this.kit.isHidden());

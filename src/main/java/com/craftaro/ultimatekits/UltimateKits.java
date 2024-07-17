@@ -399,11 +399,11 @@ public class UltimateKits extends SongodaPlugin {
 
                 case "{RIGHT-CLICK}":
                     if (kitType == KitType.CRATE) {
-                        lines.add(getLocale().getMessage("interface.hologram.crate").getMessage());
+                        lines.add(getLocale().getMessage("interface.hologram.crate").toText());
                         break;
                     }
                     if (kit.getLink() != null) {
-                        lines.add(getLocale().getMessage("interface.hologram.buylink").getMessage());
+                        lines.add(getLocale().getMessage("interface.hologram.buylink").toText());
                         break;
                     }
                     if (kit.getPrice() != 0) {
@@ -411,19 +411,19 @@ public class UltimateKits extends SongodaPlugin {
                                 .processPlaceholder("price", kit.getPrice() != 0
                                         ? NumberUtils.formatNumber(kit.getPrice())
                                         : getLocale().getMessage("general.type.free").getMessage())
-                                .getMessage());
+                                .toText());
                     }
                     break;
 
                 case "{LEFT-CLICK}":
                     if (kitType == KitType.CLAIM) {
-                        lines.add(getLocale().getMessage("interface.hologram.daily").getMessage());
+                        lines.add(getLocale().getMessage("interface.hologram.daily").toText());
                         break;
                     }
                     if (kit.getLink() == null && kit.getPrice() == 0) {
-                        lines.add(getLocale().getMessage("interface.hologram.previewonly").getMessage());
+                        lines.add(getLocale().getMessage("interface.hologram.previewonly").toText());
                     } else {
-                        lines.add(getLocale().getMessage("interface.hologram.preview").getMessage());
+                        lines.add(getLocale().getMessage("interface.hologram.preview").toText());
                     }
                     break;
 

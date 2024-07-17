@@ -52,7 +52,7 @@ public class KitSelectorGui extends Gui {
 
         setItem(0, 4, GuiUtils.createButtonItem(XMaterial.BOOK,
                 plugin.getLocale().getMessage("interface.selector.details")
-                        .processPlaceholder("player", player.getName()).getMessage().split("\\|")));
+                        .processPlaceholder("player", player.getName()).toText().split("\\|")));
 
         if (this.pages > 1) {
             this.setNextPage(this.rows - 1, 5, GuiUtils.createButtonItem(ItemUtils.getCustomHead("1b6f1a25b6bc199946472aedb370522584ff6f4e83221e5946bd2e41b5ca13b"),
@@ -146,7 +146,7 @@ public class KitSelectorGui extends Gui {
                 String kitTitle = kit.getTitle() != null
                         ? ChatColor.translateAlternateColorCodes('&', kit.getTitle())
                         : this.plugin.getLocale().getMessage("interface.selector.kit")
-                        .processPlaceholder("kit", TextUtils.formatText(kitItem, true)).getMessage();
+                        .processPlaceholder("kit", TextUtils.formatText(kitItem, true)).toText();
 
                 setButton(row, col, GuiUtils.createButtonItem(
                                 kit.getDisplayItem() != null ? kit.getDisplayItem() : XMaterial.ENCHANTED_BOOK.parseItem(), kitTitle,
@@ -179,14 +179,14 @@ public class KitSelectorGui extends Gui {
         if (kit.getPrice() != 0) {
             lore.add(this.plugin.getLocale().getMessage("interface.selector.aboutkitprice")
                     .processPlaceholder("price", String.valueOf(kit.getPrice()))
-                    .getMessage());
+                    .toText());
         } else if (kit.getLink() != null) {
-            lore.add(this.plugin.getLocale().getMessage("general.type.link").getMessage());
+            lore.add(this.plugin.getLocale().getMessage("general.type.link").toText());
         }
 
         if (!this.kitsmode) {
-            if (!this.plugin.getLocale().getMessage("interface.selector.aboutkit").getMessage().trim().equals("")) {
-                String[] parts = this.plugin.getLocale().getMessage("interface.selector.aboutkit").getMessage().split("\\|");
+            if (!this.plugin.getLocale().getMessage("interface.selector.aboutkit").toText().trim().equals("")) {
+                String[] parts = this.plugin.getLocale().getMessage("interface.selector.aboutkit").toText().split("\\|");
                 lore.add("");
                 for (String line : parts) {
                     lore.add(ChatColor.translateAlternateColorCodes('&', line));
@@ -194,33 +194,33 @@ public class KitSelectorGui extends Gui {
             }
             if (kit.hasPermissionToClaim(this.player)) {
                 if (kit.getNextUse(this.player) == -1) {
-                    lore.add(this.plugin.getLocale().getMessage("event.claim.once").getMessage());
+                    lore.add(this.plugin.getLocale().getMessage("event.claim.once").toText());
                 } else if (kit.getNextUse(this.player) > 0) {
-                    if (!this.plugin.getLocale().getMessage("event.claim.wait").getMessage().trim().equals("")) {
+                    if (!this.plugin.getLocale().getMessage("event.claim.wait").toText().trim().equals("")) {
                         lore.add(this.plugin.getLocale().getMessage("event.claim.wait")
                                 .processPlaceholder("time", TimeUtils.makeReadable(kit.getNextUse(this.player)))
-                                .getMessage());
+                                .toText());
                     }
-                } else if (!this.plugin.getLocale().getMessage("event.claim.ready").getMessage().trim().equals("")) {
-                    lore.add(this.plugin.getLocale().getMessage("event.claim.ready").getMessage());
+                } else if (!this.plugin.getLocale().getMessage("event.claim.ready").toText().trim().equals("")) {
+                    lore.add(this.plugin.getLocale().getMessage("event.claim.ready").toText());
                 }
             } else {
-                lore.add(this.plugin.getLocale().getMessage("event.claim.noaccess").getMessage());
+                lore.add(this.plugin.getLocale().getMessage("event.claim.noaccess").toText());
             }
             lore.add("");
-            lore.add(this.plugin.getLocale().getMessage("interface.selector.leftpreview").getMessage());
+            lore.add(this.plugin.getLocale().getMessage("interface.selector.leftpreview").toText());
             if (kit.hasPermissionToClaim(this.player)) {
-                lore.add(this.plugin.getLocale().getMessage("interface.selector.rightclaim").getMessage());
+                lore.add(this.plugin.getLocale().getMessage("interface.selector.rightclaim").toText());
             } else if (kit.getPrice() != 0 || kit.getLink() != null) {
-                lore.add(this.plugin.getLocale().getMessage("interface.selector.rightbuy").getMessage());
+                lore.add(this.plugin.getLocale().getMessage("interface.selector.rightbuy").toText());
             }
 
             if (this.player.hasPermission("ultimatekits.admin")) {
                 lore.add("");
-                lore.add(this.plugin.getLocale().getMessage("interface.selector.adminlore").getMessage());
+                lore.add(this.plugin.getLocale().getMessage("interface.selector.adminlore").toText());
             }
         } else {
-            lore.addAll(Arrays.asList(this.plugin.getLocale().getMessage("interface.selector.editlore").getMessage().split("\\|")));
+            lore.addAll(Arrays.asList(this.plugin.getLocale().getMessage("interface.selector.editlore").toText().split("\\|")));
         }
         return lore;
     }

@@ -230,7 +230,7 @@ public class KitItem implements Cloneable {
                 if (!lore.isEmpty()) {
                     lore.addFirst("");
                 }
-                lore.addFirst(ChatColor.GRAY + UltimateKits.getInstance().getLocale().getMessage("general.type.chance").getMessage() + ": " + ChatColor.GOLD + (this.chance == 0 ? 100 : this.chance) + "%");
+                lore.addFirst(ChatColor.GRAY + UltimateKits.getInstance().getLocale().getMessage("general.type.chance").toText() + ": " + ChatColor.GOLD + (this.chance == 0 ? 100 : this.chance) + "%");
                 meta.setLore(new ArrayList<>(lore));
             }
 

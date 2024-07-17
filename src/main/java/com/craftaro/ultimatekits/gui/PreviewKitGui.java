@@ -106,7 +106,7 @@ public class PreviewKitGui extends Gui {
         // purchase button
         if (buyable) {
             setButton(this.rows - 1, 4, GuiUtils.createButtonItem(Settings.BUY_ICON.getMaterial(XMaterial.EMERALD),
-                            plugin.getLocale().getMessage("interface.button.buynow").getMessage(),
+                            plugin.getLocale().getMessage("interface.button.buynow").toText(),
                             getBuyLore()),
                     event -> {
                         exit();
@@ -182,7 +182,7 @@ public class PreviewKitGui extends Gui {
         ArrayList<String> lore = new ArrayList<>();
         if (this.kit.hasPermissionToClaim(this.player)) {
             lore.add(this.plugin.getLocale().getMessage("interface.button.clickeco")
-                    .processPlaceholder("price", "0").getMessage());
+                    .processPlaceholder("price", "0").toText());
             if (this.player.isOp()) {
                 lore.add("");
                 lore.add(ChatColor.GRAY + "This is free because");
@@ -192,7 +192,7 @@ public class PreviewKitGui extends Gui {
             }
         } else {
             lore.add(this.plugin.getLocale().getMessage("interface.button.clickeco")
-                    .processPlaceholder("price", NumberUtils.formatNumber(this.kit.getPrice())).getMessage());
+                    .processPlaceholder("price", NumberUtils.formatNumber(this.kit.getPrice())).toText());
         }
         if (this.kit.getDelay() != 0 && this.player.isOp()) {
             lore.add("");

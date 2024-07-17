@@ -45,7 +45,7 @@ public class Crate {
         meta.setDisplayName(plugin.getLocale().getMessage("interface.crate.title")
                 .processPlaceholder("kit", kitName)
                 .processPlaceholder("crate", this.name)
-                .getMessage());
+                .toText());
 
         meta.addEnchant(Enchantment.DURABILITY, 1, true);
 
@@ -56,7 +56,7 @@ public class Crate {
         String desc1 = plugin.getLocale().getMessage("interface.crate.description1")
                 .processPlaceholder("kit", kitName)
                 .processPlaceholder("crate", this.name)
-                .getMessage();
+                .toText();
 
         if (kitName.equals("Any")) {
             desc1 = desc1.replaceAll("\\[.*?]", "");
@@ -69,19 +69,19 @@ public class Crate {
             lore.add(plugin.getLocale().getMessage("interface.crate.description2")
                     .processPlaceholder("kit", kitName)
                     .processPlaceholder("crate", this.name)
-                    .getMessage());
+                    .toText());
         } else {
             lore.add(plugin.getLocale().getMessage("interface.crate.description3")
                     .processPlaceholder("kit", kitName)
                     .processPlaceholder("crate", this.name)
-                    .getMessage());
+                    .toText());
         }
         if (this.kitAmount > 1) {
             lore.add(plugin.getLocale().getMessage("interface.crate.description4")
                     .processPlaceholder("amt", this.kitAmount)
                     .processPlaceholder("kit", kitName)
                     .processPlaceholder("crate", this.name)
-                    .getMessage());
+                    .toText());
         }
 
         meta.setLore(lore);

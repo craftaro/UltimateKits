@@ -36,12 +36,12 @@ public class KitDecorOptionsGui extends Gui {
                 ClickType.LEFT,
                 event -> event.player.closeInventory());
 
-        final String enableLore = plugin.getLocale().getMessage("interface.kitdecor.settingon").getMessage();
-        final String disableLore = plugin.getLocale().getMessage("interface.kitdecor.settingoff").getMessage();
+        final String enableLore = plugin.getLocale().getMessage("interface.kitdecor.settingon").toText();
+        final String disableLore = plugin.getLocale().getMessage("interface.kitdecor.settingoff").toText();
 
         // Hologram
         setButton(1, 1, GuiUtils.createButtonItem(XMaterial.NAME_TAG,
-                        plugin.getLocale().getMessage("interface.kitdecor.hologram").getMessage(),
+                        plugin.getLocale().getMessage("interface.kitdecor.hologram").toText(),
                         kitBlockData.showHologram() ? enableLore : disableLore),
                 event -> {
                     kitBlockData.setShowHologram(!kitBlockData.showHologram());
@@ -51,7 +51,7 @@ public class KitDecorOptionsGui extends Gui {
 
         // Particle effects
         setButton(1, 3, GuiUtils.createButtonItem(XMaterial.POTION,
-                        plugin.getLocale().getMessage("interface.kitdecor.particle").getMessage(),
+                        plugin.getLocale().getMessage("interface.kitdecor.particle").toText(),
                         kitBlockData.hasParticles() ? enableLore : disableLore),
                 event -> {
                     kitBlockData.setHasParticles(!kitBlockData.hasParticles());
@@ -60,7 +60,7 @@ public class KitDecorOptionsGui extends Gui {
 
         // Item Display
         setButton(1, 5, GuiUtils.createButtonItem(XMaterial.DIAMOND,
-                        plugin.getLocale().getMessage("interface.kitdecor.display").getMessage(),
+                        plugin.getLocale().getMessage("interface.kitdecor.display").toText(),
                         kitBlockData.isDisplayingItems() ? enableLore : disableLore),
                 event -> {
                     plugin.removeHologram(kitBlockData);
@@ -71,10 +71,10 @@ public class KitDecorOptionsGui extends Gui {
 
         // Item Display Override
         setButton(1, 7, GuiUtils.createButtonItem(kit.getDisplayItem() != null ? kit.getDisplayItem() : XMaterial.BEACON.parseItem(),
-                        plugin.getLocale().getMessage("interface.kitdecor.displayone").getMessage(),
+                        plugin.getLocale().getMessage("interface.kitdecor.displayone").toText(),
                         plugin.getLocale().getMessage("interface.kitdecor.displayonelore")
                                 .processPlaceholder("enabled", kitBlockData.isItemOverride() ? enableLore : disableLore)
-                                .getMessage().split("\\|")),
+                                .toText().split("\\|")),
                 event -> {
                     kitBlockData.setItemOverride(!kitBlockData.isItemOverride());
                     updateItemLore(event.slot, kitBlockData.isItemOverride() ? enableLore : disableLore);

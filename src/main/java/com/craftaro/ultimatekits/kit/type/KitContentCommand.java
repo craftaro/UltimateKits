@@ -1,5 +1,6 @@
 package com.craftaro.ultimatekits.kit.type;
 
+import com.craftaro.core.chat.AdventureUtils;
 import com.craftaro.ultimatekits.UltimateKits;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -36,8 +37,8 @@ public class KitContentCommand implements KitContent {
             lore.add(ChatColor.GREEN + (index == 0 ? "/" : "") + ChatColor.GREEN + this.command.substring(index, Math.min(index + 30, this.command.length())));
             index += 30;
         }
-        meta.setLore(lore);
-        meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("general.type.command").getMessage());
+        AdventureUtils.formatItemLore(stack, lore);
+        AdventureUtils.formatItemName(stack, UltimateKits.getInstance().getLocale().getMessage("general.type.command").getMessage());
         stack.setItemMeta(meta);
         return stack;
     }

@@ -52,8 +52,8 @@ public class KitGuiOptionsGui extends Gui {
                         this.plugin.getLocale().getMessage("interface.kitguioptions.holo").toText(),
                         this.plugin.getLocale().getMessage("interface.kitguioptions.hololore")
                                 .processPlaceholder("onoff",
-                                        this.kit.getTitle() != null ? this.plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", this.kit.getTitle()).getMessage()
-                                                : this.plugin.getLocale().getMessage("interface.kitguioptions.holooff").getMessage()
+                                        this.kit.getTitle() != null ? this.plugin.getLocale().getMessage("interface.kitguioptions.holoon").processPlaceholder("title", this.kit.getTitle()).toText()
+                                                : this.plugin.getLocale().getMessage("interface.kitguioptions.holooff").toText()
                                 ).toText().split("\\|")),
                 ClickType.LEFT,
                 event -> {
@@ -86,8 +86,8 @@ public class KitGuiOptionsGui extends Gui {
                         this.plugin.getLocale().getMessage("interface.kitguioptions.itemlore")
                                 .processPlaceholder("onoff",
                                         this.kit.getDisplayItem() != null ? this.plugin.getLocale().getMessage("interface.kitguioptions.itemon")
-                                                .processPlaceholder("item", this.kit.getDisplayItem().toString()).getMessage()
-                                                : this.plugin.getLocale().getMessage("interface.kitguioptions.itemoff").getMessage()
+                                                .processPlaceholder("item", this.kit.getDisplayItem().toString()).toText()
+                                                : this.plugin.getLocale().getMessage("interface.kitguioptions.itemoff").toText()
                                 ).toText().split("\\|")),
                 ClickType.LEFT,
                 event -> {

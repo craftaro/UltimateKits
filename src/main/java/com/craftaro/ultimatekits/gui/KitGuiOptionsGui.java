@@ -111,7 +111,7 @@ public class KitGuiOptionsGui extends Gui {
                         this.plugin.getLocale().getMessage("interface.kitguioptions.hide").toText(),
                         this.plugin.getLocale().getMessage("interface.kitguioptions.hidelore")
                                 .processPlaceholder("onoff", this.plugin.getLocale().getMessage(
-                                        this.kit.isHidden() ? "interface.kitguioptions.hideon" : "interface.kitguioptions.hideoff").getMessage()
+                                        this.kit.isHidden() ? "interface.kitguioptions.hideon" : "interface.kitguioptions.hideoff").toText()
                                 ).toText().split("\\|")),
                 ClickType.LEFT,
                 event -> {

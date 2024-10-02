@@ -35,7 +35,7 @@ public class BlockEditorGui extends Gui {
 
         // kit type
         setButton(1, 2, GuiUtils.createButtonItem(XMaterial.COMPARATOR,
-                        plugin.getLocale().getMessage("interface.kitblock.switchtype").getMessage(),
+                        plugin.getLocale().getMessage("interface.kitblock.switchtype").toText(),
                         kitTypeLore(plugin)),
                 ClickType.LEFT,
                 event -> {
@@ -57,15 +57,15 @@ public class BlockEditorGui extends Gui {
 
         // decor options
         setButton(1, 4, GuiUtils.createButtonItem(XMaterial.POPPY,
-                        plugin.getLocale().getMessage("interface.kitblock.decor").getMessage(),
-                        plugin.getLocale().getMessage("interface.kitblock.decorlore").getMessage().split("\\|")),
+                        plugin.getLocale().getMessage("interface.kitblock.decor").toText(),
+                        plugin.getLocale().getMessage("interface.kitblock.decorlore").toText().split("\\|")),
                 ClickType.LEFT,
                 event -> event.manager.showGUI(event.player, new KitDecorOptionsGui(plugin, kitBlockData, this)));
 
         // edit
         setButton(1, 6, GuiUtils.createButtonItem(XMaterial.DIAMOND_PICKAXE,
-                        plugin.getLocale().getMessage("interface.kitblock.edit").getMessage(),
-                        plugin.getLocale().getMessage("interface.kitblock.editlore").getMessage().split("\\|")),
+                        plugin.getLocale().getMessage("interface.kitblock.edit").toText(),
+                        plugin.getLocale().getMessage("interface.kitblock.editlore").toText().split("\\|")),
                 ClickType.LEFT,
                 event -> {
                     this.guiManager.showGUI(event.player, new KitEditorGui(UltimateKits.getInstance(), event.player, kitBlockData.getKit(), this));
@@ -74,7 +74,7 @@ public class BlockEditorGui extends Gui {
     }
 
     private List<String> kitTypeLore(UltimateKits plugin) {
-        String[] type = plugin.getLocale().getMessage("interface.kitblock.switchtypelore").getMessage().split("\\|");
+        String[] type = plugin.getLocale().getMessage("interface.kitblock.switchtypelore").toText().split("\\|");
         return Arrays.asList(
                 type[0],
                 (this.kitBlockData.getType() == KitType.PREVIEW ? ChatColor.GOLD : ChatColor.GRAY) + (type.length > 1 ? type[1] : "Preview"),

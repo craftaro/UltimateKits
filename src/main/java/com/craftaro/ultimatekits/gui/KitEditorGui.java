@@ -89,7 +89,7 @@ public class KitEditorGui extends DoubleGui {
                 plugin.getLocale().getMessage("interface.kiteditor.info")
                         .processPlaceholder("kit", kit.getKey())
                         .processPlaceholder("perm", "ultimatekits.claim." + kit.getKey().toLowerCase())
-                        .getMessage().split("\\|"))
+                        .toText().split("\\|"))
         );
 
         saveItemsInstance();
@@ -155,14 +155,14 @@ public class KitEditorGui extends DoubleGui {
             setUnlockedRange(4, 1, 4, 7);
 
             item = GuiUtils.createButtonItem(XMaterial.PAPER,
-                    this.plugin.getLocale().getMessage("interface.kiteditor.itemediting").getMessage(),
-                    this.plugin.getLocale().getMessage("interface.kiteditor.itemeditinglore").getMessage().split("\\|"));
+                    this.plugin.getLocale().getMessage("interface.kiteditor.itemediting").toText(),
+                    this.plugin.getLocale().getMessage("interface.kiteditor.itemeditinglore").toText().split("\\|"));
         } else {
             this.unlockedCells.clear();
 
             item = GuiUtils.createButtonItem(XMaterial.PAPER,
-                    this.plugin.getLocale().getMessage("interface.kiteditor.itemmoving").getMessage(),
-                    this.plugin.getLocale().getMessage("interface.kiteditor.itemmovinglore").getMessage().split("\\|"));
+                    this.plugin.getLocale().getMessage("interface.kiteditor.itemmoving").toText(),
+                    this.plugin.getLocale().getMessage("interface.kiteditor.itemmovinglore").toText().split("\\|"));
         }
 
         setButton(48, item,
@@ -175,11 +175,11 @@ public class KitEditorGui extends DoubleGui {
         ItemStack item2;
 
         item2 = this.isInInventory ? GuiUtils.createButtonItem(XMaterial.ITEM_FRAME,
-                this.plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctions").getMessage(),
-                this.plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctionslore").getMessage().split("\\|"))
+                this.plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctions").toText(),
+                this.plugin.getLocale().getMessage("interface.kiteditor.switchtokitfunctionslore").toText().split("\\|"))
                 : GuiUtils.createButtonItem(XMaterial.ITEM_FRAME,
-                this.plugin.getLocale().getMessage("interface.kiteditor.switchtoinventory").getMessage(),
-                this.plugin.getLocale().getMessage("interface.kiteditor.switchtoinventorylore").getMessage().split("\\|"));
+                this.plugin.getLocale().getMessage("interface.kiteditor.switchtoinventory").toText(),
+                this.plugin.getLocale().getMessage("interface.kiteditor.switchtoinventorylore").toText().split("\\|"));
 
         setButton(50, item2,
                 event -> {
@@ -217,32 +217,32 @@ public class KitEditorGui extends DoubleGui {
 
     private void setInvItems() {
         setPlayerButton(0, GuiUtils.createButtonItem(XMaterial.REDSTONE_TORCH,
-                        this.plugin.getLocale().getMessage("interface.kiteditor.generaloptions").getMessage(),
-                        this.plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").getMessage().split("\\|")),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.generaloptions").toText(),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.generaloptionslore").toText().split("\\|")),
                 (event) -> {
                     this.player.closeInventory();
                     this.guiManager.showGUI(this.player, new KitGeneralOptionsGui(this.plugin, this.player, this.kit, this.back));
                 });
 
         setPlayerButton(1, GuiUtils.createButtonItem(XMaterial.EMERALD,
-                        this.plugin.getLocale().getMessage("interface.kiteditor.sellingoptions").getMessage(),
-                        this.plugin.getLocale().getMessage("interface.kiteditor.sellingoptionslore").getMessage().split("\\|")),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.sellingoptions").toText(),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.sellingoptionslore").toText().split("\\|")),
                 (event) -> {
                     this.player.closeInventory();
                     this.guiManager.showGUI(this.player, new KitSellingOptionsGui(this.plugin, this.player, this.kit, this.back));
                 });
 
         setPlayerButton(3, GuiUtils.createButtonItem(XMaterial.ITEM_FRAME,
-                        this.plugin.getLocale().getMessage("interface.kiteditor.guioptions").getMessage(),
-                        this.plugin.getLocale().getMessage("interface.kiteditor.guioptionslore").getMessage().split("\\|")),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.guioptions").toText(),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.guioptionslore").toText().split("\\|")),
                 (event) -> {
                     this.player.closeInventory();
                     this.guiManager.showGUI(this.player, new KitGuiOptionsGui(this.plugin, this.player, this.kit, this.back));
                 });
 
         setPlayerButton(4, GuiUtils.createButtonItem(XMaterial.PAPER,
-                        this.plugin.getLocale().getMessage("interface.kiteditor.addcommand").getMessage(),
-                        this.plugin.getLocale().getMessage("interface.kiteditor.addcommandlore").getMessage().split("\\|")),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.addcommand").toText(),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.addcommandlore").toText().split("\\|")),
                 (event) -> {
                     event.gui.exit();
                     ChatPrompt.showPrompt(event.manager.getPlugin(), event.player, "Enter a command for this kit:", response -> {
@@ -259,11 +259,11 @@ public class KitEditorGui extends DoubleGui {
                                     index += 30;
                                 }
                                 meta.setLore(lore);
-                                meta.setDisplayName(this.plugin.getLocale().getMessage("general.type.command").getMessage());
+                                meta.setDisplayName(this.plugin.getLocale().getMessage("general.type.command").toText());
                                 parseStack.setItemMeta(meta);
 
                                 this.plugin.getLocale().newMessage(this.plugin.getLocale().getMessage("interface.kiteditor.addcommandok")
-                                                .processPlaceholder("command", msg).getMessage())
+                                                .processPlaceholder("command", msg).toText())
                                         .sendPrefixedMessage(this.player);
 
                                 this.inventory.addItem(parseStack);
@@ -278,8 +278,8 @@ public class KitEditorGui extends DoubleGui {
                 });
 
         setPlayerButton(5, GuiUtils.createButtonItem(XMaterial.SUNFLOWER,
-                        this.plugin.getLocale().getMessage("interface.kiteditor.addeconomy").getMessage(),
-                        this.plugin.getLocale().getMessage("interface.kiteditor.addeconomylore").getMessage().split("\\|")),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.addeconomy").toText(),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.addeconomylore").toText().split("\\|")),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(this.player, this);
                     gui.setTitle(this.plugin.getLocale().getMessage("interface.kiteditor.addeconomyprompt").getMessage());
@@ -297,7 +297,7 @@ public class KitEditorGui extends DoubleGui {
                             index += 30;
                         }
                         meta.setLore(lore);
-                        meta.setDisplayName(this.plugin.getLocale().getMessage("general.type.money").getMessage());
+                        meta.setDisplayName(this.plugin.getLocale().getMessage("general.type.money").toText());
                         parseStack.setItemMeta(meta);
 
                         this.plugin.getLocale().getMessage("interface.kiteditor.addeconomyok").processPlaceholder("amount", msg.trim())
@@ -311,9 +311,9 @@ public class KitEditorGui extends DoubleGui {
                 });
 
         setPlayerButton(7, GuiUtils.createButtonItem(XMaterial.SHEEP_SPAWN_EGG,
-                        this.plugin.getLocale().getMessage("interface.kiteditor.clone").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.clone").toText(),
                         this.plugin.getLocale().getMessage("interface.kiteditor.clonelore")
-                                .getMessage().split("\\|")),
+                                .toText().split("\\|")),
                 (event) -> {
                     AnvilGui gui = new AnvilGui(this.player, this);
                     gui.setTitle("Enter a new kit name");
@@ -339,10 +339,10 @@ public class KitEditorGui extends DoubleGui {
                 });
 
         setPlayerButton(8, GuiUtils.createButtonItem(XMaterial.CHEST,
-                        this.plugin.getLocale().getMessage("interface.kiteditor.animation").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.kiteditor.animation").toText(),
                         this.plugin.getLocale().getMessage("interface.kiteditor.animationlore")
                                 .processPlaceholder("animation", this.kit.getKitAnimation().name())
-                                .getMessage().split("\\|")),
+                                .toText().split("\\|")),
                 (event) -> {
                     if (this.kit.getKitAnimation() == KitAnimation.NONE) {
                         this.kit.setKitAnimation(KitAnimation.ROULETTE);
@@ -470,14 +470,14 @@ public class KitEditorGui extends DoubleGui {
             itemLore = new ArrayList<>();
         }
         itemLore.add(TextUtils.formatText("&8----"));
-        itemLore.add(ChatColor.GRAY + this.plugin.getLocale().getMessage("general.type.chance").getMessage().replaceFirst("^" + ChatColor.RESET, "")
+        itemLore.add(ChatColor.GRAY + this.plugin.getLocale().getMessage("general.type.chance").toText().replaceFirst("^" + ChatColor.RESET, "")
                 + ": " + ChatColor.GOLD + item.getChance() + "%"); //TODO use a placeholder message in locales
         if (this.isInFunction) {
             itemLore.addAll(Arrays.asList(this.plugin.getLocale().getMessage("interface.kiteditor.itemfunctionlore")
                     .processPlaceholder("item", item.getDisplayItem() == null ? "" : item.getDisplayItem().name())
                     .processPlaceholder("name", item.getDisplayName())
                     .processPlaceholder("lore", item.getDisplayLore())
-                    .getMessage().split("\\|")));
+                    .toText().split("\\|")));
         }
         meta.setLore(itemLore);
         is.setItemMeta(meta);

@@ -1,5 +1,6 @@
 package com.craftaro.ultimatekits.kit.type;
 
+import com.craftaro.core.chat.AdventureUtils;
 import com.craftaro.core.hooks.EconomyManager;
 import com.craftaro.core.utils.NumberUtils;
 import com.craftaro.ultimatekits.UltimateKits;
@@ -39,8 +40,8 @@ public class KitContentEconomy implements KitContent {
             lore.add(ChatColor.GREEN + (index == 0 ? UltimateKits.getInstance().getConfig().getString("Main.Currency Symbol") : "") + ChatColor.GREEN + String.valueOf(this.amount).substring(index, Math.min(index + 30, String.valueOf(this.amount).length())));
             index += 30;
         }
-        meta.setLore(lore);
-        meta.setDisplayName(UltimateKits.getInstance().getLocale().getMessage("general.type.money").getMessage());
+        AdventureUtils.formatItemLore(parseStack, lore);
+        AdventureUtils.formatItemName(parseStack, UltimateKits.getInstance().getLocale().getMessage("general.type.money").getMessage());
         parseStack.setItemMeta(meta);
         return parseStack;
     }

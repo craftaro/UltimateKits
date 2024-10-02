@@ -47,11 +47,11 @@ public class KitSellingOptionsGui extends Gui {
     private void paint() {
         // remove sale
         setButton(1, 2, GuiUtils.createButtonItem(XMaterial.BARRIER,
-                        this.plugin.getLocale().getMessage("interface.kitsell.nosell").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.kitsell.nosell").toText(),
                         this.plugin.getLocale().getMessage("interface.kitsell.noselllore")
                                 .processPlaceholder("onoff", this.plugin.getLocale().getMessage(
-                                        this.kit.getPrice() != 0 || this.kit.getLink() != null ? "interface.kitsell.nosellon" : "interface.kitsell.noselloff").getMessage()
-                                ).getMessage().split("\\|")),
+                                        this.kit.getPrice() != 0 || this.kit.getLink() != null ? "interface.kitsell.nosellon" : "interface.kitsell.noselloff").toText()
+                                ).toText().split("\\|")),
                 event -> {
                     this.kit.setPrice(0);
                     this.kit.setLink(null);
@@ -60,12 +60,12 @@ public class KitSellingOptionsGui extends Gui {
 
         // kit link
         setButton(1, 4, GuiUtils.createButtonItem(XMaterial.PAPER,
-                        this.plugin.getLocale().getMessage("interface.kitsell.link").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.kitsell.link").toText(),
                         this.plugin.getLocale().getMessage("interface.kitsell.linklore")
                                 .processPlaceholder("onoff",
-                                        this.kit.getLink() != null ? this.plugin.getLocale().getMessage("interface.kitsell.linkon").processPlaceholder("kit", this.kit.getLink()).getMessage()
-                                                : this.plugin.getLocale().getMessage("interface.kitsell.linkoff").getMessage()
-                                ).getMessage().split("\\|")),
+                                        this.kit.getLink() != null ? this.plugin.getLocale().getMessage("interface.kitsell.linkon").processPlaceholder("kit", this.kit.getLink()).toText()
+                                                : this.plugin.getLocale().getMessage("interface.kitsell.linkoff").toText()
+                                ).toText().split("\\|")),
                 event -> {
                     AnvilGui gui = new AnvilGui(event.player, this);
                     gui.setTitle(this.plugin.getLocale().getMessage("interface.kitsell.linkprompt").getMessage());
@@ -86,13 +86,13 @@ public class KitSellingOptionsGui extends Gui {
 
         // kit price
         setButton(1, 6, GuiUtils.createButtonItem(XMaterial.SUNFLOWER,
-                        this.plugin.getLocale().getMessage("interface.kitsell.price").getMessage(),
+                        this.plugin.getLocale().getMessage("interface.kitsell.price").toText(),
                         this.plugin.getLocale().getMessage("interface.kitsell.pricelore")
                                 .processPlaceholder("onoff",
                                         this.kit.getPrice() != 0 ? this.plugin.getLocale().getMessage("interface.kitsell.priceon")
-                                                .processPlaceholder("price", this.kit.getPrice()).getMessage()
-                                                : this.plugin.getLocale().getMessage("interface.kitsell.priceoff").getMessage()
-                                ).getMessage().split("\\|")),
+                                                .processPlaceholder("price", this.kit.getPrice()).toText()
+                                                : this.plugin.getLocale().getMessage("interface.kitsell.priceoff").toText()
+                                ).toText().split("\\|")),
                 event -> {
                     if (!EconomyManager.isEnabled()) {
                         this.plugin.getLocale().getMessage("interface.kitsell.pricenoeco").sendPrefixedMessage(event.player);

@@ -4,7 +4,6 @@ import com.craftaro.ultimatekits.UltimateKits;
 import com.craftaro.ultimatekits.conversion.hooks.CMIHook;
 import com.craftaro.ultimatekits.conversion.hooks.DefaultHook;
 import com.craftaro.ultimatekits.conversion.hooks.EssentialsHook;
-import com.craftaro.ultimatekits.conversion.hooks.UltimateCoreHook;
 import com.craftaro.ultimatekits.kit.Kit;
 import com.craftaro.ultimatekits.kit.KitItem;
 import org.bukkit.Bukkit;
@@ -25,8 +24,6 @@ public class Convert {
                     convertKits(plugin, new EssentialsHook());
                 }
             }
-            if (Bukkit.getPluginManager().isPluginEnabled("UltimateCore"))
-                convertKits(plugin, new UltimateCoreHook());
             if (Bukkit.getPluginManager().isPluginEnabled("CMI"))
                 convertKits(plugin, new CMIHook());
         }
@@ -47,13 +44,14 @@ public class Convert {
                 for (ItemStack item : cvt.getItemStacks()) {
                     if (item == null || item.getType() == Material.AIR)
                         continue;
-                    kitObj.getContents().add(new KitItem(item));
+                    kitObj.addItem(new KitItem(item));
                 }
                 kitObj.setDelay(cvt.getDelay());
             }
             plugin.saveKits(true);
         } catch (NoSuchMethodError | NoClassDefFoundError e) {
-            System.out.println("UltimateKits conversion failed.");
+            plugin.getLogger().severe("Failed to convert kits from " + hook.getClass().getSimpleName() + "most likely due to an outdated plugin version.");
+            e.printStackTrace();
         }
     }
 

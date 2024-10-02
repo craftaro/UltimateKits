@@ -41,7 +41,7 @@ public class CategorySelectorGui extends Gui {
 
         setItem(0, 4, GuiUtils.createButtonItem(XMaterial.BOOK,
                 plugin.getLocale().getMessage("interface.categoryselector.details")
-                        .processPlaceholder("player", player.getName()).getMessage().split("\\|")));
+                        .processPlaceholder("player", player.getName()).toText().split("\\|")));
 
         if (!glassless) {
             setButton(this.rows - 1, 4, GuiUtils.createButtonItem(Settings.EXIT_ICON.getMaterial(XMaterial.OAK_DOOR),
@@ -79,7 +79,7 @@ public class CategorySelectorGui extends Gui {
             setButton(i, GuiUtils.createButtonItem(XMaterial.matchXMaterial(category.getMaterial()),
                             TextUtils.formatText(category.getName()),
                             "",
-                            plugin.getLocale().getMessage("interface.categoryselector.view").getMessage()),
+                            plugin.getLocale().getMessage("interface.categoryselector.view").toText()),
                     event -> {
                         this.guiManager.showGUI(player, new KitSelectorGui(plugin, player, category));
                     });

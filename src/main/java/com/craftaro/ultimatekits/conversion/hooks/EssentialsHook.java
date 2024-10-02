@@ -5,6 +5,7 @@ import com.craftaro.ultimatekits.conversion.Hook;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.Kit;
 import com.earth2me.essentials.MetaItemStack;
+import com.earth2me.essentials.config.EssentialsConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -23,10 +24,10 @@ public class EssentialsHook implements Hook {
 
     @Override
     public Map<String, ConversionKit> getKits() {
-        ConfigurationSection cs = this.essentials.getSettings().getKits();
+        EssentialsConfiguration cs = this.essentials.getKits().getRootConfig();
         Map<String, ConversionKit> kits = new LinkedHashMap<>();
         try {
-            for (String name : cs.getKeys(false)) {
+            for (String name : cs.getKeys()) {
                 Set<ItemStack> stacks = new HashSet<>();
                 Kit kitObj = new Kit(name, this.essentials);
                 for (String nonParse : kitObj.getItems()) {
@@ -42,7 +43,7 @@ public class EssentialsHook implements Hook {
                     }
                     stacks.add(metaStack.getItemStack());
                 }
-                kits.put(name, new ConversionKit(stacks, Integer.toUnsignedLong((int) this.essentials.getSettings().getKit(name).getOrDefault("delay", 0))));
+                kits.put(name, new ConversionKit(stacks, Integer.toUnsignedLong((int) cs.getInt("delay", 0))));
             }
         } catch (Exception e) {
             return kits;

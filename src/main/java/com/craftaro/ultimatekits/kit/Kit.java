@@ -275,6 +275,10 @@ public class Kit implements Cloneable {
         return this;
     }
 
+    public void addItem(KitItem item) {
+        this.contents.add(item);
+    }
+
     public Kit clone(String key) {
         try {
             Kit newKit = (Kit) super.clone();

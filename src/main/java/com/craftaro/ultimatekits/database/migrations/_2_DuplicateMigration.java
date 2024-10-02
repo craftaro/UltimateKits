@@ -74,9 +74,10 @@ public class _2_DuplicateMigration extends DataMigration {
             connection.commit();
             connection.setAutoCommit(true);
             // free up disk space (sqlite command)
-            try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate("VACUUM");
-            }
+//            try (Statement statement = connection.createStatement()) {
+//                statement.executeUpdate("VACUUM");
+//            }
+            //SQLite no longer supported/used
         }
     }
 

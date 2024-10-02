@@ -410,7 +410,7 @@ public class UltimateKits extends SongodaPlugin {
                         lines.add(getLocale().getMessage("interface.hologram.buyeco")
                                 .processPlaceholder("price", kit.getPrice() != 0
                                         ? NumberUtils.formatNumber(kit.getPrice())
-                                        : getLocale().getMessage("general.type.free").getMessage())
+                                        : getLocale().getMessage("general.type.free").toText())
                                 .toText());
                     }
                     break;
